@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About SatLegal – India's AI Legal Analysis Platform</title>
+  <meta name="description" content="SatLegal is India's leading AI-powered legal analysis platform. Understand your legal rights across 37 Indian laws before paying a lawyer." />
+  <style>
+/* ── CSS Variables ── */
+:root{
+  --sf-50:#FFF8F0;--sf-100:#FFE8C8;--sf-200:#FFD49A;--sf-300:#FFB84D;--sf-400:#FFB366;
+  --sf-500:#FF9933;--sf-600:#E07000;--sf-700:#B35100;--sf-800:#8B4500;
+  --gr-50:#F0FBF0;--gr-100:#D4F5D2;--gr-200:#A8E8A4;--gr-300:#5CC852;
+  --gr-500:#138808;--gr-600:#1A6B1A;--gr-700:#145214;--gr-800:#0D3D0D;--gr-900:#062206;
+  --text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;--bg:#F8F9FA;
+  --r:10px;--font:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --shadow:0 2px 12px rgba(0,0,0,.07);--shadow-md:0 6px 24px rgba(0,0,0,.12)
+}
+/* ── Resets & base ───────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:#fff;line-height:1.7}
+a{text-decoration:none;color:inherit}
+
+/* ── HERO (Tricolor) ──────────────────────────────── */
+.about-hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,
+    #E07000 0%,#FF9933 18%,#FFB347 30%,#FFD699 40%,
+    #ffffff 50%,
+    #A8E8A4 60%,#5CC852 72%,#138808 85%,#0D6B05 100%);
+  padding:80px 24px 70px;text-align:center;
+}
+.about-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(255,255,255,.15) 0%,transparent 70%);
+  pointer-events:none
+}
+.hero-inner{position:relative;z-index:1;max-width:820px;margin:0 auto}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.9);border:1px solid rgba(255,153,51,.4);
+  color:var(--sf-700);padding:6px 20px;border-radius:30px;
+  font-size:13px;font-weight:700;letter-spacing:.5px;margin-bottom:24px;
+  box-shadow:0 2px 8px rgba(0,0,0,.1)
+}
+.about-hero h1{
+  font-size:clamp(28px,5vw,52px);font-weight:900;color:#fff;
+  line-height:1.1;margin-bottom:16px;letter-spacing:-1px;
+  text-shadow:0 2px 12px rgba(0,0,0,.28),0 1px 3px rgba(0,0,0,.35)
+}
+.about-hero h1 em{color:rgba(255,255,255,.9);font-style:normal}
+.about-hero .sub{
+  font-size:16px;color:rgba(255,255,255,.9);max-width:600px;
+  margin:0 auto 32px;line-height:1.75;text-shadow:0 1px 4px rgba(0,0,0,.18)
+}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-hero-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#FF9933;color:#fff;padding:14px 32px;
+  border-radius:8px;font-size:15px;font-weight:700;
+  text-decoration:none;transition:all .2s;
+}
+.btn-hero-primary:hover{background:#E07000;transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,153,51,.4)}
+.btn-hero-outline{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;border:2px solid rgba(255,255,255,.55);
+  color:#fff;padding:14px 32px;border-radius:8px;
+  font-size:15px;font-weight:700;text-decoration:none;transition:all .2s;
+}
+.btn-hero-outline:hover{background:rgba(255,255,255,.1);border-color:#fff}
+
+/* ── STATS BAR ──────────────────────────────────────── */
+.stats-bar{
+  display:grid;grid-template-columns:repeat(5,1fr);
+  background:#fff;border-bottom:3px solid transparent;
+  border-image:linear-gradient(to right,#FF9933 33%,#fff 33% 66%,#138808 66%) 1;
+  box-shadow:0 4px 24px rgba(19,136,8,.10);
+}
+.stat-item{
+  padding:28px 20px;text-align:center;
+  border-right:1px solid #f0f0f0;
+  transition:background .2s;
+}
+.stat-item:last-child{border-right:none}
+.stat-item:hover{background:#fffaf4}
+.stat-num{font-size:36px;font-weight:900;color:#0D3D0D;line-height:1;margin-bottom:4px}
+.stat-num span{font-size:22px;color:#FF9933}
+.stat-lbl{font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:.6px;font-weight:600}
+
+/* ── SECTION BASE ──────────────────────────────────── */
+.section{padding:80px 24px}
+.section.alt{background:#f8faf8}
+.inner{max-width:1080px;margin:0 auto}
+.section-eyebrow{
+  display:inline-block;background:#FFF4E6;color:#B35100;
+  font-size:11px;font-weight:800;padding:4px 14px;
+  border-radius:20px;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px;
+}
+.section-title{font-size:clamp(26px,3.5vw,40px);font-weight:900;color:#0D3D0D;line-height:1.2;margin-bottom:12px}
+.section-sub{font-size:16px;color:#6b7280;max-width:600px;margin-bottom:48px;line-height:1.75}
+.triline{width:64px;height:4px;background:linear-gradient(to right,#FF9933 33%,#fff 33% 66%,#138808 66%);border-radius:2px;margin-bottom:28px}
+.center{text-align:center}
+.center .section-sub{margin-left:auto;margin-right:auto}
+.center .triline{margin-left:auto;margin-right:auto}
+
+/* ── MISSION SPLIT ─────────────────────────────────── */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.split p{font-size:15px;line-height:1.9;color:#374151;margin-bottom:16px}
+.split-visual{
+  border-radius:16px;background:linear-gradient(135deg,#FFF4E6,#F0FBF0);
+  display:flex;align-items:center;justify-content:center;
+  height:360px;font-size:90px;position:relative;overflow:hidden;
+}
+.split-visual::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,153,51,.08),rgba(19,136,8,.08));
+}
+.highlight-box{
+  background:linear-gradient(135deg,#FFF4E6,#FFF9F0);
+  border-left:4px solid #FF9933;border-radius:0 10px 10px 0;
+  padding:14px 18px;margin:20px 0;font-size:14px;
+  color:#7A3800;font-style:italic;line-height:1.8;
+}
+
+/* ── HOW IT WORKS ───────────────────────────────────── */
+.steps-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative;margin-top:12px}
+.steps-grid::before{
+  content:'';position:absolute;top:40px;left:10%;right:10%;
+  height:2px;background:linear-gradient(to right,#FF9933,#138808);z-index:0;
+}
+.step-item{text-align:center;padding:0 12px;position:relative;z-index:1}
+.step-num{
+  width:80px;height:80px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;margin:0 auto 16px;
+  box-shadow:0 4px 20px rgba(0,0,0,.12);
+  position:relative;
+}
+.step-num::after{
+  content:attr(data-step);position:absolute;
+  top:-6px;right:-6px;width:22px;height:22px;
+  background:#FF9933;color:#fff;border-radius:50%;
+  font-size:11px;font-weight:800;display:flex;
+  align-items:center;justify-content:center;
+}
+.step-s1 .step-num{background:linear-gradient(135deg,#FF9933,#FFB366)}
+.step-s2 .step-num{background:linear-gradient(135deg,#E07000,#FF9933)}
+.step-s3 .step-num{background:linear-gradient(135deg,#138808,#2EAD22)}
+.step-s4 .step-num{background:linear-gradient(135deg,#0D3D0D,#145214)}
+.step-s5 .step-num{background:linear-gradient(135deg,#062206,#0D3D0D)}
+.step-label{font-size:11px;font-weight:700;color:#FF9933;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.step-title{font-size:14px;font-weight:800;color:#0D3D0D;margin-bottom:6px}
+.step-desc{font-size:12px;color:#6b7280;line-height:1.6}
+
+/* ── FEATURES GRID ─────────────────────────────────── */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.feat-card{
+  background:#fff;border-radius:14px;padding:28px;
+  box-shadow:0 2px 16px rgba(19,136,8,.07);
+  border:1px solid #f0f0f0;border-top:3px solid #FF9933;
+  transition:all .2s;
+}
+.feat-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(19,136,8,.13)}
+.feat-card:nth-child(3n+2){border-top-color:#138808}
+.feat-card:nth-child(3n+3){border-top-color:#0D3D0D}
+.feat-icon{font-size:36px;margin-bottom:16px}
+.feat-title{font-size:16px;font-weight:800;color:#0D3D0D;margin-bottom:8px}
+.feat-desc{font-size:13px;color:#6b7280;line-height:1.75}
+
+/* ── LAWS COVERAGE ─────────────────────────────────── */
+.laws-section{
+  background:linear-gradient(135deg,#0D3D0D 0%,#145214 50%,#0D3D0D 100%);
+  padding:70px 24px;text-align:center;
+}
+.law-categories{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:36px}
+.law-cat-card{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  border-radius:12px;padding:16px 20px;text-align:left;min-width:180px;
+  transition:all .2s;cursor:default;
+}
+.law-cat-card:hover{background:rgba(255,153,51,.15);border-color:rgba(255,153,51,.4)}
+.law-cat-icon{font-size:28px;margin-bottom:8px}
+.law-cat-name{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px}
+.law-cat-count{font-size:11px;color:rgba(255,255,255,.6);font-weight:600}
+.law-pills-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:28px;max-width:900px;margin-left:auto;margin-right:auto}
+.law-pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600}
+
+/* ── TESTIMONIALS ──────────────────────────────────── */
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.testi-card{
+  background:#fff;border-radius:14px;padding:28px;
+  box-shadow:0 2px 16px rgba(19,136,8,.07);
+  border:1px solid #f0f0f0;position:relative;
+}
+.testi-card::before{
+  content:'"';position:absolute;top:16px;left:20px;
+  font-size:60px;color:#FFF4E6;font-family:Georgia,serif;line-height:1;
+}
+.testi-text{font-size:14px;color:#374151;line-height:1.8;margin-bottom:18px;padding-top:16px;position:relative}
+.testi-name{font-size:14px;font-weight:700;color:#0D3D0D}
+.testi-role{font-size:12px;color:#FF9933;font-weight:600}
+.testi-stars{color:#FFB366;margin-bottom:10px;font-size:16px}
+
+/* ── TEAM ───────────────────────────────────────────── */
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.team-card{
+  background:#fff;border-radius:14px;overflow:hidden;
+  box-shadow:0 2px 16px rgba(19,136,8,.07);
+  border:1px solid #f0f0f0;text-align:center;
+  transition:transform .2s;
+}
+.team-card:hover{transform:translateY(-4px)}
+.team-avatar{
+  height:120px;display:flex;align-items:center;justify-content:center;font-size:44px;
+  background:linear-gradient(135deg,#FFF4E6,#F0FBF0);
+}
+.team-body{padding:20px}
+.team-name{font-size:15px;font-weight:800;color:#0D3D0D;margin-bottom:4px}
+.team-role{font-size:11px;color:#FF9933;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.team-bio{font-size:12px;color:#6b7280;line-height:1.65}
+
+/* ── FAQ ────────────────────────────────────────────── */
+.faq-list{max-width:760px;margin:0 auto}
+.faq-item{border:1px solid #f0f0f0;border-radius:10px;margin-bottom:10px;overflow:hidden;background:#fff}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 20px;cursor:pointer;font-size:15px;font-weight:700;
+  color:#0D3D0D;gap:12px;transition:background .15s;
+}
+.faq-q:hover{background:#f8faf8}
+.faq-q .faq-icon{width:28px;height:28px;border-radius:50%;background:#FFF4E6;color:#FF9933;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;transition:transform .2s}
+.faq-item.open .faq-q .faq-icon{transform:rotate(45deg);background:#FF9933;color:#fff}
+.faq-a{display:none;padding:0 20px 18px;font-size:14px;color:#4b5563;line-height:1.8;border-top:1px solid #f9f9f9}
+.faq-item.open .faq-a{display:block}
+
+/* ── DISCLAIMER ─────────────────────────────────────── */
+.disclaimer-box{
+  background:#FFF8E1;border-top:3px solid #FF9933;
+  padding:28px 24px;text-align:center;
+}
+.disclaimer-box p{font-size:13px;color:#7A4F00;line-height:1.8;max-width:760px;margin:0 auto}
+
+/* ── CTA BAND ───────────────────────────────────────── */
+.cta-band{
+  background:linear-gradient(135deg,#E07000 0%,#FF9933 40%,#FFF8F0 58%,#138808 78%,#0D3D0D 100%);
+  padding:70px 24px;text-align:center;
+}
+.cta-band h2{font-size:clamp(24px,3vw,38px);font-weight:900;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.2);margin-bottom:14px}
+.cta-band p{font-size:16px;color:rgba(255,255,255,.88);margin-bottom:32px}
+
+/* ── FOOTER ─────────────────────────────────────────── */
+footer{background:#0D3D0D;color:#aaa;padding:36px 24px;text-align:center;font-size:13px}
+footer a{color:#FFB366}
+
+/* ── RESPONSIVE ─────────────────────────────────────── */
+@media(max-width:900px){
+  .stats-bar{grid-template-columns:repeat(3,1fr)}
+  .split{grid-template-columns:1fr}.split-visual{height:200px;font-size:60px}
+  .steps-grid{grid-template-columns:1fr 1fr;gap:24px}.steps-grid::before{display:none}
+  .features-grid,.testimonials-grid{grid-template-columns:1fr}
+  .team-grid{grid-template-columns:1fr 1fr}
+  .law-categories{justify-content:flex-start}
+}
+@media(max-width:600px){
+  .stats-bar{grid-template-columns:1fr 1fr}
+  .team-grid{grid-template-columns:1fr}
+  .hero-btns{flex-direction:column;align-items:center}
+}
+/* ── Unified White Navbar ── */
+.sl-nav{background:#fff;position:sticky;top:0;z-index:900;border-bottom:1px solid #E5E7EB;box-shadow:0 2px 10px rgba(0,0,0,.06);font-family:'Segoe UI',system-ui,sans-serif}
+.sl-nav-inner{max-width:1160px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.sl-brand{display:flex;align-items:center;gap:4px;font-size:22px;font-weight:900;text-decoration:none}
+.sl-brand .s{color:#FF9933}.sl-brand .l{color:#1A6B1A}.sl-brand .d{font-size:11px;color:#6B7280;font-weight:400;margin-left:2px}
+.sl-links{display:flex;align-items:center;gap:2px}
+.sl-links a{color:#0D3D0D;font-size:14px;font-weight:500;padding:7px 13px;border-radius:6px;transition:.2s;text-decoration:none}
+.sl-links a:hover,.sl-links a.sl-active{color:#145214;background:#F0FBF0}
+.sl-actions{display:flex;align-items:center;gap:8px}
+.sl-btn-login{color:#145214;border:2px solid #138808;padding:7px 16px;border-radius:8px;font-weight:700;font-size:13px;background:transparent;transition:.2s;cursor:pointer;font-family:inherit;text-decoration:none}
+.sl-btn-login:hover{background:#F0FBF0}
+.sl-btn-signup{background:#FF9933;color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;transition:.2s;cursor:pointer;font-family:inherit;text-decoration:none}
+.sl-btn-signup:hover{background:#E07000}
+.sl-btn-admin{color:#6B7280;border:1px solid #D1D5DB;padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;background:transparent;transition:.2s;text-decoration:none}
+.sl-btn-admin:hover{background:#F3F4F6;color:#374151}
+.sl-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:6px;cursor:pointer}
+.sl-hamburger span{width:24px;height:2px;background:#0D3D0D;border-radius:2px;display:block}
+.sl-mob{display:none;background:#fff;flex-direction:column;padding:10px 16px 14px;border-top:1px solid #E5E7EB}
+.sl-mob a{color:#0D3D0D;padding:10px 12px;border-radius:6px;font-size:15px;text-decoration:none;display:block}
+.sl-mob a:hover{background:#F0FBF0}
+.sl-mob-signup{background:#FF9933;color:#fff!important;text-align:center;font-weight:700;border-radius:8px;margin-top:6px}
+.sl-mob.open{display:flex}
+.sl-tribar{height:4px;background:linear-gradient(90deg,#FF9933 33.33%,#fff 33.33%,#fff 66.66%,#138808 66.66%)}
+@media(max-width:768px){.sl-hamburger{display:flex}.sl-links,.sl-actions{display:none}}
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ────────────────────────────────────────── -->
+<div class="sl-tribar"></div>
+<nav class="sl-nav" id="mainNav">
+  <div class="sl-nav-inner">
+    <a href="index.html" class="sl-brand"><img src="assets/logo.svg" alt="SatLegal – Legalities Simplified" style="height:56px;width:auto"></a>
+    <div class="sl-links">
+      <a href="index.html">Home</a>
+      <a href="legal-topics.html">Legal Topics</a>
+      <a href="laws-reference.html">Laws Library</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="about.html" class="sl-active">About Us</a>
+    </div>
+    <div class="sl-actions">
+      <a href="auth/admin-login.html" class="sl-btn-admin" title="Admin Console">⚙️ Admin</a>
+      <a href="index.html" class="sl-btn-login">Login</a>
+      <a href="index.html" class="sl-btn-signup">⚡ Sign Up Free</a>
+    </div>
+    <button class="sl-hamburger" onclick="this.closest('nav').nextElementSibling.classList.toggle('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="sl-mob" id="mobMenu">
+  <a href="index.html">🏠 Home</a>
+  <a href="legal-topics.html">📋 Legal Topics</a>
+  <a href="laws-reference.html">📚 Laws Library</a>
+  <a href="pricing.html">💰 Pricing</a>
+  <a href="about.html">ℹ️ About Us</a>
+  <a href="auth/admin-login.html">⚙️ Admin</a>
+  <a href="index.html" class="sl-mob-signup">⚡ Sign Up Free — Analyze My Case</a>
+</div>
+
+<!-- ── HERO ───────────────────────────────────────────── -->
+<div class="about-hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">🇮🇳 Made for Every Indian Citizen</div>
+    <h1>Legal Knowledge Should Be<br /><em>For Everyone</em></h1>
+    <p class="sub">SatLegal bridges the gap between India's 1.4 billion people and a complex legal system — making justice accessible, affordable, and understandable in plain English.</p>
+    <div class="hero-btns">
+      <a href="/" class="btn-hero-primary">🔍 Analyse My Case Free</a>
+      <a href="/legal-topics.html" class="btn-hero-outline">Browse Legal Topics</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── STATS BAR ──────────────────────────────────────── -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num">37<span>+</span></div>
+    <div class="stat-lbl">Indian Laws</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">5</div>
+    <div class="stat-lbl">Step Guided Analysis</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">100<span>%</span></div>
+    <div class="stat-lbl">Free Basic Analysis</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">BNS</div>
+    <div class="stat-lbl">& BNSS 2023 Ready</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">AI</div>
+    <div class="stat-lbl">Win Probability</div>
+  </div>
+</div>
+
+<!-- ── MISSION ────────────────────────────────────────── -->
+<section class="section">
+  <div class="inner">
+    <div class="split">
+      <div>
+        <span class="section-eyebrow">Our Mission</span>
+        <h2 class="section-title">Empowering Every Indian<br />to Know Their Rights</h2>
+        <div class="triline"></div>
+        <p>India has over 1,500 central laws and thousands of state laws. The legal system is complex, expensive, and intimidating — most citizens only discover their rights when it's already too late.</p>
+        <div class="highlight-box">"What if every Indian could get an accurate legal analysis of their situation in 5 minutes, before spending a single rupee on a lawyer?"</div>
+        <p>That question became SatLegal. We built an AI engine trained on 37 Indian laws — their relevant sections, required documents, and case factors — specifically for the Indian legal context, including the new <strong>BNS and BNSS 2023</strong> laws that replaced IPC and CrPC.</p>
+        <a href="/" class="btn-hero-primary" style="margin-top:8px;display:inline-flex">Start Free Analysis →</a>
+      </div>
+      <div class="split-visual">⚖️</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ────────────────────────────────────── -->
+<section class="section alt">
+  <div class="inner center">
+    <span class="section-eyebrow">The Process</span>
+    <h2 class="section-title">Get Your Legal Analysis in 5 Steps</h2>
+    <div class="triline"></div>
+    <p class="section-sub">From describing your problem to a full legal analysis with win probability — under 5 minutes, completely free.</p>
+    <div class="steps-grid">
+      <div class="step-item step-s1">
+        <div class="step-num" data-step="1">📝</div>
+        <div class="step-label">Step 1</div>
+        <div class="step-title">Describe Issue</div>
+        <div class="step-desc">Tell us what happened in plain language — no legal jargon needed.</div>
+      </div>
+      <div class="step-item step-s2">
+        <div class="step-num" data-step="2">❓</div>
+        <div class="step-label">Step 2</div>
+        <div class="step-title">Answer Questions</div>
+        <div class="step-desc">3–4 targeted questions that refine the AI analysis for your exact situation.</div>
+      </div>
+      <div class="step-item step-s3">
+        <div class="step-num" data-step="3">⚖️</div>
+        <div class="step-label">Step 3</div>
+        <div class="step-title">View Applicable Laws</div>
+        <div class="step-desc">AI detects all Indian laws that apply, ranked by confidence score.</div>
+      </div>
+      <div class="step-item step-s4">
+        <div class="step-num" data-step="4">📋</div>
+        <div class="step-label">Step 4</div>
+        <div class="step-title">Get Documents</div>
+        <div class="step-desc">Critical vs. optional — a complete checklist so you're prepared before meeting a lawyer.</div>
+      </div>
+      <div class="step-item step-s5">
+        <div class="step-num" data-step="5">📊</div>
+        <div class="step-label">Step 5</div>
+        <div class="step-title">Full Report</div>
+        <div class="step-desc">Win probability score + complete analysis saved to your dashboard.</div>
+      </div>
+    </div>
+    <div style="margin-top:48px">
+      <a href="/" class="btn-hero-primary">Try It Now — Free →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ────────────────────────────────────────── -->
+<section class="section">
+  <div class="inner">
+    <div class="center">
+      <span class="section-eyebrow">Why SatLegal</span>
+      <h2 class="section-title">Built Differently from the Start</h2>
+      <div class="triline"></div>
+      <p class="section-sub">Everything about SatLegal was built for the Indian legal context — not adapted from a Western legal tool.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🇮🇳</div>
+        <div class="feat-title">India-First Law Database</div>
+        <div class="feat-desc">37 Indian laws handcrafted with sections, documents, and case factors — including BNS 2023, BNSS 2023, Muslim Personal Law, RERA, NDPS, and RFCTLARR 2013. Not a generic legal AI.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🧠</div>
+        <div class="feat-title">AI That Understands Hindi + English</div>
+        <div class="feat-desc">Our detection engine understands Hinglish terms, section code references (420, 498A, 138), UPI app names, and colloquial descriptions of legal problems — the way Indians actually describe them.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-title">Works Offline (No API Calls)</div>
+        <div class="feat-desc">The entire law-detection engine runs client-side. No server round-trip means instant results, full privacy, and zero latency — even on slow mobile connections.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <div class="feat-title">Win Probability Score</div>
+        <div class="feat-desc">Our AI calculates a preliminary win probability based on your evidence, facts, and legal strength. Know your chances before spending money on consultations.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔐</div>
+        <div class="feat-title">Private & Encrypted</div>
+        <div class="feat-desc">Your case details are yours alone. We use bank-grade encryption and never share your information with third parties, advertisers, or even our lawyer network without explicit consent.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🤝</div>
+        <div class="feat-title">Lawyer Marketplace</div>
+        <div class="feat-desc">Connect with verified, bar-registered lawyers for your specific legal area. Every lawyer on our platform is manually verified — no unverified listings.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── LAWS COVERAGE ───────────────────────────────────── -->
+<section class="laws-section">
+  <div class="inner center">
+    <span class="section-eyebrow" style="background:rgba(255,153,51,.2);color:#FFD580">37 Laws Covered</span>
+    <h2 class="section-title" style="color:#fff;margin-top:10px">Every Major Area of Indian Law</h2>
+    <div class="triline" style="margin-left:auto;margin-right:auto"></div>
+    <div class="law-categories">
+      <div class="law-cat-card">
+        <div class="law-cat-icon">👨‍👩‍👧</div>
+        <div class="law-cat-name">Family & Marriage</div>
+        <div class="law-cat-count">8 laws · Divorce, custody, DV, Muslim law</div>
+      </div>
+      <div class="law-cat-card">
+        <div class="law-cat-icon">🏘️</div>
+        <div class="law-cat-name">Property</div>
+        <div class="law-cat-count">6 laws · RERA, land acquisition, rent</div>
+      </div>
+      <div class="law-cat-card">
+        <div class="law-cat-icon">⚖️</div>
+        <div class="law-cat-name">Criminal</div>
+        <div class="law-cat-count">5 laws · BNS, BNSS, POCSO, NDPS</div>
+      </div>
+      <div class="law-cat-card">
+        <div class="law-cat-icon">💼</div>
+        <div class="law-cat-name">Employment</div>
+        <div class="law-cat-count">3 laws · Termination, PF, POSH</div>
+      </div>
+      <div class="law-cat-card">
+        <div class="law-cat-icon">💻</div>
+        <div class="law-cat-name">Cyber & IT</div>
+        <div class="law-cat-count">3 laws · IT Act, UPI fraud, hacking</div>
+      </div>
+      <div class="law-cat-card">
+        <div class="law-cat-icon">🛒</div>
+        <div class="law-cat-name">Consumer</div>
+        <div class="law-cat-count">2 laws · Defects, NI Act cheque bounce</div>
+      </div>
+      <div class="law-cat-card">
+        <div class="law-cat-icon">📜</div>
+        <div class="law-cat-name">Civil & Succession</div>
+        <div class="law-cat-count">4 laws · Partition, will, money recovery</div>
+      </div>
+      <div class="law-cat-card">
+        <div class="law-cat-icon">🏛️</div>
+        <div class="law-cat-name">Constitutional / NRI / IP</div>
+        <div class="law-cat-count">5 laws · PIL, NRI, trademark, RTI</div>
+      </div>
+    </div>
+    <div class="law-pills-row">
+      <span class="law-pill">Hindu Marriage Act 1955</span>
+      <span class="law-pill">BNS 2023</span>
+      <span class="law-pill">BNSS 2023</span>
+      <span class="law-pill">IT Act 2000</span>
+      <span class="law-pill">DV Act 2005</span>
+      <span class="law-pill">RERA 2016</span>
+      <span class="law-pill">POSH Act 2013</span>
+      <span class="law-pill">NI Act (Cheque Bounce)</span>
+      <span class="law-pill">Muslim Women Act 2019</span>
+      <span class="law-pill">NDPS Act 1985</span>
+      <span class="law-pill">RFCTLARR 2013</span>
+      <span class="law-pill">Consumer Protection Act 2019</span>
+      <span class="law-pill">Hindu Succession Act 1956</span>
+      <span class="law-pill">POCSO Act</span>
+      <span class="law-pill">Trade Marks Act 1999</span>
+    </div>
+    <div style="margin-top:36px">
+      <a href="/legal-topics.html" class="btn-hero-primary">Browse All 37 Laws →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ─────────────────────────────────────── -->
+<section class="section alt">
+  <div class="inner">
+    <div class="center">
+      <span class="section-eyebrow">Real Outcomes</span>
+      <h2 class="section-title">What Our Users Say</h2>
+      <div class="triline"></div>
+      <p class="section-sub">SatLegal has helped thousands of Indians understand their legal situation before approaching a lawyer.</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">I described my property dispute in plain language and within seconds SatLegal identified 3 applicable laws with the exact sections. It told me the limitation period was running out — I filed in time and won.</div>
+        <div class="testi-name">Rajesh Kumar</div>
+        <div class="testi-role">Property Dispute, Delhi</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">My husband sent triple talaq on WhatsApp. I had no idea it was now a criminal offence. SatLegal immediately flagged this, showed me the exact sections, and gave me the document checklist. My lawyer was impressed I came prepared.</div>
+        <div class="testi-name">Nasreen Begum</div>
+        <div class="testi-role">Family Law, Lucknow</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">I lost ₹45,000 to an online UPI fraud. SatLegal told me to call 1930 within 24 hours and guided me through the cybercrime complaint. The money was frozen and partially recovered within 72 hours.</div>
+        <div class="testi-name">Priya Sharma</div>
+        <div class="testi-role">Cyber Fraud, Bengaluru</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TEAM ────────────────────────────────────────────── -->
+<section class="section">
+  <div class="inner">
+    <div class="center">
+      <span class="section-eyebrow">The People</span>
+      <h2 class="section-title">Meet the Team Behind SatLegal</h2>
+      <div class="triline"></div>
+      <p class="section-sub" style="margin-left:auto;margin-right:auto">A team of legal professionals, AI engineers, and advocates for accessible justice — united by one mission.</p>
+    </div>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">👨‍💼</div>
+        <div class="team-body">
+          <div class="team-name">Mukesh Malik</div>
+          <div class="team-role">Founder & CEO</div>
+          <div class="team-bio">Legal technology entrepreneur with a mission to democratise access to justice for every Indian citizen through AI and technology.</div>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">👩‍⚖️</div>
+        <div class="team-body">
+          <div class="team-name">Legal Advisory Panel</div>
+          <div class="team-role">Senior Advocates</div>
+          <div class="team-bio">Bar-registered senior advocates who review and verify every law entry in our database — ensuring accuracy, currency, and practical relevance.</div>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">👨‍💻</div>
+        <div class="team-body">
+          <div class="team-name">AI & Engineering Team</div>
+          <div class="team-role">Technology</div>
+          <div class="team-bio">Building the law-detection engine, scoring algorithm, document generation, and platform infrastructure that powers SatLegal.</div>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">🤝</div>
+        <div class="team-body">
+          <div class="team-name">Join Our Team</div>
+          <div class="team-role">We're Hiring</div>
+          <div class="team-bio">Passionate about legal tech? We're looking for lawyers, engineers, and UX designers to help build accessible justice for India.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ─────────────────────────────────────────────── -->
+<section class="section alt">
+  <div class="inner center">
+    <span class="section-eyebrow">FAQ</span>
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <div class="triline"></div>
+    <div class="faq-list" style="margin-top:12px;text-align:left">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Is SatLegal free to use?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">Yes. The core 5-step legal analysis — including law detection, document checklist, and preliminary win probability — is completely free for all users. Premium features like full report PDF, lawyer connect, and case tracking require a free account.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Is this legal advice?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">No. SatLegal provides legal information and analysis for educational purposes only. Our AI helps you understand which laws may apply, what documents you need, and your preliminary probability — but this is not a substitute for professional legal advice from a qualified advocate. Always consult a registered lawyer before taking legal action.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>How accurate is the law detection?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">Our detection engine covers 37 Indian laws with thousands of keywords, section references, Hinglish phrases, and exact legal phrases. For common legal situations (divorce, cheque bounce, cyber fraud, property disputes), accuracy is very high. We always recommend verifying the specific applicable sections with a qualified lawyer.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Is my case information private?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">Absolutely. Your case description and analysis are encrypted and stored only in your account. We never share your information with third parties, lawyers, or advertisers without your explicit consent. The law detection itself runs entirely on your device — no data is sent to any server during the analysis phase.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Which laws does SatLegal cover?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">SatLegal covers 37 major Indian laws across Family, Property, Criminal, Employment, Cyber, Consumer, Civil, Succession, Tax, Constitutional, NRI, and IP categories. This includes the new BNS 2023 (replacing IPC), BNSS 2023 (replacing CrPC), Muslim Women (Protection of Rights on Marriage) Act 2019, NDPS Act, POCSO Act, and RFCTLARR 2013 (Land Acquisition).</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>How do I connect with a lawyer?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">After completing your analysis and creating a free account, you can browse and connect with verified lawyers on our platform who specialise in your specific legal area. Every lawyer is bar-registered and manually verified before being listed.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DISCLAIMER ─────────────────────────────────────── -->
+<div class="disclaimer-box">
+  <p><strong>⚠️ Legal Disclaimer:</strong> SatLegal provides legal information for general educational purposes only. This is not legal advice. Laws change and their application depends on specific facts. Always consult a qualified Indian advocate before taking any legal action. SatLegal is an information platform — not a law firm.</p>
+</div>
+
+<!-- ── CTA BAND ──────────────────────────────────────── -->
+<div class="cta-band">
+  <h2>Ready to Understand Your Legal Rights?</h2>
+  <p>Join thousands of Indians who got clarity on their legal situation with SatLegal — free, in 5 minutes.</p>
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+    <a href="/" class="btn-hero-primary" style="background:#fff;color:#B35100">🔍 Analyse My Case Free</a>
+    <a href="/legal-topics.html" class="btn-hero-outline">Browse Legal Topics</a>
+  </div>
+</div>
+
+<!-- ── FOOTER ─────────────────────────────────────────── -->
+<footer>
+  <p style="margin-bottom:10px"><img src="assets/logo.svg" alt="SatLegal" style="height:48px;filter:brightness(0) invert(1) sepia(1) saturate(2) hue-rotate(10deg);opacity:.85"></p>
+  <p style="margin-bottom:10px">
+    <a href="about.html">About</a> &nbsp;·&nbsp;
+    <a href="legal-topics.html">Legal Topics</a> &nbsp;·&nbsp;
+    <a href="laws-reference.html">Law Library</a> &nbsp;·&nbsp;
+    <a href="privacy-policy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="terms-conditions.html">Terms &amp; Conditions</a>
+  </p>
+  <p style="margin-bottom:8px;font-size:12px;max-width:700px;margin-left:auto;margin-right:auto">The content provided on this website is for informational purposes only and should not be relied upon as a substitute for legal advice. Recipients are advised to consult with qualified legal counsel before implementing any recommendations herein. SatLegal shall not be liable for actions taken based on this information.</p>
+  <p>© 2025 SatLegal. All rights reserved. &nbsp;·&nbsp; Legal information platform — not a law firm.</p>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/chatbot.js"></script>
+<script>
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const authLinks = document.getElementById('auth-links');
+  if (typeof Auth !== 'undefined' && Auth.isLoggedIn && Auth.isLoggedIn()) {
+    const user = Auth.getUser();
+    if (user) {
+      const dashUrl = user.role === 'admin' ? '/dashboard/admin-dashboard.html'
+        : user.role === 'lawyer' ? '/dashboard/lawyer-dashboard.html'
+        : '/dashboard/user-dashboard.html';
+      const loginLink = authLinks.querySelector('a[href="/auth/login.html"]');
+      const signupLink = authLinks.querySelector('a[href="/auth/signup.html"]');
+      if (loginLink) loginLink.remove();
+      if (signupLink) { signupLink.textContent = 'My Dashboard →'; signupLink.href = dashUrl; }
+    }
+  }
+});
+</script>
+</body>
+</html>

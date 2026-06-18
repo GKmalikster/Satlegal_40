@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Your Legal Report – SatLegal</title>
+<style>
+:root{
+  --sf-500:#FF9933;--sf-600:#FF8800;--sf-700:#E07000;
+  --sf-100:#FFF4E6;--sf-200:#FFE4C2;--sf-300:#FFCC99;
+  --gr-500:#138808;--gr-600:#1A6B1A;--gr-700:#145214;--gr-800:#0D3D0D;
+  --gr-50:#F0FBF0;--gr-100:#D4F5D2;
+  --danger:#C0392B;--danger-lt:#FDECEA;
+  --text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;
+  --bg:#F8F9FA;--white:#fff;
+  --font:'Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:var(--bg);line-height:1.6}
+a{text-decoration:none;color:inherit}
+.tribar{height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
+.nav{background:#fff;border-bottom:1px solid var(--border);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:900}
+.nav a{font-size:14px;color:var(--gr-700);font-weight:600}
+.nav-brand img{height:38px}
+.btn-dl{background:var(--sf-500);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-dl:hover{background:var(--sf-600)}
+
+.rpt-hero{background:linear-gradient(135deg,var(--gr-800),var(--gr-600));padding:28px 20px;text-align:center;color:#fff}
+.rpt-hero h1{font-size:22px;font-weight:900;margin-bottom:4px}
+.rpt-hero p{font-size:13px;color:rgba(255,255,255,.75)}
+.rpt-meta{font-size:11px;color:rgba(255,255,255,.5);margin-top:8px}
+
+.rpt-body{max-width:860px;margin:0 auto;padding:28px 20px 60px}
+.rpt-section{background:#fff;border-radius:12px;border:1px solid var(--border);padding:24px;margin-bottom:18px}
+.rpt-sec-title{font-size:14px;font-weight:700;color:var(--gr-800);margin-bottom:14px;display:flex;align-items:center;gap:6px;border-bottom:2px solid var(--sf-200);padding-bottom:10px}
+
+/* Win probability */
+.win-card{border-radius:10px;padding:20px;text-align:center}
+.win-card.strong{background:var(--gr-50);border:2px solid var(--gr-200)}
+.win-card.moderate{background:#FFF8E0;border:2px solid #FFE082}
+.win-card.weak{background:var(--danger-lt);border:2px solid #FFCDD2}
+.win-level{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.win-level.strong{color:var(--gr-600)}.win-level.moderate{color:#B8860B}.win-level.weak{color:var(--danger)}
+.win-pct{font-size:44px;font-weight:900;line-height:1.1;margin-bottom:4px}
+.win-bar-wrap{width:100%;height:10px;background:var(--border);border-radius:5px;overflow:hidden;margin:10px 0}
+.win-bar{height:100%;border-radius:5px;transition:width 1s ease}
+.win-factors{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;font-size:12px;color:var(--text-lt)}
+.win-reasoning{font-size:13px;color:var(--text-lt);margin-top:8px;font-style:italic}
+
+/* Laws */
+.law-item{border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px}
+.law-item:last-child{margin:0}
+.li-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.li-name{font-size:14px;font-weight:700;color:var(--gr-800)}
+.li-conf{background:var(--gr-50);color:var(--gr-700);font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px}
+.li-act{font-size:11px;color:var(--text-lt);margin-bottom:6px}
+.li-sections{font-size:11px;color:var(--gr-700);line-height:1.8}
+.li-urg{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;text-transform:uppercase}
+.li-urg.high{background:var(--danger-lt);color:var(--danger)}
+.li-urg.medium{background:#FFF3E0;color:#E07000}
+.li-urg.low{background:var(--gr-50);color:var(--gr-700)}
+
+/* Docs */
+.doc-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--border)}
+.doc-row:last-child{border:none}
+.doc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.doc-dot.critical{background:var(--danger)}
+.doc-dot.supp{background:var(--sf-500)}
+.doc-label{font-size:13px;flex:1}
+.doc-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;text-transform:uppercase}
+.doc-badge.critical{background:var(--danger-lt);color:var(--danger)}
+.doc-badge.supp{background:var(--sf-100);color:var(--sf-700)}
+
+/* Action steps */
+.action-step{display:flex;gap:14px;margin-bottom:14px}
+.as-num{width:30px;height:30px;background:var(--sf-500);color:#fff;border-radius:50%;font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.as-body h4{font-size:14px;font-weight:700;color:var(--gr-800);margin-bottom:3px}
+.as-body p{font-size:12px;color:var(--text-lt);line-height:1.6}
+
+/* Lawyer recommendation */
+.lawyer-card{background:linear-gradient(135deg,var(--gr-50),#fff);border:2px solid var(--gr-200);border-radius:12px;padding:20px}
+.lc-header{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.lc-icon{width:52px;height:52px;border-radius:12px;background:var(--gr-100);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.lc-firm-name{font-size:16px;font-weight:800;color:var(--gr-800)}
+.lc-firm-spec{font-size:12px;color:var(--gr-600);margin-top:2px}
+.lc-firm-loc{font-size:11px;color:var(--text-lt);margin-top:2px}
+.btn-book-consult{background:var(--sf-500);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-book-consult:hover{background:var(--sf-600)}
+.consult-price-note{font-size:12px;color:var(--text-lt);margin-left:10px}
+
+/* Disclaimer */
+.disclaimer-box{background:#FFFBF0;border:1px solid #FFD580;border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:12px;color:#7A5800;line-height:1.6}
+.disclaimer-box strong{color:#5A3F00}
+</style>
+</head>
+<body>
+<div class="tribar"></div>
+<nav class="nav">
+  <a class="nav-brand" href="index.html"><img src="assets/logo.svg" alt="SatLegal"/></a>
+  <button class="btn-dl" onclick="window.print()">⬇ Download Report</button>
+</nav>
+
+<div class="rpt-hero">
+  <h1>📊 Your Legal Analysis Report</h1>
+  <p>AI-generated analysis based on your described situation</p>
+  <div class="rpt-meta" id="rptMeta">Loading...</div>
+</div>
+
+<div class="rpt-body">
+  <div class="disclaimer-box">
+    <strong>⚠️ Professional Disclaimer:</strong> This report is for informational and educational purposes only. It does not constitute legal advice or create a lawyer-client relationship. Applicable laws, strengths, and strategies indicated herein are based on the facts described by you. Before taking any legal action, please consult a qualified legal professional. SatLegal shall not be liable for any actions taken based on this report.
+  </div>
+
+  <!-- Win Probability -->
+  <div class="rpt-section">
+    <div class="rpt-sec-title">📊 Case Strength Assessment</div>
+    <div class="win-card" id="winCard">
+      <div class="win-level" id="winLevel">Strong</div>
+      <div class="win-pct" id="winPct" style="color:var(--gr-600)">78%</div>
+      <div class="win-bar-wrap"><div class="win-bar" id="winBar" style="width:78%;background:var(--gr-500)"></div></div>
+      <div class="win-reasoning" id="winReasoning">Strong legal grounds with good evidence base.</div>
+      <div class="win-factors" id="winFactors"></div>
+    </div>
+  </div>
+
+  <!-- Applicable Laws -->
+  <div class="rpt-section">
+    <div class="rpt-sec-title">⚖️ Applicable Laws</div>
+    <div id="lawsContainer"></div>
+  </div>
+
+  <!-- Document Checklist -->
+  <div class="rpt-section">
+    <div class="rpt-sec-title">📎 Document Checklist</div>
+    <div id="docsContainer"></div>
+  </div>
+
+  <!-- Action Plan -->
+  <div class="rpt-section">
+    <div class="rpt-sec-title">🗺️ Legal Action Plan</div>
+    <div id="actionContainer"></div>
+  </div>
+
+  <!-- Lawyer Recommendation -->
+  <div class="rpt-section" id="lawyerSection">
+    <div class="rpt-sec-title">🏛️ Recommended Legal Expert</div>
+    <div class="lawyer-card">
+      <div class="lc-header">
+        <div class="lc-icon" id="lcIcon">⚖️</div>
+        <div>
+          <div class="lc-firm-name" id="lcName">Loading...</div>
+          <div class="lc-firm-spec" id="lcSpec"></div>
+          <div class="lc-firm-loc" id="lcLoc"></div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--text-lt);margin-bottom:14px">This firm has been matched to your case type and is registered with SatLegal. Expert consultation available at ₹2500 for a 30-minute session.</p>
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px">
+        <button class="btn-book-consult" onclick="bookConsult()">Book ₹2500 Consultation →</button>
+        <span class="consult-price-note">30-min session · Includes drafted legal notice</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Load data from localStorage
+let user={},payment={},report={};
+try{user=JSON.parse(localStorage.getItem('sl_user')||'{}')}catch(e){}
+try{payment=JSON.parse(localStorage.getItem('sl_payment')||'{}')}catch(e){}
+try{report=JSON.parse(localStorage.getItem('sl_pending_report')||'{}')}catch(e){}
+
+const now=new Date().toLocaleString('en-IN',{dateStyle:'long',timeStyle:'short'});
+document.getElementById('rptMeta').textContent=`User: ${user.name||'User'} · ${user.email||''} · Generated: ${now} · Report ID: ${payment.paymentId||'DEMO'}`;
+
+// Win probability calculation
+const laws=report.laws||[];
+const numFiles=report.files||0;
+const numAnswers=Object.keys(report.answers||{}).length;
+const baseScore=laws.length>0?Math.min(70,35+laws.length*8):30;
+const ansScore=Math.min(15,numAnswers*3);
+const fileScore=Math.min(15,numFiles*5);
+const totalPct=Math.min(95,baseScore+ansScore+fileScore);
+const level=totalPct>=70?'strong':totalPct>=45?'moderate':'weak';
+const winColor=level==='strong'?'var(--gr-500)':level==='moderate'?'#F9A825':'var(--danger)';
+const winText=level==='strong'?'Strong Case':'Moderate Case';
+document.getElementById('winCard').className='win-card '+level;
+document.getElementById('winLevel').textContent=winText;
+document.getElementById('winLevel').className='win-level '+level;
+document.getElementById('winPct').textContent=totalPct+'%';
+document.getElementById('winPct').style.color=winColor;
+document.getElementById('winBar').style.width=totalPct+'%';
+document.getElementById('winBar').style.background=winColor;
+document.getElementById('winReasoning').textContent=level==='strong'
+  ?'Your case has strong legal grounds. The applicable laws clearly support your claim and evidence gathered should be sufficient for a successful outcome.'
+  :level==='moderate'
+  ?'Your case has moderate strength. There are valid legal grounds but strengthening evidence before proceeding will improve outcomes.'
+  :'Your case needs more evidence and documentation to proceed effectively. A lawyer consultation is strongly advised.';
+document.getElementById('winFactors').innerHTML=
+  `<span>⚖️ Laws: <strong>${laws.length}</strong></span>
+   <span>❓ Q&A: <strong>${numAnswers} answers</strong></span>
+   <span>📎 Files: <strong>${numFiles}</strong></span>`;
+
+// Laws
+const lawsHtml=laws.length>0
+  ?laws.map(l=>`<div class="law-item">
+    <div class="li-header">
+      <div class="li-name">${l.caseType||l.lawCategory||'Law'}</div>
+      <span class="li-conf">${l.confidence||80}% match</span>
+    </div>
+    <div class="li-act">${l.actName||''}</div>
+    ${l.lawSections&&l.lawSections.length?`<div class="li-sections">📌 ${l.lawSections.slice(0,3).join(' · ')}</div>`:''}
+    <div style="margin-top:6px"><span class="li-urg ${(l.urgency||'medium').toLowerCase()}">${l.urgency||'Medium'} Urgency</span>${l.limitation?`<span style="font-size:11px;color:var(--text-lt);margin-left:8px">⏱ ${l.limitation}</span>`:''}</div>
+  </div>`).join('')
+  :`<p style="color:var(--text-lt);font-size:13px">Complete the legal wizard to see applicable laws.</p>`;
+document.getElementById('lawsContainer').innerHTML=lawsHtml;
+
+// Documents
+const allDocs=laws.flatMap(l=>(l.documents||[]).map(d=>({...d,law:l.caseType})));
+const seen=new Set(),uniqueDocs=allDocs.filter(d=>{const k=d.name;if(seen.has(k))return false;seen.add(k);return true});
+document.getElementById('docsContainer').innerHTML=uniqueDocs.length
+  ?uniqueDocs.map(d=>`<div class="doc-row">
+    <div class="doc-dot ${d.critical?'critical':'supp'}"></div>
+    <div class="doc-label">${d.name}</div>
+    <span class="doc-badge ${d.critical?'critical':'supp'}">${d.critical?'Critical':'Supporting'}</span>
+  </div>`).join('')
+  :`<p style="color:var(--text-lt);font-size:13px">Document checklist will appear here after completing the wizard.</p>`;
+
+// Action plan
+const caseType=laws[0]?.caseType||'';
+const steps=[
+  {n:'1',title:'Gather All Documents',desc:`Collect the critical documents listed above. Originals are preferred. Make photocopies of everything.`},
+  {n:'2',title:'Consult a Lawyer',desc:`Before filing, get a 30-minute consultation with a SatLegal-verified lawyer who specialises in ${caseType||'your case type'}.`},
+  {n:'3',title:'Send Legal Notice',desc:`A lawyer-drafted legal notice often resolves disputes without going to court. It puts the other party on formal notice.`},
+  {n:'4',title:'File Complaint / FIR / Petition',desc:`If the legal notice is ignored, file the appropriate complaint in the correct court/forum/authority as identified in this report.`},
+  {n:'5',title:'Keep Records',desc:`Document every step. Save all correspondence, receipts, orders, and acknowledgements throughout the legal process.`}
+];
+document.getElementById('actionContainer').innerHTML=steps.map(s=>`<div class="action-step">
+  <div class="as-num">${s.n}</div>
+  <div class="as-body"><h4>${s.title}</h4><p>${s.desc}</p></div>
+</div>`).join('');
+
+// Lawyer recommendation
+let firms=[];
+try{firms=JSON.parse(localStorage.getItem('sl_law_firms')||'[]')}catch(e){}
+if(!firms.length){
+  firms=[
+    {name:'Sharma & Associates',specialty:'Family Law · Divorce · Succession',location:'Mumbai, Maharashtra',icon:'⚖️'},
+    {name:'Kapoor Legal Consultants',specialty:'Civil · Property · RERA',location:'Delhi, NCR',icon:'🏛️'},
+    {name:'R. Krishnamurthy & Co.',specialty:'Criminal Law · BNS · Cyber',location:'Bengaluru, Karnataka',icon:'👨‍⚖️'},
+  ];
+}
+let firm=firms[0];
+firms.forEach(f=>{
+  if(f.specialty&&caseType&&caseType.toLowerCase().split(' ').some(w=>w.length>4&&(f.specialty||'').toLowerCase().includes(w))){firm=f;}
+});
+document.getElementById('lcIcon').textContent=firm.icon||'⚖️';
+document.getElementById('lcName').textContent=firm.name;
+document.getElementById('lcSpec').textContent=firm.specialty||'';
+document.getElementById('lcLoc').textContent='📍 '+(firm.location||'');
+
+function bookConsult(){
+  const uid=payment.uid||user.uid||'USER';
+  window.location.href='payment.html?plan=consult&amt=2500&uid='+uid;
+}
+</script>
+</body>
+</html>

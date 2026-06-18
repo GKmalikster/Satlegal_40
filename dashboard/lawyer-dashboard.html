@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lawyer Dashboard – SatLegal</title>
+  <style>
+/* ── Inlined global styles (tricolor theme) ── */
+/* ═══════════════════════════════════════════════════════════════════
+   SatLegal – Pure Indian Tricolor Theme
+   Saffron  ·  White  ·  Green  (no blue, no navy)
+═══════════════════════════════════════════════════════════════════ */
+:root {
+  /* ── Saffron family ──────────────────────────────────────────── */
+  --sf-900:  #7A3800;   /* darkest saffron-brown */
+  --sf-800:  #B35100;
+  --sf-700:  #E07000;
+  --sf-600:  #FF8800;   /* rich saffron */
+  --sf-500:  #FF9933;   /* standard saffron */
+  --sf-400:  #FFB366;
+  --sf-300:  #FFCC99;
+  --sf-200:  #FFE4C2;
+  --sf-100:  #FFF4E6;
+  --sf-50:   #FFFAF4;
+
+  /* ── Green family ────────────────────────────────────────────── */
+  --gr-900:  #062206;   /* darkest forest green */
+  --gr-800:  #0D3D0D;
+  --gr-700:  #145214;
+  --gr-600:  #1A6B1A;
+  --gr-500:  #138808;   /* standard India green */
+  --gr-400:  #2EAD22;
+  --gr-300:  #5CC852;
+  --gr-200:  #A8E8A4;
+  --gr-100:  #D4F5D2;
+  --gr-50:   #F0FBF0;
+
+  /* ── Semantic roles ──────────────────────────────────────────── */
+  --primary:      var(--sf-500);
+  --primary-dk:   var(--sf-700);
+  --primary-lt:   var(--sf-100);
+  --success:      var(--gr-500);
+  --success-dk:   var(--gr-700);
+  --success-lt:   var(--gr-50);
+
+  /* Dark backgrounds = deep forest green (replaces navy) */
+  --dark:         var(--gr-800);
+  --dark2:        var(--gr-900);
+  --dark3:        var(--gr-700);
+
+  --warning:      #CC8800;
+  --danger:       #C0392B;
+  --danger-lt:    #FDECEA;
+
+  /* ── Neutrals ────────────────────────────────────────────────── */
+  --text:         #1A1A1A;
+  --text-light:   #6B7280;
+  --border:       #E5E7EB;
+  --bg-light:     #FAFAFA;
+  --white:        #FFFFFF;
+  --shadow:       0 2px 15px rgba(19,136,8,0.07);
+  --shadow-md:    0 6px 28px rgba(19,136,8,0.12);
+  --radius:       8px;
+  --font:         'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* ── Legacy aliases (backward compat with HTML inline styles) ─ */
+  --saffron:      var(--sf-500);
+  --saffron-dk:   var(--sf-700);
+  --saffron-lt:   var(--sf-100);
+  --green:        var(--gr-500);
+  --green-dk:     var(--gr-700);
+  --green-lt:     var(--gr-50);
+  --chakra-blue:  var(--sf-600);   /* remapped: no blue */
+  --navy:         var(--gr-800);   /* remapped: dark green */
+  --navy-dk:      var(--gr-900);
+  --navy-mid:     var(--gr-700);
+  --accent:       var(--sf-600);   /* remapped: saffron */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg-light);
+  line-height: 1.6;
+}
+
+a { color: var(--sf-700); text-decoration: none; }
+a:hover { color: var(--sf-900); text-decoration: underline; }
+
+/* ── Tricolor stripe utility ─────────────────────────────────── */
+.tricolor-stripe {
+  height: 4px;
+  background: linear-gradient(to right,
+    var(--sf-500) 33.33%,
+    #fff        33.33% 66.66%,
+    var(--gr-500) 66.66%);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary       { background: var(--sf-500); color: #fff; }
+.btn-primary:hover { background: var(--sf-700); color: #fff; text-decoration: none; }
+
+.btn-success       { background: var(--gr-500); color: #fff; }
+.btn-success:hover { background: var(--gr-700); color: #fff; text-decoration: none; }
+
+.btn-dark          { background: var(--gr-800); color: #fff; }
+.btn-dark:hover    { background: var(--gr-900); color: #fff; text-decoration: none; }
+
+.btn-outline       { background: transparent; border: 2px solid var(--sf-500); color: var(--sf-700); }
+.btn-outline:hover { background: var(--sf-500); color: #fff; text-decoration: none; }
+
+.btn-outline-white       { background: transparent; border: 2px solid rgba(255,255,255,0.7); color: #fff; }
+.btn-outline-white:hover { background: rgba(255,255,255,0.15); color: #fff; text-decoration: none; }
+
+.btn-outline-green       { background: transparent; border: 2px solid var(--gr-500); color: var(--gr-600); }
+.btn-outline-green:hover { background: var(--gr-500); color: #fff; text-decoration: none; }
+
+.btn-danger        { background: var(--danger); color: #fff; }
+.btn-danger:hover  { background: #962D22; color: #fff; text-decoration: none; }
+
+.btn-sm    { padding: 6px 14px; font-size: 13px; }
+.btn-lg    { padding: 14px 32px; font-size: 16px; }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn-block { width: 100%; justify-content: center; }
+
+/* ── Cards ───────────────────────────────────────────────────── */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--sf-100);
+}
+.card-title { font-size: 18px; font-weight: 700; color: var(--gr-800); }
+
+/* ── Forms ───────────────────────────────────────────────────── */
+.form-group { margin-bottom: 18px; }
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: var(--gr-800);
+}
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: var(--font);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fff;
+}
+.form-control:focus {
+  outline: none;
+  border-color: var(--sf-500);
+  box-shadow: 0 0 0 3px rgba(255,153,51,0.18);
+}
+.form-control.error { border-color: var(--danger); }
+.form-hint  { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+.form-error { font-size: 12px; color: var(--danger); margin-top: 4px; display: none; }
+.form-error.show { display: block; }
+textarea.form-control { resize: vertical; min-height: 100px; }
+select.form-control   { cursor: pointer; }
+
+/* ── Alerts ──────────────────────────────────────────────────── */
+.alert {
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.alert-success { background: var(--gr-50);   color: var(--gr-800);  border-left: 4px solid var(--gr-500); }
+.alert-danger  { background: var(--danger-lt); color: #6B1A15;       border-left: 4px solid var(--danger); }
+.alert-warning { background: #FFF8E6;         color: #6B3E00;        border-left: 4px solid var(--sf-600); }
+.alert-info    { background: var(--sf-50);    color: var(--sf-900);  border-left: 4px solid var(--sf-500); }
+
+/* ── Badges ──────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge-success  { background: var(--gr-100);  color: var(--gr-800); }
+.badge-danger   { background: var(--danger-lt); color: #962D22; }
+.badge-warning  { background: #FFF3CD;         color: #7A4F00; }
+.badge-primary  { background: var(--sf-100);   color: var(--sf-800); }
+.badge-info     { background: var(--sf-50);    color: var(--sf-700); }
+.badge-dark     { background: var(--gr-800);   color: #fff; }
+.badge-new      { background: var(--gr-600);   color: #fff; }
+
+/* ── Navigation ──────────────────────────────────────────────── */
+.navbar {
+  background: var(--white);
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 65px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 12px rgba(19,136,8,0.10);
+  border-bottom: 3px solid transparent;
+  border-image: linear-gradient(to right,
+    var(--sf-500) 33.33%,
+    #fff          33.33% 66.66%,
+    var(--gr-500) 66.66%) 1;
+}
+.navbar-brand {
+  font-size: 23px;
+  font-weight: 900;
+  text-decoration: none;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+}
+.brand-sat   { color: var(--sf-600); }
+.brand-legal { color: var(--gr-600); }
+.brand-dot   { color: var(--sf-300); font-size: 10px; vertical-align: super; margin-left: 1px; }
+.nav-links { display: flex; align-items: center; gap: 8px; }
+.nav-links a {
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.nav-links a:hover,
+.nav-links a.active { color: var(--sf-700); background: var(--sf-100); text-decoration: none; }
+
+/* ── Dashboard Layout ────────────────────────────────────────── */
+.dashboard-layout { display: flex; min-height: calc(100vh - 65px); }
+.sidebar {
+  width: 245px;
+  background: var(--gr-800);   /* deep forest green — no blue */
+  padding: 20px 0;
+  flex-shrink: 0;
+  position: sticky;
+  top: 65px;
+  height: calc(100vh - 65px);
+  overflow-y: auto;
+}
+.sidebar::before {
+  content: '';
+  display: block;
+  height: 4px;
+  background: linear-gradient(to right,
+    var(--sf-500) 33.33%,
+    #fff          33.33% 66.66%,
+    var(--gr-400) 66.66%);
+  margin-bottom: 16px;
+}
+.sidebar-section {
+  padding: 10px 18px 5px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.38);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  color: rgba(255,255,255,0.72);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.sidebar-link:hover  { color: #fff; background: rgba(255,255,255,0.08); text-decoration: none; }
+.sidebar-link.active {
+  color: #fff;
+  background: rgba(255,153,51,0.18);
+  border-right: 3px solid var(--sf-500);
+}
+.sidebar-link .badge { margin-left: auto; }
+.main-content { flex: 1; padding: 30px; max-width: 1100px; }
+
+/* ── Stats Cards ─────────────────────────────────────────────── */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.stat-card.saffron-accent::after { background: var(--sf-500); }
+.stat-card.green-accent::after   { background: var(--gr-500); }
+.stat-card.warm-accent::after    { background: var(--sf-700); }
+.stat-card.forest-accent::after  { background: var(--gr-700); }
+
+.stat-icon {
+  width: 50px; height: 50px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.stat-icon.orange { background: var(--sf-100);  color: var(--sf-700); }
+.stat-icon.green  { background: var(--gr-50);   color: var(--gr-600); }
+.stat-icon.amber  { background: #FFF3CD;         color: #7A4F00; }
+.stat-icon.forest { background: var(--gr-100);  color: var(--gr-800); }
+.stat-icon.red    { background: var(--danger-lt); color: var(--danger); }
+/* legacy aliases */
+.stat-icon.blue   { background: var(--sf-100);  color: var(--sf-700); }
+.stat-icon.navy   { background: var(--gr-50);   color: var(--gr-700); }
+
+.stat-number { font-size: 28px; font-weight: 800; color: var(--gr-800); line-height: 1; }
+.stat-label  { font-size: 13px; color: var(--text-light); margin-top: 3px; }
+
+/* ── Table ───────────────────────────────────────────────────── */
+.table-wrapper { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+thead th {
+  background: linear-gradient(to right, var(--gr-800), var(--gr-700));
+  color: #fff;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 13px;
+}
+thead th:first-child { border-radius: 6px 0 0 0; }
+thead th:last-child  { border-radius: 0 6px 0 0; }
+tbody td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
+tbody tr:hover { background: var(--sf-50); }
+tbody tr:last-child td { border-bottom: none; }
+
+/* ── Progress Bar ────────────────────────────────────────────── */
+.progress-bar  { height: 8px; background: #E5E7EB; border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+.progress-fill.orange { background: var(--sf-500); }
+.progress-fill.green  { background: var(--gr-500); }
+.progress-fill.amber  { background: var(--sf-700); }
+.progress-fill.red    { background: var(--danger); }
+/* legacy */
+.progress-fill.blue   { background: var(--sf-600); }
+
+/* ── Score Display ───────────────────────────────────────────── */
+.score-circle {
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  font-size: 26px; font-weight: 800;
+  border: 5px solid;
+}
+.score-circle.high   { border-color: var(--gr-500);  color: var(--gr-600); }
+.score-circle.medium { border-color: var(--sf-500);  color: var(--sf-700); }
+.score-circle.low    { border-color: var(--danger);  color: var(--danger); }
+.score-circle small  { font-size: 11px; font-weight: 500; }
+
+/* ── Loader ──────────────────────────────────────────────────── */
+.loader {
+  width: 36px; height: 36px;
+  border: 4px solid var(--sf-200);
+  border-top-color: var(--sf-500);
+  border-right-color: var(--gr-500);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 20px auto;
+}
+.loading-overlay {
+  position: fixed; inset: 0;
+  background: rgba(10,40,10,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.loading-overlay.show { display: flex; }
+.loading-box {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: var(--radius);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  border-top: 4px solid var(--sf-500);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Modal ───────────────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(10,40,10,0.5);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-backdrop.show { display: flex; }
+.modal {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 30px;
+  width: 100%;
+  max-width: 550px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideIn 0.2s ease;
+  border-top: 4px solid var(--sf-500);
+  box-shadow: var(--shadow-md);
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.modal-header h3 { font-size: 18px; font-weight: 700; color: var(--gr-800); }
+.modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-light); line-height: 1; transition: color 0.2s; }
+.modal-close:hover { color: var(--danger); }
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+/* ── Steps Indicator ─────────────────────────────────────────── */
+.steps { display: flex; align-items: center; margin-bottom: 30px; }
+.step  { display: flex; align-items: center; flex: 1; }
+.step-num {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--text-light);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px;
+  flex-shrink: 0;
+}
+.step.active .step-num  { background: var(--sf-500); color: #fff; }
+.step.done   .step-num  { background: var(--gr-500); color: #fff; }
+.step-label  { font-size: 12px; color: var(--text-light); margin-left: 8px; white-space: nowrap; }
+.step.active .step-label { color: var(--sf-700); font-weight: 600; }
+.step.done   .step-label { color: var(--gr-700); font-weight: 600; }
+.step-line  { flex: 1; height: 2px; background: var(--border); margin: 0 8px; }
+.step.done  .step-line  { background: var(--gr-400); }
+
+/* ── Law Selection Cards ─────────────────────────────────────── */
+.law-card {
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #fff;
+}
+.law-card:hover    { border-color: var(--sf-400); box-shadow: var(--shadow); background: var(--sf-50); }
+.law-card.selected { border-color: var(--sf-500); background: var(--sf-100); }
+.law-card-check {
+  width: 22px; height: 22px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px;
+  transition: all 0.2s;
+}
+.law-card.selected .law-card-check { background: var(--sf-500); border-color: var(--sf-500); color: #fff; }
+.law-confidence { font-size: 22px; font-weight: 800; color: var(--sf-700); }
+.law-name    { font-weight: 700; font-size: 15px; color: var(--gr-800); }
+.law-act     { font-size: 13px; color: var(--text-light); margin-top: 3px; }
+.law-priority { font-size: 11px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ── Section heading with tricolor underline ─────────────────── */
+.section-heading {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--gr-800);
+  text-align: center;
+  margin-bottom: 8px;
+  position: relative;
+  padding-bottom: 14px;
+}
+.section-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 72px; height: 4px;
+  background: linear-gradient(to right,
+    var(--sf-500) 33.33%,
+    #fff          33.33% 66.66%,
+    var(--gr-500) 66.66%);
+  border-radius: 2px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .navbar { padding: 0 15px; }
+  .dashboard-layout { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: static; }
+  .sidebar::before { margin-bottom: 8px; }
+  .main-content { padding: 15px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  table { font-size: 13px; }
+  thead th, tbody td { padding: 8px 10px; }
+}
+
+/* ── Utilities ───────────────────────────────────────────────── */
+.text-primary  { color: var(--sf-600); }
+.text-success  { color: var(--gr-500); }
+.text-danger   { color: var(--danger); }
+.text-dark     { color: var(--gr-800); }
+.text-muted    { color: var(--text-light); }
+.text-center   { text-align: center; }
+.font-bold     { font-weight: 700; }
+.mt-10 { margin-top: 10px; }
+.mt-20 { margin-top: 20px; }
+.mt-30 { margin-top: 30px; }
+.mb-10 { margin-bottom: 10px; }
+.mb-20 { margin-bottom: 20px; }
+.flex         { display: flex; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-center  { display: flex; justify-content: center; align-items: center; }
+.gap-10 { gap: 10px; }
+.gap-15 { gap: 15px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+.empty-state { text-align: center; padding: 50px 20px; color: var(--text-light); }
+.empty-state-icon { font-size: 48px; margin-bottom: 15px; }
+.empty-state p { font-size: 15px; }
+
+/* ── Toast notifications ─────────────────────────────────────── */
+#toast-container {
+  position: fixed;
+  top: 80px; right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toast {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 20px rgba(19,136,8,0.12);
+  padding: 14px 18px;
+  min-width: 280px; max-width: 380px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastIn 0.3s ease;
+  border-left: 4px solid var(--gr-500);
+}
+.toast.error   { border-left-color: var(--danger); }
+.toast.warning { border-left-color: var(--sf-600); }
+.toast.info    { border-left-color: var(--sf-500); }
+.toast-icon { font-size: 18px; }
+.toast-msg  { font-size: 14px; flex: 1; color: var(--text); }
+@keyframes toastIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* ── Demo Banner ─────────────────────────────────────────────── */
+.demo-banner {
+  background: linear-gradient(90deg, var(--gr-900), var(--gr-800));
+  color: #fff;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 13px;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  border-bottom: 3px solid var(--sf-500);
+}
+
+</style>
+  <style>
+    .lead-row { cursor: pointer; }
+    .lead-row:hover { background: #fde8ec !important; }
+    .pending-banner { background: #fff3cd; border: 1px solid #ffc107; color: #856404; border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px; display: none; }
+    .tab-nav { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid var(--border); }
+    .tab-btn { padding: 10px 18px; background: none; border: none; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-light); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+    .tab-btn.active { color: var(--saffron-dk); border-bottom-color: var(--saffron); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .profile-tag { display: inline-block; background: #e8f4fd; color: #0c5460; border-radius: 20px; padding: 4px 12px; font-size: 12px; margin: 3px; }
+    .fee-box { background: var(--bg-light); border-radius: var(--radius); padding: 15px; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+<div id="loading-overlay" class="loading-overlay"><div class="loading-box"><div class="loader"></div><p style="margin-top:10px;color:#666">Loading...</p></div></div>
+
+<nav class="navbar">
+  <a href="/" class="navbar-brand"><span class="brand-sat">Sat</span><span class="brand-legal">Legal</span><span class="brand-dot">.in</span></a>
+  <div class="nav-links" id="auth-links"></div>
+</nav>
+
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <div style="padding:15px 20px;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:10px">
+      <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.5px">Advocate Portal</div>
+      <div style="color:#fff;font-weight:700;font-size:15px" id="sidebarName">—</div>
+    </div>
+    <div class="sidebar-section">Menu</div>
+    <a href="#" class="sidebar-link active" onclick="switchTab('overview', this)">🏠 Overview</a>
+    <a href="#" class="sidebar-link" onclick="switchTab('leads', this)" id="leadsLink">📥 My Leads</a>
+    <a href="#" class="sidebar-link" onclick="switchTab('earnings', this)">💰 Earnings</a>
+    <a href="#" class="sidebar-link" onclick="switchTab('profile', this)">⚖️ Profile & Fees</a>
+    <div style="padding:20px">
+      <button onclick="Auth.logout()" class="btn btn-danger btn-sm" style="width:100%">Logout</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <!-- Pending Banner -->
+    <div id="pendingBanner" class="pending-banner">
+      ⏳ <strong>Your profile is under review.</strong> Our team will verify your Bar Council details within 24–48 hours. You'll be notified once approved.
+    </div>
+
+    <!-- Overview Tab -->
+    <div id="tab-overview" class="tab-content active">
+      <div class="flex-between mb-20">
+        <div>
+          <h1 style="font-size:22px;font-weight:800" id="welcomeText">Welcome ⚖️</h1>
+          <p style="color:var(--text-light);font-size:14px">Here's your practice summary</p>
+        </div>
+      </div>
+      <div class="stats-grid" id="statsGrid"></div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Recent Leads</span><a href="#" onclick="switchTab('leads',null)" class="btn btn-outline btn-sm">View All</a></div>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Lead ID</th><th>Case Type(s)</th><th>Client</th><th>Urgency</th><th>Status</th><th>Date</th><th></th></tr></thead>
+            <tbody id="recentLeadsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leads Tab -->
+    <div id="tab-leads" class="tab-content">
+      <div class="flex-between mb-20">
+        <h2 style="font-size:20px;font-weight:700">My Leads</h2>
+      </div>
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="filterLeads('', this)">All</button>
+        <button class="tab-btn" onclick="filterLeads('new', this)">🔵 New</button>
+        <button class="tab-btn" onclick="filterLeads('accepted', this)">✅ Accepted</button>
+        <button class="tab-btn" onclick="filterLeads('completed', this)">🏁 Completed</button>
+        <button class="tab-btn" onclick="filterLeads('rejected', this)">❌ Rejected</button>
+      </div>
+      <div class="card" style="padding:0">
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Lead ID</th><th>Case Types</th><th>Client</th><th>Message</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody id="allLeadsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Earnings Tab -->
+    <div id="tab-earnings" class="tab-content">
+      <h2 style="font-size:20px;font-weight:700;margin-bottom:20px">Earnings & Analytics</h2>
+      <div class="stats-grid" id="earningsGrid"></div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Performance Metrics</span></div>
+        <div id="performanceStats" style="padding:10px"></div>
+      </div>
+    </div>
+
+    <!-- Profile Tab -->
+    <div id="tab-profile" class="tab-content">
+      <h2 style="font-size:20px;font-weight:700;margin-bottom:20px">Profile & Settings</h2>
+      <div class="grid-2" style="align-items:start">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Personal Bio</span></div>
+          <div id="profileAlert"></div>
+          <form id="profileForm">
+            <div class="form-group">
+              <label>Professional Bio</label>
+              <textarea id="bio" class="form-control" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+              <label>City</label>
+              <input type="text" id="city" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>State</label>
+              <input type="text" id="state" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">Save Profile</button>
+          </form>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">Fee Structure</span></div>
+            <div id="feeAlert"></div>
+            <form id="feeForm">
+              <div class="form-group">
+                <label>Consultation Fee (₹) *</label>
+                <input type="number" id="consultationFee" class="form-control" min="0" required />
+              </div>
+              <div class="form-group">
+                <label>Hourly Rate (₹)</label>
+                <input type="number" id="hourlyRate" class="form-control" min="0" />
+              </div>
+              <div class="form-group">
+                <label>Case Filing Fee (₹)</label>
+                <input type="number" id="caseFilingFee" class="form-control" min="0" />
+              </div>
+              <div class="form-group">
+                <label>Minimum Fee (₹)</label>
+                <input type="number" id="minimumFee" class="form-control" min="0" />
+              </div>
+              <button type="submit" class="btn btn-primary">Update Fees</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><span class="card-title">Upload Verification Docs</span></div>
+            <div id="docAlert"></div>
+            <div>
+              <div class="doc-upload-item" style="margin-bottom:12px">
+                <div style="font-size:13px;font-weight:600;margin-bottom:6px">Bar Council Certificate *</div>
+                <label class="btn btn-outline btn-sm" style="cursor:pointer">
+                  📎 Upload PDF <input type="file" style="display:none" accept=".pdf,.jpg,.png" onchange="uploadVerDoc(this,'barCouncilCertificate')">
+                </label>
+              </div>
+              <div class="doc-upload-item" style="margin-bottom:12px">
+                <div style="font-size:13px;font-weight:600;margin-bottom:6px">ID Proof (Aadhaar/PAN) *</div>
+                <label class="btn btn-outline btn-sm" style="cursor:pointer">
+                  📎 Upload <input type="file" style="display:none" accept=".pdf,.jpg,.png" onchange="uploadVerDoc(this,'idProof')">
+                </label>
+              </div>
+              <div class="doc-upload-item">
+                <div style="font-size:13px;font-weight:600;margin-bottom:6px">Degree Certificate (LLB/LLM) *</div>
+                <label class="btn btn-outline btn-sm" style="cursor:pointer">
+                  📎 Upload PDF <input type="file" style="display:none" accept=".pdf,.jpg,.png" onchange="uploadVerDoc(this,'degreeCertificate')">
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Lead Action Modal -->
+<div id="leadModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="leadModalTitle">Lead Details</h3>
+      <button class="modal-close" onclick="closeModal('leadModal')">×</button>
+    </div>
+    <div id="leadModalBody"></div>
+    <div id="leadModalActions" class="flex-between mt-20" style="flex-wrap:wrap;gap:10px"></div>
+  </div>
+</div>
+
+<!-- Quote Modal -->
+<div id="quoteModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>💰 Send Fee Quote</h3>
+      <button class="modal-close" onclick="closeModal('quoteModal')">×</button>
+    </div>
+    <div class="form-group">
+      <label>Quote Amount (₹) *</label>
+      <input type="number" id="quoteAmount" class="form-control" min="0" required />
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="quoteDesc" class="form-control" rows="3" placeholder="Briefly describe what this fee covers..."></textarea>
+    </div>
+    <div class="flex-between mt-20">
+      <button onclick="closeModal('quoteModal')" class="btn btn-outline">Cancel</button>
+      <button onclick="submitQuote()" class="btn btn-primary">Send Quote</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+if (!Auth.requireRole('lawyer')) {}
+const user = Auth.getUser();
+if (user) document.getElementById('sidebarName').textContent = user.name;
+
+let activeLead = null;
+
+async function loadOverview() {
+  try {
+    const data = await API.getLawyerDashboard();
+    if (data.profile.status === 'pending') {
+      document.getElementById('pendingBanner').style.display = 'block';
+    }
+
+    document.getElementById('welcomeText').textContent = `Welcome, ${user?.name?.split(' ')[0] || 'Advocate'}! ⚖️`;
+    const s = data.stats;
+    const ps = data.profile.stats;
+    document.getElementById('statsGrid').innerHTML = `
+      <div class="stat-card"><div class="stat-icon blue">📥</div><div><div class="stat-number">${s.newLeads}</div><div class="stat-label">New Leads</div></div></div>
+      <div class="stat-card"><div class="stat-icon green">✅</div><div><div class="stat-number">${s.acceptedLeads}</div><div class="stat-label">Active Cases</div></div></div>
+      <div class="stat-card"><div class="stat-icon orange">🏁</div><div><div class="stat-number">${s.completedLeads}</div><div class="stat-label">Completed</div></div></div>
+      <div class="stat-card"><div class="stat-icon red">⭐</div><div><div class="stat-number">${ps.rating || '—'}</div><div class="stat-label">Rating</div></div></div>
+    `;
+
+    const tbody = document.getElementById('recentLeadsBody');
+    if (!data.recentLeads?.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="padding:30px;text-align:center;color:var(--text-light)">No leads yet. Once approved, leads will appear here.</td></tr>';
+    } else {
+      tbody.innerHTML = data.recentLeads.map(l => `
+        <tr class="lead-row" onclick="openLead('${l.leadId}')">
+          <td><code style="font-size:12px">${l.leadId}</code></td>
+          <td>${(l.caseTypes||[]).map(c=>`<div style="font-size:12px">${c.substring(0,30)}…</div>`).join('')}</td>
+          <td>${l.userName}</td>
+          <td><span class="badge badge-${l.urgency==='high'?'danger':l.urgency==='medium'?'warning':'info'}">${l.urgency}</span></td>
+          <td>${fmt.status(l.status)}</td>
+          <td>${fmt.date(l.createdAt)}</td>
+          <td><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openLead('${l.leadId}')">Manage</button></td>
+        </tr>`).join('');
+    }
+  } catch (err) { Toast.error('Failed to load dashboard: ' + err.message); }
+}
+
+async function loadLeads(status = '') {
+  const tbody = document.getElementById('allLeadsBody');
+  tbody.innerHTML = '<tr><td colspan="7" class="text-center" style="padding:30px">Loading...</td></tr>';
+  try {
+    const data = await API.getLeads(status ? `status=${status}` : '');
+    if (!data.leads?.length) {
+      tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted" style="padding:40px">No leads found.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.leads.map(l => `
+      <tr class="lead-row" onclick="openLead('${l.leadId}')">
+        <td><code style="font-size:12px">${l.leadId}</code></td>
+        <td>${(l.caseTypes||[]).slice(0,2).map(c=>`<div style="font-size:11px">${c.substring(0,28)}…</div>`).join('')}</td>
+        <td><strong>${l.userName}</strong><br><span style="font-size:12px;color:var(--text-light)">${l.userPhone||''}</span></td>
+        <td style="max-width:150px;font-size:13px">${(l.userMessage||'—').substring(0,60)}</td>
+        <td>${fmt.status(l.status)}</td>
+        <td>${fmt.date(l.createdAt)}</td>
+        <td><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openLead('${l.leadId}')">Manage</button></td>
+      </tr>`).join('');
+  } catch (err) { Toast.error(err.message); }
+}
+
+function filterLeads(status, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  loadLeads(status);
+}
+
+async function loadEarnings() {
+  try {
+    const data = await API.getEarnings();
+    const e = data.earnings;
+    document.getElementById('earningsGrid').innerHTML = `
+      <div class="stat-card"><div class="stat-icon green">💰</div><div><div class="stat-number">${fmt.money(e.total)}</div><div class="stat-label">Total Earnings</div></div></div>
+      <div class="stat-card"><div class="stat-icon blue">🏁</div><div><div class="stat-number">${e.completedCases}</div><div class="stat-label">Completed Cases</div></div></div>
+      <div class="stat-card"><div class="stat-icon orange">⚡</div><div><div class="stat-number">${e.pendingCases}</div><div class="stat-label">Active Cases</div></div></div>
+      <div class="stat-card"><div class="stat-icon red">📈</div><div><div class="stat-number">${e.acceptanceRate}%</div><div class="stat-label">Acceptance Rate</div></div></div>
+    `;
+    document.getElementById('performanceStats').innerHTML = `
+      <div class="fee-box">
+        <strong>Total Leads Received:</strong> ${data.stats.totalLeads}<br>
+        <strong>Leads Accepted:</strong> ${data.stats.acceptedLeads}<br>
+        <strong>Cases Completed:</strong> ${data.stats.completedCases}<br>
+        <strong>Rating:</strong> ${data.stats.rating || 'No ratings yet'}
+      </div>`;
+  } catch (err) { Toast.error(err.message); }
+}
+
+async function loadProfile() {
+  try {
+    const data = await API.getLawyerDashboard();
+    // Profile form would be loaded here
+  } catch {}
+}
+
+function openLead(leadId) {
+  // Find lead from loaded data
+  API.getLeads().then(data => {
+    const lead = data.leads.find(l => l.leadId === leadId);
+    if (!lead) return;
+    activeLead = lead;
+    document.getElementById('leadModalTitle').textContent = `Lead: ${lead.leadId}`;
+    document.getElementById('leadModalBody').innerHTML = `
+      <table style="width:100%;font-size:14px">
+        <tr><td style="padding:6px 0;font-weight:600;width:40%">Client:</td><td>${lead.userName}</td></tr>
+        <tr><td style="padding:6px 0;font-weight:600">Email:</td><td>${lead.userEmail}</td></tr>
+        <tr><td style="padding:6px 0;font-weight:600">Phone:</td><td>${lead.userPhone}</td></tr>
+        <tr><td style="padding:6px 0;font-weight:600">Case Types:</td><td>${(lead.caseTypes||[]).join('<br>')}</td></tr>
+        <tr><td style="padding:6px 0;font-weight:600">Urgency:</td><td>${lead.urgency}</td></tr>
+        <tr><td style="padding:6px 0;font-weight:600">Status:</td><td>${fmt.status(lead.status)}</td></tr>
+        <tr><td style="padding:6px 0;font-weight:600">Description:</td><td>${lead.description || '—'}</td></tr>
+        ${lead.userMessage ? `<tr><td style="padding:6px 0;font-weight:600">Client Message:</td><td>${lead.userMessage}</td></tr>` : ''}
+        ${lead.quotedFee?.amount ? `<tr><td style="padding:6px 0;font-weight:600">Your Quote:</td><td>${fmt.money(lead.quotedFee.amount)}</td></tr>` : ''}
+      </table>`;
+
+    const actions = document.getElementById('leadModalActions');
+    if (lead.status === 'new' || lead.status === 'viewed') {
+      actions.innerHTML = `
+        <button onclick="updateLead('${leadId}','rejected')" class="btn btn-danger btn-sm">❌ Reject</button>
+        <div style="display:flex;gap:8px">
+          <button onclick="openQuoteModal('${leadId}')" class="btn btn-outline btn-sm">💰 Send Quote</button>
+          <button onclick="updateLead('${leadId}','accepted')" class="btn btn-success">✅ Accept Lead</button>
+        </div>`;
+    } else if (lead.status === 'accepted') {
+      actions.innerHTML = `
+        <button onclick="closeModal('leadModal')" class="btn btn-outline">Close</button>
+        <button onclick="updateLead('${leadId}','completed')" class="btn btn-success">🏁 Mark Completed</button>`;
+    } else {
+      actions.innerHTML = `<button onclick="closeModal('leadModal')" class="btn btn-outline">Close</button>`;
+    }
+
+    // Mark as viewed
+    if (lead.status === 'new') {
+      API.updateLead(leadId, { status: 'viewed' }).catch(() => {});
+    }
+    document.getElementById('leadModal').classList.add('show');
+  });
+}
+
+async function updateLead(leadId, status) {
+  Loader.show();
+  try {
+    await API.updateLead(leadId, { status });
+    closeModal('leadModal');
+    Toast.success(`Lead ${status}!`);
+    loadOverview();
+    loadLeads();
+  } catch (err) { Toast.error(err.message); }
+  finally { Loader.hide(); }
+}
+
+let activeQuoteLead = null;
+function openQuoteModal(leadId) {
+  activeQuoteLead = leadId;
+  closeModal('leadModal');
+  document.getElementById('quoteModal').classList.add('show');
+}
+
+async function submitQuote() {
+  const amount = document.getElementById('quoteAmount').value;
+  const desc   = document.getElementById('quoteDesc').value;
+  if (!amount) { Toast.warning('Please enter an amount.'); return; }
+  Loader.show();
+  try {
+    await API.sendQuote(activeQuoteLead, { amount: parseFloat(amount), description: desc });
+    closeModal('quoteModal');
+    Toast.success('Quote sent to client!');
+  } catch (err) { Toast.error(err.message); }
+  finally { Loader.hide(); }
+}
+
+async function uploadVerDoc(input, docType) {
+  if (!input.files[0]) return;
+  const fd = new FormData();
+  fd.append('document', input.files[0]);
+  fd.append('documentType', docType);
+  Loader.show();
+  try {
+    await API.uploadLawyerDoc(fd);
+    Toast.success('Document uploaded successfully!');
+  } catch (err) { Toast.error(err.message); }
+  finally { Loader.hide(); }
+}
+
+document.getElementById('feeForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    await API.updateFeeStructure({
+      consultationFee: document.getElementById('consultationFee').value,
+      hourlyRate: document.getElementById('hourlyRate').value,
+      caseFilingFee: document.getElementById('caseFilingFee').value,
+      minimumFee: document.getElementById('minimumFee').value
+    });
+    document.getElementById('feeAlert').innerHTML = '<div class="alert alert-success">✅ Fee structure updated!</div>';
+    setTimeout(() => document.getElementById('feeAlert').innerHTML = '', 3000);
+  } catch (err) {
+    document.getElementById('feeAlert').innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
+  }
+});
+
+document.getElementById('profileForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    await API.updateLawyerProfile({ bio: document.getElementById('bio').value, city: document.getElementById('city').value, state: document.getElementById('state').value });
+    document.getElementById('profileAlert').innerHTML = '<div class="alert alert-success">✅ Profile updated!</div>';
+    setTimeout(() => document.getElementById('profileAlert').innerHTML = '', 3000);
+  } catch (err) {
+    document.getElementById('profileAlert').innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
+  }
+});
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (el) el.classList.add('active');
+  if (tab === 'leads') loadLeads();
+  if (tab === 'earnings') loadEarnings();
+  if (tab === 'profile') loadProfile();
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+loadOverview();
+</script>
+</body>
+</html>

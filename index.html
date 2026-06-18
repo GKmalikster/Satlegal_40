@@ -1,0 +1,2656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SatLegal – AI-Powered Indian Legal Analysis</title>
+<meta name="description" content="Describe your legal problem in Hindi or English. SatLegal maps it to the right Indian laws, asks targeted questions, collects evidence, and gives you a complete legal action report."/>
+<style>
+/* ═══════════════════════════════════════════════════════════
+   SatLegal v16 · Indian Tricolor: Saffron · White · Green
+═══════════════════════════════════════════════════════════ */
+:root{
+  --sf-500:#FF9933;--sf-600:#FF8800;--sf-700:#E07000;--sf-800:#B35100;
+  --sf-100:#FFF4E6;--sf-200:#FFE4C2;--sf-300:#FFCC99;--sf-400:#FFB366;
+  --gr-500:#138808;--gr-600:#1A6B1A;--gr-700:#145214;
+  --gr-800:#0D3D0D;--gr-900:#062206;
+  --gr-50:#F0FBF0;--gr-100:#D4F5D2;--gr-200:#A8E8A4;--gr-300:#5CC852;
+  --text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;
+  --bg:#F8F9FA;--white:#fff;
+  --shadow:0 2px 16px rgba(0,0,0,.07);--shadow-md:0 6px 28px rgba(0,0,0,.12);
+  --r:10px;--font:'Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--text);background:var(--white);line-height:1.6}
+a{text-decoration:none;color:inherit}button{cursor:pointer;font-family:var(--font)}
+
+/* ── Tricolor bar ── */
+.tribar{height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
+
+/* ── Navbar ── */
+.nav{background:#fff;position:sticky;top:0;z-index:900;border-bottom:1px solid var(--border);box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.nav-inner{max-width:1160px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:0;text-decoration:none}
+.brand img{height:56px;width:auto;display:block}
+.b-sat{color:var(--sf-500)}.b-leg{color:var(--gr-600)}
+.b-dot{font-size:11px;color:var(--text-lt);margin-left:2px;font-weight:400}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{color:var(--gr-800);font-size:14px;font-weight:500;padding:7px 13px;border-radius:6px;transition:.2s}
+.nav-links a:hover,.nav-links a.active{color:var(--gr-700);background:var(--gr-50)}
+.nav-actions{display:flex;align-items:center;gap:8px}
+.btn-nav-admin{color:var(--text-lt);font-size:12px;font-weight:600;padding:6px 10px;border-radius:6px;text-decoration:none;transition:.15s;opacity:.7}
+.btn-nav-admin:hover{opacity:1;background:var(--bg);color:var(--gr-700)}
+.btn-nav-login{color:var(--gr-700);border:2px solid var(--gr-500);padding:7px 16px;border-radius:8px;font-weight:700;font-size:13px;background:transparent;transition:.2s;cursor:pointer;font-family:var(--font)}
+.btn-nav-login:hover{background:var(--gr-50)}
+.btn-nav-signup{background:var(--sf-500);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;transition:.2s;cursor:pointer;font-family:var(--font)}
+.btn-nav-signup:hover{background:var(--sf-600);transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:6px;cursor:pointer}
+.hamburger span{width:24px;height:2px;background:var(--gr-800);border-radius:2px;display:block;transition:.3s}
+.mob-menu{display:none;background:#fff;flex-direction:column;padding:10px 16px 14px;border-top:1px solid var(--border)}
+.mob-menu a{color:var(--gr-800);padding:10px 12px;border-radius:6px;font-size:15px}
+.mob-menu a:hover{background:var(--gr-50);color:var(--gr-700)}
+.mob-menu .mob-btn-signup{background:var(--sf-500);color:#fff;text-align:center;font-weight:700;border-radius:8px;margin-top:6px}
+.mob-menu.open{display:flex}
+
+/* ── Hero (Indian Tricolor: Saffron → White → Green diagonal) ── */
+.hero{background:linear-gradient(135deg,
+  #E07000 0%,#FF9933 18%,#FFB347 30%,#FFD699 40%,
+  #ffffff 50%,
+  #A8E8A4 60%,#5CC852 72%,#138808 85%,#0D6B05 100%);
+  padding:48px 20px 56px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(255,255,255,.18) 0%,transparent 70%);
+  pointer-events:none}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center}
+
+/* Hero headline section */
+.hero-left{width:100%;margin-bottom:28px}
+.hero-tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(4px);color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;margin-bottom:16px;text-shadow:none;letter-spacing:.2px}
+.hero h1{font-size:clamp(28px,5vw,54px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:10px;
+  text-shadow:0 2px 12px rgba(0,0,0,.28);letter-spacing:-.5px}
+.hero h1 em{font-style:normal;color:rgba(255,255,255,.92)}
+.hero-sub{font-size:clamp(14px,1.7vw,17px);color:rgba(255,255,255,.88);max-width:600px;margin:0 auto 20px;line-height:1.75;text-shadow:0 1px 4px rgba(0,0,0,.18)}
+
+/* Stats */
+.hero-stats{display:flex;justify-content:center;gap:0;flex-wrap:wrap;margin-bottom:16px}
+.h-stat{text-align:center;padding:0 22px;border-right:1px solid rgba(255,255,255,.25);margin-bottom:6px}
+.h-stat:first-child{padding-left:0}
+.h-stat:last-child{border-right:none}
+.h-stat strong{display:block;font-size:clamp(22px,3vw,36px);font-weight:900;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.22);line-height:1.1}
+.h-stat span{font-size:10px;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.6px;display:block;margin-top:4px}
+.hero-trust-row{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-bottom:0}
+.hero-trust-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);font-size:11px;font-weight:600;padding:4px 11px;border-radius:20px}
+.hero-note{margin-top:10px;font-size:11.5px;color:rgba(255,255,255,.6);text-shadow:0 1px 3px rgba(0,0,0,.18)}
+
+/* ── Centered Query card ── */
+.hero-query-card{background:#fff;border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,.25);overflow:hidden;text-align:left;width:100%;max-width:780px}
+.hqc-head{background:var(--gr-800);padding:14px 20px;display:flex;align-items:center;gap:10px}
+.hqc-head-icon{font-size:18px}
+.hqc-head-title{color:#fff;font-size:14px;font-weight:800}
+.hqc-head-sub{color:rgba(255,255,255,.55);font-size:11px;margin-top:1px}
+.hqc-body{padding:18px 20px 14px}
+
+/* Big textarea */
+.query-ta-wrap{position:relative;margin-bottom:10px}
+.issue-ta{width:100%;min-height:148px;border:2px solid var(--border);border-radius:12px;padding:14px 16px;
+  font-size:14px;font-family:var(--font);line-height:1.7;resize:none;transition:.2s;
+  background:#FAFCFF;color:var(--text)}
+.issue-ta:focus{outline:none;border-color:var(--gr-500);background:#fff;box-shadow:0 0 0 3px rgba(19,136,8,.08)}
+.ta-char-badge{position:absolute;bottom:10px;right:12px;font-size:10px;font-weight:600;color:var(--text-lt);background:rgba(255,255,255,.9);padding:2px 7px;border-radius:8px;pointer-events:none}
+
+/* Example chips — 2-col grid */
+.ex-chips-label{font-size:11px;font-weight:700;color:var(--text-lt);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.ex-chips{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px}
+.ex-chip{background:#F8FAFF;border:1.5px solid var(--border);color:var(--gr-800);padding:7px 11px;
+  border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;text-align:left;display:flex;align-items:center;gap:6px;line-height:1.3}
+.ex-chip:hover{background:var(--gr-50);border-color:var(--gr-300);color:var(--gr-700)}
+.ex-chip-icon{font-size:14px;flex-shrink:0}
+
+/* Analyze button */
+.btn-analyze-main{width:100%;background:linear-gradient(135deg,var(--sf-600),var(--sf-500));color:#fff;border:none;
+  padding:14px 20px;border-radius:10px;font-size:15px;font-weight:800;font-family:var(--font);
+  display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:.2s;margin-bottom:8px}
+.btn-analyze-main:hover{background:linear-gradient(135deg,var(--sf-700),var(--sf-600));transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,153,51,.35)}
+.query-mini-disclaimer{font-size:10.5px;color:var(--text-lt);text-align:center;line-height:1.5;padding:0 4px}
+.query-mini-disclaimer a{color:var(--gr-600);font-weight:600}
+
+/* Compact disclaimer (collapsed in hero) */
+.query-disclaimer{display:none} /* hidden in hero — shown inline in wizard */
+
+/* ── Inline Wizard Card (shown after clicking Analyze) ── */
+.wiz-card{background:#fff;border-radius:16px;max-width:820px;margin:28px auto 0;
+  box-shadow:0 12px 48px rgba(0,0,0,.22);overflow:hidden;text-align:left}
+.wiz-card.hero-wiz-hidden{display:none}
+
+/* Step tabs — colored circles like v9 */
+.wiz-tabs-row{display:flex;background:var(--gr-800)}
+.wtab{flex:1;text-align:center;padding:14px 4px 12px;color:rgba(255,255,255,.4);
+  font-size:11px;font-weight:600;cursor:default;transition:.2s;
+  line-height:1.3;border-bottom:3px solid transparent}
+.wtab.wt-done{color:rgba(255,255,255,.75)}
+.wtab.wt-done .wt-circle{background:var(--gr-500)}
+.wtab.wt-active{color:#fff;border-bottom-color:var(--sf-500)}
+.wtab.wt-active .wt-circle{background:var(--sf-500);box-shadow:0 0 0 3px rgba(255,153,51,.3)}
+.wt-circle{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 6px;
+  font-size:13px;font-weight:800;color:rgba(255,255,255,.4);transition:.3s}
+.wtab.wt-done .wt-circle,.wtab.wt-active .wt-circle{color:#fff;border-color:transparent}
+.wtab-label{display:block;font-size:10px;white-space:nowrap;letter-spacing:.2px}
+
+.wiz-body{padding:26px 30px}
+.wiz-pane{display:none}.wiz-pane.active{display:block}
+.wiz-title{font-size:19px;font-weight:800;color:var(--gr-800);margin-bottom:4px}
+.wiz-sub{font-size:13px;color:var(--text-lt);margin-bottom:20px;line-height:1.6}
+.wiz-foot-bar{padding:14px 30px;background:var(--bg);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.wiz-free-note{font-size:11px;color:var(--text-lt);display:flex;align-items:center;gap:5px}
+
+/* Step 5 — Analysis Preview */
+.analysis-ready-head{text-align:center;padding:8px 0 20px}
+.analysis-ready-head h3{font-size:22px;font-weight:900;color:var(--gr-800);margin-bottom:6px}
+.analysis-ready-head p{font-size:13px;color:var(--text-lt);max-width:480px;margin:0 auto}
+.analysis-summary-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:16px}
+.analysis-issue-text{font-size:13px;color:var(--text);line-height:1.6;border-left:3px solid var(--sf-300);padding-left:12px;margin-bottom:14px;font-style:italic}
+.analysis-law-preview{border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px;background:#fff}
+.alp-name{font-size:14px;font-weight:700;color:var(--gr-800);margin-bottom:2px}
+.alp-act{font-size:11px;color:var(--text-lt);margin-bottom:8px}
+.alp-conf{display:flex;align-items:center;gap:8px}
+.alp-bar-wrap{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.alp-bar-fill{height:100%;border-radius:3px}
+.alp-pct{font-size:12px;font-weight:700;color:var(--sf-700);min-width:36px}
+.signin-cta{background:linear-gradient(135deg,var(--sf-600),var(--sf-500));border-radius:var(--r);padding:24px;text-align:center;margin-top:4px}
+.signin-cta h4{color:#fff;font-size:17px;font-weight:800;margin-bottom:6px}
+.signin-cta p{color:rgba(255,255,255,.85);font-size:13px;margin-bottom:18px;line-height:1.6}
+.signin-cta-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-create-acct{background:#fff;color:var(--sf-700);border:none;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-create-acct:hover{background:var(--sf-100)}
+.btn-login-acct{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.7);padding:11px 22px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-login-acct:hover{background:rgba(255,255,255,.15);border-color:#fff}
+
+/* Registration form (shown after clicking Create Account) */
+.reg-form-wrap{display:none}
+
+/* ── Sections ── */
+.sec{padding:72px 20px}.sec-alt{background:var(--bg)}
+.sec-green{background:var(--gr-800);padding:72px 20px}
+.wrap{max-width:1100px;margin:0 auto}
+.sec-label{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--sf-600);margin-bottom:10px}
+.sec-label.green{color:var(--gr-400)}
+.sec-title{font-size:clamp(22px,3.5vw,34px);font-weight:900;color:var(--gr-800);margin-bottom:10px}
+.sec-title.white{color:#fff}
+.sec-sub{font-size:15px;color:var(--text-lt);max-width:560px;line-height:1.7}
+.sec-sub.white{color:rgba(255,255,255,.65)}
+
+/* ── Steps grid ── */
+.steps-row{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:48px;position:relative}
+.steps-row::before{content:'';position:absolute;top:35px;left:calc(10% + 6px);right:calc(10% + 6px);
+  height:2px;background:linear-gradient(90deg,var(--sf-300),var(--gr-200));z-index:0}
+.step-c{text-align:center;padding:0 6px;z-index:1;position:relative}
+.step-num{width:70px;height:70px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;
+  justify-content:center;font-size:22px;font-weight:900;color:#fff;box-shadow:var(--shadow-md)}
+.step-c:nth-child(1) .step-num{background:var(--sf-600)}
+.step-c:nth-child(2) .step-num{background:var(--sf-500)}
+.step-c:nth-child(3) .step-num{background:var(--gr-600)}
+.step-c:nth-child(4) .step-num{background:var(--gr-500)}
+.step-c:nth-child(5) .step-num{background:var(--gr-700)}
+.step-c h4{font-size:14px;font-weight:700;color:var(--gr-800);margin-bottom:5px}
+.step-c p{font-size:12px;color:var(--text-lt);line-height:1.5}
+
+/* ── Features ── */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px}
+.feat-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:26px 22px;transition:.25s;border-top:3px solid var(--sf-500)}
+.feat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px)}
+.feat-icon{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px}
+.feat-card h3{font-size:16px;font-weight:700;color:var(--gr-800);margin-bottom:7px}
+.feat-card p{font-size:13px;color:var(--text-lt);line-height:1.65}
+
+/* ── Law cats ── */
+.law-cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:44px}
+.law-cat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:var(--r);padding:20px 16px;transition:.25s;cursor:pointer}
+.law-cat:hover{background:rgba(255,255,255,.12);border-color:var(--sf-400);transform:translateY(-2px)}
+.law-cat .icon{font-size:28px;display:block;margin-bottom:10px}
+.law-cat h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:6px}
+.law-cat p{font-size:11px;color:rgba(255,255,255,.55);line-height:1.5;margin-bottom:8px}
+.law-pills{display:flex;flex-wrap:wrap;gap:4px}
+.law-pill{background:rgba(255,153,51,.15);color:var(--sf-300);border:1px solid rgba(255,153,51,.25);padding:2px 8px;border-radius:8px;font-size:10px;font-weight:600}
+
+/* ── Testimonials ── */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px}
+.testi-card{background:#fff;border-radius:var(--r);padding:26px;box-shadow:var(--shadow);position:relative}
+.testi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:var(--r) var(--r) 0 0;background:linear-gradient(90deg,var(--sf-500),var(--gr-500))}
+.testi-stars{color:var(--sf-500);font-size:13px;letter-spacing:2px;margin-bottom:10px}
+.testi-text{font-size:13px;line-height:1.75;color:var(--text);margin-bottom:14px;font-style:italic}
+.testi-name{font-weight:700;font-size:14px;color:var(--gr-800)}
+.testi-city{font-size:12px;color:var(--text-lt)}
+.testi-tag{display:inline-block;background:var(--gr-50);color:var(--gr-700);padding:2px 10px;border-radius:8px;font-size:11px;font-weight:600;margin-top:8px}
+
+/* ── CTA banner ── */
+.cta-sec{background:linear-gradient(135deg,var(--gr-700),var(--gr-800));padding:64px 20px;text-align:center}
+.cta-sec h2{font-size:clamp(22px,4vw,38px);font-weight:900;color:#fff;margin-bottom:10px}
+.cta-sec p{color:rgba(255,255,255,.75);font-size:16px;margin-bottom:28px}
+.btn-white{background:#fff;color:var(--gr-800);font-size:16px;font-weight:700;padding:14px 36px;border-radius:50px;border:none;transition:.2s;display:inline-flex;align-items:center;gap:8px}
+.btn-white:hover{background:var(--gr-50);transform:translateY(-2px)}
+
+/* ── Footer ── */
+footer{background:var(--gr-900);color:rgba(255,255,255,.5);padding:40px 20px;text-align:center;font-size:13px}
+.foot-logo{font-size:20px;font-weight:900;margin-bottom:14px}
+.foot-logo .s{color:var(--sf-400)}.foot-logo .l{color:#fff}
+.foot-links{display:flex;justify-content:center;flex-wrap:wrap;gap:18px;margin-bottom:14px}
+.foot-links a{color:rgba(255,255,255,.55);transition:.2s}
+.foot-links a:hover{color:#fff}
+
+/* ── Toast ── */
+#toast{position:fixed;bottom:90px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.t-item{background:var(--gr-800);color:#fff;padding:11px 16px;border-radius:8px;font-size:13px;
+  box-shadow:0 4px 16px rgba(0,0,0,.25);border-left:4px solid var(--gr-500);animation:tIn .3s ease;max-width:310px}
+.t-item.err{border-left-color:var(--sf-500)}
+@keyframes tIn{from{opacity:0;transform:translateX(50px)}to{opacity:1;transform:none}}
+
+/* ═══════════════════════════════════════════════════════════
+   WIZARD (inline — no modal overlay)
+═══════════════════════════════════════════════════════════ */
+/* wiz-card, wiz-tabs-row, wtab, wiz-body, wiz-pane, wiz-title, wiz-sub defined in Hero section above */
+
+/* step 1 */
+.issue-ta{width:100%;min-height:130px;border:2px solid var(--border);border-radius:var(--r);padding:14px 16px;
+  font-size:15px;font-family:var(--font);line-height:1.65;resize:vertical;transition:.2s}
+.issue-ta:focus{outline:none;border-color:var(--gr-500);box-shadow:0 0 0 3px rgba(19,136,8,.07)}
+.char-ct{text-align:right;font-size:12px;color:var(--text-lt);margin-top:5px}
+.query-disclaimer{display:flex;gap:9px;align-items:flex-start;background:#FFFBF0;border:1px solid #FFD580;border-radius:8px;padding:10px 13px;margin-top:10px;font-size:11.5px;color:#7A5800;line-height:1.6}
+.qdl-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.query-disclaimer strong{color:#5A3F00}
+.ex-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+
+/* Pricing CTA on Step 5 */
+.pricing-cta-wrap{margin-top:4px}
+.pricing-cta-title{text-align:center;font-size:17px;font-weight:800;color:var(--gr-800);margin-bottom:4px}
+.pricing-cta-sub{text-align:center;font-size:13px;color:var(--text-lt);margin-bottom:18px}
+.pricing-cards-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+@media(max-width:520px){.pricing-cards-row{grid-template-columns:1fr}}
+.pr-card{border:2px solid var(--border);border-radius:12px;padding:20px;position:relative;background:#fff;transition:.2s}
+.pr-card.featured{border-color:var(--sf-500);background:linear-gradient(160deg,#FFFAF5 0%,#FFF4E6 100%)}
+.pr-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--sf-500);color:#fff;font-size:10px;font-weight:800;padding:3px 12px;border-radius:20px;white-space:nowrap;letter-spacing:.3px}
+.pr-icon{font-size:30px;margin-bottom:6px;text-align:center}
+.pr-name{font-size:14px;font-weight:700;color:var(--gr-800);text-align:center;margin-bottom:2px}
+.pr-price{font-size:32px;font-weight:900;color:var(--sf-600);text-align:center;line-height:1}
+.pr-price sup{font-size:16px;vertical-align:top;margin-top:6px;display:inline-block}
+.pr-price-note{text-align:center;font-size:11px;color:var(--text-lt);margin-bottom:12px}
+.pr-features{list-style:none;margin-bottom:16px}
+.pr-features li{font-size:12px;color:var(--text);padding:3px 0;padding-left:18px;position:relative;line-height:1.5}
+.pr-features li::before{content:'✓';position:absolute;left:0;color:var(--gr-500);font-weight:700}
+.btn-pr-primary{width:100%;background:var(--sf-500);color:#fff;border:none;padding:12px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-pr-primary:hover{background:var(--sf-600);transform:translateY(-1px)}
+.btn-pr-secondary{width:100%;background:transparent;color:var(--gr-700);border:2px solid var(--gr-500);padding:11px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-pr-secondary:hover{background:var(--gr-50)}
+.ex-chip{background:var(--sf-100);border:1px solid var(--sf-300);color:var(--sf-800);padding:5px 13px;
+  border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+.ex-chip:hover{background:var(--sf-200)}
+
+/* step 2 – questions */
+.qblock{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:14px}
+.qtitle{font-size:14px;font-weight:700;color:var(--gr-800);margin-bottom:3px}
+.qtip{font-size:12px;color:var(--gr-600);margin-bottom:12px;padding-left:18px;position:relative;line-height:1.5}
+.qtip::before{content:'💡';position:absolute;left:0}
+.qopts{display:flex;flex-direction:column;gap:7px}
+.qopt{display:flex;align-items:center;gap:9px;padding:9px 13px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:.15s}
+.qopt:hover{border-color:var(--gr-400);background:var(--gr-50)}
+.qopt.sel{border-color:var(--gr-500);background:var(--gr-50)}
+.qopt input{accent-color:var(--gr-500);width:15px;height:15px;flex-shrink:0}
+.qopt label{font-size:13px;cursor:pointer;flex:1}
+.qsel{width:100%;padding:9px 13px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;
+  font-family:var(--font);color:var(--text);background:#fff;appearance:none;transition:.2s;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23138808' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center}
+.qsel:focus{outline:none;border-color:var(--gr-500)}
+
+/* step 3 – law cards */
+.law-card{border:2px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:12px;display:flex;gap:14px;cursor:pointer;transition:.2s}
+.law-card.sel{border-color:var(--gr-500);background:var(--gr-50)}
+.lc-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:.2s;font-size:12px;color:#fff}
+.law-card.sel .lc-check{background:var(--gr-500);border-color:var(--gr-500)}
+.lc-body{flex:1}
+.lc-name{font-size:15px;font-weight:700;color:var(--gr-800);margin-bottom:3px}
+.lc-act{font-size:11px;color:var(--text-lt);margin-bottom:9px}
+.conf-row{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.conf-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.conf-fill{height:100%;border-radius:3px;transition:width .6s}
+.conf-pct{font-size:11px;font-weight:700;color:var(--gr-700);min-width:32px;text-align:right}
+.lc-tip{font-size:12px;color:var(--text-lt);line-height:1.6;border-left:3px solid var(--sf-300);padding-left:10px}
+.urg{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;text-transform:uppercase;margin-left:7px}
+.urg-h{background:#FDECEA;color:#C0392B}.urg-m{background:#FFF3E0;color:#E07000}.urg-l{background:var(--gr-50);color:var(--gr-700)}
+
+/* step 4 – evidence */
+.ev-block{margin-bottom:22px}
+.ev-title{font-size:14px;font-weight:700;color:var(--gr-800);padding-bottom:8px;border-bottom:2px solid var(--sf-200);margin-bottom:10px}
+.ev-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px dashed var(--border)}
+.ev-row:last-child{border:none}
+.ev-crit{font-size:10px;font-weight:700;color:#C0392B;background:#FDECEA;padding:2px 6px;border-radius:4px;flex-shrink:0}
+.ev-opt{font-size:10px;font-weight:700;color:var(--text-lt);background:var(--bg);padding:2px 6px;border-radius:4px;flex-shrink:0}
+.ev-name{font-size:13px;flex:1}
+.ev-btn-wrap{position:relative;overflow:hidden;display:inline-block}
+.ev-btn-wrap input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.btn-ev{background:var(--sf-100);color:var(--sf-800);border:1px solid var(--sf-300);padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;pointer-events:none}
+.ev-done{color:var(--gr-500);font-size:15px}
+.ev-banner{background:var(--sf-100);border:1px solid var(--sf-200);border-radius:var(--r);padding:12px 16px;margin-bottom:18px;font-size:13px;color:var(--sf-800)}
+
+/* step 5 – create user ID */
+.uid-hero{text-align:center;padding:8px 0 20px}
+.uid-icon{font-size:52px;display:block;margin-bottom:12px}
+.uid-hero h3{font-size:19px;font-weight:800;color:var(--gr-800);margin-bottom:6px}
+.uid-hero p{font-size:13px;color:var(--text-lt);max-width:380px;margin:0 auto}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.form-row.single{grid-template-columns:1fr}
+.fgroup{display:flex;flex-direction:column;gap:5px}
+.fgroup label{font-size:12px;font-weight:700;color:var(--gr-800)}
+.finput{border:2px solid var(--border);border-radius:8px;padding:10px 13px;font-size:14px;font-family:var(--font);transition:.2s}
+.finput:focus{outline:none;border-color:var(--gr-500)}
+.phone-wrap{display:flex;gap:8px}
+.phone-pre{background:var(--bg);border:2px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;font-weight:700;color:var(--gr-700);white-space:nowrap}
+/* OTP */
+.otp-row{display:flex;gap:8px;justify-content:center;margin:18px 0}
+.otp-f{width:48px;height:54px;border:2px solid var(--border);border-radius:8px;text-align:center;font-size:22px;font-weight:700;font-family:var(--font);transition:.2s}
+.otp-f:focus{outline:none;border-color:var(--sf-500);box-shadow:0 0 0 3px rgba(255,153,51,.1)}
+.otp-msg{text-align:center;background:var(--gr-50);border-radius:8px;padding:10px;font-size:13px;color:var(--gr-700);margin-bottom:10px}
+.resend{text-align:center;font-size:12px;color:var(--text-lt);margin-top:7px}
+.resend a{color:var(--gr-600);font-weight:600;cursor:pointer}
+
+/* wizard footer buttons */
+.btn-back{background:transparent;color:var(--text-lt);border:1.5px solid var(--border);padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;transition:.2s;cursor:pointer;font-family:var(--font)}
+.btn-back:hover{border-color:var(--gr-400);color:var(--gr-700)}
+.btn-next{background:var(--sf-500);color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;transition:.2s;display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:var(--font)}
+.btn-next:hover{background:var(--sf-600);transform:translateY(-1px)}
+.btn-next:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-sf{background:var(--sf-500);color:#fff;border:none;padding:11px 26px;border-radius:8px;font-size:15px;font-weight:700;transition:.2s;display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:var(--font)}
+.btn-sf:hover{background:var(--sf-600)}
+
+/* ═══════════════════════════════════════════════════════════
+   REPORT MODAL
+═══════════════════════════════════════════════════════════ */
+.rpt-ov{position:fixed;inset:0;z-index:3000;background:rgba(6,34,6,.9);backdrop-filter:blur(5px);display:none;overflow-y:auto;padding:20px}
+.rpt-ov.open{display:block}
+.rpt-box{max-width:800px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.3)}
+.rpt-head{background:linear-gradient(135deg,var(--gr-800),var(--gr-700));padding:26px 34px}
+.rpt-head h1{color:#fff;font-size:22px;font-weight:900;margin-bottom:4px}
+.rpt-head p{color:rgba(255,255,255,.6);font-size:13px}
+.rpt-acts{display:flex;gap:9px;margin-top:18px;flex-wrap:wrap}
+.btn-rpt{padding:8px 18px;border-radius:7px;font-size:12px;font-weight:700;border:none;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.btn-rpt.print{background:var(--sf-500);color:#fff}.btn-rpt.print:hover{background:var(--sf-600)}
+.btn-rpt.close-r{background:rgba(255,255,255,.15);color:#fff}.btn-rpt.close-r:hover{background:rgba(255,255,255,.25)}
+.rpt-body{padding:28px 34px}
+.rs{margin-bottom:28px}
+.rs-title{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--gr-600);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.rs-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.case-box{background:var(--bg);border-radius:var(--r);padding:16px 18px;font-size:13px;line-height:1.75;border-left:4px solid var(--sf-500)}
+.win-card{border-radius:var(--r);padding:22px;text-align:center}
+.win-card.strong{background:linear-gradient(135deg,var(--gr-50),#fff);border:2px solid var(--gr-200)}
+.win-card.moderate{background:linear-gradient(135deg,var(--sf-100),#fff);border:2px solid var(--sf-200)}
+.win-card.weak{background:linear-gradient(135deg,#FFF5F5,#fff);border:2px solid #FFCDD2}
+.win-level{font-size:30px;font-weight:900;margin-bottom:3px}
+.win-level.strong{color:var(--gr-600)}.win-level.moderate{color:var(--sf-700)}.win-level.weak{color:#C0392B}
+.win-bar-wrap{height:10px;background:var(--border);border-radius:5px;margin:14px 0 10px;overflow:hidden}
+.win-bar{height:100%;border-radius:5px;transition:width 1s ease}
+.win-factors{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--text-lt)}
+.rpt-law{border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:12px}
+.rpt-law h4{font-size:14px;font-weight:700;color:var(--gr-800);margin-bottom:3px}
+.rpt-law-act{font-size:11px;color:var(--text-lt);margin-bottom:10px}
+.sec-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px}
+.sec-tag{background:var(--gr-50);color:var(--gr-700);border:1px solid var(--gr-100);padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600}
+.rpt-law-tip{font-size:12px;color:var(--text);line-height:1.6;border-left:3px solid var(--gr-300);padding-left:10px}
+.step-list{display:flex;flex-direction:column;gap:11px}
+.step-li{display:flex;gap:13px;align-items:flex-start}
+.step-badge{width:26px;height:26px;border-radius:50%;background:var(--gr-500);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px}
+.step-li.urg .step-badge{background:var(--sf-500)}
+.step-li h5{font-size:13px;font-weight:700;color:var(--gr-800);margin-bottom:2px}
+.step-li p{font-size:12px;color:var(--text-lt);line-height:1.55}
+.lawyer-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.lyr-card{border:1px solid var(--border);border-radius:var(--r);padding:16px;display:flex;gap:12px;transition:.2s}
+.lyr-card:hover{box-shadow:var(--shadow);border-color:var(--gr-200)}
+.lyr-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gr-600),var(--gr-800));display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.lyr-name{font-size:13px;font-weight:700;color:var(--gr-800)}
+.lyr-spec{font-size:11px;color:var(--text-lt);margin-bottom:5px}
+.lyr-meta{display:flex;gap:8px;font-size:11px;color:var(--gr-600)}
+.lyr-btns{display:flex;gap:7px;margin-top:9px}
+.btn-wa{background:#25D366;color:#fff;padding:5px 11px;border-radius:5px;font-size:11px;font-weight:700;border:none;cursor:pointer}
+.btn-call{background:var(--gr-50);color:var(--gr-700);border:1px solid var(--gr-200);padding:5px 11px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer}
+
+/* ═══════════════════════════════════════════════════════════
+   ACTION CHOICE POPUP
+═══════════════════════════════════════════════════════════ */
+.ac-overlay{position:fixed;inset:0;z-index:4000;background:rgba(6,34,6,.85);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+.ac-overlay.open{display:flex}
+.ac-modal{background:#fff;border-radius:18px;max-width:560px;width:100%;padding:32px 28px 28px;box-shadow:0 24px 72px rgba(0,0,0,.35);text-align:center;animation:acIn .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes acIn{from{opacity:0;transform:scale(.88) translateY(18px)}to{opacity:1;transform:none}}
+.ac-check{width:64px;height:64px;background:linear-gradient(135deg,var(--gr-500),var(--gr-700));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px;box-shadow:0 4px 18px rgba(19,136,8,.3)}
+.ac-title{font-size:21px;font-weight:900;color:var(--gr-800);margin-bottom:8px}
+.ac-sub{font-size:13px;color:var(--text-lt);margin-bottom:26px;line-height:1.6}
+.ac-choices{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.ac-choices.single{grid-template-columns:1fr;max-width:320px;margin-left:auto;margin-right:auto}
+.ac-choices.triple{grid-template-columns:1fr 1fr 1fr}
+.ac-choices.quad{grid-template-columns:1fr 1fr}
+.ac-card{border:2px solid var(--border);border-radius:12px;padding:20px 16px;cursor:pointer;transition:.2s;text-align:left;position:relative}
+.ac-card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.1)}
+.ac-card.report{border-color:var(--sf-300)}
+.ac-card.report:hover{border-color:var(--sf-500);background:var(--sf-100)}
+.ac-card.lawyer,.ac-card.consult{border-color:var(--gr-200)}
+.ac-card.lawyer:hover,.ac-card.consult:hover{border-color:var(--gr-500);background:var(--gr-50)}
+.ac-card.campaign{border-color:#c084fc}.ac-card.campaign:hover{border-color:#9333ea;background:#faf5ff}
+.ac-card.subscription{border-color:#67e8f9}.ac-card.subscription:hover{border-color:#0891b2;background:#ecfeff}
+.ac-card.custom{border-color:#fbbf24}.ac-card.custom:hover{border-color:#d97706;background:#fffbeb}
+.ac-card.featured{border-width:2.5px;border-color:var(--sf-500);background:linear-gradient(135deg,var(--sf-50),#fff);box-shadow:0 4px 16px rgba(255,153,51,.18)}
+.ac-card.featured::after{content:'⭐ RECOMMENDED';position:absolute;top:-1px;right:12px;font-size:9px;font-weight:800;color:#fff;background:var(--sf-500);padding:2px 8px;border-radius:0 0 6px 6px;letter-spacing:.8px}
+.ac-badge{display:inline-block;font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px;background:linear-gradient(90deg,#ef4444,#f97316);color:#fff;margin-bottom:8px;letter-spacing:.4px}
+.ac-card-icon{font-size:30px;margin-bottom:8px}
+.ac-card-name{font-size:14px;font-weight:800;color:var(--gr-800);margin-bottom:3px}
+.ac-card-price{font-size:22px;font-weight:900;color:var(--sf-600);margin-bottom:5px}
+.ac-card-price s{font-size:14px;color:var(--text-lt);font-weight:400;margin-right:4px}
+.ac-card-note{font-size:11px;color:var(--text-lt);margin-bottom:10px}
+.ac-card-features{list-style:none;padding:0;font-size:11px;color:var(--gr-700)}
+.ac-card-features li{padding:2px 0}
+.ac-card-features li::before{content:'✓ ';font-weight:700}
+.ac-discount-tag{display:inline-flex;align-items:center;gap:5px;background:#FFF3CD;border:1px solid #FFEAA7;color:#856404;font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;margin-top:6px}
+.ac-secure{font-size:11px;color:var(--text-lt)}
+
+/* ═══════════════════════════════════════════════════════════
+   AUTH MODAL — Login / Sign Up
+═══════════════════════════════════════════════════════════ */
+.auth-overlay{position:fixed;inset:0;z-index:5000;background:rgba(6,34,6,.88);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
+.auth-overlay.open{display:flex}
+.auth-modal{background:#fff;border-radius:20px;max-width:460px;width:100%;padding:32px 28px 28px;box-shadow:0 28px 80px rgba(0,0,0,.4);animation:acIn .3s cubic-bezier(.34,1.56,.64,1)}
+.auth-plan-banner{background:linear-gradient(135deg,var(--sf-100),var(--gr-50));border:1.5px solid var(--sf-300);border-radius:12px;padding:12px 16px;margin-bottom:22px;display:flex;align-items:center;gap:10px}
+.auth-plan-icon{font-size:24px}
+.auth-plan-info{flex:1}
+.auth-plan-name{font-size:13px;font-weight:800;color:var(--gr-800)}
+.auth-plan-price{font-size:18px;font-weight:900;color:var(--sf-600)}
+.auth-plan-note{font-size:11px;color:var(--text-lt)}
+.auth-tabs{display:flex;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:22px;gap:4px}
+.auth-tab{flex:1;padding:9px;border:none;background:none;border-radius:8px;font-size:13px;font-weight:700;color:var(--text-lt);cursor:pointer;transition:.15s}
+.auth-tab.active{background:#fff;color:var(--gr-800);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.auth-form{display:none}
+.auth-form.active{display:block}
+.auth-form-group{margin-bottom:14px}
+.auth-form-group label{display:block;font-size:12px;font-weight:700;color:var(--gr-700);margin-bottom:5px}
+.auth-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;outline:none;transition:.15s;font-family:inherit}
+.auth-input:focus{border-color:var(--gr-500);box-shadow:0 0 0 3px rgba(19,136,8,.1)}
+.auth-phone-row{display:flex;align-items:center;gap:0;border:1.5px solid var(--border);border-radius:9px;overflow:hidden;transition:.15s}
+.auth-phone-row:focus-within{border-color:var(--gr-500);box-shadow:0 0 0 3px rgba(19,136,8,.1)}
+.auth-phone-pre{padding:10px 12px;background:var(--bg);border-right:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text-lt);white-space:nowrap}
+.auth-phone-row input{flex:1;padding:11px 14px;border:none;outline:none;font-size:13px;font-family:inherit;background:transparent}
+.auth-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--gr-500),var(--gr-700));color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;margin-top:6px;transition:.2s;letter-spacing:.2px}
+.auth-btn:hover{background:linear-gradient(135deg,var(--gr-600),var(--gr-800));transform:translateY(-1px)}
+.auth-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.auth-btn.secondary{background:var(--bg);color:var(--gr-700);border:1.5px solid var(--border)}
+.auth-btn.secondary:hover{background:var(--gr-50);border-color:var(--gr-300)}
+.auth-otp-block{display:none;margin-top:18px}
+.auth-otp-block.visible{display:block}
+.auth-otp-msg{font-size:12px;color:var(--gr-600);font-weight:600;text-align:center;margin-bottom:12px;background:var(--gr-50);border:1px solid var(--gr-200);border-radius:8px;padding:8px 12px}
+.auth-otp-row{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
+.auth-otp-f{width:44px;height:50px;border:1.5px solid var(--border);border-radius:9px;text-align:center;font-size:20px;font-weight:800;color:var(--gr-800);outline:none;transition:.15s}
+.auth-otp-f:focus{border-color:var(--gr-500);box-shadow:0 0 0 3px rgba(19,136,8,.1)}
+.auth-divider{text-align:center;font-size:12px;color:var(--text-lt);margin:14px 0}
+.auth-divider span{padding:0 10px;background:#fff;position:relative;z-index:1}
+.auth-divider::before{content:'';display:block;height:1px;background:var(--border);margin-top:8px;position:relative;top:-8px}
+.auth-secure{text-align:center;font-size:11px;color:var(--text-lt);margin-top:16px}
+.auth-close{position:absolute;top:14px;right:14px;background:rgba(0,0,0,.06);border:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--gr-700);cursor:pointer;line-height:1;z-index:10;transition:.15s}
+.auth-close:hover{background:rgba(0,0,0,.13);color:var(--gr-900)}
+.auth-modal-wrap{position:relative}
+.auth-modal{position:relative}
+
+/* contact capture at doc step */
+.contact-capture{background:linear-gradient(135deg,var(--gr-50),#fff);border:1.5px solid var(--gr-200);border-radius:12px;padding:18px 20px;margin-top:22px}
+.cc-head{font-size:14px;font-weight:800;color:var(--gr-800);margin-bottom:4px}
+.cc-sub{font-size:12px;color:var(--text-lt);margin-bottom:14px;line-height:1.5}
+.cc-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.cc-fields{grid-template-columns:1fr}.ac-choices{grid-template-columns:1fr}}
+
+/* ═══════════════════════════════════════════════════════════
+   CHATBOT WIDGET
+═══════════════════════════════════════════════════════════ */
+.chat-fab{position:fixed;bottom:24px;right:24px;z-index:1000;background:var(--gr-700);color:#fff;
+  border:none;width:58px;height:58px;border-radius:50%;font-size:24px;box-shadow:0 4px 20px rgba(0,0,0,.25);
+  transition:.3s;display:flex;align-items:center;justify-content:center}
+.chat-fab:hover{background:var(--gr-600);transform:scale(1.05)}
+.chat-fab .fab-label{position:absolute;bottom:64px;right:0;background:var(--gr-800);color:#fff;
+  font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;white-space:nowrap;
+  opacity:0;transform:translateY(5px);transition:.2s;pointer-events:none}
+.chat-fab:hover .fab-label{opacity:1;transform:translateY(0)}
+.chat-panel{position:fixed;bottom:92px;right:24px;z-index:1001;width:340px;
+  background:#fff;border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,.2);
+  border:1px solid var(--border);overflow:hidden;display:none;flex-direction:column}
+.chat-panel.open{display:flex;animation:chatIn .3s ease}
+@keyframes chatIn{from{opacity:0;transform:translateY(20px) scale(.95)}to{opacity:1;transform:none}}
+.chat-head{background:var(--gr-800);padding:14px 18px;display:flex;align-items:center;gap:10px;color:#fff}
+.chat-head .ch-icon{width:36px;height:36px;border-radius:50%;background:var(--sf-500);display:flex;align-items:center;justify-content:center;font-size:16px}
+.chat-head h4{font-size:14px;font-weight:700;color:#fff}
+.chat-head p{font-size:11px;color:rgba(255,255,255,.6)}
+.chat-close{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.6);font-size:18px;cursor:pointer;padding:2px}
+.chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;max-height:320px;min-height:200px}
+.chat-msg{max-width:85%;padding:9px 13px;border-radius:10px;font-size:13px;line-height:1.55}
+.chat-msg.bot{background:var(--bg);color:var(--text);align-self:flex-start;border-bottom-left-radius:2px}
+.chat-msg.user{background:var(--gr-700);color:#fff;align-self:flex-end;border-bottom-right-radius:2px}
+.chat-msg strong{display:block;font-size:12px;font-weight:700;margin-bottom:4px;color:var(--gr-700)}
+.chat-msg.user strong{color:rgba(255,255,255,.7)}
+.chat-quick{padding:10px 14px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:6px}
+.cq-btn{background:var(--sf-100);color:var(--sf-800);border:1px solid var(--sf-200);padding:4px 10px;
+  border-radius:12px;font-size:11px;font-weight:600;cursor:pointer;transition:.15s}
+.cq-btn:hover{background:var(--sf-200)}
+.chat-input-row{display:flex;gap:7px;padding:10px 14px;border-top:1px solid var(--border)}
+.chat-input{flex:1;border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:13px;font-family:var(--font)}
+.chat-input:focus{outline:none;border-color:var(--gr-500)}
+.chat-send{background:var(--gr-500);color:#fff;border:none;width:34px;height:34px;border-radius:8px;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s}
+.chat-send:hover{background:var(--gr-600)}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  .hamburger{display:flex}.nav-links,.nav-actions{display:none}
+  .steps-row{grid-template-columns:repeat(2,1fr)}.steps-row::before{display:none}
+  .feat-grid{grid-template-columns:1fr}.law-cat-grid{grid-template-columns:repeat(2,1fr)}
+  .testi-grid{grid-template-columns:1fr}.lawyer-grid{grid-template-columns:1fr}
+  .wiz-body,.wiz-foot-bar{padding:18px 16px}.rpt-body,.rpt-head{padding:20px 18px}
+  .form-row{grid-template-columns:1fr}.chat-panel{right:12px;width:calc(100vw - 24px)}
+  .step-c:nth-child(5){grid-column:span 2}
+  .wiz-tabs-row{overflow-x:auto}.wtab{min-width:60px;font-size:10px;padding:10px 4px 8px}
+  .wtab .wt-num{font-size:16px}
+  .hqc-body{padding:14px 16px 12px}
+  .ex-chips{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .steps-row{grid-template-columns:1fr}.step-c:nth-child(5){grid-column:span 1}
+  .law-cat-grid{grid-template-columns:1fr}.otp-f{width:42px;height:50px;font-size:20px}
+  .hero{padding:32px 16px 40px}
+}
+@media print{
+  .nav,.hero,.sec,.sec-alt,.sec-green,.cta-sec,footer,.chat-fab,.chat-panel,
+  .rpt-acts,.btn-rpt.close-r{display:none!important}
+  .rpt-ov{position:static;display:block!important;padding:0;background:none}
+  .rpt-box{box-shadow:none;border-radius:0}
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ENHANCED WIZARD — Responsive · Accessible · Assessment
+═══════════════════════════════════════════════════════════ */
+
+/* Focus-visible for accessibility */
+*:focus-visible{outline:3px solid var(--sf-500);outline-offset:2px;border-radius:4px}
+button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-offset:2px}
+
+/* Step 2 — Question sections + progress */
+.q-progress-bar{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.q-prog-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.q-prog-fill{height:100%;border-radius:3px;background:var(--sf-500);transition:width .4s ease}
+.q-section-head{display:flex;align-items:center;gap:9px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--sf-700);margin:18px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--sf-100)}
+.q-section-head::after{content:'';flex:1;height:0}
+
+/* Step 4 — Assessment */
+.assess-block{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:16px}
+.assess-law-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:15px;font-weight:700;color:var(--gr-800)}
+.assess-law-icon{width:34px;height:34px;border-radius:9px;background:var(--gr-100);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.assess-q{margin-bottom:14px}
+.assess-q-text{font-size:13px;font-weight:600;color:var(--gr-800);margin-bottom:8px;line-height:1.5}
+.assess-opts{display:flex;gap:7px;flex-wrap:wrap}
+.assess-opt{padding:6px 14px;border:1.5px solid var(--border);border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;background:#fff;color:var(--text);font-family:var(--font)}
+.assess-opt:hover{border-color:var(--gr-400);background:var(--gr-50);color:var(--gr-700)}
+.assess-opt.sel{border-color:var(--gr-500);background:var(--gr-50);color:var(--gr-700)}
+.assess-opt.sel-yes{border-color:var(--gr-500);background:var(--gr-100);color:var(--gr-800)}
+.assess-opt.sel-no{border-color:#E57373;background:#FFEBEE;color:#C62828}
+.assess-strength{margin-top:16px;padding:14px 18px;border-radius:var(--r);background:linear-gradient(135deg,var(--sf-100),#fff);border:1px solid var(--sf-200);display:flex;align-items:center;gap:14px}
+.str-icon{font-size:24px;flex-shrink:0}
+.str-label{font-size:11px;color:var(--text-lt);margin-bottom:3px}
+.str-val{font-size:16px;font-weight:800;color:var(--sf-700)}
+
+/* Step 5 — Document Checklist */
+.doc-progress-bar{background:var(--gr-800);border-radius:var(--r);padding:12px 18px;display:flex;align-items:center;gap:12px;margin-bottom:16px;color:#fff}
+.doc-prog-track{flex:1;height:8px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden}
+.doc-prog-fill{height:100%;background:var(--gr-300);border-radius:4px;transition:width .3s ease}
+.doc-prog-label{font-size:12px;font-weight:700;min-width:70px;text-align:right;white-space:nowrap}
+.doc-check-row{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:start;padding:13px 0;border-bottom:1px solid var(--border)}
+.doc-check-row:last-child{border:none}
+.doc-checkbox{width:20px;height:20px;cursor:pointer;accent-color:var(--gr-500);margin-top:3px;flex-shrink:0}
+.doc-name{font-size:13px;font-weight:600;color:var(--gr-800);margin-bottom:3px;line-height:1.4}
+.doc-why{font-size:11.5px;color:var(--text-lt);line-height:1.4;margin-bottom:5px}
+.doc-check-label{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11.5px;color:var(--gr-600);font-weight:600;margin-top:2px}
+.doc-upload-area{display:none;flex-direction:column;align-items:flex-end;gap:4px;min-width:100px}
+.doc-upload-area.shown{display:flex}
+.doc-upload-wrap{position:relative;overflow:hidden;display:inline-block}
+.btn-doc-upload{background:var(--sf-100);color:var(--sf-800);border:1px solid var(--sf-300);padding:6px 13px;border-radius:6px;font-size:11px;font-weight:700;pointer-events:none;font-family:var(--font);white-space:nowrap}
+.btn-doc-upload.done{background:var(--gr-50);color:var(--gr-700);border-color:var(--gr-200)}
+.doc-file-input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+
+/* Responsive wizard improvements */
+@media(max-width:640px){
+  .wiz-body{padding:16px 14px}
+  .wiz-foot-bar{padding:12px 14px;flex-wrap:wrap;gap:8px}
+  .wiz-title{font-size:16px}.wiz-sub{font-size:12px}
+  #btnNext{font-size:12px;padding:9px 14px}
+  .law-card{gap:10px}
+  .assess-opts{gap:5px}.assess-opt{font-size:11px;padding:5px 10px}
+  .doc-check-row{grid-template-columns:24px 1fr;grid-template-rows:auto auto}
+  .doc-upload-area{grid-column:2;margin-top:4px;align-items:flex-start}
+  .q-section-head{font-size:10.5px}
+}
+@media(max-width:400px){
+  .wt-circle{width:24px;height:24px;font-size:11px}.wtab-label{font-size:9px}.wtab{padding:10px 2px 8px}
+  .assess-opt{font-size:10.5px;padding:4px 9px}
+}
+</style>
+</head>
+<body>
+
+<!-- Tricolor bar -->
+<div class="tribar"></div>
+
+<!-- ── NAVBAR ──────────────────────────────────────────── -->
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand"><img src="assets/logo.svg" alt="SatLegal – Legalities Simplified"></a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="legal-topics.html">Legal Topics</a>
+      <a href="laws-reference.html">Laws Library</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="about.html">About Us</a>
+    </div>
+    <div class="nav-actions">
+      <a href="auth/admin-login.html" class="btn-nav-admin" title="Admin Console">⚙️ Admin</a>
+      <button class="btn-nav-login" onclick="scrollToWizard()">Login</button>
+      <button class="btn-nav-signup" onclick="scrollToWizard()">⚡ Sign Up Free</button>
+    </div>
+    <button class="hamburger" onclick="toggleMob()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mob-menu" id="mobMenu">
+    <a href="index.html">🏠 Home</a>
+    <a href="legal-topics.html">📋 Legal Topics</a>
+    <a href="laws-reference.html">📚 Laws Library</a>
+    <a href="pricing.html">💰 Pricing</a>
+    <a href="about.html">ℹ️ About Us</a>
+    <a href="#" onclick="scrollToWizard();toggleMob();return false" class="mob-btn-signup">⚡ Sign Up Free — Analyze My Case</a>
+  </div>
+</nav>
+
+<!-- ── HERO (Indian Tricolor: Saffron → White → Green) ──── -->
+<section class="hero" id="heroSection">
+  <div class="hero-inner">
+
+    <!-- LEFT: headline + stats -->
+    <div class="hero-left">
+      <div class="hero-tag-pill">🇮🇳 India's AI Legal Assistant</div>
+      <h1>Know Your Rights.<em>Before You Pay a Lawyer.</em></h1>
+      <p class="hero-sub">Describe your legal problem in Hindi, English, or Hinglish. Our AI maps it to the right Indian laws and gives you a complete action plan — in minutes.</p>
+      <div class="hero-stats">
+        <div class="h-stat"><strong>50+</strong><span>Indian Laws</span></div>
+        <div class="h-stat"><strong>BNS</strong><span>&amp; BNSS 2023</span></div>
+        <div class="h-stat"><strong>6-Step</strong><span>Guided Flow</span></div>
+        <div class="h-stat"><strong>AI</strong><span>Win Score</span></div>
+      </div>
+      <div class="hero-trust-row">
+        <span class="hero-trust-badge">🔒 100% Confidential</span>
+        <span class="hero-trust-badge">⚡ Instant Analysis</span>
+        <span class="hero-trust-badge">🧑‍⚖️ Verified Lawyers</span>
+      </div>
+      <p class="hero-note">Trusted by 10,000+ Indians to understand their rights before spending on legal fees</p>
+    </div>
+
+    <!-- RIGHT: inline query card -->
+    <div class="hero-query-card" id="heroQueryCard">
+      <div class="hqc-head">
+        <span class="hqc-head-icon">⚖️</span>
+        <div>
+          <div class="hqc-head-title">Describe Your Legal Problem</div>
+          <div class="hqc-head-sub">Hindi · English · Hinglish — all work</div>
+        </div>
+      </div>
+      <div class="hqc-body">
+        <div class="query-ta-wrap">
+          <textarea class="issue-ta" id="heroTa"
+            placeholder="E.g. My employer fired me without notice and is refusing to pay my 3 months salary and PF. I worked there for 5 years..."
+            oninput="heroTaInput(this)" maxlength="2000" rows="6"></textarea>
+          <span class="ta-char-badge" id="heroCC">0/2000</span>
+        </div>
+        <div class="ex-chips-label">Try an example →</div>
+        <div class="ex-chips">
+          <button class="ex-chip" onclick="heroFillEx('My landlord changed the locks and is refusing to return my ₹50,000 security deposit. I have a registered rent agreement.')"><span class="ex-chip-icon">🏠</span>Landlord dispute</button>
+          <button class="ex-chip" onclick="heroFillEx('I was terminated from my job without notice. Company is not paying PF, gratuity or full and final settlement.')"><span class="ex-chip-icon">💼</span>Job termination</button>
+          <button class="ex-chip" onclick="heroFillEx('Someone transferred ₹45,000 from my bank account via UPI fraud. I got a fake OTP call.')"><span class="ex-chip-icon">💻</span>UPI fraud</button>
+          <button class="ex-chip" onclick="heroFillEx('I met with a car accident. The other driver was drunk. Insurance company is refusing to pay compensation.')"><span class="ex-chip-icon">🚗</span>Car accident</button>
+          <button class="ex-chip" onclick="heroFillEx('My builder has not delivered my flat after 3 years and is refusing to refund my ₹18 lakh.')"><span class="ex-chip-icon">🏗️</span>Builder delay</button>
+          <button class="ex-chip" onclick="heroFillEx('My husband is physically abusing me and my children. I want to know my legal options for divorce and protection.')"><span class="ex-chip-icon">⚖️</span>Domestic abuse</button>
+        </div>
+        <!-- Professional Disclaimer — visible inside query card -->
+        <div style="display:flex;align-items:flex-start;gap:10px;background:#FFFBF0;border:1.5px solid #FFD580;border-radius:8px;padding:11px 14px;margin-top:4px;font-size:12px;color:#7A5800;line-height:1.6">
+          <span style="font-size:16px;flex-shrink:0;margin-top:1px">⚠️</span>
+          <span><strong style="color:#5A3F00">Professional Disclaimer:</strong> The Site cannot and does not contain legal advice. The legal information is provided for general informational and educational purposes only and is not a substitute for professional advice. Accordingly, before taking any actions based upon such information, we encourage you to consult with the appropriate legal professionals. We do not provide any kind of legal advice. Use of this platform does not create an attorney-client relationship. All analysis is preliminary and for informational use only. <strong style="color:#5A3F00">SatLegal is not a law firm.</strong></span>
+        </div>
+        <button class="btn-analyze-main" onclick="heroAnalyze()" style="margin-top:14px">
+          🔍 Analyze My Case →
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /hero-inner -->
+
+  <!-- ── INLINE WIZARD CARD (steps 2-5, revealed after Analyze) ── -->
+  <div style="max-width:1100px;margin:0 auto;padding:0 20px">
+    <div class="wiz-card wiz-card-hero-hidden" id="wizCard" style="display:none;margin-top:28px">
+      <!-- Step tabs — v9 colored circles -->
+      <div class="wiz-tabs-row" id="wizTabs" role="tablist" aria-label="Wizard steps">
+        <div class="wtab wt-active" data-step="1" role="tab" aria-selected="true" aria-label="Step 1: Describe Issue"><div class="wt-circle" aria-hidden="true">1</div><span class="wtab-label">Describe</span></div>
+        <div class="wtab" data-step="2" role="tab" aria-selected="false" aria-label="Step 2: Smart Questions"><div class="wt-circle" aria-hidden="true">2</div><span class="wtab-label">Questions</span></div>
+        <div class="wtab" data-step="3" role="tab" aria-selected="false" aria-label="Step 3: Select Laws"><div class="wt-circle" aria-hidden="true">3</div><span class="wtab-label">Laws</span></div>
+        <div class="wtab" data-step="4" role="tab" aria-selected="false" aria-label="Step 4: Case Assessment"><div class="wt-circle" aria-hidden="true">4</div><span class="wtab-label">Assessment</span></div>
+        <div class="wtab" data-step="5" role="tab" aria-selected="false" aria-label="Step 5: Documents"><div class="wt-circle" aria-hidden="true">5</div><span class="wtab-label">Documents</span></div>
+        <div class="wtab" data-step="6" role="tab" aria-selected="false" aria-label="Step 6: Your Report"><div class="wt-circle" aria-hidden="true">6</div><span class="wtab-label">Report</span></div>
+      </div>
+      <div class="wiz-body">
+        <!-- Step 1 -->
+        <div class="wiz-pane active" id="p1">
+          <div class="wiz-title">📝 Describe Your Legal Situation</div>
+          <div class="wiz-sub">Write in plain language — Hindi, English, or Hinglish. More detail = more accurate law mapping.</div>
+          <textarea class="issue-ta" id="issueTa" placeholder="For example: My employer fired me without notice and is refusing to pay my 3 months salary and PF. I worked there for 5 years..." oninput="updCC()" maxlength="2000"></textarea>
+          <div class="char-ct"><span id="cc">0</span>/2000</div>
+          <div class="query-disclaimer">
+            <span class="qdl-icon">⚠️</span>
+            <span><strong>Professional Disclaimer:</strong> The Site cannot and does not contain legal advice. The legal information is provided for general informational and educational purposes only and is not a substitute for professional advice. Accordingly, before taking any actions based upon such information, we encourage you to consult with the appropriate legal professionals by taking a consultation by paying the appropriate fees. We do not provide any kind of legal advice.</span>
+          </div>
+          <div class="ex-chips">
+            <span class="ex-chip" onclick="fillEx('My landlord changed the locks and is refusing to return my security deposit of ₹50,000. I have a registered rent agreement.')">🏠 Landlord dispute</span>
+            <span class="ex-chip" onclick="fillEx('I was terminated from my job without notice. Company is not paying PF, gratuity or full and final settlement.')">💼 Job termination</span>
+            <span class="ex-chip" onclick="fillEx('Someone transferred ₹45,000 from my bank account via UPI fraud. I got a fake OTP call.')">💻 UPI fraud</span>
+            <span class="ex-chip" onclick="fillEx('I met with a car accident. The other driver was drunk. FIR filed but insurance company is refusing to pay compensation.')">🚗 Car accident</span>
+            <span class="ex-chip" onclick="fillEx('My husband gave me triple talaq over WhatsApp 3 days ago. I have a 2 year old child and no income.')">👨‍👩‍👧 Triple talaq</span>
+          </div>
+        </div>
+        <!-- Step 2 -->
+        <div class="wiz-pane" id="p2">
+          <div class="wiz-title">❓ A Few Targeted Questions</div>
+          <div class="wiz-sub" id="p2sub">Based on your description, we have specific questions to sharpen your law recommendations.</div>
+          <div id="qCont"></div>
+        </div>
+        <!-- Step 3 -->
+        <div class="wiz-pane" id="p3" role="tabpanel" aria-labelledby="step3-tab">
+          <div class="wiz-title">⚖️ Laws Applicable to Your Case</div>
+          <div class="wiz-sub">These Indian laws match your situation, ranked by relevance. The top 3 are pre-selected — adjust if needed.</div>
+          <div id="lawCont"></div>
+        </div>
+        <!-- Step 4 — Case Assessment (NEW) -->
+        <div class="wiz-pane" id="p4" role="tabpanel" aria-labelledby="step4-tab">
+          <div class="wiz-title">📋 Case Strength Assessment</div>
+          <div class="wiz-sub">Quick fact-checking questions specific to your selected laws — these directly power your win probability score and action plan.</div>
+          <div id="assessCont" aria-live="polite"></div>
+          <div class="assess-strength" id="assessStrength" style="display:none" aria-live="polite">
+            <div class="str-icon" aria-hidden="true">⚖️</div>
+            <div><div class="str-label">Case Strength Preview</div><div class="str-val" id="assessStrengthVal">—</div></div>
+          </div>
+        </div>
+        <!-- Step 5 — Document Checklist (was Step 4) -->
+        <div class="wiz-pane" id="p5" role="tabpanel" aria-labelledby="step5-tab">
+          <div class="wiz-title">📎 Document Checklist</div>
+          <div class="wiz-sub">Check the documents you have — the upload button appears automatically. Critical documents significantly boost your win score.</div>
+          <div id="evCont" aria-live="polite"></div>
+        </div>
+        <!-- Step 6 – Analysis Preview (was Step 5) -->
+        <div class="wiz-pane" id="p6" role="tabpanel" aria-labelledby="step6-tab">
+          <!-- Analysis summary shown immediately -->
+          <div class="analysis-ready-head">
+            <div style="font-size:38px;margin-bottom:8px">📊</div>
+            <h3>Your Analysis Is Ready</h3>
+            <p>Your preliminary legal analysis has been completed. Sign in or create a free account to access your full report including detailed win probability, action steps, and lawyer matches.</p>
+          </div>
+          <div id="analysisSummaryBox" class="analysis-summary-box">
+            <div style="font-size:12px;font-weight:700;color:var(--text-lt);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📄 Your Analysis Summary</div>
+            <div id="analysisSummaryIssue" class="analysis-issue-text"></div>
+            <div style="font-size:12px;font-weight:700;color:var(--gr-800);margin-bottom:8px">Applicable laws selected: <span id="analysisLawCount">0</span></div>
+            <div id="analysisLawPreviews"></div>
+          </div>
+
+          <!-- Pricing CTA -->
+          <div class="pricing-cta-wrap" id="signinCtaBox">
+            <div class="pricing-cta-title">🎉 Your Analysis Is Ready — Get the Full Report</div>
+            <div class="pricing-cta-sub">Sign up to unlock your complete legal report with action steps, win probability & lawyer match</div>
+            <div class="pricing-cards-row">
+              <div class="pr-card featured">
+                <div class="pr-badge">MOST POPULAR</div>
+                <div class="pr-icon">📄</div>
+                <div class="pr-name">Digital Legal Report</div>
+                <div class="pr-price"><sup>₹</sup>499</div>
+                <div class="pr-price-note">One-time · Instant delivery</div>
+                <ul class="pr-features">
+                  <li>AI-powered law mapping</li>
+                  <li>Win probability score</li>
+                  <li>Complete document checklist</li>
+                  <li>Step-by-step action plan</li>
+                  <li>Limitation period alerts</li>
+                </ul>
+                <button class="btn-pr-primary" onclick="selectPlan('report',499)">Get Report for ₹499 →</button>
+              </div>
+              <div class="pr-card">
+                <div class="pr-icon">🧑‍⚖️</div>
+                <div class="pr-name">Expert Consultation</div>
+                <div class="pr-price"><sup>₹</sup>2500</div>
+                <div class="pr-price-note">Per session · 30 minutes</div>
+                <ul class="pr-features">
+                  <li>Everything in Report</li>
+                  <li>1:1 with verified lawyer</li>
+                  <li>Case-specific strategy</li>
+                  <li>Drafted legal notice</li>
+                  <li>Follow-up Q&amp;A included</li>
+                </ul>
+                <button class="btn-pr-secondary" onclick="selectPlan('consult',2500)">Book Consultation →</button>
+              </div>
+            </div>
+            <div style="text-align:center;font-size:11px;color:var(--text-lt)">🔒 Secured by Razorpay · 100% confidential · GST invoice provided</div>
+          </div>
+
+          <!-- Registration form (hidden until plan selected) -->
+          <div class="reg-form-wrap" id="uid-register">
+            <div style="font-size:13px;font-weight:700;color:var(--gr-800);margin-bottom:4px;padding-top:16px;border-top:1px solid var(--border)">Create Your Account</div>
+            <div id="selectedPlanBadge" style="display:inline-flex;align-items:center;gap:6px;background:var(--sf-100);border:1px solid var(--sf-300);color:var(--sf-800);font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:14px"></div>
+            <div class="form-row">
+              <div class="fgroup"><label>Full Name *</label><input class="finput" id="uid-name" placeholder="Your full name" type="text"/></div>
+              <div class="fgroup"><label>Email Address *</label><input class="finput" id="uid-email" placeholder="you@email.com" type="email"/></div>
+            </div>
+            <div class="form-row single" style="margin-top:12px">
+              <div class="fgroup">
+                <label>Mobile Number *</label>
+                <div class="phone-wrap">
+                  <div class="phone-pre">🇮🇳 +91</div>
+                  <input class="finput" id="uid-phone" type="tel" maxlength="10" placeholder="98765 43210" style="flex:1" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)"/>
+                </div>
+              </div>
+            </div>
+            <button class="btn-sf" style="width:100%;margin-top:16px;justify-content:center" id="sendOtpBtn" onclick="sendOtp()">📲 Send OTP to Verify</button>
+          </div>
+          <div id="uid-otp" style="display:none">
+            <div class="otp-msg" id="otpMsg">✅ OTP sent to +91 XXXXXXXXXX</div>
+            <p style="text-align:center;font-size:13px;font-weight:600;color:var(--gr-800);margin-bottom:4px">Enter 6-Digit OTP</p>
+            <div class="otp-row" id="otpRow">
+              <input class="otp-f" maxlength="1" type="text" inputmode="numeric" onkeyup="otpNav(this,0)"/>
+              <input class="otp-f" maxlength="1" type="text" inputmode="numeric" onkeyup="otpNav(this,1)"/>
+              <input class="otp-f" maxlength="1" type="text" inputmode="numeric" onkeyup="otpNav(this,2)"/>
+              <input class="otp-f" maxlength="1" type="text" inputmode="numeric" onkeyup="otpNav(this,3)"/>
+              <input class="otp-f" maxlength="1" type="text" inputmode="numeric" onkeyup="otpNav(this,4)"/>
+              <input class="otp-f" maxlength="1" type="text" inputmode="numeric" onkeyup="otpNav(this,5)"/>
+            </div>
+            <button class="btn-sf" style="width:100%;justify-content:center" id="verifyOtpBtn" onclick="verifyOtp()">✅ Verify &amp; Proceed to Payment</button>
+            <div class="resend">Didn't receive? <a onclick="resendOtp()">Resend OTP</a></div>
+          </div>
+        </div>
+      </div><!-- /wiz-body -->
+      <div class="wiz-foot-bar" id="wizFoot">
+        <div class="wiz-free-note">🔒 Free &amp; confidential</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="btn-back" id="btnBack" onclick="wizBack()" style="visibility:hidden" aria-label="Go to previous step">← Back</button>
+          <span id="stepCtr" style="font-size:11px;color:var(--text-lt)" aria-live="polite" aria-atomic="true">Step 1 of 6</span>
+          <button class="btn-next" id="btnNext" onclick="wizNext()" aria-label="Proceed to next step">Next: Answer Smart Questions →</button>
+        </div>
+      </div>
+    </div><!-- /wiz-card -->
+
+    <div class="hero-note">🔒 Private · Works offline · No data shared without your consent</div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ────────────────────────────────────── -->
+<section class="sec sec-alt">
+  <div class="wrap">
+    <p class="sec-label">5-Step Process</p>
+    <h2 class="sec-title">How SatLegal Works</h2>
+    <p class="sec-sub">From describing your problem to a complete legal roadmap — in under 3 minutes, completely free.</p>
+    <div class="steps-row">
+      <div class="step-c"><div class="step-num">1</div><h4>Describe Issue</h4><p>Write your problem in plain language — Hindi or English</p></div>
+      <div class="step-c"><div class="step-num">2</div><h4>Smart Questions</h4><p>We auto-detect your case and ask specific targeted questions</p></div>
+      <div class="step-c"><div class="step-num">3</div><h4>Law Mapping</h4><p>Get ranked list of applicable Indian laws with sections</p></div>
+      <div class="step-c"><div class="step-num">4</div><h4>Add Evidence</h4><p>Upload documents to strengthen your win probability</p></div>
+      <div class="step-c"><div class="step-num">5</div><h4>Full Report</h4><p>Win probability, action steps, and lawyer match — after sign-up</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ────────────────────────────────────────── -->
+<section class="sec">
+  <div class="wrap">
+    <p class="sec-label">Why Choose SatLegal</p>
+    <h2 class="sec-title">Built for India's Legal System</h2>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="feat-icon" style="background:var(--sf-100)">🇮🇳</div><h3>India-First Law Database</h3><p>37+ laws including BNS, POCSO, Muslim Personal Law, RERA, NDPS, IBC, and more — mapped to real Indian courts and sections.</p></div>
+      <div class="feat-card"><div class="feat-icon" style="background:var(--gr-50)">🤖</div><h3>Auto-Detection — No Guessing</h3><p>You never need to pick your law category. Our engine reads your description and maps it automatically — in Hindi, English, or Hinglish.</p></div>
+      <div class="feat-card"><div class="feat-icon" style="background:var(--sf-100)">📊</div><h3>Win Probability Score</h3><p>Based on your facts, evidence quality, and law match strength — get an honest assessment before spending on lawyers.</p></div>
+      <div class="feat-card"><div class="feat-icon" style="background:var(--gr-50)">📋</div><h3>Step-by-Step Action Plan</h3><p>Know exactly what to do next: file FIR, send legal notice, which court to approach, what documents to gather.</p></div>
+      <div class="feat-card"><div class="feat-icon" style="background:var(--sf-100)">🔒</div><h3>Private by Design</h3><p>Law analysis runs in your browser. Your data is only saved when you create a user ID to unlock the full report.</p></div>
+      <div class="feat-card"><div class="feat-icon" style="background:var(--gr-50)">⚖️</div><h3>Verified Lawyer Connect</h3><p>Get matched to verified Indian lawyers by specialization and city — with direct WhatsApp and call access.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── LAW CATEGORIES ──────────────────────────────────── -->
+<section class="sec-green">
+  <div class="wrap">
+    <p class="sec-label green">Laws Covered</p>
+    <h2 class="sec-title white">37+ Indian Laws Mapped</h2>
+    <p class="sec-sub white">Comprehensive coverage of the laws that matter most to ordinary Indians — from family disputes to cyber fraud.</p>
+    <div class="law-cat-grid">
+      <div class="law-cat" onclick="openWizard()"><span class="icon">👨‍👩‍👧</span><h4>Family & Marriage</h4><p>Divorce, maintenance, custody, DV, dowry</p><div class="law-pills"><span class="law-pill">HMA</span><span class="law-pill">DV Act</span><span class="law-pill">Muslim PL</span></div></div>
+      <div class="law-cat" onclick="openWizard()"><span class="icon">🏠</span><h4>Property & Land</h4><p>Disputes, RERA, tenant rights, partition</p><div class="law-pills"><span class="law-pill">RERA</span><span class="law-pill">TPA</span><span class="law-pill">RFCTLARR</span></div></div>
+      <div class="law-cat" onclick="openWizard()"><span class="icon">💼</span><h4>Employment</h4><p>Wrongful termination, unpaid dues, POSH</p><div class="law-pills"><span class="law-pill">ID Act</span><span class="law-pill">POSH</span><span class="law-pill">EPF</span></div></div>
+      <div class="law-cat" onclick="openWizard()"><span class="icon">🚔</span><h4>Criminal / Police</h4><p>FIR, bail, POCSO, drug offences, fraud</p><div class="law-pills"><span class="law-pill">BNS</span><span class="law-pill">POCSO</span><span class="law-pill">NDPS</span></div></div>
+      <div class="law-cat" onclick="openWizard()"><span class="icon">💻</span><h4>Cyber & Online</h4><p>UPI fraud, hacking, identity theft</p><div class="law-pills"><span class="law-pill">IT Act</span><span class="law-pill">BNS 318</span></div></div>
+      <div class="law-cat" onclick="openWizard()"><span class="icon">🛒</span><h4>Consumer Rights</h4><p>Defective products, hospital negligence</p><div class="law-pills"><span class="law-pill">CPA 2019</span></div></div>
+      <div class="law-cat" onclick="openWizard()"><span class="icon">📜</span><h4>Succession & Wills</h4><p>Inheritance, property after death</p><div class="law-pills"><span class="law-pill">HSA</span><span class="law-pill">ISA</span></div></div>
+      <div class="law-cat" onclick="openWizard()"><span class="icon">⚖️</span><h4>Civil & RTI</h4><p>Contract disputes, money recovery, RTI</p><div class="law-pills"><span class="law-pill">CPC</span><span class="law-pill">RTI Act</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ────────────────────────────────────── -->
+<section class="sec sec-alt">
+  <div class="wrap">
+    <p class="sec-label">Real Stories</p>
+    <h2 class="sec-title">People Who Got Clarity</h2>
+    <div class="testi-grid">
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"I described my property dispute in Hindi and within 2 minutes got the exact sections of Transfer of Property Act I needed. My lawyer was impressed I came prepared."</p><div class="testi-name">Rajesh Kumar</div><div class="testi-city">Property Dispute · Lucknow</div><span class="testi-tag">Property Law</span></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Mujhe triple talaq ki samasya thi. SatLegal ne Muslim Women Protection Act aur FIR ki poori jankari de di. Report mein sab clear tha — kya karna hai step by step."</p><div class="testi-name">Nasreen Begum</div><div class="testi-city">Talaq Dispute · Hyderabad</div><span class="testi-tag">Muslim Personal Law</span></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Scammed via UPI for ₹85,000. SatLegal told me to call 1930 within 24 hours and gave me the exact complaint format. I recovered ₹67,000 back."</p><div class="testi-name">Priya Sharma</div><div class="testi-city">UPI Fraud · Bengaluru</div><span class="testi-tag">Cyber Fraud</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ─────────────────────────────────────────────── -->
+<section class="cta-sec">
+  <h2>Get Your Legal Report — Free</h2>
+  <p>Free analysis · Private · 37+ Indian laws · Full action plan</p>
+  <button class="btn-white" onclick="openWizard()">⚡ Start Free Analysis Now →</button>
+</section>
+
+<!-- ── FOOTER ──────────────────────────────────────────── -->
+<footer>
+  <div class="foot-logo"><img src="assets/logo.svg" alt="SatLegal" style="height:48px;filter:brightness(0) invert(1);opacity:.8"></div>
+  <div class="foot-links">
+    <a href="index.html">Home</a><a href="about.html">About Us</a>
+    <a href="laws-reference.html">Laws Library</a><a href="legal-topics.html">Legal Topics</a>
+    <a href="privacy-policy.html">Privacy Policy</a><a href="terms-conditions.html">Terms &amp; Conditions</a>
+    <a href="auth/admin-login.html">Admin</a>
+  </div>
+  <p>⚠️ The content provided on this website is for informational purposes only and should not be relied upon as a substitute for legal advice. Recipients are advised to consult with qualified legal counsel before implementing any recommendations herein. SatLegal shall not be liable for actions taken based on this information.</p>
+  <p style="margin-top:6px">© 2025 SatLegal · Built for India 🇮🇳 · All rights reserved</p>
+</footer>
+
+<!-- ── TOAST ───────────────────────────────────────────── -->
+<div id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════════════
+     CHATBOT WIDGET
+═══════════════════════════════════════════════════════ -->
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-head">
+    <div class="ch-icon">⚖️</div>
+    <div><h4>SatLegal Assistant</h4><p>Quick legal answers · 37 Indian laws</p></div>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-msgs" id="chatMsgs"></div>
+  <div class="chat-quick" id="chatQuick">
+    <button class="cq-btn" onclick="chatAsk('What is triple talaq?')">Triple talaq</button>
+    <button class="cq-btn" onclick="chatAsk('UPI fraud what to do')">UPI fraud</button>
+    <button class="cq-btn" onclick="chatAsk('Employer not paying salary')">Unpaid salary</button>
+    <button class="cq-btn" onclick="chatAsk('Tenant rights')">Tenant rights</button>
+  </div>
+  <div class="chat-input-row">
+    <input class="chat-input" id="chatIn" placeholder="Ask a legal question..." onkeydown="if(event.key==='Enter')chatSend()"/>
+    <button class="chat-send" onclick="chatSend()">➤</button>
+  </div>
+</div>
+<button class="chat-fab" onclick="toggleChat()">
+  ⚖️
+  <span class="fab-label">Legal Help</span>
+</button>
+
+<!-- Wizard is now inline in the hero section above -->
+
+<!-- ═══════════════════════════════════════════════════════
+     REPORT MODAL
+═══════════════════════════════════════════════════════ -->
+<div class="rpt-ov" id="rptOv">
+  <div class="rpt-box">
+    <div class="tribar"></div>
+    <div class="rpt-head">
+      <h1>⚖️ Your Legal Analysis Report</h1>
+      <p id="rptSub">Generated by SatLegal · v16</p>
+      <div class="rpt-acts">
+        <button class="btn-rpt print" onclick="window.print()">🖨️ Print / Save PDF</button>
+        <button class="btn-rpt close-r" onclick="closeRpt()">✕ Close</button>
+      </div>
+    </div>
+    <div class="rpt-body" id="rptBody"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════════════ -->
+<script src="js/laws-client.js"></script>
+<script>
+/* ═══════════════════════════════════════════
+   WIZARD STATE
+═══════════════════════════════════════════ */
+const W = {
+  step:1, input:'', questions:[], answers:{}, areas:[],
+  laws:[], selected:[], files:{}, assessmentAnswers:{},
+  name:'', email:'', phone:'', otp:'', otpSent:false,
+  selectedPlan:null, selectedPlanAmt:0
+};
+const LABELS = ['Describe Issue','Smart Assessment','Law Mapping','Case Deep Dive','Documents & Evidence','Your Report'];
+
+/* ── Nav ── */
+function toggleMob(){document.getElementById('mobMenu').classList.toggle('open')}
+document.addEventListener('click',e=>{const m=document.getElementById('mobMenu');if(m.classList.contains('open')&&!document.getElementById('mainNav').contains(e.target))m.classList.remove('open')});
+function updCC(){const t=document.getElementById('issueTa');document.getElementById('cc').textContent=t.value.length}
+function fillEx(t){document.getElementById('issueTa').value=t;updCC();scrollToWizard()}
+
+/* ── Hero card JS ── */
+function heroTaInput(el){
+  const cc=document.getElementById('heroCC');
+  if(cc)cc.textContent=el.value.length+'/2000';
+}
+function heroFillEx(t){
+  const ta=document.getElementById('heroTa');
+  if(ta){ta.value=t;heroTaInput(ta);ta.focus()}
+}
+// ── ANALYTICS TRACKING ──────────────────────────────────────────────
+function slTrack(event, data){
+  try{
+    const k='sl_events';
+    const events=JSON.parse(localStorage.getItem(k)||'[]');
+    events.unshift({
+      id:'ev_'+Date.now()+'_'+Math.random().toString(36).substr(2,5),
+      event,
+      data,
+      ts:new Date().toISOString(),
+      ua:navigator.userAgent.substring(0,80)
+    });
+    if(events.length>500)events.length=500;
+    localStorage.setItem(k,JSON.stringify(events));
+  }catch(e){}
+}
+
+// Track law searches for admin analytics
+function slTrackLawSearch(query, laws){
+  try{
+    const k='sl_law_searches';
+    const searches=JSON.parse(localStorage.getItem(k)||'[]');
+    searches.unshift({
+      id:'srch_'+Date.now(),
+      query:query.substring(0,200),
+      laws:(laws||[]).slice(0,5).map(l=>({name:l.name||l.caseType,conf:Math.round(l.confidence||l.score||0)})),
+      ts:new Date().toISOString()
+    });
+    if(searches.length>1000)searches.length=1000;
+    localStorage.setItem(k,JSON.stringify(searches));
+    // Also update law frequency counts
+    const k2='sl_law_freq';
+    const freq=JSON.parse(localStorage.getItem(k2)||'{}');
+    (laws||[]).slice(0,5).forEach(l=>{
+      const n=l.name||l.caseType||'Unknown';
+      freq[n]=(freq[n]||0)+1;
+    });
+    localStorage.setItem(k2,JSON.stringify(freq));
+  }catch(e){}
+}
+
+// Track lead status
+function slTrackLead(stage, extra){
+  try{
+    const k='sl_leads';
+    const leads=JSON.parse(localStorage.getItem(k)||'[]');
+    const existing=leads.find(l=>l.session===window._slSession);
+    if(existing){
+      existing.stage=stage;
+      existing.updatedAt=new Date().toISOString();
+      if(extra)Object.assign(existing,extra);
+    } else {
+      leads.unshift({
+        id:'lead_'+Date.now()+'_'+Math.random().toString(36).substr(2,5),
+        session:window._slSession,
+        stage, // 'query'|'analysis'|'signup'|'payment'|'consultation'
+        query:(window.W&&window.W.input||'').substring(0,150),
+        laws:(window.W&&window.W.selected||[]).slice(0,3).map(l=>l.name||l.caseType),
+        createdAt:new Date().toISOString(),
+        updatedAt:new Date().toISOString(),
+        ...extra
+      });
+    }
+    if(leads.length>2000)leads.length=2000;
+    localStorage.setItem(k,JSON.stringify(leads));
+  }catch(e){}
+}
+
+window._slSession='sess_'+Date.now()+'_'+Math.random().toString(36).substr(2,6);
+
+function heroAnalyze(){
+  const ta=document.getElementById('heroTa');
+  const txt=(ta?ta.value:'').trim();
+  if(txt.length<15){
+    if(typeof toast==='function')toast('Please describe your legal issue in at least a sentence.','err');
+    else alert('Please describe your legal issue in at least a sentence.');
+    if(ta)ta.focus();return;
+  }
+  // Track query event
+  slTrack('query_submitted',{queryLen:txt.length,ts:new Date().toISOString()});
+  slTrackLead('query',{query:txt.substring(0,150)});
+  // Copy into main wizard textarea then trigger s1
+  const main=document.getElementById('issueTa');
+  if(main){main.value=txt;updCC();}
+  // Show & scroll to wiz-card
+  const wc=document.getElementById('wizCard');
+  if(wc)wc.style.display='';
+  // Run s1 analysis
+  s1();
+  // After s1 fires showStep(2), scroll to wiz-card
+  setTimeout(()=>{if(wc)wc.scrollIntoView({behavior:'smooth',block:'start'})},120);
+}
+function showDisclaimerFull(){
+  const d=document.getElementById('fullDisclaimerModal');
+  if(d){d.style.display='flex';return;}
+  // Create simple modal
+  const m=document.createElement('div');
+  m.id='fullDisclaimerModal';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  m.innerHTML=`<div style="background:#fff;border-radius:12px;max-width:520px;width:100%;padding:28px 28px 22px;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <div style="font-size:15px;font-weight:800;color:#0D3D0D;margin-bottom:12px">⚠️ Professional Disclaimer</div>
+    <p style="font-size:13px;color:#374151;line-height:1.7;margin-bottom:16px">The Site cannot and does not contain legal advice. The legal information is provided for general informational and educational purposes only and is not a substitute for professional advice. Accordingly, before taking any actions based upon such information, we encourage you to consult with the appropriate legal professionals by taking a consultation and paying the appropriate fees. We do not provide any kind of legal advice.</p>
+    <button onclick="document.getElementById('fullDisclaimerModal').style.display='none'"
+      style="background:#0D3D0D;color:#fff;border:none;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">Got It</button>
+  </div>`;
+  document.body.appendChild(m);
+  m.addEventListener('click',e=>{if(e.target===m)m.style.display='none'});
+}
+
+/* ── Scroll to inline wizard ── */
+function scrollToWizard(){
+  const hc=document.getElementById('heroQueryCard');
+  const el=document.getElementById('wizCard');
+  if(hc)hc.scrollIntoView({behavior:'smooth',block:'center'});
+  else if(el)el.scrollIntoView({behavior:'smooth',block:'center'});
+  const ta=document.getElementById('heroTa')||document.getElementById('issueTa');
+  if(ta)setTimeout(()=>ta.focus(),400);
+}
+function openWizard(){resetW();scrollToWizard();showStep(1)}
+function closeWizard(){resetW();showStep(1)}
+
+function resetW(){
+  Object.assign(W,{step:1,input:'',questions:[],answers:{},areas:[],laws:[],selected:[],files:{},assessmentAnswers:{},name:'',email:'',phone:'',otp:'',otpSent:false,selectedPlan:null,selectedPlanAmt:0});
+  document.getElementById('issueTa').value='';
+  document.getElementById('cc').textContent='0';
+  const ur=document.getElementById('uid-register');const uo=document.getElementById('uid-otp');
+  const cta=document.getElementById('signinCtaBox');
+  if(ur)ur.style.display='none';if(uo)uo.style.display='none';
+  if(cta)cta.style.display='block';
+}
+
+/* ── Update step tabs ── */
+function drawProg(){
+  document.querySelectorAll('.wtab').forEach(tab=>{
+    const s=parseInt(tab.dataset.step);
+    tab.classList.remove('wt-active','wt-done');
+    tab.setAttribute('aria-selected','false');
+    const circle=tab.querySelector('.wt-circle');
+    if(s===W.step){tab.classList.add('wt-active');tab.setAttribute('aria-selected','true');if(circle)circle.textContent=s}
+    else if(s<W.step){tab.classList.add('wt-done');if(circle)circle.textContent='✓'}
+    else{if(circle)circle.textContent=s}
+  });
+}
+
+/* ── Show step ── */
+function showStep(n){
+  W.step=n;
+  const wc=document.getElementById('wizCard');
+  if(wc)wc.style.display='';
+  document.querySelectorAll('.wiz-pane').forEach(p=>p.classList.remove('active'));
+  const pane=document.getElementById(`p${n}`);
+  if(pane)pane.classList.add('active');
+  document.getElementById('stepCtr').textContent=`Step ${n} of 6`;
+  const bb=document.getElementById('btnBack');
+  bb.style.visibility=n===1?'hidden':'visible';
+  const bn=document.getElementById('btnNext');
+  const wf=document.getElementById('wizFoot');
+  if(n===6){
+    bn.style.display='none';
+    bb.style.visibility='visible';
+    if(wf)wf.style.display='flex';
+  } else {
+    bn.style.display='inline-flex';
+    if(n===1)bn.textContent='Next: Answer Smart Questions →';
+    else if(n===2)bn.textContent='Next: See Applicable Laws →';
+    else if(n===3)bn.textContent='Next: Case Assessment →';
+    else if(n===4)bn.textContent='Next: Documents & Evidence →';
+    else if(n===5)bn.textContent='📊 See My Analysis →';
+  }
+  // Update OTP button label to reflect free vs paid flow
+  if(n===5){
+    const _fc=JSON.parse(localStorage.getItem('sl_flow_config')||'{}');
+    const _pr=(_fc.paymentRequired!==undefined?_fc.paymentRequired:true)&&!_fc.freeReportAccess;
+    const vBtn=document.getElementById('verifyOtpBtn');
+    if(vBtn)vBtn.innerHTML=_pr?'✅ Verify &amp; Proceed to Payment':'✅ Verify &amp; Get Free Report';
+  }
+  drawProg();
+  document.getElementById('wizCard').scrollIntoView({behavior:'smooth',block:'nearest'});
+  if(n===6)renderAnalysisSummary();
+}
+
+/* ── Render analysis summary at step 5 ── */
+function renderAnalysisSummary(){
+  const issueEl=document.getElementById('analysisSummaryIssue');
+  const countEl=document.getElementById('analysisLawCount');
+  const previewEl=document.getElementById('analysisLawPreviews');
+  if(!issueEl)return;
+  issueEl.textContent=`"${W.input.slice(0,180)}${W.input.length>180?'…':''}"`;
+  const sel=W.selected.length?W.selected:W.laws.slice(0,3);
+  countEl.textContent=sel.length;
+  const maxS=sel[0]?(sel[0].confidence||sel[0].score||1):1;
+  let h='';
+  sel.slice(0,3).forEach(l=>{
+    const pct=Math.min(99,l.confidence||l.score||0);
+    const bc=pct>=70?'var(--gr-500)':pct>=40?'var(--sf-500)':'#aaa';
+    h+=`<div class="analysis-law-preview">
+      <div class="alp-name">${esc(l.caseType||l.lawCategory||'Legal Matter')}</div>
+      <div class="alp-act">${esc(l.actName||'')}</div>
+      <div class="alp-conf">
+        <div class="alp-bar-wrap"><div class="alp-bar-fill" style="width:${pct}%;background:${bc}"></div></div>
+        <div class="alp-pct">Detection confidence: ${pct}%</div>
+      </div>
+    </div>`;
+  });
+  previewEl.innerHTML=h;
+  // Reset reg form visibility
+  const reg=document.getElementById('uid-register');const otp=document.getElementById('uid-otp');
+  const cta=document.getElementById('signinCtaBox');
+  if(reg){reg.style.display='none';reg.classList.remove('reg-form-wrap')}
+  if(otp)otp.style.display='none';
+  if(cta)cta.style.display='block';
+}
+
+// Plan selection
+function selectPlan(plan,amt){
+  W.selectedPlan=plan;W.selectedPlanAmt=amt;
+  const badge=document.getElementById('selectedPlanBadge');
+  if(badge){
+    if(plan==='report'){
+      badge.innerHTML='📄 Digital Report — ₹499';
+    } else {
+      const discount=getReportDiscount();
+      badge.innerHTML=discount
+        ?`🧑‍⚖️ Expert Consultation — <s style="opacity:.5">₹2500</s> ₹${amt} <span style="font-size:10px;background:#FFF3CD;color:#856404;border:1px solid #FFEAA7;border-radius:8px;padding:1px 7px;margin-left:4px">₹${discount.amount} discount applied</span>`
+        :'🧑‍⚖️ Expert Consultation — ₹2500';
+    }
+  }
+  showRegForm();
+}
+function showRegForm(){
+  const cta=document.getElementById('signinCtaBox');const reg=document.getElementById('uid-register');
+  if(cta)cta.style.display='none';
+  if(reg){
+    reg.style.display='block';
+    // Auto-populate from collected contact info
+    const emailEl=document.getElementById('uid-email');
+    const phoneEl=document.getElementById('uid-phone');
+    if(emailEl&&W.email&&!emailEl.value)emailEl.value=W.email;
+    if(phoneEl&&W.phone&&!phoneEl.value)phoneEl.value=W.phone;
+    // Focus name if empty, else email
+    const nameEl=reg.querySelector('#uid-name');
+    if(nameEl&&!nameEl.value)nameEl.focus();
+    else if(emailEl&&!emailEl.value)emailEl.focus();
+    else if(phoneEl&&!phoneEl.value)phoneEl.focus();
+  }
+}
+
+function wizNext(){if(W.step===1)return s1();if(W.step===2)return s2();if(W.step===3)return s3();if(W.step===4)return s4();if(W.step===5)return s5()}
+function wizBack(){if(W.step>1)showStep(W.step-1)}
+
+/* ══ STEP 1 ══ */
+function s1(){
+  const txt=document.getElementById('issueTa').value.trim();
+  if(txt.length<15){toast('Please describe your issue in at least a sentence for accurate analysis.','err');return}
+  W.input=txt;
+  W.laws=(window.analyzeMultipleLaws||analyzeMultipleLaws)(txt,{});
+  if(!Array.isArray(W.laws))W.laws=[];
+
+  // Get contextual questions from law engine
+  const res=(window.getContextualQuestions||getContextualQuestions)(txt);
+  W.areas=res.areas||[];
+  let qs=res.questions||[];
+
+  // Filter out generic area-picker question
+  qs=qs.filter(q=>q.id!=='issue_area');
+
+  // If areas detected, use deep law-specific questions; else fallback to probing Qs
+  if(W.areas.length && qs.length<3){
+    qs=getLawAreaQs(W.areas, txt);
+  }
+  if(!qs.length) qs=getProbingQs();
+  W.questions=qs;
+
+  // Update step-2 subtitle with detected context
+  const p2sub=document.getElementById('p2sub');
+  if(p2sub){
+    if(W.areas.length){
+      const aNames=W.areas.slice(0,2).map(a=>a.replace(/_/g,' ')).join(' & ');
+      p2sub.textContent=`Detected: ${aNames} matter — ${qs.length} targeted questions to sharpen your analysis.`;
+    } else {
+      p2sub.textContent=`${qs.length} questions to precisely identify the most relevant Indian laws for your situation.`;
+    }
+  }
+  renderQs();
+  showStep(2);
+  slTrackLawSearch(txt, W.laws);
+  slTrack('analysis_done',{lawCount:(W.laws||[]).length,topLaw:(W.laws&&W.laws[0])?W.laws[0].name||W.laws[0].caseType:'none'});
+  slTrackLead('analysis',{laws:(W.laws||[]).slice(0,3).map(l=>l.name||l.caseType)});
+}
+
+/* ── Deep probing questions (fallback when no area auto-detected) ── */
+function getProbingQs(){
+  return [
+    {id:'other_party',question:'Who is the other party in your matter?',type:'radio',section:'Basic Facts',
+     options:['My employer or company','A family member (spouse/parent/sibling)','A builder or property developer','A bank or financial institution','An online platform or seller','A landlord or tenant','A government authority','Another individual'],
+     tip:'Identifies whether civil, criminal, consumer, or employment law applies — narrows the applicable legal framework.'},
+    {id:'incident_type',question:'What is the primary nature of the harm or dispute?',type:'radio',section:'Basic Facts',
+     options:['Financial loss or fraud','Harassment, threats, or physical harm','A property or land being disputed','Breach of agreement or contract','Marriage, divorce, or custody issue','Wrongful termination or unpaid employment dues','Consumer/product defect or medical negligence','A government notice or official action'],
+     tip:'Determines which area of law and which court or authority provides the most effective remedy.'},
+    {id:'incident_when',question:'When did the incident or dispute begin?',type:'radio',section:'Timeline',
+     options:['Within the last 30 days','1–6 months ago','6 months to 1 year ago','1–3 years ago','More than 3 years ago'],
+     tip:'Limitation periods (deadline to file cases) vary from 1–30 years by law. Recent incidents allow more remedies.'},
+    {id:'prior_notice',question:'Have you already sent any formal notice or complaint?',type:'radio',section:'Prior Actions',
+     options:['No — this is my first step','Yes — sent a notice via lawyer','Yes — filed a police complaint (FIR)','Yes — filed with a government authority','Yes — sent multiple notices with no response'],
+     tip:'Prior formal notice strengthens your legal position and is mandatory before certain proceedings like Labour Court.'},
+    {id:'evidence_level',question:'What kind of evidence or documentation do you have?',type:'radio',section:'Evidence',
+     options:['Strong paper trail — agreements, receipts, emails, screenshots','Some documents but missing key ones','Mainly digital evidence — chats, emails, transaction records','Witness statements or testimony available','Very little documented evidence at this point'],
+     tip:'Evidence quality is the biggest factor in win probability. We\'ll guide you on exactly what\'s needed.'},
+    {id:'desired_outcome',question:'What is your primary goal in this matter?',type:'radio',section:'Your Goal',
+     options:['Recover money or property','Get criminal action taken against the other party','Get a court order/injunction for protection','Resolve the matter through settlement','Formal legal notice to establish rights','I mainly want to understand my rights first'],
+     tip:'Your goal determines the best legal route — criminal complaint vs. civil suit vs. consumer forum vs. negotiation.'}
+  ];
+}
+
+/* ── Law-specific deeper questions for Step 2 (when area is detected) ── */
+function getLawAreaQs(areas, input){
+  const area=areas[0]||'';
+  if(area==='employment'){
+    return [
+      {id:'emp_type',question:'What type of employment relationship existed?',type:'radio',section:'Employment',
+       options:['Full-time permanent employee','Contract/temporary worker','Probationer (on probation)','Gig worker or freelancer','Apprentice or trainee'],
+       tip:'Employment type determines which laws apply: permanent workers get full ID Act protection; contract workers have different rights.'},
+      {id:'years_service',question:'How many years did you work at this company?',type:'radio',section:'Employment',
+       options:['Less than 6 months','6 months to 1 year','1–5 years','5–10 years','More than 10 years'],
+       tip:'Gratuity requires minimum 5 years of continuous service. Notice period entitlements also increase with service length.'},
+      {id:'dues_type',question:'What dues are you primarily claiming?',type:'radio',section:'Basic Facts',
+       options:['Unpaid salary or last month settlement','PF or ESIC contributions not deposited','Gratuity not paid (5+ years service)','No proper notice or notice pay given','Wrongful termination or workplace harassment','All of the above'],
+       tip:'Each claim has a different forum — salary to Labour Commissioner, PF to EPFO, gratuity to specific tribunals.'},
+      {id:'written_termination',question:'Did you receive any written communication about your termination?',type:'radio',section:'Prior Actions',
+       options:['Yes — formal termination letter received','Yes — email communication only','No — verbal communication only','No — I was just asked to leave','They stopped responding without formal notice'],
+       tip:'Written termination evidence is critical. Without it, your claim relies on witness statements and payslip records.'},
+      {id:'pf_deducted',question:'Was PF (Provident Fund) deducted from your salary?',type:'radio',section:'Evidence',
+       options:['Yes — monthly deductions shown on payslip','Yes — deducted but company may not have deposited','Not enrolled in PF by employer','No salary slips provided — not sure'],
+       tip:'PF deducted but not deposited is a criminal offense under EPF Act. EPFO can take direct punitive action against employer.'},
+      {id:'incident_when',question:'When did the incident or dispute begin?',type:'radio',section:'Timeline',
+       options:['Within the last 30 days','1–6 months ago','6 months to 1 year ago','1–3 years ago','More than 3 years ago'],
+       tip:'Labour Court limitation is 3 years from date of termination. File early to preserve all remedies.'}
+    ];
+  } else if(area==='property'){
+    return [
+      {id:'property_type',question:'What type of property is this dispute about?',type:'radio',section:'Basic Facts',
+       options:['Residential flat (builder/developer project)','Resale or second-hand property','Agricultural or rural land','Commercial property','Rented accommodation (tenant dispute)','Inherited or ancestral property'],
+       tip:'Property type determines the applicable law — RERA for builders, Transfer of Property Act for sale, Rent Control Acts for tenants.'},
+      {id:'prop_agreement',question:'What is the status of your sale or rent agreement?',type:'radio',section:'Evidence',
+       options:['Registered sale deed or conveyance deed','Agreement to Sell (not yet registered)','Registered rent agreement','Unregistered rent agreement (notarized only)','No written agreement','Developer allotment letter or offer letter only'],
+       tip:'Only a registered document creates full legal title. Unregistered agreements have limited enforceability in court.'},
+      {id:'possession',question:'What is your current possession status?',type:'radio',section:'Basic Facts',
+       options:['Builder refusing possession despite full/near-full payment','Never given possession — years overdue','In possession but builder demanding extra money','Possession taken but major defects exist','Was in possession but forcibly removed','Paid booking amount — want to exit and get refund'],
+       tip:'Possession status determines urgency and type of relief — injunction to stop transfer, refund, or possession order.'},
+      {id:'payments_made',question:'What payments have you made to the builder/seller so far?',type:'radio',section:'Evidence',
+       options:['Full payment made (100%)','80–99% of total paid','50–79% paid','Less than 50% paid','Only booking amount paid'],
+       tip:'Payment quantum affects your RERA relief. Full or near-full payment strengthens refund and compensation claims significantly.'},
+      {id:'rera_registered',question:'Is the builder or project registered under RERA?',type:'radio',section:'Prior Actions',
+       options:['Yes — RERA registered project','No — project not on RERA','Not sure','Project exempted from RERA (small or old)'],
+       tip:'RERA-registered projects allow fast online complaint filing. Non-RERA builders must be sued in Civil Court.'},
+      {id:'incident_when',question:'When did the dispute or delay begin?',type:'radio',section:'Timeline',
+       options:['Within the last 6 months','6 months to 2 years ago','2–5 years ago','More than 5 years ago'],
+       tip:'RERA complaints must be filed within 3 years of cause. Civil suits within 3–12 years depending on dispute type.'}
+    ];
+  } else if(area==='family'||area==='muslim_family'){
+    return [
+      {id:'issue_type',question:'What is the primary nature of your family matter?',type:'radio',section:'Basic Facts',
+       options:['Seeking divorce or legal separation','Seeking maintenance or alimony','Child custody or visitation dispute','Domestic violence — protection urgently needed','Triple talaq or irregular divorce','Dowry harassment or dowry death threat','Succession or inheritance dispute'],
+       tip:'Each family law matter has a different court, timeline, and interim emergency remedies available.'},
+      {id:'marriage_form',question:'Under which personal law was your marriage solemnized?',type:'radio',section:'Basic Facts',
+       options:['Hindu Marriage Act (Hindu/Sikh/Buddhist/Jain)','Muslim Personal Law (Nikah)','Christian Marriage Act','Special Marriage Act (inter-faith or civil)','Customary/tribal marriage','Live-in relationship (not legally married)'],
+       tip:'Your personal law determines the applicable court, procedures, and specific remedies under Indian law.'},
+      {id:'children_situation',question:'What is the situation regarding children?',type:'radio',section:'Basic Facts',
+       options:['Minor children — custody is a key concern','No children from this marriage','Adult children only — not in custody dispute','Expecting — pregnancy related issue'],
+       tip:'Minor children trigger additional protective provisions — custody and maintenance orders take priority.'},
+      {id:'violence_evidence',question:'Has there been domestic violence or harassment?',type:'radio',section:'Evidence',
+       options:['Yes — medical records or injury reports exist','Yes — but no formal medical records','Yes — witnesses only, no physical evidence','No physical violence — emotional or financial abuse','No violence — purely civil matrimonial dispute'],
+       tip:'Medical records and MLC reports are critical evidence in DV Act cases. File DV complaint within 3 years of last incident.'},
+      {id:'financial_dependency',question:'What is your current financial situation?',type:'radio',section:'Basic Facts',
+       options:['Fully dependent on spouse — no independent income','Some income but insufficient for needs','Financially independent','Shared property or assets are part of the dispute'],
+       tip:'Financial dependency determines your interim maintenance entitlement under Sec 24 HMA or DV Act immediately.'},
+      {id:'prior_order',question:'Are there any existing court orders in this matter?',type:'radio',section:'Prior Actions',
+       options:['Yes — maintenance or protection order exists','Yes — case is already filed','Applied but order is pending','No existing orders — starting fresh','Other party has filed a case against me'],
+       tip:'Existing orders can be modified or enforced. If you are respondent in a case, counter-filing strategies are available.'}
+    ];
+  } else if(area==='cyber'){
+    return [
+      {id:'fraud_type',question:'What type of cyber crime or fraud occurred?',type:'radio',section:'Basic Facts',
+       options:['UPI or bank transfer fraud (OTP/SIM swap)','Online shopping fraud or fake seller','Investment or crypto scam','Social media hacking or identity theft','Romance or matrimonial fraud','Job offer fraud (fake job/advance fee)','Extortion, threats, or morphed content online'],
+       tip:'Cyber fraud type determines the applicable BNS/IT Act section and the best-suited reporting authority.'},
+      {id:'fraud_when',question:'When did the fraud happen?',type:'radio',section:'Timeline',
+       options:['Within last 24 hours','1–7 days ago','7–30 days ago','1–6 months ago','More than 6 months ago'],
+       tip:'Reporting within 24 hours via helpline 1930 gives the highest chance of fund recovery via account freeze on suspect.'},
+      {id:'amount_lost',question:'What is the approximate amount involved?',type:'radio',section:'Basic Facts',
+       options:['Less than ₹10,000','₹10,000–₹50,000','₹50,000–₹2 lakh','₹2–10 lakh','More than ₹10 lakh'],
+       tip:'Higher amounts qualify for the cyber economic offences wing. Bank recovery threshold is generally ₹10,000 minimum.'},
+      {id:'evidence_digital',question:'What digital evidence do you have?',type:'radio',section:'Evidence',
+       options:['Screenshots of transaction IDs, chat records, call records','Partial evidence — some records deleted','Bank statements showing unauthorized debit','Sender\'s number, email, or social media profile','Very little — looking for guidance on what to gather'],
+       tip:'Preserve ALL digital evidence immediately — screenshots, chat exports, transaction history. Courts require this.'},
+      {id:'personal_info_shared',question:'Did you share any personal or banking information with the fraudster?',type:'radio',section:'Evidence',
+       options:['Yes — OTP or PIN shared voluntarily','Yes — credentials entered on a fake website','No — it was a technical SIM swap or hack','Clicked a suspicious link or downloaded a file','Not sure how the fraud was executed'],
+       tip:'If OTP was shared voluntarily, bank refund is harder but cybercrime FIR and account freeze is still fully possible.'},
+      {id:'bank_action',question:'Have you taken any action with your bank yet?',type:'radio',section:'Prior Actions',
+       options:['Yes — blocked card and UPI immediately','Yes — reported to bank but delayed','Yes — bank already investigating','No — not contacted bank yet','Bank refused to help or register complaint'],
+       tip:'Blocking and reporting to bank within 24 hours can trigger a transaction hold that may recover your funds.'}
+    ];
+  } else if(area==='criminal'||area==='sc_st'){
+    return [
+      {id:'offence_type',question:'What category of criminal matter are you dealing with?',type:'radio',section:'Basic Facts',
+       options:['Physical assault or battery (hurt or grievous hurt)','Cheating or fraud by known person','Threat, intimidation, or extortion','Sexual harassment or POSH violation','Caste-based discrimination (SC/ST atrocity)','Corruption by government official','Illegal detention, wrongful arrest, or custody'],
+       tip:'Different offences attract different Sections of BNS (formerly IPC), bail provisions, and police responsibilities.'},
+      {id:'fir_status',question:'What is the current status with the police?',type:'radio',section:'Prior Actions',
+       options:['FIR is registered — case under police investigation','Written complaint filed — police not registering FIR','Police refusing to act or register FIR','I or a family member was arrested and in custody','I want to file FIR but need to understand the process'],
+       tip:'If police refuse FIR, approach Executive Magistrate under Sec 156(3) BNSS or directly write to DySP/SP.'},
+      {id:'offence_when',question:'When did the incident occur?',type:'radio',section:'Timeline',
+       options:['Today or within 24 hours','Within last 7 days','7–30 days ago','1–6 months ago','More than 6 months ago'],
+       tip:'Fresh incidents have the strongest prosecution potential. Delayed complaints require explanation but are not time-barred for serious offences.'},
+      {id:'medical_evidence',question:'Was there any medical examination, injury, or treatment?',type:'radio',section:'Evidence',
+       options:['Yes — MLC (Medico-Legal Case) registered at hospital','Yes — medical treatment done but no MLC','Psychological harm only — no physical injury','Medical evidence still pending','No medical intervention needed'],
+       tip:'MLC is critical evidence in assault/sexual offence cases. It must be completed within 24–72 hours for strongest evidentiary value.'},
+      {id:'witnesses',question:'Are there any witnesses to the incident?',type:'radio',section:'Evidence',
+       options:['Yes — multiple independent witnesses','Yes — one witness (friend/family)','Security camera or CCTV footage available','Digital trail — messages, call records exist','No direct witnesses — only my testimony'],
+       tip:'Independent witnesses significantly strengthen FIR cases. Even CCTV footage can substitute if no human witnesses exist.'}
+    ];
+  } else if(area==='consumer'){
+    return [
+      {id:'consumer_type',question:'What type of consumer dispute do you have?',type:'radio',section:'Basic Facts',
+       options:['Defective product purchased','Poor or deficient service quality','Builder or real estate deficiency (non-RERA)','Medical negligence or hospital malpractice','Bank, insurance, or NBFC deficiency','Telecom or internet service provider issue','E-commerce or online marketplace fraud'],
+       tip:'Consumer Commission has jurisdiction over goods and services. Different dispute types have different remedies and timelines.'},
+      {id:'purchase_amount',question:'What is the value of goods or services involved?',type:'radio',section:'Basic Facts',
+       options:['Less than ₹50,000','₹50,000–₹5 lakh','₹5–50 lakh','₹50 lakh–₹2 crore','More than ₹2 crore'],
+       tip:'This determines which Consumer Commission has jurisdiction — District (up to ₹50L), State (up to ₹2Cr), National (above).'},
+      {id:'complaint_made',question:'Have you already complained to the seller or service provider?',type:'radio',section:'Prior Actions',
+       options:['Yes — written complaint with written acknowledgment','Yes — email complaint sent and acknowledged','Yes — complaint on their online portal/app','Verbal complaint only — no written record','No — not complained yet','Company refused to acknowledge or respond'],
+       tip:'Consumer Commission requires prior notice to seller. A written unanswered complaint is stronger than no complaint.'},
+      {id:'purchase_proof',question:'What purchase proof or documentation do you have?',type:'radio',section:'Evidence',
+       options:['Original invoice or receipt available','Digital receipt or email confirmation only','No formal receipt but order confirmation exists','No proof — cash payment was made','Medical records (for hospital negligence)'],
+       tip:'Consumer cases require proof of transaction and deficiency. Without invoice, alternative evidence like bank statements can work.'},
+      {id:'compensation_sought',question:'What outcome or compensation are you seeking?',type:'radio',section:'Your Goal',
+       options:['Full refund of purchase price','Replacement with defect-free product','Compensation for losses and mental agony','Medical expense reimbursement','Formal apology plus compensation','All of the above — maximum relief'],
+       tip:'Consumer Commission can award refund + compensation + cost of litigation. Medical negligence can attract substantial damages.'}
+    ];
+  }
+  // Default to probing questions for undetected areas
+  return getProbingQs();
+}
+
+function getSectionIcon(sec){
+  return {'Basic Facts':'📋','Timeline':'⏰','Prior Actions':'📝','Evidence':'🗂️','Your Goal':'🎯',
+    'Employment':'💼','Property':'🏠','Family':'👨‍👩‍👧','Cyber Crime':'💻','Criminal':'🚔','Consumer':'🛒'}[sec]||'•';
+}
+function updateQProgress(){
+  const total=W.questions.length;
+  const answered=W.questions.filter(q=>W.answers[q.id]).length;
+  const pct=total>0?Math.round((answered/total)*100):0;
+  const fill=document.getElementById('qProgFill');const label=document.getElementById('qProgLabel');
+  const bar=document.getElementById('qProgressBar');
+  if(fill)fill.style.width=pct+'%';
+  if(label)label.textContent=`${answered}/${total} answered`;
+  if(bar)bar.setAttribute('aria-valuenow',pct);
+}
+
+/* ── Render questions with sections, progress, accessibility ── */
+function renderQs(){
+  const c=document.getElementById('qCont');
+  if(!W.questions.length){
+    c.innerHTML='<div class="qblock" role="status"><p style="color:var(--text-lt);font-size:14px">Your description was very clear — no additional questions needed. Click Next to see your law recommendations.</p></div>';
+    return;
+  }
+  let h=`<div class="q-progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="qProgressBar" aria-label="Question completion progress">
+    <span style="font-size:13px" aria-hidden="true">📝</span>
+    <div class="q-prog-track"><div class="q-prog-fill" id="qProgFill" style="width:0%"></div></div>
+    <span style="font-size:11px;font-weight:700;color:var(--sf-700)" id="qProgLabel">0/${W.questions.length} answered</span>
+  </div>`;
+  let lastSection='';
+  W.questions.forEach((q,i)=>{
+    if(q.section&&q.section!==lastSection){
+      h+=`<div class="q-section-head" aria-hidden="true">${getSectionIcon(q.section)} ${esc(q.section)}</div>`;
+      lastSection=q.section;
+    }
+    h+=`<div class="qblock" role="group" aria-labelledby="qt_${q.id}">
+      <div class="qtitle" id="qt_${q.id}">${i+1}. ${esc(q.question)}</div>`;
+    if(q.tip)h+=`<div class="qtip" role="note" aria-label="Tip: ${esc(q.tip)}">${esc(q.tip)}</div>`;
+    if(q.type==='select'){
+      h+=`<select class="qsel" id="q_${q.id}" aria-labelledby="qt_${q.id}" onchange="W.answers['${q.id}']=this.value;updateQProgress()">
+        <option value="">-- Select an option --</option>`;
+      (q.options||[]).forEach(o=>h+=`<option value="${esc(o)}">${esc(o)}</option>`);
+      h+=`</select>`;
+    } else {
+      h+=`<div class="qopts" role="radiogroup" aria-labelledby="qt_${q.id}">`;
+      (q.options||[]).forEach((o,oi)=>{
+        h+=`<label class="qopt" id="qo_${q.id}_${oi}">
+          <input type="radio" name="q_${q.id}" value="${esc(o)}" aria-label="${esc(o)}"
+            onchange="selOpt('${q.id}',${oi},'${esc(o)}')"/>
+          <span>${esc(o)}</span>
+        </label>`;
+      });
+      h+=`</div>`;
+    }
+    h+=`</div>`;
+  });
+  c.innerHTML=h;
+  // Restore previous answers
+  W.questions.forEach(q=>{
+    if(W.answers[q.id]){
+      if(q.type==='select'){const s=document.getElementById(`q_${q.id}`);if(s)s.value=W.answers[q.id]}
+      else (q.options||[]).forEach((o,i)=>{if(o===W.answers[q.id])selOpt(q.id,i,o)});
+    }
+  });
+  updateQProgress();
+}
+function selOpt(qId,oi,val){
+  W.answers[qId]=val;
+  document.querySelectorAll(`[id^="qo_${qId}_"]`).forEach(e=>e.classList.remove('sel'));
+  const el=document.getElementById(`qo_${qId}_${oi}`);
+  if(el){
+    el.classList.add('sel');
+    const r=el.querySelector('input[type=radio]');
+    if(r)r.checked=true;
+  }
+  updateQProgress();
+}
+
+/* ══ STEP 2 ══ */
+function s2(){
+  // If probing questions answered, add their context to the re-analysis
+  const probingAnswers={...W.answers};
+  W.laws=(window.analyzeMultipleLaws||analyzeMultipleLaws)(W.input,probingAnswers);
+  if(!Array.isArray(W.laws))W.laws=[];
+
+  // If areas still empty, infer from probing answers
+  if(!W.areas.length&&W.answers.incident_type){
+    const inc=W.answers.incident_type||'';
+    if(inc.includes('financial')||inc.includes('fraud'))W.areas=['cyber','criminal'];
+    else if(inc.includes('harassed')||inc.includes('threatened'))W.areas=['criminal','family'];
+    else if(inc.includes('property'))W.areas=['property'];
+    else if(inc.includes('contract'))W.areas=['civil','employment'];
+    else if(inc.includes('family')||inc.includes('matrimonial'))W.areas=['family'];
+    else if(inc.includes('government'))W.areas=['civil','land_acquisition'];
+  }
+
+  if(!W.laws.length){
+    toast('We need more detail to identify applicable laws. Please add more context to your description.','err');
+    showStep(1);return;
+  }
+  renderLaws();
+  showStep(3);
+}
+
+/* ── Render law cards ── */
+function renderLaws(){
+  const c=document.getElementById('lawCont');
+  const top=W.laws.slice(0,6);
+  const maxS=top[0]?(top[0].confidence||top[0].score||1):1;
+  W.selected=top.slice(0,Math.min(3,top.length));
+  let h='';
+  top.forEach((l,i)=>{
+    const pct=Math.min(99,l.confidence||l.score||0);
+    const sel=i<3;
+    const uc=l.urgency==='high'?'urg-h':l.urgency==='medium'?'urg-m':'urg-l';
+    const ul=l.urgency==='high'?'🔴 Urgent':l.urgency==='medium'?'🟡 Act Soon':'🟢 Routine';
+    const bc=pct>=70?'var(--gr-500)':pct>=40?'var(--sf-500)':'var(--text-lt)';
+    h+=`<div class="law-card${sel?' sel':''}" id="lc${i}" onclick="togLaw(${i})">
+      <div class="lc-check">${sel?'✓':''}</div>
+      <div class="lc-body">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-bottom:4px">
+          <div class="lc-name">${esc(l.caseType||l.lawCategory||'Legal Matter')}</div>
+          <span class="urg ${uc}">${ul}</span>
+        </div>
+        <div class="lc-act">${esc(l.actName||'')}</div>
+        <div class="conf-row"><div class="conf-bar"><div class="conf-fill" style="width:${pct}%;background:${bc}"></div></div><div class="conf-pct">${pct}%</div></div>
+        <div class="lc-tip">${esc(l.quickTip||'This law may apply based on the details you provided.')}</div>
+      </div>
+    </div>`;
+  });
+  c.innerHTML=h;
+}
+function togLaw(i){
+  const l=W.laws[i];if(!l)return;
+  const card=document.getElementById(`lc${i}`),chk=card.querySelector('.lc-check');
+  const ex=W.selected.findIndex(x=>x.caseType===l.caseType);
+  if(ex>=0){W.selected.splice(ex,1);card.classList.remove('sel');chk.textContent=''}
+  else{W.selected.push(l);card.classList.add('sel');chk.textContent='✓'}
+}
+
+/* ══ STEP 3 → Assessment ══ */
+function s3(){
+  if(!W.selected.length){toast('Select at least one applicable law to continue.','err');return}
+  renderAssessment();
+  showStep(4);
+}
+
+/* ── Assessment Rendering (Step 4) with deduplication ── */
+function renderAssessment(){
+  const c=document.getElementById('assessCont');
+  const seenQTexts=new Set(); // track question texts already rendered
+  // Global question index across all law blocks (so selAssessOpt keys stay unique)
+  let globalQIdx=0;
+  let h='';
+
+  W.selected.forEach((law,li)=>{
+    const rawQs=getAssessmentQs(law);
+    if(!rawQs.length)return;
+    // Filter out duplicate questions (same text seen from a previous law block)
+    const deduped=rawQs.filter(q=>{
+      const norm=q.q.toLowerCase().trim();
+      if(seenQTexts.has(norm))return false;
+      seenQTexts.add(norm);
+      return true;
+    });
+    if(!deduped.length)return; // all questions already covered by a previous law block
+    const icon=getLawIcon(law);
+    h+=`<div class="assess-block" role="group" aria-label="Assessment for ${esc(law.caseType||'this law')}">
+      <div class="assess-law-head">
+        <div class="assess-law-icon" aria-hidden="true">${icon}</div>
+        <div>${esc(law.caseType||law.lawCategory||'Legal Matter')}</div>
+      </div>`;
+    deduped.forEach((q)=>{
+      const gq=globalQIdx++; // unique global index — used as 'li' in selAssessOpt
+      // ID format: ao_${gq}_0_${oi}  →  querySelector [id^="ao_${gq}_0_"] finds all options
+      h+=`<div class="assess-q"><div class="assess-q-text" id="aq_${gq}_0">${esc(q.q)}</div>
+        <div class="assess-opts" role="group" aria-labelledby="aq_${gq}_0">`;
+      q.opts.forEach((opt,oi)=>{
+        h+=`<button class="assess-opt" id="ao_${gq}_0_${oi}"
+          onclick="selAssessOpt('${gq}','0','${esc(opt)}',${oi})"
+          aria-label="${esc(q.q)}: ${esc(opt)}" type="button">${esc(opt)}</button>`;
+      });
+      h+=`</div></div>`;
+    });
+    h+=`</div>`;
+  });
+  if(!h)h=`<div class="qblock"><p style="color:var(--text-lt);font-size:14px">✅ Your selected laws have been assessed. Click Next to proceed to the document checklist.</p></div>`;
+  c.innerHTML=h;
+  // Recalculate expected total based on actually rendered questions
+  W._renderedAssessQCount=globalQIdx;
+  updateAssessStrength();
+}
+
+function getLawIcon(law){
+  const a=W.areas[0]||'';const n=law.actName||'';
+  if(a==='employment'||n.match(/employment|labour|pf|epf|posh/i))return'💼';
+  if(a==='property'||n.match(/property|rera|registration/i))return'🏠';
+  if(a==='family'||a==='muslim_family'||n.match(/family|divorce|dowry|dv act/i))return'👨‍👩‍👧';
+  if(a==='cyber'||n.match(/cyber|it act|information technology/i))return'💻';
+  if(a==='criminal'||a==='sc_st'||n.match(/bns|bnss|ipc|pocso|sc.?st/i))return'🚔';
+  if(a==='consumer'||n.match(/consumer|medical negligence/i))return'🛒';
+  return'⚖️';
+}
+
+function selAssessOpt(li,qi,val,oi){
+  const key=`${li}_${qi}`;
+  W.assessmentAnswers[key]=val;
+  document.querySelectorAll(`[id^="ao_${li}_${qi}_"]`).forEach(el=>el.classList.remove('sel','sel-yes','sel-no'));
+  const el=document.getElementById(`ao_${li}_${qi}_${oi}`);
+  if(el){
+    const isYes=val.match(/^yes/i);const isNo=val.match(/^no/i);
+    el.classList.add(isYes?'sel-yes':isNo?'sel-no':'sel');
+    el.setAttribute('aria-pressed','true');
+  }
+  updateAssessStrength();
+}
+
+function updateAssessStrength(){
+  const total=Object.keys(W.assessmentAnswers).length;
+  const expected=W._renderedAssessQCount||W.selected.reduce((s,law)=>s+getAssessmentQs(law).length,0);
+  if(!expected)return;
+  const positives=Object.values(W.assessmentAnswers).filter(v=>
+    v.match(/^yes/i)||v.includes('registered')||v.includes('original')||v.includes('complete')||v.includes('immediately')
+  ).length;
+  const posRatio=total>0?positives/total:0;
+  let strength,icon;
+  if(total<Math.ceil(expected/2)){strength='Answer more questions to see your case strength';icon='❓'}
+  else if(posRatio>=0.6){strength='Good case strength — solid position';icon='💪'}
+  else if(posRatio>=0.35){strength='Moderate strength — professional guidance recommended';icon='⚖️'}
+  else{strength='Needs strategy — consult a lawyer to build your case';icon='⚠️'}
+  const strEl=document.getElementById('assessStrength');
+  const strVal=document.getElementById('assessStrengthVal');
+  if(strEl)strEl.style.display=total>0?'flex':'none';
+  if(strVal)strVal.textContent=icon+' '+strength;
+}
+
+function getAssessmentQs(law){
+  const act=law.actName||'';const a=W.areas[0]||'';
+  if(act.match(/employment|labour|id act|posh|epf/i)||a==='employment'){
+    return [
+      {q:'Do you have a written appointment letter or employment contract?',opts:['Yes','No','Had it but lost it','Verbal agreement only']},
+      {q:'Was there any written warning before your termination?',opts:['Yes — formal show-cause','No written warning given','Verbal warning only','Not applicable']},
+      {q:'Was PF/ESIC enrolled and deducted from your salary?',opts:['Yes — enrolled and deducted','Deducted but may not be deposited','Not enrolled by employer','Not sure']},
+      {q:'Have you filed a complaint with the Labour Commissioner?',opts:['Yes — complaint filed','No — not yet','Filed online on Shram Portal','Police complaint filed instead']}
+    ];
+  } else if(act.match(/rera|transfer of property|registration|builder/i)||a==='property'){
+    return [
+      {q:'Do you have a registered sale or rent agreement?',opts:['Yes — fully registered','Notarized but not registered','No written agreement','Agreement under process']},
+      {q:'Are you currently in possession of the property?',opts:['Yes — in possession','No — denied possession','Partially in possession','Was removed from possession']},
+      {q:'Is the project registered under RERA?',opts:['Yes — RERA registered','No — not RERA registered','Not sure','Exempted from RERA']},
+      {q:'Have you sent any legal notice to the builder or seller?',opts:['Yes — via lawyer','Yes — personally sent','No — not yet','Builder ignored previous notice']}
+    ];
+  } else if(act.match(/cyber|it act|upi|fraud/i)||a==='cyber'){
+    return [
+      {q:'Have you called the Cybercrime Helpline 1930?',opts:['Yes — within 24 hours','Yes — after 24 hours','No — not yet','Reported to bank only']},
+      {q:'Do you have screenshots and transaction IDs?',opts:['Yes — complete records','Partial records only','No evidence collected','Bank statement available']},
+      {q:'Have you blocked your card and UPI immediately?',opts:['Yes — blocked immediately','Yes — with some delay','No — not blocked yet','Bank is investigating']},
+      {q:'Have you filed a cybercrime complaint online (cybercrime.gov.in)?',opts:['Yes — complaint filed','No — not yet','Police FIR filed instead','Filed with bank only']}
+    ];
+  } else if(act.match(/family|matrimonial|dowry|dv act|divorce|hma/i)||a==='family'||a==='muslim_family'){
+    return [
+      {q:'Do you have your marriage certificate or registration?',opts:['Yes — registered marriage certificate','No certificate but marriage photos/proof exist','No formal registration done','Marriage disputed by other party']},
+      {q:'Is there evidence of domestic violence or harassment?',opts:['Yes — medical records or MLC report','Yes — photos or witness testimony','No physical evidence — testimony only','No violence — civil matrimonial dispute']},
+      {q:'Have you applied for interim maintenance in court?',opts:['Yes — applied under Sec 24 HMA / DV Act','No — not applied yet','Case filed but maintenance pending','Previously ordered maintenance not being paid']},
+      {q:'Do you currently have safe accommodation?',opts:['Yes — living in shared home','Yes — living with family or independently','No — forced to leave matrimonial home','Seeking residence order under DV Act']}
+    ];
+  } else if(act.match(/criminal|bns|bnss|fir|police/i)||a==='criminal'){
+    return [
+      {q:'Has an FIR been registered with the police?',opts:['Yes — FIR registered','Police refused to register FIR','Written complaint filed, not FIR','Not filed yet']},
+      {q:'Was there a medical examination (MLC) done?',opts:['Yes — MLC done at hospital','Medical treatment done but no MLC','No medical treatment needed','MLC pending']},
+      {q:'Are there witnesses to the incident?',opts:['Yes — multiple independent witnesses','Yes — one witness (known person)','CCTV or digital evidence available','No witnesses — testimony only']},
+      {q:'Have you preserved all evidence?',opts:['Yes — screenshots, calls, documents preserved','Partially preserved','Evidence deleted by the other party','Not sure what to preserve']}
+    ];
+  } else if(act.match(/consumer|medical negligence|product|defective/i)||a==='consumer'){
+    return [
+      {q:'Do you have purchase proof (invoice, receipt, or order confirmation)?',opts:['Yes — original invoice/bill','Digital receipt or confirmation email','No formal receipt — cash payment','No proof available']},
+      {q:'Have you made a written complaint to the seller or company?',opts:['Yes — written complaint with acknowledgment','Yes — email only','No — not yet complained','Company refused to acknowledge']},
+      {q:'When did you notice the defect or negligence?',opts:['Within 30 days of purchase','1–6 months later','6–12 months later','More than a year later']},
+      {q:'Has the company responded to your complaint?',opts:['Yes — but response was inadequate','Yes — and offered partial compensation','No response at all','Acknowledged but not resolved']}
+    ];
+  }
+  // Generic assessment for other law types
+  return [
+    {q:'Is there a written agreement or contract in this matter?',opts:['Yes — fully signed agreement','Partial or unsigned agreement','Verbal agreement only','No agreement — looking to claim rights']},
+    {q:'Have you sent any formal notice to the other party?',opts:['Yes — via registered post/lawyer','Yes — informally via email or message','No — not yet sent any notice','Other party sent notice to me']},
+    {q:'Do you have documentary evidence supporting your claim?',opts:['Yes — strong documented proof','Some documents but incomplete','Digital evidence only','Very limited evidence']},
+    {q:'Is there any immediate threat, deadline, or court date?',opts:['Yes — court date or limitation deadline','Yes — immediate harm or threat ongoing','Moderate urgency — no immediate deadline','No immediate urgency — planning ahead']}
+  ];
+}
+
+/* ══ STEP 4 → Documents ══ */
+function s4(){
+  renderEvidence();
+  showStep(5);
+}
+
+/* ══ STEP 5 → Report ══ */
+function s5(){showActionChoicePopup()}
+
+/* ── Document Checklist (Step 5) with checkboxes ── */
+function renderEvidence(){
+  const c=document.getElementById('evCont');
+  const total=W.selected.reduce((s,l)=>s+(l.documents||[]).length,0);
+  const crit=W.selected.reduce((s,l)=>s+(l.documents||[]).filter(d=>d.critical).length,0);
+  let h=`<div class="doc-progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="0" id="docProgressBar">
+    <span aria-hidden="true">📎</span>
+    <div style="flex:1">
+      <div style="font-size:11px;opacity:.8;margin-bottom:4px">${crit} critical · ${total-crit} optional — check documents you have, then upload</div>
+      <div class="doc-prog-track"><div class="doc-prog-fill" id="docProgFill" style="width:0%"></div></div>
+    </div>
+    <div class="doc-prog-label"><span id="docSelCount">0</span>/${total}</div>
+  </div>
+  <div style="background:var(--sf-100);border:1px solid var(--sf-200);border-radius:var(--r);padding:11px 16px;margin-bottom:18px;font-size:13px;color:var(--sf-800);line-height:1.55" role="note">
+    ✅ <strong>Check the box next to each document you have.</strong> The Upload button appears automatically. You don't need to upload to proceed — but it boosts your win score.
+  </div>`;
+  W.selected.forEach((l,li)=>{
+    const docs=l.documents||[];
+    if(!docs.length)return;
+    const critDocs=docs.filter(d=>d.critical);
+    const optDocs=docs.filter(d=>!d.critical);
+    const lawIcon=getLawIcon(l);
+    h+=`<div class="ev-block" role="region" aria-label="Documents for ${esc(l.caseType||'this law')}">
+      <div class="ev-title">${lawIcon} ${esc(l.caseType||l.lawCategory||'Legal Matter')}
+        <span style="font-size:11px;font-weight:500;color:var(--text-lt);margin-left:8px">${critDocs.length} critical · ${optDocs.length} optional</span>
+      </div>`;
+    if(critDocs.length){
+      h+=`<div style="font-size:11px;font-weight:700;color:#C0392B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;display:flex;align-items:center;gap:6px">🔴 Critical Documents — High Impact on Win Score</div>`;
+      critDocs.forEach((d,di)=>{
+        const did=`d${li}_crit_${di}`;
+        const why=d.why||d.description||'Key evidence that significantly strengthens your legal position.';
+        h+=renderDocRow(did,d.name,why,li,true);
+      });
+    }
+    if(optDocs.length){
+      h+=`<div style="font-size:11px;font-weight:700;color:var(--text-lt);text-transform:uppercase;letter-spacing:.4px;margin:12px 0 8px;display:flex;align-items:center;gap:6px">📄 Supporting Documents — Optional but Helpful</div>`;
+      optDocs.forEach((d,di)=>{
+        const did=`d${li}_opt_${di}`;
+        const why=d.why||d.description||'Provides additional context to support your case.';
+        h+=renderDocRow(did,d.name,why,li,false);
+      });
+    }
+    h+=`</div>`;
+  });
+  if(!total){
+    h+=`<div class="qblock"><p style="color:var(--text-lt);font-size:14px">No specific documents are required for your selected laws. Click Next to proceed to your analysis.</p></div>`;
+  }
+  // Contact capture — pre-fill from W state if already collected
+  const preEmail=W.email||'';const prePhone=W.phone||'';
+  h+=`<div class="contact-capture" id="quickContactBox">
+    <div class="cc-head">📬 Save Your Analysis & Get Updates</div>
+    <div class="cc-sub">Enter your details to receive your document checklist by email and get case progress alerts. These will be used to create your account when you proceed.</div>
+    <div class="cc-fields">
+      <input class="finput" id="quick-email" type="email" placeholder="Your email address" value="${esc(preEmail)}" autocomplete="email" oninput="W.email=this.value.trim()"/>
+      <div class="phone-wrap" style="width:100%">
+        <div class="phone-pre">🇮🇳 +91</div>
+        <input class="finput" id="quick-phone" type="tel" maxlength="10" placeholder="Mobile number" value="${esc(prePhone)}" autocomplete="tel" style="flex:1" oninput="this.value=this.value.replace(/\\D/g,'').slice(0,10);W.phone=this.value"/>
+      </div>
+    </div>
+  </div>`;
+  c.innerHTML=h;
+  updateDocProgress();
+}
+
+function renderDocRow(did,name,why,li,critical){
+  return `<div class="doc-check-row" id="docrow_${did}">
+    <div>
+      <input type="checkbox" class="doc-checkbox" id="chk_${did}"
+        aria-label="I have this document: ${esc(name)}"
+        onchange="toggleDocUpload('${did}','${li}',this)" />
+    </div>
+    <div>
+      <label for="chk_${did}" style="cursor:pointer">
+        <div class="doc-name">${critical?'<span class="ev-crit" style="margin-right:6px">CRITICAL</span>':''}${esc(name)}</div>
+        <div class="doc-why">${esc(why)}</div>
+        <div class="doc-check-label">${critical?'🔴':'📄'} Check if you have this document</div>
+      </label>
+    </div>
+    <div class="doc-upload-area" id="uparea_${did}">
+      <div class="doc-upload-wrap">
+        <button class="btn-doc-upload" id="btn_${did}" aria-label="Upload ${esc(name)}">📎 Upload</button>
+        <input type="file" class="doc-file-input" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+          aria-label="File upload for ${esc(name)}"
+          onchange="fileUpDoc('${did}','${li}',this)" />
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleDocUpload(did,li,checkbox){
+  const upArea=document.getElementById(`uparea_${did}`);
+  if(upArea){
+    if(checkbox.checked)upArea.classList.add('shown');
+    else{
+      upArea.classList.remove('shown');
+      const btn=document.getElementById(`btn_${did}`);
+      if(btn){btn.textContent='📎 Upload';btn.classList.remove('done');}
+    }
+  }
+  updateDocProgress();
+}
+
+function fileUpDoc(did,li,inp){
+  if(!inp.files.length)return;
+  const k=W.selected[parseInt(li)]?.caseType||li;
+  W.files[k]=(W.files[k]||0)+1;
+  const btn=document.getElementById(`btn_${did}`);
+  if(btn){btn.textContent='✅ '+inp.files[0].name.slice(0,16);btn.classList.add('done');}
+  toast(`"${inp.files[0].name.slice(0,25)}" added`);
+  updateDocProgress();
+}
+
+function updateDocProgress(){
+  const checkboxes=document.querySelectorAll('.doc-checkbox');
+  const total=checkboxes.length;
+  const checked=Array.from(checkboxes).filter(cb=>cb.checked).length;
+  const pct=total>0?Math.round((checked/total)*100):0;
+  const fill=document.getElementById('docProgFill');
+  const count=document.getElementById('docSelCount');
+  const bar=document.getElementById('docProgressBar');
+  if(fill)fill.style.width=pct+'%';
+  if(count)count.textContent=checked;
+  if(bar)bar.setAttribute('aria-valuenow',checked);
+}
+
+/* ── OTP / User ID ── */
+function sendOtp(){
+  const name=document.getElementById('uid-name').value.trim();
+  const email=document.getElementById('uid-email').value.trim();
+  const phone=document.getElementById('uid-phone').value.trim();
+  if(!name){toast('Please enter your full name.','err');return}
+  if(!email||!email.includes('@')){toast('Please enter a valid email address.','err');return}
+  if(phone.length!==10){toast('Please enter a valid 10-digit mobile number.','err');return}
+  W.name=name;W.email=email;W.phone=phone;
+  W.otp=String(Math.floor(100000+Math.random()*900000));
+  W.otpSent=true;
+  console.log(`[SatLegal OTP Demo] OTP for ${phone}: ${W.otp}`);
+  toast(`OTP sent to +91 ${phone.slice(0,5)}XXXXX (check console for demo)`);
+  document.getElementById('otpMsg').textContent=`✅ OTP sent to +91 ${phone.slice(0,5)}XXXXX — Valid 10 mins`;
+  document.getElementById('uid-register').style.display='none';
+  document.getElementById('uid-otp').style.display='block';
+  document.getElementById('otpRow').querySelectorAll('.otp-f')[0].focus();
+}
+function otpNav(inp,idx){
+  const fs=document.getElementById('otpRow').querySelectorAll('.otp-f');
+  if(inp.value&&idx<5)fs[idx+1].focus();
+  if(event.key==='Backspace'&&!inp.value&&idx>0)fs[idx-1].focus();
+  if(Array.from(fs).map(f=>f.value).join('').length===6)verifyOtp();
+}
+function resendOtp(){
+  W.otp=String(Math.floor(100000+Math.random()*900000));
+  console.log(`[SatLegal OTP Demo] New OTP: ${W.otp}`);
+  toast('New OTP sent!');
+}
+function verifyOtp(){
+  const fs=document.getElementById('otpRow').querySelectorAll('.otp-f');
+  const entered=Array.from(fs).map(f=>f.value).join('');
+  if(entered.length<6){toast('Enter the complete 6-digit OTP.','err');return}
+  if(entered===W.otp||entered==='123456'){
+    const uid='SL'+Date.now().toString(36).toUpperCase();
+    const user={uid,name:W.name,email:W.email,phone:'+91'+W.phone.slice(0,5)+'XXXXX',createdAt:new Date().toLocaleString('en-IN'),plan:W.selectedPlan||'report',amt:W.selectedPlanAmt||499};
+    try{localStorage.setItem('sl_user',JSON.stringify(user));localStorage.setItem('sl_pending_report',JSON.stringify({input:W.input,laws:W.selected,answers:W.answers,files:Object.keys(W.files).length}))}catch(e){}
+    // Track signup
+    slTrack('signup_completed',{uid,plan:W.selectedPlan||'report',amt:W.selectedPlanAmt||499});
+    // Persist to sales ledger
+    try{
+      const k='sl_sales';
+      const sales=JSON.parse(localStorage.getItem(k)||'[]');
+      sales.unshift({id:uid,name:W.name,email:W.email,phone:W.phone||'',plan:W.selectedPlan||'report',amt:W.selectedPlanAmt||499,status:'signup_completed',laws:(W.selected||[]).slice(0,3).map(l=>l.name||l.caseType),ts:new Date().toISOString()});
+      if(sales.length>5000)sales.length=5000;
+      localStorage.setItem(k,JSON.stringify(sales));
+    }catch(e){}
+    // Store ₹500 discount for lawyer consultation (valid 7 days) if plan is report
+    if((W.selectedPlan||'report')==='report'){
+      try{
+        const expiry=new Date(Date.now()+7*24*60*60*1000).toISOString();
+        localStorage.setItem('sl_report_discount',JSON.stringify({amount:500,code:'RPT500',reportUid:uid,email:W.email,createdAt:new Date().toISOString(),expiry}));
+      }catch(e){}
+    }
+    // Check admin payment toggle — if payments disabled, skip to report directly
+    const _flowCfg=JSON.parse(localStorage.getItem('sl_flow_config')||'{}');
+    const _paymentRequired=(_flowCfg.paymentRequired!==undefined?_flowCfg.paymentRequired:true) && !_flowCfg.freeReportAccess;
+    if(!_paymentRequired){
+      toast('✅ Verified! Loading your report...');
+      setTimeout(()=>{ genReport(uid,user); showStep(6); },600);
+    } else {
+      toast('✅ Verified! Redirecting to payment...');
+      slTrackLead('payment',{uid,email:W.email,phone:W.phone?W.phone.substring(0,5)+'XXXXX':'',name:W.name,plan:W.selectedPlan||'report',amt:W.selectedPlanAmt||499});
+      const plan=W.selectedPlan||'report';
+      setTimeout(()=>{ window.location.href=`payment.html?plan=${plan}&amt=${W.selectedPlanAmt||499}&uid=${uid}`; },600);
+    }
+  } else {
+    toast('Incorrect OTP. Please try again.','err');
+    fs.forEach(f=>{f.value='';f.style.borderColor='#C0392B'});
+    fs[0].focus();
+    setTimeout(()=>fs.forEach(f=>f.style.borderColor=''),1500);
+  }
+}
+
+/* ══ REPORT ══ */
+function genReport(uid,user){
+  const files=Object.values(W.files).reduce((s,v)=>s+v,0);
+  const win=calcWin(W.selected,W.answers,files);
+  const now=new Date().toLocaleString('en-IN',{dateStyle:'long',timeStyle:'short'});
+  let h='';
+
+  // Header meta
+  document.getElementById('rptSub').textContent=`User ID: ${uid} · ${user.name} · ${now}`;
+
+  // 1. Case Summary
+  h+=`<div class="rs"><div class="rs-title">📄 Case Summary</div>
+    <div class="case-box"><strong>Issue Described:</strong> ${esc(W.input)}<br/>
+    <span style="font-size:11px;color:var(--text-lt);margin-top:6px;display:block">User ID: ${uid} · Name: ${esc(user.name)} · ${now}</span></div></div>`;
+
+  // 2. Win Probability
+  h+=`<div class="rs"><div class="rs-title">📊 Case Strength Assessment</div>
+    <div class="win-card ${win.level.toLowerCase()}">
+      <div style="font-size:12px;color:var(--text-lt);margin-bottom:5px">Overall Win Probability</div>
+      <div class="win-level ${win.level.toLowerCase()}">${win.level} Case</div>
+      <div style="font-size:26px;font-weight:900;color:var(--text);margin-bottom:3px">${win.pct}%</div>
+      <div class="win-bar-wrap"><div class="win-bar" style="width:${win.pct}%;background:${win.color}"></div></div>
+      <div style="font-size:13px;color:var(--text-lt);margin-bottom:10px">${esc(win.reasoning)}</div>
+      <div class="win-factors">
+        <span>⚖️ Law match: <strong>${win.lScore}%</strong></span>
+        <span>❓ Answers: <strong>${win.aScore}%</strong></span>
+        <span>📎 Evidence: <strong>${files} file${files!==1?'s':''}</strong></span>
+      </div>
+    </div></div>`;
+
+  // 3. Laws + Sections
+  h+=`<div class="rs"><div class="rs-title">⚖️ Applicable Indian Laws & Sections</div>`;
+  W.selected.forEach(l=>{
+    h+=`<div class="rpt-law"><h4>${esc(l.caseType||l.lawCategory)}</h4>
+      <div class="rpt-law-act">${esc(l.actName||'')}</div>
+      <div class="sec-tags">${(l.sections||[]).slice(0,5).map(s=>`<span class="sec-tag">${esc(s)}</span>`).join('')}</div>
+      <div class="rpt-law-tip">${esc(l.quickTip||'This law applies to your situation.')}</div>
+    </div>`;
+  });
+  h+=`</div>`;
+
+  // 4. Next Steps
+  h+=`<div class="rs"><div class="rs-title">📋 Your Action Plan — Next Steps</div>
+    <div class="step-list">${buildSteps(W.selected,W.answers,W.areas)}</div></div>`;
+
+  // 5. Lawyers
+  h+=`<div class="rs"><div class="rs-title">👨‍⚖️ Connect to a Verified Lawyer</div>
+    <div class="lawyer-grid">${buildLawyers()}</div>
+    <p style="font-size:11px;color:var(--text-lt);text-align:center;margin-top:12px">⚠️ Verify credentials independently before engaging any lawyer.</p>
+  </div>`;
+
+  document.getElementById('rptBody').innerHTML=h;
+  document.getElementById('rptOv').classList.add('open');
+  document.body.style.overflow='hidden';
+  saveCase(uid,now,win,files);
+}
+function closeRpt(){
+  document.getElementById('rptOv').classList.remove('open');
+  document.body.style.overflow='';
+  // Reset wizard for a new case
+  resetW();showStep(1);
+}
+
+/* ── Win probability (factors in Step 2 + Step 4 answers) ── */
+function calcWin(laws,ans,files){
+  const top=laws[0]||{};
+  const lScore=Math.min(100,Math.round((top.confidence||top.score||0)/1.5));
+  // Step 2 answer score
+  const totalQs=W.questions.length||1;
+  const aCount=Object.keys(ans).filter(k=>ans[k]).length;
+  const aScore=Math.round((aCount/totalQs)*100);
+  // Step 4 assessment score (positive signals from case facts)
+  const assAnswers=Object.values(W.assessmentAnswers||{});
+  const assTotal=assAnswers.length;
+  const assPositive=assAnswers.filter(v=>
+    v.match(/^yes/i)||v.includes('registered')||v.includes('original')||v.includes('immediately')||v.includes('complete')||v.includes('multiple')
+  ).length;
+  const assScore=assTotal>0?Math.round((assPositive/assTotal)*100):50;
+  // Combined score: law match + answers + assessment + evidence files
+  let pct=Math.round(lScore*.30+aScore*.20+assScore*.25+Math.min(files*4,15)+((laws.length>=3)?5:0)+((assTotal>=4)?5:0));
+  if(top.urgency==='high')pct=Math.max(pct-5,0);
+  pct=Math.min(Math.max(pct,8),95);
+  let level,color,reasoning;
+  if(pct>=65){level='Strong';color='var(--gr-600)';reasoning='Your case has strong legal grounds with good evidence documentation and clear law alignment.'}
+  else if(pct>=38){level='Moderate';color='var(--sf-700)';reasoning='Your case has merit but would benefit from stronger documentation and professional legal guidance.'}
+  else{level='Weak';color='#C0392B';reasoning='Case needs stronger documentation and legal strategy. Consulting a lawyer early will significantly improve outcomes.'}
+  return{level,color,pct,reasoning,lScore,aScore};
+}
+
+/* ── Next steps by area ── */
+function buildSteps(laws,ans,areas){
+  const area=areas[0]||'';
+  const steps=[];
+  if(area==='cyber'){
+    steps.push({u:true,t:'Call 1930 Within 24 Hours',d:'Cybercrime Helpline 1930 for financial fraud. Report within 24 hrs for maximum chance of fund recovery.'});
+    steps.push({u:true,t:'File at cybercrime.gov.in',d:'Submit formal complaint with screenshots, transaction IDs, sender details, and communication records.'});
+    steps.push({u:false,t:'Inform Your Bank Immediately',d:'Block your card/UPI, file a chargeback complaint, and request transaction reversal at your branch.'});
+  } else if(area==='criminal'||area==='sc_st'){
+    steps.push({u:true,t:'File an FIR at the Nearest Police Station',d:'If police refuse, approach the Judicial Magistrate under Section 156(3) BNSS or directly approach the Superintendent of Police.'});
+    steps.push({u:false,t:'Preserve All Evidence',d:'Screenshots, messages, medical reports, witness contacts. Do not delete any digital evidence.'});
+    steps.push({u:false,t:'Apply for Bail if Someone is in Custody',d:'Contact a criminal lawyer within 24 hours. Anticipatory bail can be sought before arrest.'});
+  } else if(area==='family'||area==='muslim_family'){
+    steps.push({u:false,t:'Send a Legal Notice via Advocate',d:'A formal notice is the first legal step in matrimonial matters and often prompts settlement.'});
+    steps.push({u:false,t:'File in the Family Court',d:'Approach Family Court in the city where you or your spouse last lived together.'});
+    steps.push({u:false,t:'Apply for Interim Maintenance',d:'Under Sec 24 HMA or DV Act, apply for maintenance and residence order while the main case is pending.'});
+  } else if(area==='employment'){
+    steps.push({u:true,t:'Send a Formal Demand Letter',d:'Write to HR demanding all dues (salary, PF, gratuity). Give 15 days — mandatory before Labour Court.'});
+    steps.push({u:false,t:'File with the Labour Commissioner',d:'File with the Assistant Labour Commissioner in your district. Free to file, no advocate needed initially.'});
+    steps.push({u:false,t:'Raise PF Grievance Online',d:'epfindia.gov.in → Member Portal → Raise Grievance. Fastest channel for PF-related issues.'});
+  } else if(area==='property'||area==='land_acquisition'){
+    steps.push({u:false,t:'Obtain Property Documents Urgently',d:'Get certified copies of all property records from the Sub-Registrar office immediately.'});
+    steps.push({u:false,t:'File in Civil Court or RERA',d:'For builder disputes: RERA. For other property disputes: Civil Court. For government acquisition: file Reference to Collector.'});
+    steps.push({u:false,t:'Apply for Temporary Injunction',d:'Under Order 39 CPC to prevent dispossession, construction, or transfer while your case is pending.'});
+  } else if(area==='consumer'){
+    steps.push({u:false,t:'Send Written Complaint to the Company',d:'Companies often resolve quickly to avoid Consumer Commission. Send via email + registered post.'});
+    steps.push({u:false,t:'File at District Consumer Commission',d:'For disputes up to ₹50 lakh. Free, no advocate needed. File online at edaakhil.nic.in.'});
+    steps.push({u:false,t:'Check the 2-Year Limitation',d:'File within 2 years of the deficiency of service. Apply for condonation if delayed.'});
+  } else {
+    steps.push({u:false,t:'Consult a Specialist Advocate',d:`Based on ${laws[0]?.actName||'the applicable acts'}, consult a specialist advocate for a detailed case assessment.`});
+    steps.push({u:false,t:'Gather All Relevant Documents',d:'Agreements, IDs, correspondence, receipts, and any evidence supporting your claim.'});
+    steps.push({u:false,t:'Send a Formal Legal Notice',d:'A notice via registered post is often the first formal step that prompts resolution without court.'});
+  }
+  steps.push({u:false,t:'Document Everything Chronologically',d:'Courts appreciate well-organized evidence. Keep a written record of all dates, actions, and communications.'});
+  return steps.slice(0,5).map((s,i)=>`<div class="step-li${s.u?' urg':''}"><div class="step-badge">${i+1}</div><div><h5>${esc(s.t)}</h5><p>${esc(s.d)}</p></div></div>`).join('');
+}
+
+/* ── Lawyers ── */
+const LDB=[
+  {n:'Adv. Priya Malhotra',sp:'Family & Matrimonial Law',c:'Delhi',e:'12 yrs',a:['family','muslim_family'],i:'PM'},
+  {n:'Adv. Rahul Sinha',sp:'Criminal Defense',c:'Mumbai',e:'8 yrs',a:['criminal','sc_st'],i:'RS'},
+  {n:'Adv. Kavitha Reddy',sp:'Cyber Crime & IT Law',c:'Hyderabad',e:'9 yrs',a:['cyber'],i:'KR'},
+  {n:'Adv. Suresh Nair',sp:'Property & Real Estate',c:'Kochi',e:'15 yrs',a:['property','land_acquisition'],i:'SN'},
+  {n:'Adv. Deepika Joshi',sp:'Labour & Employment',c:'Pune',e:'11 yrs',a:['employment'],i:'DJ'},
+  {n:'Adv. Mohammed Raza',sp:'Muslim Personal Law',c:'Hyderabad',e:'14 yrs',a:['muslim_family','family'],i:'MR'},
+  {n:'Adv. Anita Sharma',sp:'Consumer Protection',c:'Bengaluru',e:'7 yrs',a:['consumer','civil'],i:'AS'},
+  {n:'Adv. Vikram Tiwari',sp:'Civil & Succession Law',c:'Lucknow',e:'18 yrs',a:['succession','civil'],i:'VT'},
+];
+function buildLawyers(){
+  const ar=W.areas.length?W.areas:['civil'];
+  const sc=LDB.map(l=>({...l,m:l.a.filter(a=>ar.includes(a)).length})).sort((a,b)=>b.m-a.m).slice(0,4);
+  return sc.map(l=>`<div class="lyr-card">
+    <div class="lyr-av">${esc(l.i)}</div>
+    <div><div class="lyr-name">${esc(l.n)}</div><div class="lyr-spec">${esc(l.sp)}</div>
+    <div class="lyr-meta"><span>📍 ${esc(l.c)}</span><span>${esc(l.e)}</span></div>
+    <div class="lyr-btns"><button class="btn-wa" onclick="toast('WhatsApp coming soon.')">WhatsApp</button><button class="btn-call" onclick="toast('Call feature coming soon.')">📞 Call</button></div>
+    </div></div>`).join('');
+}
+
+/* ── Save case ── */
+function saveCase(uid,ts,win,files){
+  try{
+    const cases=JSON.parse(localStorage.getItem('sl_cases')||'[]');
+    cases.unshift({id:uid,timestamp:ts,name:W.name,email:W.email,phone:'+91'+W.phone.slice(0,5)+'XXXXX',
+      issue:W.input.slice(0,120),laws:W.selected.map(l=>l.caseType||l.lawCategory),
+      winLevel:win.level,winPercent:win.pct,filesUploaded:files,areas:W.areas});
+    localStorage.setItem('sl_cases',JSON.stringify(cases.slice(0,100)));
+  }catch(e){}
+}
+
+/* ══ CHATBOT ══ */
+let chatOpen=false;
+function toggleChat(){
+  chatOpen=!chatOpen;
+  document.getElementById('chatPanel').classList.toggle('open',chatOpen);
+  if(chatOpen&&!document.getElementById('chatMsgs').children.length){
+    addBotMsg('👋 Hi! I\'m SatLegal\'s legal assistant. Ask me about any Indian legal issue — I\'ll tell you which law applies and what to do next.\n\nOr click a quick question below to get started.');
+  }
+}
+function chatSend(){const v=document.getElementById('chatIn').value.trim();if(!v)return;chatAsk(v);document.getElementById('chatIn').value=''}
+function chatAsk(q){
+  addUserMsg(q);
+  setTimeout(()=>addBotMsg(chatAnswer(q)),600);
+}
+function addUserMsg(t){const m=document.getElementById('chatMsgs');const d=document.createElement('div');d.className='chat-msg user';d.textContent=t;m.appendChild(d);m.scrollTop=m.scrollHeight}
+function addBotMsg(t){
+  const m=document.getElementById('chatMsgs');
+  const d=document.createElement('div');d.className='chat-msg bot';
+  d.innerHTML=t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br/>');
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+function chatAnswer(q){
+  const laws=(window.analyzeMultipleLaws||analyzeMultipleLaws)(q,{});
+  if(!laws||!laws.length||(laws[0].confidence||laws[0].score||0)<15){
+    return 'I need more context to help you accurately. Could you describe your situation in more detail? For example: who is involved, what happened, and what outcome you are seeking?';
+  }
+  const top=laws[0];
+  const sections=(top.sections||[]).slice(0,3).map(s=>`• ${s}`).join('\n');
+  return `**${top.caseType}**\n*${top.actName}*\n\n💡 ${top.quickTip||''}\n\n${sections?'**Key Sections:**\n'+sections+'\n\n':''}\n👉 <a href="#" onclick="openWizard();return false" style="color:var(--gr-600);font-weight:700">Run Full Analysis →</a>`;
+}
+
+/* ── Toast ── */
+function toast(msg,type='ok'){
+  const c=document.getElementById('toast');
+  const d=document.createElement('div');
+  d.className='t-item'+(type==='err'?' err':'');
+  d.textContent=msg;c.appendChild(d);
+  setTimeout(()=>{d.style.opacity='0';d.style.transition='opacity .4s'},3200);
+  setTimeout(()=>d.remove(),3600);
+}
+
+/* ── HTML escape ── */
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+/* ════ PAYMENT PLANS ENGINE ════ */
+
+/* Default built-in plans (used when no custom plans saved) */
+const DEFAULT_PLANS=[
+  {id:'plan_report_std',name:'Digital Legal Report',type:'report',icon:'📄',price:499,originalPrice:null,
+   description:'One-time · Instant delivery · PDF',
+   features:['Law mapping + sections','Win probability score','Action plan & next steps','Document checklist'],
+   badge:null,active:true,featured:false,startDate:null,endDate:null,couponCode:null},
+  {id:'plan_consult_std',name:'Expert Consultation',type:'consult',icon:'🧑‍⚖️',price:2500,originalPrice:null,
+   description:'30 min · Verified lawyer · Call/Chat',
+   features:['Everything in Report','1:1 with a verified lawyer','Case strategy + legal notice','Follow-up Q&A included'],
+   badge:null,active:true,featured:false,startDate:null,endDate:null,couponCode:null}
+];
+
+function getActivePlans(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('sl_payment_plans')||'null');
+    if(!saved||!saved.length)return DEFAULT_PLANS;
+    const now=new Date();
+    const active=saved.filter(p=>{
+      if(!p.active)return false;
+      if(p.startDate&&new Date(p.startDate)>now)return false;
+      if(p.endDate&&new Date(p.endDate)<now)return false;
+      return true;
+    });
+    return active.length?active:DEFAULT_PLANS;
+  }catch(e){return DEFAULT_PLANS;}
+}
+
+function getReportDiscount(){
+  try{
+    const d=JSON.parse(localStorage.getItem('sl_report_discount')||'null');
+    if(!d)return null;
+    if(new Date()>new Date(d.expiry)){localStorage.removeItem('sl_report_discount');return null;}
+    return d;
+  }catch(e){return null;}
+}
+
+function _effectivePrice(plan){
+  const discount=getReportDiscount();
+  if(plan.type==='consult'&&discount)return plan.price-discount.amount;
+  return plan.price;
+}
+
+function renderPlanCards(){
+  const plans=getActivePlans();
+  W.activePlans=plans;
+  const discount=getReportDiscount();
+  const daysLeft=discount?Math.ceil((new Date(discount.expiry)-new Date())/(1000*60*60*24)):0;
+
+  const container=document.getElementById('acChoicesContainer');
+  const cls=plans.length===1?'single':plans.length===3?'triple':plans.length>=4?'quad':'';
+  container.className='ac-choices'+(cls?' '+cls:'');
+
+  container.innerHTML=plans.map((p,i)=>{
+    const effAmt=_effectivePrice(p);
+    const hasDiscount=(p.type==='consult'&&discount)||(p.originalPrice&&effAmt<(p.originalPrice||p.price));
+    const oldAmt=p.type==='consult'&&discount?p.price:(p.originalPrice||null);
+    const priceHtml=hasDiscount
+      ?`<s style="opacity:.5;font-size:13px">₹${oldAmt}</s> ₹${effAmt}`
+      :`₹${effAmt}`;
+    const badgeHtml=p.badge?`<div class="ac-badge">${esc(p.badge)}</div>`:'';
+    const discTag=p.type==='consult'&&discount
+      ?`<div class="ac-discount-tag">🎁 ₹${discount.amount} discount · ${daysLeft}d left</div>`:'';
+    const feats=(p.features||[]).map(f=>`<li>${esc(f)}</li>`).join('');
+    const cardType=p.type==='consult'?'lawyer':p.type;
+    return `<div class="ac-card ${cardType}${p.featured?' featured':''}"
+      role="button" tabindex="0"
+      onclick="selectActionByIndex(${i})"
+      onkeydown="if(event.key==='Enter'||event.key===' ')selectActionByIndex(${i})"
+      aria-label="${esc(p.name)} ₹${effAmt}">
+      ${badgeHtml}
+      <div class="ac-card-icon">${p.icon||'📄'}</div>
+      <div class="ac-card-name">${esc(p.name)}</div>
+      <div class="ac-card-price">${priceHtml}</div>
+      <div class="ac-card-note">${esc(p.description||'')}</div>
+      ${feats?`<ul class="ac-card-features">${feats}</ul>`:''}
+      ${discTag}
+    </div>`;
+  }).join('');
+}
+
+function showActionChoicePopup(){
+  const qe=document.getElementById('quick-email');
+  const qp=document.getElementById('quick-phone');
+  if(qe&&qe.value.trim())W.email=qe.value.trim();
+  if(qp&&qp.value.trim())W.phone=qp.value.trim();
+  // If free access is configured, skip plan selection and go straight to auth
+  const _fc=JSON.parse(localStorage.getItem('sl_flow_config')||'{}');
+  const _isFree=!((_fc.paymentRequired!==undefined?_fc.paymentRequired:true)&&!_fc.freeReportAccess);
+  if(_isFree){
+    W.selectedPlan={type:'report',name:'Free Legal Report',icon:'📋',price:0,description:'Complimentary access — full report included'};
+    W.selectedPlanAmt=0;
+    showAuthModal(W.selectedPlan,0);
+    return;
+  }
+  renderPlanCards();
+  document.getElementById('actionChoiceModal').classList.add('open');
+}
+
+function closeActionPopup(){document.getElementById('actionChoiceModal').classList.remove('open')}
+
+function selectActionByIndex(i){
+  const plan=(W.activePlans||DEFAULT_PLANS)[i];
+  if(plan)selectActionChoice(plan);
+}
+
+function selectActionChoice(plan){
+  closeActionPopup();
+  const amt=_effectivePrice(plan);
+  W.selectedPlan=plan;W.selectedPlanAmt=amt;
+  showAuthModal(plan,amt);
+}
+
+/* ════ AUTH MODAL LOGIC ════ */
+function showAuthModal(plan,amt){
+  const mo=document.getElementById('authModal');if(!mo)return;
+  // plan is a full plan object
+  const discount=getReportDiscount();
+  const hasDiscount=(plan.type==='consult'&&discount)||(plan.originalPrice&&amt<plan.originalPrice);
+  const oldAmt=plan.type==='consult'&&discount?plan.price:(plan.originalPrice||null);
+  let priceHtml=amt===0?'<span style="color:#27ae60;font-weight:700">Free</span>':'₹'+amt;
+  if(hasDiscount&&oldAmt)priceHtml=`<s style="opacity:.5;font-size:13px">₹${oldAmt}</s> ₹${amt}`;
+  let noteHtml=plan.description||'';
+  if(plan.type==='consult'&&discount)noteHtml+=' · ₹'+discount.amount+' discount applied';
+  document.getElementById('authPlanIcon').textContent=plan.icon||'📄';
+  document.getElementById('authPlanName').textContent=plan.name||'SatLegal Service';
+  document.getElementById('authPlanPrice').innerHTML=priceHtml;
+  document.getElementById('authPlanNote').textContent=noteHtml;
+  // Pre-fill collected contact
+  const liPhone=document.getElementById('authLoginPhone');
+  const suName=document.getElementById('authSignupName');
+  const suEmail=document.getElementById('authSignupEmail');
+  const suPhone=document.getElementById('authSignupPhone');
+  if(liPhone&&W.phone&&!liPhone.value)liPhone.value=W.phone;
+  if(suEmail&&W.email&&!suEmail.value)suEmail.value=W.email;
+  if(suPhone&&W.phone&&!suPhone.value)suPhone.value=W.phone;
+  // Default to signup tab for new users, login if email known
+  switchAuthTab(W.email?'login':'signup');
+  mo.classList.add('open');
+  mo.querySelector('.auth-modal').scrollTop=0;
+  // Update verify button labels based on free vs paid
+  const _isFreeFlow=(amt===0);
+  const _verifyLabel=_isFreeFlow?'✅ Verify &amp; Get Free Report':'✅ Verify &amp; Proceed to Payment';
+  const _createLabel=_isFreeFlow?'✅ Create Account &amp; Get Free Report':'✅ Create Account &amp; Pay';
+  const _secureNote=_isFreeFlow?'🔒 Secured &amp; private · No payment required':'🔒 Secured by Razorpay · End-to-end encrypted · GST invoice provided';
+  const loginVerifyBtn=mo.querySelector('#authForm-login .auth-otp-block .auth-btn:not(.secondary)');
+  const signupVerifyBtn=mo.querySelector('#authForm-signup .auth-otp-block .auth-btn:not(.secondary)');
+  const secureEl=mo.querySelector('.auth-secure');
+  if(loginVerifyBtn)loginVerifyBtn.innerHTML=_verifyLabel;
+  if(signupVerifyBtn)signupVerifyBtn.innerHTML=_createLabel;
+  if(secureEl)secureEl.innerHTML=_secureNote;
+}
+
+function closeAuthModal(){
+  const mo=document.getElementById('authModal');
+  if(mo)mo.classList.remove('open');
+  // Go back: free flow → step 4 (evidence), paid flow → reopen plan selection
+  const _fc=JSON.parse(localStorage.getItem('sl_flow_config')||'{}');
+  const _isFree=!((_fc.paymentRequired!==undefined?_fc.paymentRequired:true)&&!_fc.freeReportAccess);
+  if(_isFree){showStep(4);}
+  else{renderPlanCards();document.getElementById('actionChoiceModal').classList.add('open');}
+}
+
+function switchAuthTab(tab){
+  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  document.querySelectorAll('.auth-form').forEach(f=>f.classList.toggle('active',f.id==='authForm-'+tab));
+}
+
+/* OTP digit auto-advance */
+function authOtpKey(e,formId){
+  const inp=e.target;
+  const digits=[...document.querySelectorAll('#'+formId+' .auth-otp-f')];
+  const idx=digits.indexOf(inp);
+  if(e.key>='0'&&e.key<='9'){inp.value=e.key;if(digits[idx+1])digits[idx+1].focus();e.preventDefault();}
+  else if(e.key==='Backspace'){inp.value='';if(idx>0)digits[idx-1].focus();e.preventDefault();}
+  else if(e.key==='ArrowLeft'&&idx>0){digits[idx-1].focus();}
+  else if(e.key==='ArrowRight'&&digits[idx+1]){digits[idx+1].focus();}
+  // Auto-verify when all 6 filled
+  const all=digits.every(d=>d.value.match(/\d/));
+  if(all){
+    const formType=formId==='authLoginOtp'?'login':'signup';
+    setTimeout(()=>authVerifyOtp(formType),120);
+  }
+}
+
+function authGetOtp(formId){
+  return [...document.querySelectorAll('#'+formId+' .auth-otp-f')].map(d=>d.value).join('');
+}
+
+function authSendOtp(formType){
+  let phone='';
+  if(formType==='login'){
+    phone=(document.getElementById('authLoginPhone')||{}).value||'';
+    phone=phone.replace(/\D/g,'');
+    if(phone.length!==10){toast('Enter a valid 10-digit mobile number','err');return;}
+  } else {
+    const name=(document.getElementById('authSignupName')||{}).value||'';
+    const email=(document.getElementById('authSignupEmail')||{}).value||'';
+    phone=(document.getElementById('authSignupPhone')||{}).value||'';
+    phone=phone.replace(/\D/g,'');
+    if(!name.trim()){toast('Please enter your full name','err');return;}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Enter a valid email address','err');return;}
+    if(phone.length!==10){toast('Enter a valid 10-digit mobile number','err');return;}
+    // Store for later
+    W.name=name.trim();W.email=email.trim();W.phone=phone;
+  }
+  // Show OTP block
+  const otpBlock=document.getElementById(formType==='login'?'authLoginOtpBlock':'authSignupOtpBlock');
+  const msgEl=document.getElementById(formType==='login'?'authLoginOtpMsg':'authSignupOtpMsg');
+  if(otpBlock)otpBlock.classList.add('visible');
+  if(msgEl)msgEl.textContent='OTP sent to +91-'+phone+'. (Demo: use 123456)';
+  const firstDigit=otpBlock&&otpBlock.querySelector('.auth-otp-f');
+  if(firstDigit)firstDigit.focus();
+  // Demo: store OTP
+  W._authOtp='123456';W._authPhone=phone;
+  toast('OTP sent to +91-'+phone);
+}
+
+function authVerifyOtp(formType){
+  const otpId=formType==='login'?'authLoginOtpRow':'authSignupOtpRow';
+  const entered=authGetOtp(otpId);
+  if(entered.length!==6){toast('Enter all 6 OTP digits','err');return;}
+  if(entered!==W._authOtp){toast('Incorrect OTP. Try again.','err');return;}
+  // Auth success — store user session
+  const userData={
+    name:W.name||(formType==='login'?'User':document.getElementById('authSignupName').value)||'User',
+    email:W.email||'',
+    phone:W._authPhone||W.phone||'',
+    plan:W.selectedPlan,
+    loggedIn:true
+  };
+  localStorage.setItem('sl_user_session',JSON.stringify(userData));
+  // Check admin payment toggle
+  const _authFlowCfg=JSON.parse(localStorage.getItem('sl_flow_config')||'{}');
+  const _authPaymentRequired=(_authFlowCfg.paymentRequired!==undefined?_authFlowCfg.paymentRequired:true) && !_authFlowCfg.freeReportAccess;
+  closeAuthModal();
+  if(!_authPaymentRequired){
+    toast('✅ Verified! Loading your report...');
+    const _aUser=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
+    const _aUid='SL'+Date.now().toString(36).toUpperCase();
+    setTimeout(()=>{ genReport(_aUid,_aUser); showStep(6); },400);
+  } else {
+    toast('✅ Verified! Proceeding to payment…');
+    setTimeout(()=>initiateRazorpayPayment(W.selectedPlan,W.selectedPlanAmt),400);
+  }
+}
+
+/* ════ RAZORPAY PAYMENT ════ */
+function initiateRazorpayPayment(plan,amt){
+  const keyId=localStorage.getItem('sl_razorpay_key_id')||'';
+  // plan is a full plan object
+  const planLabel=(plan&&plan.name)?plan.name:(plan==='report'?'Digital Legal Report':'Expert Consultation');
+  const planType=(plan&&plan.type)?plan.type:(typeof plan==='string'?plan:'report');
+  if(!keyId){
+    toast('Payment gateway not configured. Opening report…');
+    selectPlan(planType==='report'?'report':'consult',amt);
+    showStep(6);
+    return;
+  }
+  // Load Razorpay SDK dynamically
+  if(!document.getElementById('razorpay-sdk')){
+    const s=document.createElement('script');
+    s.id='razorpay-sdk';s.src='https://checkout.razorpay.com/v1/checkout.js';
+    s.onload=()=>_openRazorpay(keyId,plan,amt,planLabel);
+    s.onerror=()=>{toast('Payment SDK failed to load. Please try again.','err');};
+    document.head.appendChild(s);
+  } else {
+    _openRazorpay(keyId,plan,amt,planLabel);
+  }
+}
+
+function _openRazorpay(keyId,plan,amt,planLabel){
+  const user=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
+  const planObj=typeof plan==='object'?plan:{id:plan,type:plan,name:planLabel};
+  const notes={plan_id:planObj.id||'',plan_type:planObj.type||'',plan_name:planLabel,...(planObj.razorpayNotes||{})};
+  const options={
+    key:keyId,
+    amount:amt*100, // paise
+    currency:'INR',
+    name:'SatLegal',
+    description:planLabel,
+    image:'https://satlegal.in/favicon.ico',
+    prefill:{name:user.name||'',email:user.email||'',contact:user.phone?'+91'+user.phone:''},
+    notes,
+    theme:{color:'#138808'},
+    handler:function(response){
+      const txn={
+        plan_id:planObj.id||'',plan_type:planObj.type||'',plan_name:planLabel,
+        amt:amt,
+        razorpay_payment_id:response.razorpay_payment_id||'demo_'+Date.now(),
+        razorpay_order_id:response.razorpay_order_id||'',
+        razorpay_signature:response.razorpay_signature||'',
+        ts:new Date().toISOString()
+      };
+      localStorage.setItem('sl_last_payment',JSON.stringify(txn));
+      toast('✅ Payment successful! Loading your '+planLabel+'…');
+      const legacyType=planObj.type==='report'?'report':'consult';
+      selectPlan(legacyType,amt);
+      showStep(6);
+    },
+    modal:{
+      ondismiss:function(){toast('Payment cancelled. You can try again.','err');}
+    }
+  };
+  try{
+    const rzp=new window.Razorpay(options);
+    rzp.open();
+  } catch(e){
+    toast('Could not open payment. Please try again.','err');
+    console.error('Razorpay error:',e);
+  }
+}
+
+/* ── CMS banner + deep-link plan handler ── */
+document.addEventListener('DOMContentLoaded',function(){
+  try{
+    const c=JSON.parse(localStorage.getItem('sl_cms_v1')||'{}');
+    if(c.banners?.showDemo&&c.banners?.demoText){
+      const b=document.createElement('div');
+      b.style.cssText='background:var(--sf-500);color:#fff;text-align:center;padding:7px;font-size:13px;font-weight:700';
+      b.textContent=c.banners.demoText;
+      document.body.insertBefore(b,document.body.firstChild);
+    }
+  }catch(e){}
+
+  // Deep-link: ?plan=<plan_id> auto-opens payment for that plan
+  try{
+    const params=new URLSearchParams(window.location.search);
+    const planId=params.get('plan');
+    if(planId){
+      const plans=getActivePlans();
+      const plan=plans.find(p=>p.id===planId);
+      if(plan){
+        setTimeout(()=>{
+          const amt=_effectivePrice(plan);
+          W.selectedPlan=plan;W.selectedPlanAmt=amt;
+          showAuthModal(plan,amt);
+        },900);
+      }
+    }
+  }catch(e){}
+});
+</script>
+
+<!-- ── ACTION CHOICE POPUP (plan cards rendered dynamically) ── -->
+<div class="ac-overlay" id="actionChoiceModal" role="dialog" aria-modal="true" aria-labelledby="acModalTitle">
+  <div class="ac-modal">
+    <div class="ac-check">✅</div>
+    <h2 class="ac-title" id="acModalTitle">Your Analysis Is Complete!</h2>
+    <p class="ac-sub">We've mapped your legal issue to the applicable Indian laws. What would you like to do next?</p>
+    <!-- Plan cards injected here by renderPlanCards() -->
+    <div class="ac-choices" id="acChoicesContainer"></div>
+    <div class="ac-secure">🔒 Secured by Razorpay · 100% confidential · GST invoice</div>
+    <div style="margin-top:14px"><button onclick="closeActionPopup()" style="background:none;border:none;color:var(--text-lt);font-size:12px;cursor:pointer;text-decoration:underline">← Go back and review documents</button></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     AUTH MODAL — Login / Sign Up → Payment
+══════════════════════════════════════════════════════ -->
+<div class="auth-overlay" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+  <div class="auth-modal-wrap">
+    <div class="auth-modal">
+      <button class="auth-close" onclick="closeAuthModal()" aria-label="Close">✕</button>
+
+      <!-- Plan banner -->
+      <div class="auth-plan-banner">
+        <div class="auth-plan-icon" id="authPlanIcon">📄</div>
+        <div class="auth-plan-info">
+          <div class="auth-plan-name" id="authPlanName">Digital Legal Report</div>
+          <div class="auth-plan-price" id="authPlanPrice">₹499</div>
+          <div class="auth-plan-note" id="authPlanNote">One-time · PDF delivery · Instant</div>
+        </div>
+      </div>
+
+      <h2 id="authModalTitle" style="font-size:17px;font-weight:900;color:var(--gr-900);margin-bottom:6px">Sign In to Continue</h2>
+      <p style="font-size:12px;color:var(--text-lt);margin-bottom:18px">New or returning? We'll get you set up in seconds.</p>
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab" data-tab="signup" onclick="switchAuthTab('signup')">New User — Sign Up</button>
+        <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Existing User — Login</button>
+      </div>
+
+      <!-- ─── LOGIN FORM ─── -->
+      <div class="auth-form active" id="authForm-login">
+        <div class="auth-form-group">
+          <label for="authLoginPhone">📱 Mobile Number</label>
+          <div class="auth-phone-row">
+            <span class="auth-phone-pre">🇮🇳 +91</span>
+            <input class="auth-input" id="authLoginPhone" type="tel" maxlength="10" placeholder="10-digit mobile number" inputmode="numeric">
+          </div>
+        </div>
+        <button class="auth-btn" onclick="authSendOtp('login')">Send OTP →</button>
+
+        <!-- OTP block (hidden until OTP sent) -->
+        <div class="auth-otp-block" id="authLoginOtpBlock">
+          <div class="auth-otp-msg" id="authLoginOtpMsg">OTP sent to your number.</div>
+          <div class="auth-form-group" style="text-align:center">
+            <label style="display:block;margin-bottom:10px">Enter 6-digit OTP</label>
+            <div class="auth-otp-row" id="authLoginOtpRow">
+              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authLoginOtpRow')">
+              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authLoginOtpRow')">
+              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authLoginOtpRow')">
+              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authLoginOtpRow')">
+              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authLoginOtpRow')">
+              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authLoginOtpRow')">
+            </div>
+          </div>
+          <button class="auth-btn" onclick="authVerifyOtp('login')">✅ Verify &amp; Proceed to Payment</button>
+          <div class="auth-divider"><span>or</span></div>
+          <button class="auth-btn secondary" onclick="authSendOtp('login')">Resend OTP</button>
+        </div>
+      </div>
+
+      <!-- ─── SIGN UP FORM ─── -->
+      <div class="auth-form" id="authForm-signup">
+        <div class="auth-form-group">
+          <label for="authSignupName">👤 Full Name</label>
+          <input class="auth-input" id="authSignupName" type="text" placeholder="Your full name">
+        </div>
+        <div class="auth-form-group">
+          <label for="authSignupEmail">✉️ Email Address</label>
+          <input class="auth-input" id="authSignupEmail" type="email" placeholder="you@example.com">
+        </div>
+        <div class="auth-form-group">
+          <label for="authSignupPhone">📱 Mobile Number</label>
+          <div class="auth-phone-row">
+            <span class="auth-phone-pre">🇮🇳 +91</span>
+            <input class="auth-input" id="authSignupPhone" type="tel" maxlength="10" placeholder="10-digit mobile number" inputmode="numeric">
+          </div>
+        </div>
+        <button class="auth-btn" onclick="authSendOtp('signup')">Send OTP →</button>
+
+        <!-- OTP block (hidden until OTP sent) -->
+        <div class="auth-otp-block" id="authSignupOtpBlock">
+          <div class="auth-otp-msg" id="authSignupOtpMsg">OTP sent to your number.</div>
+          <div class="auth-form-group" style="text-align:center">
+            <label style="display:block;margin-bottom:10px">Enter 6-digit OTP</label>
+            <div class="auth-otp-row" id="authSignupOtpRow">
+              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authSignupOtpRow')">
+              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authSignupOtpRow')">
+              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authSignupOtpRow')">
+              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authSignupOtpRow')">
+              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authSignupOtpRow')">
+              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authSignupOtpRow')">
+            </div>
+          </div>
+          <button class="auth-btn" onclick="authVerifyOtp('signup')">✅ Create Account &amp; Pay</button>
+          <div class="auth-divider"><span>or</span></div>
+          <button class="auth-btn secondary" onclick="authSendOtp('signup')">Resend OTP</button>
+        </div>
+      </div>
+
+      <div class="auth-secure">🔒 Secured by Razorpay · End-to-end encrypted · GST invoice provided</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

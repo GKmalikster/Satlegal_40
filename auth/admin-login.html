@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin Login – SatLegal</title>
+<style>
+:root{--sf-500:#FF9933;--sf-600:#FF8800;--sf-700:#E07000;--sf-100:#FFF4E6;
+  --gr-500:#138808;--gr-700:#145214;--gr-800:#0D3D0D;--gr-900:#062206;
+  --gr-50:#F0FBF0;--border:#E5E7EB;--text:#1A1A1A;--text-lt:#6B7280;--r:10px;
+  --font:'Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--gr-900) 0%,var(--gr-800) 50%,#1A3A00 100%);
+  padding:20px}
+.tribar{position:fixed;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
+.card{background:#fff;border-radius:16px;width:100%;max-width:420px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.card-head{background:linear-gradient(135deg,var(--sf-700),var(--sf-500));padding:32px 36px;text-align:center}
+.logo{font-size:26px;font-weight:900;margin-bottom:6px}
+.logo .s{color:#fff}.logo .l{color:rgba(255,255,255,.85)}
+.card-head h2{color:#fff;font-size:18px;font-weight:700;margin-bottom:4px}
+.card-head p{color:rgba(255,255,255,.7);font-size:13px}
+.card-body{padding:32px 36px}
+.fgroup{margin-bottom:18px}
+.fgroup label{display:block;font-size:12px;font-weight:700;color:var(--gr-800);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.finput{width:100%;border:2px solid var(--border);border-radius:var(--r);padding:12px 14px;font-size:15px;
+  font-family:var(--font);transition:.2s;color:var(--text)}
+.finput:focus{outline:none;border-color:var(--gr-500);box-shadow:0 0 0 3px rgba(19,136,8,.07)}
+.pass-wrap{position:relative}
+.pass-wrap .finput{padding-right:46px}
+.pass-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:var(--text-lt)}
+.btn-login{width:100%;background:var(--gr-700);color:#fff;border:none;padding:14px;border-radius:var(--r);
+  font-size:16px;font-weight:700;font-family:var(--font);transition:.25s;margin-top:4px}
+.btn-login:hover{background:var(--gr-600);transform:translateY(-1px)}
+.btn-login:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.err-msg{background:#FDECEA;color:#C0392B;border:1px solid #FFCDD2;border-radius:8px;padding:10px 14px;
+  font-size:13px;margin-bottom:16px;display:none}
+.err-msg.show{display:block}
+.hint{background:var(--gr-50);border:1px solid #A8E8A4;border-radius:8px;padding:12px 14px;margin-top:18px;font-size:12px;color:var(--gr-700);text-align:center}
+.hint strong{display:block;margin-bottom:3px;color:var(--gr-800)}
+.back-link{text-align:center;margin-top:16px;font-size:13px;color:var(--text-lt)}
+.back-link a{color:var(--gr-700);font-weight:600}
+.spinner{display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;
+  border-radius:50%;animation:spin .6s linear infinite;margin-left:8px;vertical-align:middle}
+.btn-login.loading .spinner{display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="tribar"></div>
+<div class="card">
+  <div class="card-head">
+    <div class="logo"><span class="s">Sat</span><span class="l">Legal</span></div>
+    <h2>Admin Console</h2>
+    <p>Secure access for authorised administrators only</p>
+  </div>
+  <div class="card-body">
+    <div class="err-msg" id="errMsg">❌ Invalid email or password. Please try again.</div>
+    <div class="fgroup">
+      <label>Admin Email</label>
+      <input class="finput" id="loginEmail" type="email" placeholder="Enter admin email" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <div class="fgroup">
+      <label>Password</label>
+      <div class="pass-wrap">
+        <input class="finput" id="loginPass" type="password" placeholder="Enter your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <button class="pass-toggle" onclick="togglePass()" id="passToggle" type="button">👁️</button>
+      </div>
+    </div>
+    <button class="btn-login" id="loginBtn" onclick="doLogin()">
+      🔐 Sign In to Admin Console <span class="spinner" id="spinner"></span>
+    </button>
+    <div class="back-link"><a href="../index.html">← Back to SatLegal</a></div>
+  </div>
+</div>
+<script>
+// Check if already logged in
+(function(){
+  try{
+    const a=JSON.parse(localStorage.getItem('sl_admin_auth')||'null');
+    if(a&&a.email&&(Date.now()-a.loginTime<8*60*60*1000)){
+      window.location.href='../dashboard/admin-cms.html';
+    }
+  }catch(e){}
+})();
+
+// Rate limiting: max 5 attempts per 15 minutes
+function checkRateLimit(){
+  try{
+    const k='sl_admin_attempts';
+    const now=Date.now();
+    const data=JSON.parse(localStorage.getItem(k)||'{"attempts":[]}'
+    );
+    data.attempts=data.attempts.filter(t=>now-t<15*60*1000);
+    if(data.attempts.length>=5){
+      const wait=Math.ceil((15*60*1000-(now-data.attempts[0]))/60000);
+      return {blocked:true,wait};
+    }
+    return {blocked:false,data,k,now};
+  }catch(e){return{blocked:false}}
+}
+function recordAttempt(){
+  try{
+    const k='sl_admin_attempts';
+    const now=Date.now();
+    const data=JSON.parse(localStorage.getItem(k)||'{"attempts":[]}');
+    data.attempts=data.attempts.filter(t=>now-t<15*60*1000);
+    data.attempts.push(now);
+    localStorage.setItem(k,JSON.stringify(data));
+  }catch(e){}
+}
+function clearAttempts(){
+  try{localStorage.removeItem('sl_admin_attempts');}catch(e){}
+}
+
+// Security audit log
+function auditLog(action,detail){
+  try{
+    const k='sl_audit_log';
+    const log=JSON.parse(localStorage.getItem(k)||'[]');
+    log.unshift({ts:new Date().toISOString(),action,detail,ua:navigator.userAgent.substring(0,80)});
+    if(log.length>200)log.length=200;
+    localStorage.setItem(k,JSON.stringify(log));
+  }catch(e){}
+}
+
+function togglePass(){
+  const inp=document.getElementById('loginPass');
+  const btn=document.getElementById('passToggle');
+  if(inp.type==='password'){inp.type='text';btn.textContent='🙈'}
+  else{inp.type='password';btn.textContent='👁️'}
+}
+
+function doLogin(){
+  const email=document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pass=document.getElementById('loginPass').value;
+  const btn=document.getElementById('loginBtn');
+  const err=document.getElementById('errMsg');
+  err.classList.remove('show');
+
+  if(!email||!pass){err.textContent='❌ Please enter both email and password.';err.classList.add('show');return}
+
+  // Rate limit check
+  const rl=checkRateLimit();
+  if(rl.blocked){
+    err.textContent='⚠️ Too many failed attempts. Please try again in '+rl.wait+' minute(s).';
+    err.classList.add('show');
+    auditLog('login_blocked',email);
+    return;
+  }
+
+  btn.classList.add('loading');btn.disabled=true;
+
+  setTimeout(function(){
+    const ADMIN_USERS=[
+      {email:'admin@satlegal.in',password:'Admin@2024',name:'Super Admin',role:'superadmin'},
+      {email:'cms@satlegal.in',password:'CMS@2024',name:'CMS Editor',role:'editor'},
+      {email:'contactus@gkconsulting.in',password:'GKAdmin@2024',name:'GK Consulting Admin',role:'superadmin'}
+    ];
+    const user=ADMIN_USERS.find(u=>u.email===email&&u.password===pass);
+    if(user){
+      clearAttempts();
+      auditLog('login_success',user.email+' ('+user.role+')');
+      try{
+        localStorage.setItem('sl_admin_auth',JSON.stringify({
+          email:user.email,name:user.name,role:user.role,loginTime:Date.now()
+        }));
+      }catch(e){}
+      window.location.href='../dashboard/admin-cms.html';
+    } else {
+      recordAttempt();
+      auditLog('login_failed',email);
+      err.textContent='❌ Invalid email or password. Please check and try again.';
+      err.classList.add('show');
+      btn.classList.remove('loading');btn.disabled=false;
+      document.getElementById('loginPass').value='';
+      document.getElementById('loginPass').focus();
+    }
+  },800);
+}
+</script>
+</body>
+</html>

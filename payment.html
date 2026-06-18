@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Checkout – SatLegal</title>
+<style>
+:root{
+  --sf-500:#FF9933;--sf-600:#FF8800;--sf-700:#E07000;
+  --sf-100:#FFF4E6;--sf-200:#FFE4C2;--sf-300:#FFCC99;
+  --gr-500:#138808;--gr-600:#1A6B1A;--gr-700:#145214;--gr-800:#0D3D0D;
+  --gr-50:#F0FBF0;--gr-100:#D4F5D2;
+  --text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;
+  --bg:#F8F9FA;--white:#fff;
+  --font:'Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+a{text-decoration:none;color:inherit}
+.tribar{height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
+.nav{background:#fff;border-bottom:1px solid var(--border);padding:0 20px;height:60px;display:flex;align-items:center}
+.nav a{font-size:14px;color:var(--gr-700);font-weight:600}
+.nav a:hover{color:var(--sf-600)}
+.nav-brand img{height:38px}
+
+main{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;gap:28px;flex-wrap:wrap}
+.checkout-card{background:#fff;border-radius:16px;box-shadow:0 4px 28px rgba(0,0,0,.1);padding:32px;width:100%;max-width:440px}
+.order-summary{background:#fff;border-radius:16px;box-shadow:0 4px 28px rgba(0,0,0,.1);padding:28px;width:100%;max-width:340px}
+
+/* Checkout card */
+.ck-head{text-align:center;margin-bottom:24px}
+.ck-head .step-badge{display:inline-block;background:var(--sf-100);color:var(--sf-800);font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;margin-bottom:10px;letter-spacing:.3px}
+.ck-head h2{font-size:20px;font-weight:900;color:var(--gr-800);margin-bottom:4px}
+.ck-head p{font-size:13px;color:var(--text-lt)}
+
+.plan-pill{display:flex;align-items:center;gap:12px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:20px}
+.plan-pill.active{border-color:var(--sf-400);background:var(--sf-100)}
+.pill-icon{font-size:26px}
+.pill-info{flex:1}
+.pill-name{font-size:14px;font-weight:700;color:var(--gr-800)}
+.pill-desc{font-size:11px;color:var(--text-lt)}
+.pill-price{font-size:20px;font-weight:900;color:var(--sf-600)}
+
+/* Razorpay pay button */
+.btn-pay{width:100%;background:var(--sf-500);color:#fff;border:none;padding:16px;border-radius:10px;font-size:16px;font-weight:800;cursor:pointer;font-family:var(--font);transition:.2s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px}
+.btn-pay:hover{background:var(--sf-600);box-shadow:0 6px 20px rgba(255,153,51,.4);transform:translateY(-1px)}
+.btn-pay:active{transform:none}
+.btn-pay-spin{display:none;width:18px;height:18px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.pay-secure-note{text-align:center;margin-top:12px;font-size:11px;color:var(--text-lt);display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap}
+.pay-secure-note span{display:inline-flex;align-items:center;gap:4px}
+
+/* Payment methods icons */
+.pm-icons{display:flex;justify-content:center;gap:8px;margin:16px 0;flex-wrap:wrap}
+.pm-icon{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--text-lt)}
+
+/* Order summary */
+.os-title{font-size:16px;font-weight:800;color:var(--gr-800);margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--border)}
+.os-row{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px dashed var(--border)}
+.os-row:last-child{border:none;font-weight:700;font-size:15px;color:var(--gr-800);padding-top:12px}
+.os-row span:last-child{font-weight:700}
+.os-what{margin-top:16px}
+.os-what-title{font-size:12px;font-weight:700;color:var(--text-lt);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.os-feat{font-size:12px;color:var(--text);padding:5px 0;padding-left:18px;position:relative}
+.os-feat::before{content:'✓';position:absolute;left:0;color:var(--gr-500);font-weight:900}
+
+/* Success screen */
+.success-screen{display:none;text-align:center;padding:20px 0}
+.success-icon{font-size:60px;margin-bottom:12px}
+.success-screen h2{font-size:22px;font-weight:900;color:var(--gr-800);margin-bottom:6px}
+.success-screen p{font-size:13px;color:var(--text-lt);margin-bottom:20px}
+.btn-view-report{display:inline-block;background:var(--gr-500);color:#fff;padding:13px 28px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:var(--font);transition:.2s;margin:0 6px}
+.btn-view-report:hover{background:var(--gr-600)}
+.btn-consult-now{display:inline-block;background:var(--sf-500);color:#fff;padding:13px 28px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:var(--font);transition:.2s;margin:0 6px}
+.btn-consult-now:hover{background:var(--sf-600)}
+
+/* Lawyer recommendation card */
+.lawyer-rec-card{background:linear-gradient(135deg,var(--gr-50),#fff);border:2px solid var(--gr-200);border-radius:14px;padding:20px;margin-top:24px;text-align:left}
+.lrc-title{font-size:13px;font-weight:700;color:var(--gr-800);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.lrc-firm{display:flex;align-items:center;gap:14px}
+.lrc-logo{width:46px;height:46px;border-radius:10px;background:var(--gr-100);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.lrc-info{flex:1}
+.lrc-name{font-size:14px;font-weight:700;color:var(--gr-800)}
+.lrc-specialty{font-size:11px;color:var(--gr-600);margin-bottom:2px}
+.lrc-loc{font-size:11px;color:var(--text-lt)}
+.lrc-cta{margin-top:14px;display:flex;gap:10px;align-items:center}
+.btn-lrc{padding:10px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);border:none;transition:.2s}
+.btn-lrc-book{background:var(--sf-500);color:#fff}
+.btn-lrc-book:hover{background:var(--sf-600)}
+.btn-lrc-more{background:transparent;color:var(--gr-700);border:1.5px solid var(--gr-500)!important}
+.btn-lrc-more:hover{background:var(--gr-50)}
+.lrc-price-tag{font-size:12px;color:var(--text-lt)}
+</style>
+</head>
+<body>
+<div class="tribar"></div>
+<nav class="nav">
+  <a class="nav-brand" href="index.html"><img src="assets/logo.svg" alt="SatLegal"/></a>
+  &nbsp;&nbsp;<span style="color:var(--border)">|</span>&nbsp;&nbsp;
+  <a href="index.html" style="font-size:13px;color:var(--text-lt)">← Back to Analysis</a>
+</nav>
+
+<main>
+  <!-- Checkout card -->
+  <div class="checkout-card" id="checkoutCard">
+    <div id="paymentForm">
+      <div class="ck-head">
+        <div class="step-badge">SECURE CHECKOUT</div>
+        <h2>Complete Your Order</h2>
+        <p>You're one step away from accessing your full legal report</p>
+      </div>
+
+      <!-- Plan selection pills -->
+      <div class="plan-pill active" id="pillReport" onclick="switchPlan('report')">
+        <div class="pill-icon">📄</div>
+        <div class="pill-info">
+          <div class="pill-name">Digital Legal Report</div>
+          <div class="pill-desc">Instant PDF · Win probability · Action plan</div>
+        </div>
+        <div class="pill-price">₹499</div>
+      </div>
+      <div class="plan-pill" id="pillConsult" onclick="switchPlan('consult')">
+        <div class="pill-icon">🧑‍⚖️</div>
+        <div class="pill-info">
+          <div class="pill-name">Expert Consultation</div>
+          <div class="pill-desc">30-min call + report + legal notice drafted</div>
+        </div>
+        <div class="pill-price">₹2500</div>
+      </div>
+
+      <div class="pm-icons">
+        <span class="pm-icon">UPI</span>
+        <span class="pm-icon">Visa</span>
+        <span class="pm-icon">Mastercard</span>
+        <span class="pm-icon">RuPay</span>
+        <span class="pm-icon">Net Banking</span>
+      </div>
+
+      <button class="btn-pay" id="payBtn" onclick="initiatePayment()">
+        <span id="payBtnSpinner" class="btn-pay-spin"></span>
+        <span id="payBtnText">🔒 Pay ₹499 via Razorpay</span>
+      </button>
+
+      <div class="pay-secure-note">
+        <span>🔒 256-bit SSL</span>
+        <span>🇮🇳 PCI DSS Compliant</span>
+        <span>✅ Razorpay Secured</span>
+      </div>
+    </div>
+
+    <!-- Success screen (shown after payment) -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">🎉</div>
+      <h2>Payment Successful!</h2>
+      <p id="successMsg">Your Digital Legal Report has been generated. You can view and download it below.</p>
+      <div>
+        <button class="btn-view-report" id="btnViewReport" onclick="viewReport()">📄 View My Report</button>
+      </div>
+      <!-- Lawyer recommendation (shown for report plan) -->
+      <div class="lawyer-rec-card" id="lawyerRecCard" style="display:none">
+        <div class="lrc-title">🏛️ Recommended Legal Expert for Your Case</div>
+        <div class="lrc-firm">
+          <div class="lrc-logo" id="lrcLogo">⚖️</div>
+          <div class="lrc-info">
+            <div class="lrc-name" id="lrcName">Loading...</div>
+            <div class="lrc-specialty" id="lrcSpecialty"></div>
+            <div class="lrc-loc" id="lrcLoc"></div>
+          </div>
+        </div>
+        <div class="lrc-cta">
+          <button class="btn-lrc btn-lrc-book" onclick="bookConsultation()">Book ₹2500 Consultation</button>
+          <button class="btn-lrc btn-lrc-more" onclick="viewMore()">View Profile</button>
+          <span class="lrc-price-tag">30-min session</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order summary -->
+  <div class="order-summary">
+    <div class="os-title">Order Summary</div>
+    <div class="os-row"><span>Plan</span><span id="osPlan">Digital Legal Report</span></div>
+    <div class="os-row"><span>Sub-total</span><span id="osSubtotal">₹499</span></div>
+    <div class="os-row"><span>GST (18%)</span><span id="osGst">₹89.82</span></div>
+    <div class="os-row"><span>Total Payable</span><span id="osTotal">₹499</span></div>
+    <div class="os-what" id="osFeatures">
+      <div class="os-what-title">What You Get</div>
+      <div class="os-feat">AI-powered law mapping (52 case types)</div>
+      <div class="os-feat">Win probability score with reasoning</div>
+      <div class="os-feat">Complete document checklist</div>
+      <div class="os-feat">Step-by-step legal action plan</div>
+      <div class="os-feat">Court/forum jurisdiction guide</div>
+      <div class="os-feat">Downloadable PDF report</div>
+    </div>
+    <div style="margin-top:18px;font-size:11px;color:var(--text-lt);line-height:1.6;padding-top:12px;border-top:1px solid var(--border)">
+      ⚠️ <strong>Disclaimer:</strong> This report is for informational purposes only. It does not constitute legal advice. Please consult a qualified lawyer before taking any legal action.
+    </div>
+  </div>
+</main>
+
+<!-- Razorpay SDK -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+// Read params
+const params=new URLSearchParams(location.search);
+let plan=params.get('plan')||'report';
+let amt=parseInt(params.get('amt')||'499');
+const uid=params.get('uid')||'DEMO';
+
+// Read stored user
+let user={};
+try{user=JSON.parse(localStorage.getItem('sl_user')||'{}')}catch(e){}
+
+// Read stored report data
+let pendingReport={};
+try{pendingReport=JSON.parse(localStorage.getItem('sl_pending_report')||'{}')}catch(e){}
+
+// GST is included in the displayed price (price inclusive)
+const gstRate=0.18;
+
+function updateOrderSummary(){
+  const gst=Math.round(amt*gstRate*100)/100;
+  document.getElementById('osPlan').textContent=plan==='consult'?'Expert Consultation':'Digital Legal Report';
+  document.getElementById('osSubtotal').textContent='₹'+amt;
+  document.getElementById('osGst').textContent='included';
+  document.getElementById('osTotal').textContent='₹'+amt;
+  document.getElementById('payBtnText').textContent=`🔒 Pay ₹${amt} via Razorpay`;
+  if(plan==='consult'){
+    document.getElementById('osFeatures').innerHTML=`
+      <div class="os-what-title">What You Get</div>
+      <div class="os-feat">Everything in Digital Report</div>
+      <div class="os-feat">30-min call with verified lawyer</div>
+      <div class="os-feat">Personalised legal strategy</div>
+      <div class="os-feat">Drafted legal notice (if needed)</div>
+      <div class="os-feat">Follow-up Q&A within 48 hrs</div>
+      <div class="os-feat">Matched by case type specialist</div>`;
+  }
+}
+
+function switchPlan(p){
+  plan=p;
+  amt=p==='consult'?2500:499;
+  document.getElementById('pillReport').classList.toggle('active',p==='report');
+  document.getElementById('pillConsult').classList.toggle('active',p==='consult');
+  updateOrderSummary();
+}
+
+// Initialize from URL param
+if(plan==='consult'){switchPlan('consult')}
+else{updateOrderSummary()}
+
+// ── Razorpay integration ──
+const RAZORPAY_KEY='rzp_test_REPLACE_WITH_LIVE_KEY'; // replace with live key before going live
+
+function initiatePayment(){
+  const btn=document.getElementById('payBtn');
+  const spin=document.getElementById('payBtnSpinner');
+  const txt=document.getElementById('payBtnText');
+  btn.disabled=true;
+  spin.style.display='block';
+  txt.textContent='Processing...';
+
+  // In production: call your backend to create a Razorpay order
+  // For now we'll use the Razorpay client-side flow directly
+  // Replace RAZORPAY_KEY with your actual key from the Razorpay Dashboard
+  const options={
+    key:RAZORPAY_KEY,
+    amount:amt*100, // in paise
+    currency:'INR',
+    name:'SatLegal',
+    description:plan==='consult'?'Expert Legal Consultation (30 min)':'Digital Legal Report',
+    image:'assets/logo.svg',
+    prefill:{
+      name:user.name||'',
+      email:user.email||'',
+      contact:user.phone||''
+    },
+    notes:{plan,uid,caseType:(pendingReport.laws||[])[0]?.caseType||''},
+    theme:{color:'#FF9933'},
+    handler:function(response){
+      onPaymentSuccess(response);
+    },
+    modal:{
+      ondismiss:function(){
+        btn.disabled=false;spin.style.display='none';
+        txt.textContent=`🔒 Pay ₹${amt} via Razorpay`;
+      }
+    }
+  };
+
+  // For demo/test mode, simulate payment success if key is placeholder
+  if(RAZORPAY_KEY.includes('REPLACE')){
+    setTimeout(()=>onPaymentSuccess({razorpay_payment_id:'DEMO_'+Date.now(),razorpay_order_id:'ORDER_DEMO',razorpay_signature:'demo_sig'}),800);
+    return;
+  }
+
+  const rzp=new Razorpay(options);
+  rzp.open();
+}
+
+function onPaymentSuccess(response){
+  // Store payment info
+  try{
+    localStorage.setItem('sl_payment',JSON.stringify({
+      paymentId:response.razorpay_payment_id,
+      orderId:response.razorpay_order_id,
+      plan,amt,uid,
+      paidAt:new Date().toISOString()
+    }));
+  }catch(e){}
+  showSuccessScreen();
+}
+
+function showSuccessScreen(){
+  document.getElementById('paymentForm').style.display='none';
+  document.getElementById('successScreen').style.display='block';
+
+  if(plan==='consult'){
+    document.getElementById('successMsg').textContent='Your Expert Consultation has been booked. A verified lawyer will contact you within 2 hours to schedule your 30-minute session.';
+    document.getElementById('btnViewReport').textContent='📄 View Report + Consultation Details';
+  }
+  loadLawyerRecommendation();
+}
+
+function loadLawyerRecommendation(){
+  // Load law firms from localStorage (set by admin panel)
+  let firms=[];
+  try{firms=JSON.parse(localStorage.getItem('sl_law_firms')||'[]')}catch(e){}
+
+  // Demo fallback firms if none registered
+  if(!firms.length){
+    firms=[
+      {name:'Sharma & Associates',specialty:'Family Law · Divorce · Succession',location:'Mumbai, Maharashtra',icon:'⚖️',verified:true},
+      {name:'Kapoor Legal Consultants',specialty:'Civil Law · Property · RERA',location:'Delhi, NCR',icon:'🏛️',verified:true},
+      {name:'R. Krishnamurthy & Co.',specialty:'Criminal Law · BNS · Cyber Crime',location:'Bengaluru, Karnataka',icon:'👨‍⚖️',verified:true},
+    ];
+  }
+
+  // Pick best-matching firm (simple: use first registered)
+  const caseType=(pendingReport.laws||[])[0]?.caseType||'';
+  let matchedFirm=firms[0];
+
+  // Try to match by specialty
+  firms.forEach(f=>{
+    if(f.specialty&&caseType&&caseType.toLowerCase().split(' ').some(w=>w.length>4&&(f.specialty||'').toLowerCase().includes(w))){
+      matchedFirm=f;
+    }
+  });
+
+  if(matchedFirm){
+    document.getElementById('lrcName').textContent=matchedFirm.name;
+    document.getElementById('lrcSpecialty').textContent=matchedFirm.specialty||'';
+    document.getElementById('lrcLoc').textContent='📍 '+matchedFirm.location;
+    document.getElementById('lrcLogo').textContent=matchedFirm.icon||'⚖️';
+    if(plan==='report') document.getElementById('lawyerRecCard').style.display='block';
+  }
+}
+
+function viewReport(){
+  window.location.href='report.html';
+}
+function bookConsultation(){
+  window.location.href='payment.html?plan=consult&amt=2500&uid='+uid;
+}
+function viewMore(){
+  window.location.href='pricing.html';
+}
+</script>
+</body>
+</html>

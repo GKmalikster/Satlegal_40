@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legal Topics – Browse Indian Law by Category | SatLegal</title>
+  <style>
+    /* ── CSS Variables & Base ── */
+    :root{
+      --sf-50:#FFF8F0;--sf-100:#FFE8C8;--sf-200:#FFD49A;--sf-300:#FFB84D;--sf-400:#FFB366;
+      --sf-500:#FF9933;--sf-600:#E07000;--sf-700:#B35100;--sf-800:#8B4500;
+      --gr-50:#F0FBF0;--gr-100:#D4F5D2;--gr-200:#A8E8A4;--gr-300:#5CC852;
+      --gr-500:#138808;--gr-600:#1A6B1A;--gr-700:#145214;--gr-800:#0D3D0D;
+      --text:#1A1A1A;--text-light:#6B7280;--text-secondary:#6B7280;--border:#E5E7EB;--bg:#F8F9FA;--bg-light:#F8F9FA;
+      --danger:#C0392B;--danger-lt:#FDECEA;
+      --r:10px;--font:'Segoe UI',system-ui,-apple-system,sans-serif
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);color:var(--text);background:#fff;line-height:1.6}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:var(--font)}
+
+    /* ── Hero — Tricolor ── */
+    .topics-hero {
+      background: linear-gradient(135deg,
+        #E07000 0%,#FF9933 18%,#FFB347 30%,#FFD699 40%,
+        #ffffff 50%,
+        #A8E8A4 60%,#5CC852 72%,#138808 85%,#0D6B05 100%);
+      padding: 56px 30px 68px;
+      text-align: center;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .topics-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(255,255,255,.14) 0%,transparent 70%);pointer-events:none}
+    .topics-hero h1 { font-size:clamp(24px,4vw,42px);font-weight:900;color:#fff;margin-bottom:10px;position:relative;z-index:1;text-shadow:0 2px 10px rgba(0,0,0,.25); }
+    .topics-hero h1 span { color:rgba(255,255,255,.9); }
+    .topics-hero p { font-size:15px;color:rgba(255,255,255,.9);max-width:600px;margin:0 auto 28px;position:relative;z-index:1;text-shadow:0 1px 4px rgba(0,0,0,.18); }
+
+    /* ── Search bar ── */
+    .search-wrap { max-width:540px;margin:0 auto;position:relative;z-index:1; }
+    .search-box { width:100%;padding:14px 50px 14px 18px;border-radius:30px;border:none;font-size:15px;box-shadow:0 4px 20px rgba(0,0,0,.2);font-family:inherit; }
+    .search-box:focus { outline:none;box-shadow:0 4px 28px rgba(255,153,51,.4); }
+    .search-icon { position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none; }
+
+    /* ── Quick Filters ── */
+    .quick-filters { display:flex;justify-content:center;flex-wrap:wrap;gap:8px;padding:20px 30px;background:#fff;border-bottom:1px solid var(--border); }
+    .filter-chip { padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;background:#fff;color:var(--text);display:flex;align-items:center;gap:6px; }
+    .filter-chip:hover { border-color:var(--sf-400);background:var(--sf-50); }
+    .filter-chip.active { background:var(--sf-500);border-color:var(--sf-500);color:#fff; }
+
+    /* ── Main layout ── */
+    .topics-layout { display:flex;max-width:1200px;margin:0 auto;padding:30px 20px;gap:28px; }
+
+    /* ── Sidebar categories ── */
+    .cat-sidebar { width:230px;flex-shrink:0; }
+    .cat-sidebar-title { font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border); }
+    .cat-item { display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text);transition:all .15s;margin-bottom:2px; }
+    .cat-item:hover { background:var(--sf-50);color:var(--sf-700); }
+    .cat-item.active { background:var(--sf-100);color:var(--sf-800);font-weight:700;border-left:3px solid var(--sf-500); }
+    .cat-item .cat-icon { font-size:17px;width:22px;text-align:center; }
+    .cat-count { margin-left:auto;background:var(--border);color:var(--text-light);font-size:11px;padding:2px 7px;border-radius:10px;font-weight:700; }
+    .cat-item.active .cat-count { background:var(--sf-200);color:var(--sf-800); }
+
+    /* ── Topics Grid ── */
+    .topics-main { flex:1;min-width:0; }
+    .topics-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px; }
+
+    /* ── Topic Card ── */
+    .topic-card {
+      background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(19,136,8,.07);
+      border:1px solid var(--border);overflow:hidden;
+      cursor:pointer;transition:all .2s;
+    }
+    .topic-card:hover { transform:translateY(-3px);box-shadow:0 8px 28px rgba(19,136,8,.14);border-color:var(--sf-300); }
+    .topic-card-header { padding:16px 18px;display:flex;align-items:flex-start;gap:14px;border-bottom:1px solid var(--border); }
+    .topic-icon { width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0; }
+    .topic-icon.family { background:var(--sf-100);color:var(--sf-700); }
+    .topic-icon.property { background:var(--gr-50);color:var(--gr-700); }
+    .topic-icon.labour { background:#FFF3CD;color:#7A4F00; }
+    .topic-icon.cyber { background:#EDE7F6;color:#512DA8; }
+    .topic-icon.criminal { background:var(--danger-lt);color:var(--danger); }
+    .topic-icon.civil { background:var(--sf-50);color:var(--sf-800); }
+    .topic-icon.accident { background:#FCE4EC;color:#C62828; }
+    .topic-name { font-size:15px;font-weight:700;color:var(--gr-800);margin-bottom:4px;line-height:1.3; }
+    .topic-act { font-size:11px;color:var(--text-light);font-weight:500; }
+    .topic-cat-badge { margin-left:auto;background:var(--border);color:var(--text-light);font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;white-space:nowrap; }
+    .topic-body { padding:14px 18px; }
+    .topic-desc { font-size:12px;color:var(--text-light);line-height:1.7;margin-bottom:12px; }
+    .topic-pills { display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px; }
+    .topic-pill { background:var(--bg-light);border:1px solid var(--border);color:var(--text-light);font-size:10px;padding:2px 8px;border-radius:10px; }
+    .topic-footer { display:flex;align-items:center;justify-content:space-between; }
+    .topic-docs-count { font-size:11px;color:var(--text-light);display:flex;align-items:center;gap:4px; }
+    .topic-cta { font-size:12px;font-weight:700;color:var(--sf-700);display:flex;align-items:center;gap:4px; }
+    .topic-cta:hover { color:var(--sf-900);text-decoration:none; }
+    .urgency-badge { display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:4px; }
+    .urgency-high   { background:#FDECEA;color:#C0392B; }
+    .urgency-medium { background:#FFF8E6;color:#7A4F00; }
+    .urgency-low    { background:#F0FBF0;color:#145214; }
+    .quick-tip-bar { font-size:11px;color:var(--gr-700);background:var(--gr-50);border-left:3px solid var(--gr-300);padding:5px 9px;border-radius:0 5px 5px 0;margin:6px 0;line-height:1.5; }
+
+    /* ── Modal tabs ── */
+    .modal-tabs { display:flex;border-bottom:1px solid var(--border);background:var(--bg-light); }
+    .modal-tab { flex:1;padding:11px 8px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-light);border-bottom:3px solid transparent;transition:all .2s; }
+    .modal-tab.active { color:var(--sf-700);border-bottom-color:var(--sf-500);background:#fff; }
+    .modal-tab-pane { display:none;padding:20px 24px; }
+    .modal-tab-pane.active { display:block; }
+
+    /* ── Empty state ── */
+    .no-results { text-align:center;padding:60px 20px;color:var(--text-light); }
+    .no-results-icon { font-size:52px;margin-bottom:14px; }
+
+    /* ── Category headers in grid ── */
+    .cat-section-header { grid-column:1/-1;display:flex;align-items:center;gap:14px;margin-top:10px;margin-bottom:4px; }
+    .cat-section-title { font-size:16px;font-weight:800;color:var(--gr-800);display:flex;align-items:center;gap:8px; }
+    .cat-section-line { flex:1;height:2px;background:linear-gradient(to right,var(--sf-500),transparent); }
+
+    /* ── Detail modal ── */
+    .modal-backdrop { position:fixed;inset:0;background:rgba(10,40,10,.55);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px; }
+    .modal-backdrop.show { display:flex; }
+    .modal { background:#fff;border-radius:14px;max-width:660px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);border-top:4px solid var(--sf-500); }
+    .modal-header { padding:22px 24px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between; }
+    .modal-title { font-size:19px;font-weight:800;color:var(--gr-800); }
+    .modal-act { font-size:12px;color:var(--text-light);margin-top:3px; }
+    .modal-close { background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-light);flex-shrink:0;margin-left:12px; }
+    .modal-body { padding:22px 24px; }
+    .modal-section-title { font-size:13px;font-weight:700;color:var(--gr-700);text-transform:uppercase;letter-spacing:.5px;margin:18px 0 8px; }
+    .section-pill { display:inline-block;background:var(--sf-100);color:var(--sf-800);border-radius:5px;padding:4px 10px;font-size:12px;font-weight:600;margin:3px; }
+    .doc-row { display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg-light);border-radius:6px;margin-bottom:5px;font-size:13px; }
+    .doc-row.critical { background:var(--sf-50);border-left:3px solid var(--sf-500); }
+    .doc-label { flex:1;color:var(--text); }
+    .q-item { background:var(--bg-light);border-radius:8px;padding:12px 14px;margin-bottom:8px; }
+    .q-item .q-text { font-size:13px;font-weight:600;color:var(--gr-800);margin-bottom:4px; }
+    .q-item .q-tip { font-size:12px;color:var(--text-light); }
+    .modal-cta { padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap; }
+
+    /* ── Results count ── */
+    .results-bar { display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px; }
+    .results-count { font-size:13px;color:var(--text-light); }
+    .results-count strong { color:var(--gr-800); }
+
+    @media(max-width:900px) { .cat-sidebar { display:none; } }
+    @media(max-width:600px) { .topics-grid { grid-template-columns:1fr; } }
+
+    /* ── Unified White Navbar ── */
+    .sl-tribar{height:4px;background:linear-gradient(90deg,#FF9933 33.33%,#fff 33.33%,#fff 66.66%,#138808 66.66%)}
+    .sl-nav{background:#fff;position:sticky;top:0;z-index:500;border-bottom:1px solid #E5E7EB;box-shadow:0 2px 10px rgba(0,0,0,.06);font-family:'Segoe UI',system-ui,sans-serif}
+    .sl-nav-inner{max-width:1160px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:64px}
+    .sl-brand{display:flex;align-items:center;gap:4px;font-size:22px;font-weight:900;text-decoration:none}
+    .sl-brand .s{color:#FF9933}.sl-brand .l{color:#1A6B1A}.sl-brand .d{font-size:11px;color:#6B7280;font-weight:400;margin-left:2px}
+    .sl-links{display:flex;align-items:center;gap:2px}
+    .sl-links a{color:#0D3D0D;font-size:14px;font-weight:500;padding:7px 13px;border-radius:6px;transition:.2s;text-decoration:none}
+    .sl-links a:hover,.sl-links a.sl-active{color:#145214;background:#F0FBF0}
+    .sl-actions{display:flex;align-items:center;gap:8px}
+    .sl-btn-login{color:#145214;border:2px solid #138808;padding:7px 16px;border-radius:8px;font-weight:700;font-size:13px;background:transparent;text-decoration:none;transition:.2s}
+    .sl-btn-login:hover{background:#F0FBF0}
+    .sl-btn-signup{background:#FF9933;color:#fff;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:.2s}
+    .sl-btn-signup:hover{background:#E07000}
+    .sl-btn-admin{color:#6B7280;border:1px solid #D1D5DB;padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;background:transparent;transition:.2s;text-decoration:none}
+    .sl-btn-admin:hover{background:#F3F4F6;color:#374151}
+    .sl-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:6px;cursor:pointer}
+    .sl-hamburger span{width:24px;height:2px;background:#0D3D0D;border-radius:2px;display:block}
+    .sl-mob-menu{display:none;background:#fff;flex-direction:column;padding:10px 16px 14px;border-top:1px solid #E5E7EB;position:sticky;top:64px;z-index:499}
+    .sl-mob-menu a{color:#0D3D0D;padding:10px 12px;border-radius:6px;font-size:15px;text-decoration:none;display:block}
+    .sl-mob-menu a:hover{background:#F0FBF0}
+    .sl-mob-menu .sl-mob-signup{background:#FF9933;color:#fff!important;text-align:center;font-weight:700;border-radius:8px;margin-top:6px}
+    .sl-mob-menu.open{display:flex;flex-direction:column}
+    @media(max-width:768px){.sl-hamburger{display:flex}.sl-links,.sl-actions{display:none}}
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="sl-tribar"></div>
+<nav class="sl-nav" id="mainNav">
+  <div class="sl-nav-inner">
+    <a href="index.html" class="sl-brand"><img src="assets/logo.svg" alt="SatLegal – Legalities Simplified" style="height:56px;width:auto"></a>
+    <div class="sl-links">
+      <a href="index.html">Home</a>
+      <a href="legal-topics.html" class="sl-active">Legal Topics</a>
+      <a href="laws-reference.html">Laws Library</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="about.html">About Us</a>
+    </div>
+    <div class="sl-actions">
+      <a href="auth/admin-login.html" class="sl-btn-admin" title="Admin Console">⚙️ Admin</a>
+      <a href="index.html" class="sl-btn-login">Login</a>
+      <a href="index.html" class="sl-btn-signup">⚡ Sign Up Free</a>
+    </div>
+    <button class="sl-hamburger" onclick="document.getElementById('mobMenu').classList.toggle('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="sl-mob-menu" id="mobMenu">
+  <a href="index.html">🏠 Home</a>
+  <a href="legal-topics.html">📋 Legal Topics</a>
+  <a href="laws-reference.html">📚 Laws Library</a>
+  <a href="pricing.html">💰 Pricing</a>
+  <a href="about.html">ℹ️ About Us</a>
+  <a href="auth/admin-login.html">⚙️ Admin</a>
+  <a href="index.html" class="sl-mob-signup">⚡ Sign Up Free — Analyze My Case</a>
+</div>
+
+<!-- Hero -->
+<div class="topics-hero">
+  <h1>Explore <span>Indian Legal Topics</span></h1>
+  <p>Browse all areas of Indian law. Click any topic to understand the applicable laws, required documents, and what to expect – before you consult a lawyer.</p>
+  <div class="search-wrap">
+    <input type="text" class="search-box" id="topicSearch" placeholder="Search – divorce, cyber fraud, property, RERA, wrongful termination…" oninput="filterTopics()" />
+    <span class="search-icon">🔍</span>
+  </div>
+</div>
+
+<!-- Quick Filters -->
+<div class="quick-filters" id="quickFilters">
+  <button class="filter-chip active" onclick="filterByCategory('all',this)">🗂️ All Topics</button>
+  <button class="filter-chip" onclick="filterByCategory('Family',this)">👨‍👩‍👧 Family</button>
+  <button class="filter-chip" onclick="filterByCategory('Property',this)">🏠 Property</button>
+  <button class="filter-chip" onclick="filterByCategory('Cyber & IT',this)">💻 Cyber & IT</button>
+  <button class="filter-chip" onclick="filterByCategory('Criminal',this)">⚖️ Criminal</button>
+  <button class="filter-chip" onclick="filterByCategory('Civil',this)">📜 Civil</button>
+  <button class="filter-chip" onclick="filterByCategory('Motor Accident',this)">🚗 Accidents</button>
+</div>
+
+<!-- Main Layout -->
+<div class="topics-layout">
+
+  <!-- Sidebar -->
+  <aside class="cat-sidebar">
+    <div class="cat-sidebar-title">Practice Areas</div>
+    <div id="cat-sidebar-list"></div>
+  </aside>
+
+  <!-- Grid -->
+  <div class="topics-main">
+    <div class="results-bar">
+      <div class="results-count" id="resultsCount">Loading topics…</div>
+      <div style="font-size:12px;color:var(--text-light)">Click any topic to see full details</div>
+    </div>
+    <div class="topics-grid" id="topicsGrid"></div>
+    <div class="no-results" id="noResults" style="display:none">
+      <div class="no-results-icon">🔍</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:8px">No topics found</div>
+      <div>Try a different search term or browse all categories</div>
+      <button class="btn btn-primary" style="margin-top:16px" onclick="clearSearch()">Show All Topics</button>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-backdrop" id="topicModal" onclick="closeModal(event)">
+  <div class="modal" id="modalContent">
+    <div class="modal-header">
+      <div style="flex:1;min-width:0">
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-act" id="modalAct"></div>
+        <div id="modalUrgencyBadge" style="margin-top:6px"></div>
+      </div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <!-- Tabs -->
+    <div class="modal-tabs">
+      <div class="modal-tab active" id="tab-overview" onclick="switchModalTab('overview')">📋 Overview</div>
+      <div class="modal-tab" id="tab-documents" onclick="switchModalTab('documents')">📄 Documents</div>
+      <div class="modal-tab" id="tab-questions" onclick="switchModalTab('questions')">❓ Questions</div>
+    </div>
+    <div class="modal-tab-pane active" id="pane-overview"></div>
+    <div class="modal-tab-pane" id="pane-documents"></div>
+    <div class="modal-tab-pane" id="pane-questions"></div>
+    <div class="modal-cta">
+      <a href="index.html" class="btn btn-primary" id="modalAnalyseBtn">🔍 Analyse My Case (This Topic)</a>
+      <a href="/auth/signup.html" class="btn btn-outline">Create Account Free</a>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- Footer -->
+<footer style="margin-top:40px">
+  <p style="margin-bottom:8px;color:#aaa;font-size:15px;font-weight:700">SatLegal</p>
+  <p style="margin-bottom:8px"><a href="about.html">About</a> · <a href="legal-topics.html">Legal Topics</a> · <a href="privacy-policy.html">Privacy Policy</a> · <a href="terms-conditions.html">Terms &amp; Conditions</a> · <a href="about.html#contact">Contact</a></p>
+  <p>⚠️ The content provided on this website is for informational purposes only and should not be relied upon as a substitute for legal advice. Recipients are advised to consult with qualified legal counsel before implementing any recommendations herein. SatLegal shall not be liable for actions taken based on this information.</p>
+  <p style="margin-top:8px;font-size:12px">© 2025 SatLegal. All rights reserved.</p>
+</footer>
+
+<script src="js/laws-client.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/chatbot.js"></script>
+<script>
+// ══════════════════════════════════════════════════════════
+//  SatLegal – Legal Topics Page
+// ══════════════════════════════════════════════════════════
+
+const CATEGORY_ICONS = {
+  'Family': '👨‍👩‍👧',
+  'Family & Succession': '🏠',
+  'Succession': '📜',
+  'Constitutional & Livelihood': '🏛️',
+  'Cyber & IT': '💻',
+  'Criminal': '⚖️',
+  'Property': '🏘️',
+  'Civil': '📋',
+  'Motor Accident': '🚗'
+};
+
+const CATEGORY_ICON_CLASS = {
+  'Family': 'family',
+  'Family & Succession': 'property',
+  'Succession': 'civil',
+  'Constitutional & Livelihood': 'civil',
+  'Cyber & IT': 'cyber',
+  'Criminal': 'criminal',
+  'Property': 'property',
+  'Civil': 'civil',
+  'Motor Accident': 'accident'
+};
+
+// Topic descriptions
+const TOPIC_DESCS = {
+  'Family – Divorce (Contested)': 'Legal remedies when one spouse contests the divorce, covering cruelty, adultery, desertion, and other grounds under the Hindu Marriage Act.',
+  'Family – Mutual Consent Divorce': 'Streamlined divorce process when both spouses agree to separate, covering the 1-year separation requirement and settlement terms.',
+  'Family – Child Custody / Guardianship': 'Laws governing who gets custody of children during and after divorce, including welfare principles and visitation rights.',
+  'Family – Maintenance / Alimony': 'Your right to financial support during and after separation, covering both spousal and child maintenance under Indian law.',
+  'Family – Domestic Violence': 'Protection orders, compensation, and residence rights under the Domestic Violence Act 2005 for abused spouses and family members.',
+  'Family – Judicial Separation / Restitution of Conjugal Rights': 'Legal separation options that stop short of full divorce, and remedies when a spouse wrongfully deserts the matrimonial home.',
+  'Property – Hindu Succession / Inheritance Dispute': 'Rights to ancestral and self-acquired property under Hindu Succession Act, including the 2005 amendment granting daughters equal rights.',
+  'Succession – Will Dispute / Probate': 'Challenging or probating a Will, intestate succession rights, and the process for obtaining a succession certificate.',
+  'Cyber – Online Fraud / Financial Cyber Crime': 'Legal remedies for UPI fraud, online banking fraud, phishing, and financial cyber crimes under IT Act 2000 and BNS 2023.',
+  'Cyber – Online Harassment / Cyberstalking / Defamation': 'Protection against stalking, morphed images, online threats, and defamation on social media under IT Act and BNS.',
+  'Cyber – Data Theft / Hacking / Corporate Espionage': 'Legal remedies for hacking, data breaches, unauthorised computer access, and corporate data theft.',
+  'Criminal – BNS (Fraud / Cheating)': 'Criminal complaints for cheating, fraud, and financial deception under the new Bharatiya Nyaya Sanhita 2023 (replaces IPC).',
+  'Criminal – BNS (Assault / Hurt / Grievous Hurt)': 'Filing FIR and criminal complaints for physical assault, bodily harm, and grievous injury under BNS 2023.',
+  'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)': 'Bail applications, anticipatory bail, the arrest process, and criminal procedure under BNSS 2023 (replaces CrPC).',
+  'Property – Transfer of Property / Sale Deed Dispute': 'Legal remedies for forged sale deeds, property fraud, encumbrances, and transfer of property disputes.',
+  'Property – Boundary Dispute / Encroachment': 'Protecting your land from encroachment, boundary walls, and illegal occupation by neighbours.',
+  'Property – Rent Dispute / Tenant Eviction': 'Rights of both landlords and tenants, rent control protections, eviction process, and rent disputes.',
+  'Property – RERA Disputes / Builder Fraud': 'Remedies against builders for delayed possession, defects, false promises, and RERA complaints.',
+  'Civil – Money Recovery / Debt Recovery': 'Legal process for recovering money lent, dishonoured cheques, and outstanding debts through civil courts.',
+  'Civil – Partition Suit': 'Your right to partition of jointly held family property and the legal process for dividing ancestral land.',
+  'Motor Accident Claims / Personal Injury': 'Claiming compensation for road accident injuries and deaths through Motor Accident Claims Tribunals (MACT).',
+  'Family – Muslim Divorce / Triple Talaq / Nikah Dissolution': 'Legal remedies for Muslim women facing triple talaq (now a criminal offence), unpaid Mehr, abandonment, and maintenance under Muslim Personal Law and the Muslim Women (Protection of Rights on Marriage) Act 2019.',
+  'Property – Land Acquisition / Compulsory Acquisition / Compensation': 'Challenging inadequate compensation when government acquires your land under RFCTLARR 2013. You are entitled to 2× market value (rural) or 1× market value (urban) plus 100% solatium.',
+  'Criminal – POCSO Act': 'Legal protection for children from sexual offences under the Protection of Children from Sexual Offences (POCSO) Act 2012. Mandatory reporting obligations, child-friendly court procedures, and stringent punishments for perpetrators.'
+};
+
+let allTopics = [];
+let activeCategory = 'all';
+let searchTerm = '';
+
+// ── Load topics from laws database ──────────────────────────
+function loadTopics() {
+  if (!window.LAWS_DATABASE) {
+    setTimeout(loadTopics, 200);
+    return;
+  }
+  allTopics = window.LAWS_DATABASE.map((law, idx) => ({
+    id: idx,
+    caseType: law.caseType,
+    actName: law.actName,
+    lawCategory: law.lawCategory,
+    sections: law.sections || [],
+    documents: law.documents || [],
+    questions: law.probingQuestions || [],
+    limitation: law.limitation || null,
+    urgency: law.urgency || 'medium',
+    quickTip: law.quickTip || '',
+    multiLawCompatible: law.multiLawCompatible || []
+  }));
+  buildSidebar();
+  renderTopics();
+}
+
+// ── Sidebar ──────────────────────────────────────────────────
+function buildSidebar() {
+  const counts = {};
+  allTopics.forEach(t => { counts[t.lawCategory] = (counts[t.lawCategory]||0)+1; });
+  const all = allTopics.length;
+  const cats = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+  const c = document.getElementById('cat-sidebar-list');
+  c.innerHTML = `<div class="cat-item active" onclick="filterByCategoryFromSidebar('all',this)">
+    <span class="cat-icon">🗂️</span>All Topics<span class="cat-count">${all}</span>
+  </div>` + cats.map(([cat, count]) => `
+    <div class="cat-item" onclick="filterByCategoryFromSidebar('${esc(cat)}',this)">
+      <span class="cat-icon">${CATEGORY_ICONS[cat]||'📌'}</span>${cat}<span class="cat-count">${count}</span>
+    </div>
+  `).join('');
+}
+
+// ── Filter ───────────────────────────────────────────────────
+let _searchTrackTimer = null;
+function filterTopics() {
+  searchTerm = document.getElementById('topicSearch').value.toLowerCase().trim();
+  renderTopics();
+  // Debounced tracking – fire after 1.5s pause in typing
+  if (_searchTrackTimer) clearTimeout(_searchTrackTimer);
+  if (searchTerm.length > 3 && window.API && window.API.trackSearch) {
+    _searchTrackTimer = setTimeout(() => {
+      const hits = allTopics.filter(t =>
+        t.caseType.toLowerCase().includes(searchTerm) ||
+        (t.keywords && [...(t.keywords.exact||[]),...(t.keywords.strong||[])].some(k => k.includes(searchTerm)))
+      );
+      window.API.trackSearch(searchTerm, hits.map(h => ({ caseType: h.caseType, lawCategory: h.lawCategory, confidence: 80 })), 'legal_topics');
+    }, 1500);
+  }
+}
+
+function filterByCategory(cat, btn) {
+  activeCategory = cat;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderTopics();
+}
+
+function filterByCategoryFromSidebar(cat, el) {
+  activeCategory = cat;
+  document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+  // Sync filter chips
+  document.querySelectorAll('.filter-chip').forEach(c => {
+    const chipCat = c.getAttribute('onclick')?.match(/'([^']*)'/)?.[1];
+    c.classList.toggle('active', chipCat === cat);
+  });
+  renderTopics();
+}
+
+function clearSearch() {
+  document.getElementById('topicSearch').value = '';
+  searchTerm = '';
+  activeCategory = 'all';
+  document.querySelectorAll('.filter-chip').forEach((c,i) => c.classList.toggle('active', i===0));
+  document.querySelectorAll('.cat-item').forEach((c,i) => c.classList.toggle('active', i===0));
+  renderTopics();
+}
+
+// ── Render ───────────────────────────────────────────────────
+function renderTopics() {
+  let filtered = allTopics;
+
+  // Category filter
+  if (activeCategory !== 'all') {
+    filtered = filtered.filter(t => t.lawCategory === activeCategory || t.lawCategory.includes(activeCategory));
+  }
+
+  // Search filter
+  if (searchTerm) {
+    filtered = filtered.filter(t =>
+      t.caseType.toLowerCase().includes(searchTerm) ||
+      t.actName.toLowerCase().includes(searchTerm) ||
+      t.lawCategory.toLowerCase().includes(searchTerm) ||
+      (TOPIC_DESCS[t.caseType]||'').toLowerCase().includes(searchTerm)
+    );
+  }
+
+  const grid = document.getElementById('topicsGrid');
+  const noRes = document.getElementById('noResults');
+  const count = document.getElementById('resultsCount');
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    noRes.style.display = 'block';
+    count.innerHTML = `<strong>0</strong> topics found`;
+    return;
+  }
+
+  noRes.style.display = 'none';
+  count.innerHTML = `Showing <strong>${filtered.length}</strong> of ${allTopics.length} legal topics`;
+
+  const urgencyLabels = { high: '🔴 Urgent Action', medium: '🟡 Standard', low: '🟢 Routine' };
+  grid.innerHTML = filtered.map(t => `
+    <div class="topic-card" onclick="openModal(${t.id})">
+      <div class="topic-card-header">
+        <div class="topic-icon ${CATEGORY_ICON_CLASS[t.lawCategory]||'civil'}">${CATEGORY_ICONS[t.lawCategory]||'📋'}</div>
+        <div style="flex:1;min-width:0">
+          <div class="topic-name">${esc(t.caseType)}</div>
+          <div class="topic-act">${esc(t.actName)}</div>
+          <span class="urgency-badge urgency-${t.urgency||'medium'}">${urgencyLabels[t.urgency]||urgencyLabels.medium}</span>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="topic-desc">${esc(TOPIC_DESCS[t.caseType]||'Click to explore this area of Indian law in detail.')}</div>
+        ${t.quickTip ? `<div class="quick-tip-bar">💡 ${esc(t.quickTip)}</div>` : ''}
+        <div class="topic-pills">
+          ${(t.sections||[]).slice(0,3).map(s => `<span class="topic-pill">${esc(s.split('(')[0].trim())}</span>`).join('')}
+        </div>
+        <div class="topic-footer">
+          <div class="topic-docs-count">📄 ${t.documents.length} docs · ${t.questions.length} questions</div>
+          <span class="topic-cta">Explore →</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Modal tab switcher ────────────────────────────────────────
+function switchModalTab(name) {
+  ['overview','documents','questions'].forEach(n => {
+    document.getElementById('tab-' + n).classList.toggle('active', n === name);
+    document.getElementById('pane-' + n).classList.toggle('active', n === name);
+  });
+}
+
+// ── Modal ────────────────────────────────────────────────────
+function openModal(id) {
+  const t = allTopics[id];
+  if (!t) return;
+  if (window.API && window.API.trackSearch) {
+    window.API.trackSearch(t.caseType, [{ caseType: t.caseType, lawCategory: t.lawCategory, confidence: 100 }], 'legal_topics');
+  }
+
+  document.getElementById('modalTitle').textContent = t.caseType;
+  document.getElementById('modalAct').textContent = '📜 ' + t.actName;
+
+  // Urgency badge in header
+  const urgCfg = { high: ['🔴 Urgent – Act Quickly','#C0392B','#FDECEA'], medium: ['🟡 Standard Priority','#7A4F00','#FFF8E6'], low: ['🟢 Routine Matter','#145214','#F0FBF0'] };
+  const [uLabel, uColor, uBg] = urgCfg[t.urgency] || urgCfg.medium;
+  document.getElementById('modalUrgencyBadge').innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;background:${uBg};color:${uColor};border-radius:10px;padding:3px 10px;font-size:11px;font-weight:700">${uLabel}</span>${t.limitation ? `&nbsp;<span style="background:var(--sf-50);color:var(--sf-800);border-radius:10px;padding:3px 10px;font-size:11px;font-weight:700">⏰ ${esc(t.limitation)}</span>` : ''}`;
+
+  const critical = t.documents.filter(d => d.critical);
+  const optional = t.documents.filter(d => !d.critical);
+
+  // Tab 1: Overview
+  document.getElementById('pane-overview').innerHTML = `
+    ${TOPIC_DESCS[t.caseType] ? `<p style="font-size:14px;color:var(--text);line-height:1.8;margin-bottom:14px">${esc(TOPIC_DESCS[t.caseType])}</p>` : ''}
+    ${t.quickTip ? `<div style="font-size:13px;color:var(--gr-700);background:var(--gr-50);border-left:4px solid var(--gr-400);padding:10px 14px;border-radius:0 8px 8px 0;margin-bottom:14px;line-height:1.6"><strong>💡 Key Insight:</strong> ${esc(t.quickTip)}</div>` : ''}
+    <div class="modal-section-title">⚖️ Applicable Sections</div>
+    <div>${(t.sections||[]).map(s => `<span class="section-pill">${esc(s)}</span>`).join('')}</div>
+    ${(t.multiLawCompatible||[]).length ? `
+    <div class="modal-section-title">🔗 Often Combined With</div>
+    <div>${t.multiLawCompatible.map(m => `<span class="section-pill" style="background:var(--gr-50);color:var(--gr-800)">${esc(m)}</span>`).join('')}</div>
+    ` : ''}
+  `;
+
+  // Tab 2: Documents
+  document.getElementById('pane-documents').innerHTML = `
+    ${critical.length ? `
+    <div class="modal-section-title">📄 Critical Documents (Must Have)</div>
+    <div>${critical.map(d => `<div class="doc-row critical"><span>📄</span><span class="doc-label">${esc(d.name)}</span><span style="font-size:10px;background:var(--sf-100);color:var(--sf-800);padding:2px 7px;border-radius:8px;font-weight:700">Critical</span></div>`).join('')}</div>` : ''}
+    ${optional.length ? `
+    <div class="modal-section-title">📎 Supporting Documents</div>
+    <div>${optional.map(d => `<div class="doc-row"><span>📎</span><span class="doc-label">${esc(d.name)}</span><span style="font-size:10px;background:var(--border);color:var(--text-light);padding:2px 7px;border-radius:8px;font-weight:600">Optional</span></div>`).join('')}</div>` : ''}
+    ${!critical.length && !optional.length ? '<div style="color:var(--text-light);font-size:13px;padding:20px 0">No document list available for this topic yet.</div>' : ''}
+  `;
+
+  // Tab 3: Questions
+  document.getElementById('pane-questions').innerHTML = t.questions && t.questions.length ? `
+    <p style="font-size:13px;color:var(--text-light);margin-bottom:14px">These are the key questions your lawyer or the court will likely ask. Prepare answers in advance.</p>
+    ${t.questions.map((q,i) => `<div class="q-item"><div class="q-text">${i+1}. ${esc(q.q)}</div>${q.tip ? `<div class="q-tip">💡 ${esc(q.tip)}</div>` : ''}</div>`).join('')}
+  ` : '<div style="color:var(--text-light);font-size:13px;padding:20px 0">No questions available for this topic yet.</div>';
+
+  // Reset to overview tab
+  switchModalTab('overview');
+
+  const btn = document.getElementById('modalAnalyseBtn');
+  btn.onclick = function(e) {
+    e.preventDefault();
+    sessionStorage.setItem('wizard_prefill', 'I need help with: ' + t.caseType);
+    window.location.href = '/';
+  };
+
+  document.getElementById('topicModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('topicModal')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('topicModal').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// ── Auth nav ──────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  loadTopics();
+  const authLinks = document.getElementById('auth-links');
+  if (typeof Auth !== 'undefined' && Auth.isLoggedIn && Auth.isLoggedIn()) {
+    const user = Auth.getUser();
+    if (user) {
+      const dashUrl = user.role === 'admin' ? '/dashboard/admin-dashboard.html'
+        : user.role === 'lawyer' ? '/dashboard/lawyer-dashboard.html'
+        : '/dashboard/user-dashboard.html';
+      const loginLink = authLinks.querySelector('a[href="/auth/login.html"]');
+      const signupLink = authLinks.querySelector('a[href="/auth/signup.html"]');
+      if (loginLink) loginLink.remove();
+      if (signupLink) { signupLink.textContent = 'My Dashboard →'; signupLink.href = dashUrl; }
+    }
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
+});
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
+</body>
+</html>

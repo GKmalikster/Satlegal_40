@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Law Firm Registry – SatLegal Admin</title>
+<style>
+:root{
+  --sf-500:#FF9933;--sf-600:#FF8800;--sf-700:#E07000;
+  --sf-100:#FFF4E6;--sf-200:#FFE4C2;--sf-300:#FFCC99;
+  --gr-500:#138808;--gr-600:#1A6B1A;--gr-700:#145214;--gr-800:#0D3D0D;
+  --gr-50:#F0FBF0;--gr-100:#D4F5D2;
+  --danger:#C0392B;--danger-lt:#FDECEA;
+  --text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;
+  --bg:#F8F9FA;--white:#fff;
+  --sidebar-w:240px;
+  --font:'Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:var(--font)}
+
+/* Sidebar */
+.sidebar{width:var(--sidebar-w);background:var(--gr-800);flex-shrink:0;display:flex;flex-direction:column;min-height:100vh;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sb-brand{padding:20px 18px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-brand img{height:36px;filter:brightness(0) invert(1)}
+.sb-nav{flex:1;padding:12px 8px}
+.sb-link{display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.7);padding:10px 12px;border-radius:8px;font-size:13px;font-weight:500;margin-bottom:2px;transition:.2s}
+.sb-link:hover{background:rgba(255,255,255,.1);color:#fff}
+.sb-link.active{background:var(--sf-500);color:#fff;font-weight:700}
+.sb-link span{font-size:16px}
+.sb-section{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px;padding:12px 12px 5px;margin-top:8px}
+
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;overflow:auto}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar h1{font-size:18px;font-weight:800;color:var(--gr-800)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.admin-badge{background:var(--gr-50);color:var(--gr-700);font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;border:1px solid var(--gr-200)}
+
+/* Content */
+.content{padding:28px 24px;flex:1}
+
+/* Page header */
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.page-title{font-size:20px;font-weight:900;color:var(--gr-800);margin-bottom:3px}
+.page-sub{font-size:13px;color:var(--text-lt)}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+@media(max-width:900px){.stats-row{grid-template-columns:1fr 1fr}}
+.stat-card{background:#fff;border-radius:10px;padding:18px;border:1px solid var(--border)}
+.stat-val{font-size:28px;font-weight:900;color:var(--gr-800);margin-bottom:2px}
+.stat-label{font-size:12px;color:var(--text-lt)}
+.stat-card.green .stat-val{color:var(--gr-600)}
+.stat-card.orange .stat-val{color:var(--sf-600)}
+
+/* Card */
+.card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:22px;margin-bottom:20px}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--sf-200)}
+.card-title{font-size:15px;font-weight:800;color:var(--gr-800);display:flex;align-items:center;gap:7px}
+
+/* Form */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr}}
+.fgroup{display:flex;flex-direction:column;gap:5px}
+.fgroup label{font-size:12px;font-weight:700;color:var(--gr-800)}
+.finput{border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--font);transition:.2s}
+.finput:focus{outline:none;border-color:var(--gr-500)}
+.fselect{border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--font);background:#fff;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23138808' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;transition:.2s}
+.fselect:focus{outline:none;border-color:var(--gr-500)}
+.ftag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.ftag{background:var(--gr-50);border:1px solid var(--gr-200);color:var(--gr-700);font-size:11px;padding:3px 10px;border-radius:14px;cursor:pointer;transition:.2s;user-select:none}
+.ftag:hover{background:var(--gr-100)}
+.ftag.sel{background:var(--gr-500);color:#fff;border-color:var(--gr-500)}
+.fspan2{grid-column:1/-1}
+
+/* Buttons */
+.btn-primary{background:var(--sf-500);color:#fff;border:none;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;transition:.2s}
+.btn-primary:hover{background:var(--sf-600)}
+.btn-outline{background:transparent;color:var(--gr-700);border:1.5px solid var(--gr-500);padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;transition:.2s}
+.btn-outline:hover{background:var(--gr-50)}
+.btn-danger{background:transparent;color:var(--danger);border:1.5px solid var(--danger);padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;transition:.2s}
+.btn-danger:hover{background:var(--danger-lt)}
+.btn-sm{padding:6px 14px;font-size:12px;border-radius:6px;font-weight:700;border:none;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-sm-green{background:var(--gr-50);color:var(--gr-700);border:1px solid var(--gr-300)}
+.btn-sm-green:hover{background:var(--gr-100)}
+.btn-sm-orange{background:var(--sf-100);color:var(--sf-700);border:1px solid var(--sf-300)}
+.btn-sm-orange:hover{background:var(--sf-200)}
+
+/* Firms table */
+.firms-grid{display:grid;gap:14px}
+.firm-card{border:1px solid var(--border);border-radius:10px;padding:16px;background:#fff;display:flex;gap:14px;align-items:flex-start;transition:.2s}
+.firm-card:hover{border-color:var(--gr-300);box-shadow:0 2px 12px rgba(0,0,0,.07)}
+.firm-card.inactive{opacity:.6;border-style:dashed}
+.fc-icon{width:46px;height:46px;border-radius:10px;background:var(--gr-100);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.fc-body{flex:1}
+.fc-name{font-size:15px;font-weight:800;color:var(--gr-800);margin-bottom:2px}
+.fc-spec{font-size:12px;color:var(--gr-600);margin-bottom:3px}
+.fc-meta{font-size:11px;color:var(--text-lt);line-height:1.7}
+.fc-status{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;text-transform:uppercase}
+.fc-status.active{background:var(--gr-50);color:var(--gr-600)}
+.fc-status.inactive{background:var(--danger-lt);color:var(--danger)}
+.fc-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+
+/* Toast */
+#toast{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.t-item{background:var(--gr-800);color:#fff;padding:11px 16px;border-radius:8px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.25);border-left:4px solid var(--gr-500);animation:tIn .3s ease}
+.t-item.err{border-left-color:var(--danger)}
+@keyframes tIn{from{opacity:0;transform:translateX(50px)}to{opacity:1;transform:none}}
+
+/* Modal overlay */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:5000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{background:#fff;border-radius:14px;padding:28px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;margin:16px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-title{font-size:17px;font-weight:800;color:var(--gr-800)}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-lt);line-height:1}
+.modal-close:hover{color:var(--text)}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sb-brand">
+    <a href="../index.html"><img src="../assets/logo.svg" alt="SatLegal"/></a>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-section">Main</div>
+    <a class="sb-link" href="admin-dashboard.html"><span>📊</span>Dashboard</a>
+    <a class="sb-link" href="admin-analytics.html"><span>📈</span>Analytics</a>
+    <a class="sb-link" href="admin-cms.html"><span>⚙️</span>CMS & Settings</a>
+    <div class="sb-section">Law Firms</div>
+    <a class="sb-link active" href="lawfirm-admin.html"><span>🏛️</span>Law Firm Registry</a>
+    <a class="sb-link" href="lawfirm-admin.html#matches"><span>🔗</span>User Matches</a>
+    <div class="sb-section">Operations</div>
+    <a class="sb-link" href="user-dashboard.html"><span>👤</span>User Accounts</a>
+    <a class="sb-link" href="../index.html"><span>🏠</span>Back to Site</a>
+  </div>
+</nav>
+
+<!-- Main content -->
+<div class="main">
+  <div class="topbar">
+    <h1>🏛️ Law Firm Registry</h1>
+    <div class="topbar-right">
+      <span class="admin-badge">Admin Panel</span>
+      <button class="btn-primary" onclick="openAddModal()">+ Register New Firm</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card green"><div class="stat-val" id="totalFirms">0</div><div class="stat-label">Total Registered Firms</div></div>
+      <div class="stat-card green"><div class="stat-val" id="activeFirms">0</div><div class="stat-label">Active Firms</div></div>
+      <div class="stat-card orange"><div class="stat-val" id="totalMatches">0</div><div class="stat-label">User–Firm Matches</div></div>
+      <div class="stat-card"><div class="stat-val" id="consultations">0</div><div class="stat-label">Consultations Booked</div></div>
+    </div>
+
+    <!-- Case Type Coverage -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">🗺️ Case Type Coverage</div>
+        <span style="font-size:12px;color:var(--text-lt)">Firms by specialization</span>
+      </div>
+      <div id="coverageGrid" style="display:flex;flex-wrap:wrap;gap:7px"></div>
+    </div>
+
+    <!-- Registered firms -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">🏛️ Registered Law Firms</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input class="finput" id="searchFirm" placeholder="Search firms..." style="width:200px;padding:7px 11px;font-size:12px" oninput="renderFirms()"/>
+          <select class="fselect" id="filterStatus" style="width:120px;padding:7px 11px;font-size:12px" onchange="renderFirms()">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="firms-grid" id="firmsGrid">
+        <div style="text-align:center;padding:32px;color:var(--text-lt);font-size:14px">No firms registered yet. Click "Register New Firm" to add the first one.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add / Edit Firm Modal -->
+<div class="modal-overlay" id="firmModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title" id="modalTitle">Register New Law Firm</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="form-grid">
+      <div class="fgroup fspan2">
+        <label>Firm Name *</label>
+        <input class="finput" id="f-name" placeholder="e.g. Sharma & Associates"/>
+      </div>
+
+      <div class="fgroup">
+        <label>Bar Council Registration No.</label>
+        <input class="finput" id="f-barno" placeholder="BCI/STATE/2024/XXXX"/>
+      </div>
+
+      <div class="fgroup">
+        <label>Established Year</label>
+        <input class="finput" id="f-year" type="number" min="1950" max="2025" placeholder="2015"/>
+      </div>
+
+      <div class="fgroup fspan2">
+        <label>Primary Specializations * (select all that apply)</label>
+        <div class="ftag-row" id="specTags">
+          <span class="ftag" onclick="toggleTag(this,'Family Law')">Family Law</span>
+          <span class="ftag" onclick="toggleTag(this,'Divorce & Matrimonial')">Divorce & Matrimonial</span>
+          <span class="ftag" onclick="toggleTag(this,'Criminal Law')">Criminal Law</span>
+          <span class="ftag" onclick="toggleTag(this,'Property & Real Estate')">Property & Real Estate</span>
+          <span class="ftag" onclick="toggleTag(this,'Civil Litigation')">Civil Litigation</span>
+          <span class="ftag" onclick="toggleTag(this,'Cyber Law')">Cyber Law</span>
+          <span class="ftag" onclick="toggleTag(this,'Labour & Employment')">Labour & Employment</span>
+          <span class="ftag" onclick="toggleTag(this,'IP & Trademark')">IP & Trademark</span>
+          <span class="ftag" onclick="toggleTag(this,'Corporate & NCLT')">Corporate & NCLT</span>
+          <span class="ftag" onclick="toggleTag(this,'Succession & Inheritance')">Succession & Inheritance</span>
+          <span class="ftag" onclick="toggleTag(this,'NRI Legal Matters')">NRI Legal Matters</span>
+          <span class="ftag" onclick="toggleTag(this,'Cheque Bounce')">Cheque Bounce</span>
+          <span class="ftag" onclick="toggleTag(this,'Land Acquisition')">Land Acquisition</span>
+          <span class="ftag" onclick="toggleTag(this,'Motor Accident Claims')">Motor Accident Claims</span>
+          <span class="ftag" onclick="toggleTag(this,'Insolvency & IBC')">Insolvency & IBC</span>
+        </div>
+      </div>
+
+      <div class="fgroup">
+        <label>City / Location *</label>
+        <input class="finput" id="f-city" placeholder="e.g. Mumbai, Maharashtra"/>
+      </div>
+
+      <div class="fgroup">
+        <label>State</label>
+        <select class="fselect" id="f-state">
+          <option value="">Select State</option>
+          <option>Maharashtra</option><option>Delhi</option><option>Karnataka</option>
+          <option>Tamil Nadu</option><option>Gujarat</option><option>Rajasthan</option>
+          <option>Uttar Pradesh</option><option>West Bengal</option><option>Telangana</option>
+          <option>Andhra Pradesh</option><option>Kerala</option><option>Punjab</option>
+          <option>Haryana</option><option>Madhya Pradesh</option><option>Bihar</option><option>Other</option>
+        </select>
+      </div>
+
+      <div class="fgroup">
+        <label>Contact Phone *</label>
+        <input class="finput" id="f-phone" type="tel" placeholder="+91 98765 43210"/>
+      </div>
+
+      <div class="fgroup">
+        <label>Email Address *</label>
+        <input class="finput" id="f-email" type="email" placeholder="firm@email.com"/>
+      </div>
+
+      <div class="fgroup fspan2">
+        <label>Website URL</label>
+        <input class="finput" id="f-website" type="url" placeholder="https://firmname.com"/>
+      </div>
+
+      <div class="fgroup fspan2">
+        <label>Short Bio / Description</label>
+        <textarea class="finput" id="f-bio" rows="3" placeholder="Brief description of the firm, experience, notable cases handled..." style="resize:vertical"></textarea>
+      </div>
+
+      <div class="fgroup">
+        <label>Icon / Emoji</label>
+        <input class="finput" id="f-icon" placeholder="⚖️" style="font-size:20px;text-align:center"/>
+      </div>
+
+      <div class="fgroup">
+        <label>Status</label>
+        <select class="fselect" id="f-status">
+          <option value="active">Active (visible to users)</option>
+          <option value="inactive">Inactive (hidden from users)</option>
+        </select>
+      </div>
+
+      <div class="fgroup fspan2">
+        <label>Consultation Fee (₹)</label>
+        <input class="finput" id="f-fee" type="number" value="2500" placeholder="2500"/>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:22px;justify-content:flex-end;padding-top:16px;border-top:1px solid var(--border)">
+      <button class="btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveFirm()">✅ Save Firm</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+let firms=[];
+let editIndex=-1;
+
+// Load firms
+function loadFirms(){
+  try{firms=JSON.parse(localStorage.getItem('sl_law_firms')||'[]')}catch(e){firms=[]}
+  updateStats();
+  renderFirms();
+  renderCoverage();
+}
+
+function updateStats(){
+  const active=firms.filter(f=>f.status==='active').length;
+  document.getElementById('totalFirms').textContent=firms.length;
+  document.getElementById('activeFirms').textContent=active;
+  document.getElementById('totalMatches').textContent=firms.length*3; // demo
+  document.getElementById('consultations').textContent=firms.length*2; // demo
+}
+
+function renderCoverage(){
+  const specCounts={};
+  firms.forEach(f=>(f.specs||[]).forEach(s=>{specCounts[s]=(specCounts[s]||0)+1}));
+  const el=document.getElementById('coverageGrid');
+  if(!Object.keys(specCounts).length){el.innerHTML='<span style="font-size:13px;color:var(--text-lt)">No firms registered yet.</span>';return;}
+  el.innerHTML=Object.entries(specCounts).map(([s,c])=>`<span style="background:var(--gr-50);border:1px solid var(--gr-200);color:var(--gr-700);font-size:12px;font-weight:600;padding:4px 12px;border-radius:14px">${s} <strong>(${c})</strong></span>`).join('');
+}
+
+function renderFirms(){
+  const q=(document.getElementById('searchFirm').value||'').toLowerCase();
+  const st=document.getElementById('filterStatus').value;
+  const filtered=firms.filter(f=>{
+    const matchQ=!q||f.name.toLowerCase().includes(q)||(f.specs||[]).some(s=>s.toLowerCase().includes(q));
+    const matchSt=!st||f.status===st;
+    return matchQ&&matchSt;
+  });
+  const el=document.getElementById('firmsGrid');
+  if(!filtered.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--text-lt);font-size:14px">No firms match your filter.</div>';return;}
+  el.innerHTML=filtered.map((f,i)=>{
+    const fi=firms.indexOf(f);
+    return `<div class="firm-card ${f.status==='inactive'?'inactive':''}">
+      <div class="fc-icon">${f.icon||'⚖️'}</div>
+      <div class="fc-body">
+        <div class="fc-name">${f.name} <span class="fc-status ${f.status||'active'}">${f.status||'active'}</span></div>
+        <div class="fc-spec">${(f.specs||[]).join(' · ')||'No specializations'}</div>
+        <div class="fc-meta">📍 ${f.city||''}${f.state?', '+f.state:''} &nbsp;|&nbsp; 📞 ${f.phone||'—'} &nbsp;|&nbsp; 💰 ₹${f.fee||2500}/session${f.barno?' &nbsp;|&nbsp; Bar: '+f.barno:''}</div>
+        ${f.bio?`<div style="font-size:11px;color:var(--text-lt);margin-top:5px;line-height:1.5">${f.bio.slice(0,100)}${f.bio.length>100?'...':''}</div>`:''}
+      </div>
+      <div class="fc-actions">
+        <button class="btn-sm btn-sm-orange" onclick="editFirm(${fi})">✏️ Edit</button>
+        <button class="btn-sm btn-sm-green" onclick="toggleStatus(${fi})">${f.status==='active'?'⏸ Deactivate':'▶ Activate'}</button>
+        <button class="btn-danger" style="font-size:11px;padding:5px 10px" onclick="deleteFirm(${fi})">🗑 Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleTag(el,val){el.classList.toggle('sel')}
+function getSelectedTags(){return Array.from(document.querySelectorAll('#specTags .ftag.sel')).map(t=>t.textContent)}
+
+function openAddModal(){
+  editIndex=-1;
+  document.getElementById('modalTitle').textContent='Register New Law Firm';
+  document.getElementById('f-name').value='';
+  document.getElementById('f-barno').value='';
+  document.getElementById('f-year').value='';
+  document.getElementById('f-city').value='';
+  document.getElementById('f-state').value='';
+  document.getElementById('f-phone').value='';
+  document.getElementById('f-email').value='';
+  document.getElementById('f-website').value='';
+  document.getElementById('f-bio').value='';
+  document.getElementById('f-icon').value='⚖️';
+  document.getElementById('f-status').value='active';
+  document.getElementById('f-fee').value='2500';
+  document.querySelectorAll('#specTags .ftag').forEach(t=>t.classList.remove('sel'));
+  document.getElementById('firmModal').classList.add('open');
+}
+
+function editFirm(i){
+  const f=firms[i];
+  editIndex=i;
+  document.getElementById('modalTitle').textContent='Edit Law Firm';
+  document.getElementById('f-name').value=f.name||'';
+  document.getElementById('f-barno').value=f.barno||'';
+  document.getElementById('f-year').value=f.year||'';
+  document.getElementById('f-city').value=f.city||'';
+  document.getElementById('f-state').value=f.state||'';
+  document.getElementById('f-phone').value=f.phone||'';
+  document.getElementById('f-email').value=f.email||'';
+  document.getElementById('f-website').value=f.website||'';
+  document.getElementById('f-bio').value=f.bio||'';
+  document.getElementById('f-icon').value=f.icon||'⚖️';
+  document.getElementById('f-status').value=f.status||'active';
+  document.getElementById('f-fee').value=f.fee||2500;
+  document.querySelectorAll('#specTags .ftag').forEach(t=>{
+    t.classList.toggle('sel',(f.specs||[]).includes(t.textContent));
+  });
+  document.getElementById('firmModal').classList.add('open');
+}
+
+function closeModal(){document.getElementById('firmModal').classList.remove('open')}
+
+function saveFirm(){
+  const name=document.getElementById('f-name').value.trim();
+  const city=document.getElementById('f-city').value.trim();
+  const phone=document.getElementById('f-phone').value.trim();
+  const email=document.getElementById('f-email').value.trim();
+  if(!name){toast('Please enter the firm name.','err');return}
+  if(!city){toast('Please enter the city/location.','err');return}
+  const specs=getSelectedTags();
+  const firm={
+    name,
+    barno:document.getElementById('f-barno').value.trim(),
+    year:document.getElementById('f-year').value,
+    specs,
+    specialty:specs.join(' · '),
+    city,state:document.getElementById('f-state').value,
+    location:`${city}${document.getElementById('f-state').value?', '+document.getElementById('f-state').value:''}`,
+    phone,email,
+    website:document.getElementById('f-website').value.trim(),
+    bio:document.getElementById('f-bio').value.trim(),
+    icon:document.getElementById('f-icon').value.trim()||'⚖️',
+    status:document.getElementById('f-status').value,
+    fee:parseInt(document.getElementById('f-fee').value)||2500,
+    registeredAt:editIndex<0?new Date().toISOString():firms[editIndex].registeredAt,
+    updatedAt:new Date().toISOString()
+  };
+  if(editIndex>=0){firms[editIndex]=firm;toast('Firm updated successfully!')}
+  else{firms.push(firm);toast('New firm registered! They are now visible to matching users.')}
+  try{localStorage.setItem('sl_law_firms',JSON.stringify(firms))}catch(e){}
+  closeModal();
+  updateStats();renderFirms();renderCoverage();
+}
+
+function toggleStatus(i){
+  firms[i].status=firms[i].status==='active'?'inactive':'active';
+  try{localStorage.setItem('sl_law_firms',JSON.stringify(firms))}catch(e){}
+  toast(`Firm ${firms[i].status==='active'?'activated':'deactivated'}.`);
+  updateStats();renderFirms();renderCoverage();
+}
+
+function deleteFirm(i){
+  if(!confirm(`Delete "${firms[i].name}"? This cannot be undone.`))return;
+  firms.splice(i,1);
+  try{localStorage.setItem('sl_law_firms',JSON.stringify(firms))}catch(e){}
+  toast('Firm deleted.','err');
+  updateStats();renderFirms();renderCoverage();
+}
+
+function toast(msg,type){
+  const el=document.getElementById('toast');
+  const t=document.createElement('div');t.className='t-item'+(type?(' '+type):'');t.textContent=msg;
+  el.appendChild(t);setTimeout(()=>t.remove(),3500);
+}
+
+// Seed demo firms if none exist
+function seedDemoFirms(){
+  if(firms.length) return;
+  const demos=[
+    {name:'Sharma & Associates',barno:'BCI/MH/2012/1234',year:'2012',specs:['Family Law','Divorce & Matrimonial','Succession & Inheritance'],specialty:'Family Law · Divorce & Matrimonial · Succession & Inheritance',city:'Mumbai',state:'Maharashtra',location:'Mumbai, Maharashtra',phone:'+91 98201 45678',email:'info@sharmaassociates.in',bio:'15+ years experience in family law, divorce proceedings, and succession matters across Mumbai High Court.',icon:'⚖️',status:'active',fee:2500,registeredAt:new Date().toISOString()},
+    {name:'Kapoor Legal Consultants',barno:'BCI/DL/2015/5678',year:'2015',specs:['Property & Real Estate','Civil Litigation','Land Acquisition'],specialty:'Property & Real Estate · Civil Litigation',city:'New Delhi',state:'Delhi',location:'New Delhi, Delhi',phone:'+91 98110 23456',email:'info@kaporlegal.in',bio:'Specialising in property disputes, RERA complaints, and land acquisition matters.',icon:'🏛️',status:'active',fee:2500,registeredAt:new Date().toISOString()},
+    {name:'R. Krishnamurthy & Co.',barno:'BCI/KA/2010/9012',year:'2010',specs:['Criminal Law','Cyber Law','IP & Trademark'],specialty:'Criminal Law · Cyber Law · IP & Trademark',city:'Bengaluru',state:'Karnataka',location:'Bengaluru, Karnataka',phone:'+91 98440 34567',email:'info@rklaw.in',bio:'Expert criminal defence lawyers with specialisation in cyber crimes and intellectual property disputes.',icon:'👨‍⚖️',status:'active',fee:2500,registeredAt:new Date().toISOString()},
+  ];
+  firms=demos;
+  try{localStorage.setItem('sl_law_firms',JSON.stringify(firms))}catch(e){}
+}
+
+seedDemoFirms();
+loadFirms();
+</script>
+</body>
+</html>

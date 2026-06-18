@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SatLegal – Test Bed v1.0</title>
+<style>
+:root{
+  --sf:#FF9933;--gr:#138808;--gr-dk:#0D5E08;--white:#fff;
+  --pass:#138808;--fail:#c0392b;--skip:#888;--warn:#e67e22;
+  --bg:#f8f9fa;--card:#fff;--border:#dee2e6;--text:#212529;--muted:#6c757d;
+  --radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+
+/* ── HEADER ─────────────────────────────────────────────── */
+header{background:linear-gradient(135deg,var(--gr-dk),var(--gr));color:#fff;padding:18px 24px;display:flex;align-items:center;gap:16px;box-shadow:0 3px 12px rgba(0,0,0,.2)}
+header .logo{font-size:22px;font-weight:800;letter-spacing:.5px}
+header .logo span{color:var(--sf)}
+header .badge{background:rgba(255,255,255,.2);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+header .ml{margin-left:auto;display:flex;gap:10px;align-items:center}
+
+/* ── TRICOLOR STRIPE ────────────────────────────────────── */
+.stripe{height:5px;background:linear-gradient(90deg,var(--sf) 33.3%,#fff 33.3% 66.6%,var(--gr) 66.6%)}
+
+/* ── SUMMARY CARDS ──────────────────────────────────────── */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;padding:20px 24px 0}
+.card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);text-align:center;border-top:4px solid var(--border)}
+.card.total{border-color:var(--sf)}
+.card.pass{border-color:var(--pass)}
+.card.fail{border-color:var(--fail)}
+.card.skip{border-color:var(--skip)}
+.card.rate{border-color:var(--gr)}
+.card .num{font-size:32px;font-weight:800;line-height:1}
+.card .lbl{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+
+/* ── CATEGORY BREAKDOWN ─────────────────────────────────── */
+.breakdown{margin:20px 24px 0;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.breakdown h3{background:linear-gradient(90deg,var(--gr-dk),var(--gr));color:#fff;padding:10px 16px;font-size:13px;letter-spacing:.4px}
+.bk-table{width:100%;border-collapse:collapse}
+.bk-table th,.bk-table td{padding:8px 14px;text-align:left;border-bottom:1px solid var(--border);font-size:12px}
+.bk-table th{background:#f1f3f5;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.bk-table tr:last-child td{border:none}
+.pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;color:#fff}
+.pill.p{background:var(--pass)}.pill.f{background:var(--fail)}.pill.s{background:var(--skip)}
+.prog{height:8px;background:#e9ecef;border-radius:4px;overflow:hidden;min-width:60px}
+.prog-inner{height:100%;background:var(--pass);border-radius:4px;transition:width .4s}
+
+/* ── CONTROLS ───────────────────────────────────────────── */
+.controls{display:flex;flex-wrap:wrap;gap:10px;padding:16px 24px;align-items:center}
+.controls input,.controls select{padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;outline:none}
+.controls input:focus,.controls select:focus{border-color:var(--gr)}
+.btn{padding:8px 16px;border:none;border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:600;transition:.2s}
+.btn-run{background:var(--gr);color:#fff}.btn-run:hover{background:var(--gr-dk)}
+.btn-csv{background:var(--sf);color:#fff}.btn-csv:hover{background:#e07e1a}
+.btn-clear{background:#6c757d;color:#fff}.btn-clear:hover{background:#545b62}
+.count-badge{background:var(--gr);color:#fff;border-radius:12px;padding:2px 10px;font-size:12px;font-weight:700;margin-left:6px}
+
+/* ── RESULTS TABLE ──────────────────────────────────────── */
+.results-wrap{margin:0 24px 24px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.results-wrap h3{background:linear-gradient(90deg,var(--gr-dk),var(--gr));color:#fff;padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px}
+table.rt{width:100%;border-collapse:collapse}
+table.rt th{background:#f1f3f5;padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--border);position:sticky;top:0}
+table.rt td{padding:8px 12px;border-bottom:1px solid #f0f0f0;font-size:12px;vertical-align:top}
+table.rt tr:hover{background:#f9fbf9}
+table.rt tr.pass-row{border-left:3px solid var(--pass)}
+table.rt tr.fail-row{border-left:3px solid var(--fail)}
+table.rt tr.skip-row{border-left:3px solid #bbb}
+.id-badge{font-weight:700;color:var(--gr-dk);font-size:11px}
+.cat-tag{background:#e8f5e9;color:var(--gr-dk);padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600}
+.conf-bar{display:flex;align-items:center;gap:6px}
+.conf-num{font-weight:700;min-width:30px}
+.conf-mini{height:6px;width:60px;background:#e9ecef;border-radius:3px;overflow:hidden}
+.conf-fill{height:100%;border-radius:3px}
+.status-pass{color:var(--pass);font-weight:700}
+.status-fail{color:var(--fail);font-weight:700}
+.status-skip{color:var(--skip);font-weight:700}
+.diff-easy{color:#27ae60}.diff-med{color:#e67e22}.diff-hard{color:#c0392b}
+.expand-btn{background:none;border:none;cursor:pointer;color:var(--gr);font-size:16px;padding:0 4px}
+.detail-row{display:none;background:#f9fbf9}
+.detail-row.open{display:table-row}
+.detail-cell{padding:12px 16px;border-bottom:1px solid var(--border)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dg-box{background:#fff;border:1px solid var(--border);border-radius:6px;padding:10px}
+.dg-box h4{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.dg-box p{font-size:12px;line-height:1.5}
+.match-chip{display:inline-block;background:#d4edda;color:#155724;padding:2px 8px;border-radius:10px;font-size:11px;margin:2px}
+.miss-chip{display:inline-block;background:#f8d7da;color:#721c24;padding:2px 8px;border-radius:10px;font-size:11px;margin:2px}
+
+/* ── SPINNER ────────────────────────────────────────────── */
+#spinner{text-align:center;padding:40px;color:var(--muted);font-size:16px;display:none}
+#spinner .sp{font-size:32px;display:block;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── FOOTER ─────────────────────────────────────────────── */
+footer{text-align:center;padding:16px;color:var(--muted);font-size:11px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<div class="stripe"></div>
+<header>
+  <div class="logo">Sat<span>Legal</span></div>
+  <div class="badge">Test Bed v1.0</div>
+  <div class="ml">
+    <span id="hdrStatus" style="font-size:12px;opacity:.8">Ready to run</span>
+  </div>
+</header>
+<div class="stripe"></div>
+
+<!-- Summary Cards -->
+<div class="summary">
+  <div class="card total"><div class="num" id="cTotal">0</div><div class="lbl">Total Cases</div></div>
+  <div class="card pass"><div class="num" id="cPass" style="color:var(--pass)">0</div><div class="lbl">Passed</div></div>
+  <div class="card fail"><div class="num" id="cFail" style="color:var(--fail)">0</div><div class="lbl">Failed</div></div>
+  <div class="card skip"><div class="num" id="cSkip" style="color:var(--skip)">0</div><div class="lbl">Skipped</div></div>
+  <div class="card rate"><div class="num" id="cRate" style="color:var(--gr)">—</div><div class="lbl">Pass Rate</div></div>
+</div>
+
+<!-- Category Breakdown -->
+<div class="breakdown" id="bkSection" style="display:none">
+  <h3>📊 Category Breakdown</h3>
+  <table class="bk-table">
+    <thead><tr><th>Category</th><th>Total</th><th>Pass</th><th>Fail</th><th>Rate</th><th>Progress</th></tr></thead>
+    <tbody id="bkBody"></tbody>
+  </table>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+  <button class="btn btn-run" onclick="runAll()">▶ Run All Tests</button>
+  <select id="filterCat" onchange="applyFilters()">
+    <option value="">All Categories</option>
+    <option>Family</option>
+    <option>Succession &amp; Inheritance</option>
+    <option>Property</option>
+    <option>Employment</option>
+    <option>Cyber Crime</option>
+    <option>Criminal</option>
+    <option>Consumer</option>
+    <option>Civil</option>
+    <option>Motor Accident</option>
+    <option>RTI</option>
+    <option>Constitutional</option>
+    <option>Tax</option>
+    <option>NRI / OCI</option>
+    <option>IP</option>
+    <option>Multi-Law</option>
+    <option>Negative / Edge</option>
+  </select>
+  <select id="filterStatus" onchange="applyFilters()">
+    <option value="">All Status</option>
+    <option value="PASS">Pass</option>
+    <option value="FAIL">Fail</option>
+    <option value="SKIP">Skip</option>
+  </select>
+  <select id="filterDiff" onchange="applyFilters()">
+    <option value="">All Difficulty</option>
+    <option value="easy">Easy</option>
+    <option value="medium">Medium</option>
+    <option value="hard">Hard</option>
+  </select>
+  <input id="searchQ" placeholder="🔍 Search test input..." oninput="applyFilters()" style="min-width:220px"/>
+  <button class="btn btn-csv" onclick="exportCSV()">⬇ Export CSV</button>
+  <button class="btn btn-clear" onclick="clearResults()">✕ Clear</button>
+  <span id="visCount" class="count-badge">0</span> shown
+</div>
+
+<div id="spinner"><span class="sp">⚙</span>Running tests…</div>
+
+<!-- Results Table -->
+<div class="results-wrap" id="resultsWrap" style="display:none">
+  <h3>📋 Test Results <span id="resultTitle"></span></h3>
+  <div style="overflow-x:auto;max-height:70vh;overflow-y:auto">
+    <table class="rt">
+      <thead>
+        <tr>
+          <th></th><th>ID</th><th>Category</th><th>Expected Law</th>
+          <th>Test Input</th><th>Actual Top Result</th>
+          <th>Conf</th><th>Diff</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="rtBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<footer>SatLegal Test Bed — Built for QA &amp; Law Detection Validation — Indian Legal Tech</footer>
+
+<!-- Load the real detection engine -->
+<script src="/js/laws-client.js"></script>
+<script>
+// ══════════════════════════════════════════════════════════════
+//  TEST CASES  (220 scenarios across all 35 law categories)
+// ══════════════════════════════════════════════════════════════
+const TEST_CASES = [
+
+// ─────────────────────────────────────────────────────────────
+// FAMILY – DIVORCE (CONTESTED)  T001-T020
+// ─────────────────────────────────────────────────────────────
+{id:'T001',category:'Family',law:'Family – Divorce (Contested)',label:'Physical cruelty with FIR',
+ input:'My husband beats me regularly and I have filed an FIR. I want to file for divorce on grounds of cruelty.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:['Family – Domestic Violence'],minConf:60,difficulty:'easy'},
+
+{id:'T002',category:'Family',law:'Family – Divorce (Contested)',label:'Adultery grounds',
+ input:'My wife is having an affair with her colleague and I have WhatsApp messages as proof. I want to file for divorce.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:[],minConf:55,difficulty:'easy'},
+
+{id:'T003',category:'Family',law:'Family – Divorce (Contested)',label:'Desertion for 3 years',
+ input:'My husband left the matrimonial home 3 years ago without any reason and refuses to return. I want a divorce on grounds of desertion.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:[],minConf:55,difficulty:'easy'},
+
+{id:'T004',category:'Family',law:'Family – Divorce (Contested)',label:'Mental cruelty and dowry harassment',
+ input:'My husband and in-laws mentally torture me daily and demand dowry. I cannot live there anymore and want to file for divorce.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:['Family – Domestic Violence'],minConf:55,difficulty:'easy'},
+
+{id:'T005',category:'Family',law:'Family – Divorce (Contested)',label:'Conversion to another religion',
+ input:'My husband converted to Islam without my consent and is now claiming we can have multiple wives. I want to file for divorce.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T006',category:'Family',law:'Family – Divorce (Contested)',label:'Impotency grounds',
+ input:'My husband has been impotent since our marriage and we have never had conjugal relations. I want to dissolve this marriage.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:[],minConf:45,difficulty:'medium'},
+
+{id:'T007',category:'Family',law:'Family – Divorce (Contested)',label:'Husband in jail for crime',
+ input:'My husband was sentenced to 7 years imprisonment for a serious crime. I want to know if I can file for divorce on these grounds.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:[],minConf:40,difficulty:'hard'},
+
+{id:'T008',category:'Family',law:'Family – Divorce (Contested)',label:'Schizophrenia grounds',
+ input:'My wife has been suffering from incurable schizophrenia for 5 years and refuses all treatment. Can I file for divorce?',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:[],minConf:40,difficulty:'hard'},
+
+{id:'T009',category:'Family',law:'Family – Divorce (Contested)',label:'Renounced world – sanyas',
+ input:'My husband has renounced the world and joined a religious order without consulting me. I need to file for divorce.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:[],minConf:40,difficulty:'hard'},
+
+{id:'T010',category:'Family',law:'Family – Divorce (Contested)',label:'Not seen spouse in 7 years',
+ input:'My husband went abroad 8 years ago and I have not heard from him since. I believe he may be dead. I want to remarry.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:[],minConf:40,difficulty:'medium'},
+
+{id:'T011',category:'Family',law:'Family – Divorce (Contested)',label:'Husband alcoholic and abusive',
+ input:'My husband comes home drunk every night, abuses me verbally and sometimes hits me. The marriage has completely broken down.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:['Family – Domestic Violence'],minConf:55,difficulty:'easy'},
+
+{id:'T012',category:'Family',law:'Family – Divorce (Contested)',label:'Second marriage discovered',
+ input:'I discovered my husband was already married before our wedding. He committed bigamy. I want to get my marriage annulled or divorced.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:[],minConf:45,difficulty:'medium'},
+
+{id:'T013',category:'Family',law:'Family – Divorce (Contested)',label:'Dowry demand refusal — divorce sought',
+ input:'My in-laws have been harassing me for a car as dowry. My husband supports them. I want to file a divorce petition.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:['Family – Domestic Violence'],minConf:50,difficulty:'medium'},
+
+{id:'T014',category:'Family',law:'Family – Divorce (Contested)',label:'Wife has left with children abroad',
+ input:'My wife took the children to the UK 2 years ago and refuses to return. I want a divorce and custody order.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:['Family – Child Custody / Guardianship'],minConf:45,difficulty:'medium'},
+
+{id:'T015',category:'Family',law:'Family – Divorce (Contested)',label:'Husband lives with another woman',
+ input:'My husband is living with another woman openly in our city. He does not give me maintenance. I want to divorce him.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:['Family – Maintenance / Alimony'],minConf:55,difficulty:'easy'},
+
+{id:'T016',category:'Family',law:'Family – Divorce (Contested)',label:'Violence after property dispute',
+ input:'My husband attacked me with a knife after I refused to sign property documents. I have hospitalisation records. I want a divorce.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:['Family – Domestic Violence'],minConf:55,difficulty:'easy'},
+
+{id:'T017',category:'Family',law:'Family – Divorce (Contested)',label:'Child neglect as cruelty',
+ input:'My husband never contributes to childcare or household expenses and humiliates me in front of our children. I want a divorce.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:['Family – Maintenance / Alimony'],minConf:45,difficulty:'medium'},
+
+{id:'T018',category:'Family',law:'Family – Divorce (Contested)',label:'Forced prostitution by husband',
+ input:'My husband is forcing me into prostitution. I want to escape and file for divorce immediately.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:['Family – Domestic Violence'],minConf:55,difficulty:'easy'},
+
+{id:'T019',category:'Family',law:'Family – Divorce (Contested)',label:'Spouses of different religion seeking divorce',
+ input:'My marriage was under Special Marriage Act. My husband is abusive. How do I file for divorce?',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:[],minConf:45,difficulty:'medium'},
+
+{id:'T020',category:'Family',law:'Family – Divorce (Contested)',label:'Contested divorce with property',
+ input:'My husband refuses to divorce but the marriage is over. We have a flat in both names. What is my legal option for divorce and property?',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:['Property – Transfer of Property / Sale Deed Dispute'],minConf:45,difficulty:'medium'},
+
+// ─────────────────────────────────────────────────────────────
+// FAMILY – MUTUAL CONSENT DIVORCE  T021-T032
+// ─────────────────────────────────────────────────────────────
+{id:'T021',category:'Family',law:'Family – Mutual Consent Divorce',label:'Classic mutual consent scenario',
+ input:'My wife and I both agree to end the marriage. We have been living separately for 18 months and have settled child custody and alimony. How do we file mutual consent divorce?',
+ expectPrimary:'Family – Mutual Consent Divorce',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T022',category:'Family',law:'Family – Mutual Consent Divorce',label:'Both parties agree no property dispute',
+ input:'Both of us want an amicable divorce. No property dispute. No children. How do we file for mutual divorce?',
+ expectPrimary:'Family – Mutual Consent Divorce',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T023',category:'Family',law:'Family – Mutual Consent Divorce',label:'Cooling period waiver',
+ input:'We filed mutual consent divorce first motion. Can we waive the 6 month cooling period? We both want to move on quickly.',
+ expectPrimary:'Family – Mutual Consent Divorce',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T024',category:'Family',law:'Family – Mutual Consent Divorce',label:'NRI spouse in mutual consent',
+ input:'My husband lives in USA. We both agree to divorce by mutual consent. Can we do it without him coming to India for every hearing?',
+ expectPrimary:'Family – Mutual Consent Divorce',expectInResults:['NRI / OCI – Overseas Indian Legal Issues'],minConf:45,difficulty:'medium'},
+
+{id:'T025',category:'Family',law:'Family – Mutual Consent Divorce',label:'Alimony negotiation in mutual consent',
+ input:'We are both agreeing to divorce. My wife wants Rs 15 lakhs as alimony. How do we document this in mutual consent divorce?',
+ expectPrimary:'Family – Mutual Consent Divorce',expectInResults:['Family – Maintenance / Alimony'],minConf:50,difficulty:'medium'},
+
+{id:'T026',category:'Family',law:'Family – Mutual Consent Divorce',label:'Separation of only 8 months',
+ input:'My wife and I want mutual consent divorce but we have only been separated 8 months. Are we eligible?',
+ expectPrimary:'Family – Mutual Consent Divorce',expectInResults:[],minConf:55,difficulty:'easy'},
+
+{id:'T027',category:'Family',law:'Family – Mutual Consent Divorce',label:'One spouse withdrawing consent',
+ input:'We filed mutual divorce first motion but now my wife is refusing to appear for second motion. What can I do?',
+ expectPrimary:'Family – Mutual Consent Divorce',expectInResults:['Family – Divorce (Contested)'],minConf:45,difficulty:'medium'},
+
+{id:'T028',category:'Family',law:'Family – Mutual Consent Divorce',label:'Uncontested divorce with children',
+ input:'My husband and I have decided on a friendly divorce. We have two kids. We have agreed on joint custody and monthly maintenance. Need mutual consent divorce procedure.',
+ expectPrimary:'Family – Mutual Consent Divorce',expectInResults:['Family – Child Custody / Guardianship'],minConf:55,difficulty:'easy'},
+
+{id:'T029',category:'Family',law:'Family – Mutual Consent Divorce',label:'Special Marriage Act mutual consent',
+ input:'Our marriage was registered under Special Marriage Act. Both of us agree to divorce amicably. What section applies?',
+ expectPrimary:'Family – Mutual Consent Divorce',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T030',category:'Family',law:'Family – Mutual Consent Divorce',label:'Divorce settlement agreement drafting',
+ input:'We want to file for divorce by mutual agreement. We need a proper settlement agreement drafted covering alimony, house, and car.',
+ expectPrimary:'Family – Mutual Consent Divorce',expectInResults:[],minConf:55,difficulty:'easy'},
+
+{id:'T031',category:'Family',law:'Family – Mutual Consent Divorce',label:'Both agree — different cities',
+ input:'I live in Mumbai and my husband in Delhi. We both want an uncontested divorce. Which court do we file in?',
+ expectPrimary:'Family – Mutual Consent Divorce',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T032',category:'Family',law:'Family – Mutual Consent Divorce',label:'Friendly separation after 2 years',
+ input:'Friendly divorce — we have lived separately for over two years, both parties in agreement. No disputes. How long will the process take?',
+ expectPrimary:'Family – Mutual Consent Divorce',expectInResults:[],minConf:60,difficulty:'easy'},
+
+// ─────────────────────────────────────────────────────────────
+// FAMILY – CHILD CUSTODY / GUARDIANSHIP  T033-T046
+// ─────────────────────────────────────────────────────────────
+{id:'T033',category:'Family',law:'Family – Child Custody / Guardianship',label:'Mother denied access by father',
+ input:'My husband has taken my 6-year-old son and is not allowing me to see him. I want custody of my child.',
+ expectPrimary:'Family – Child Custody / Guardianship',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T034',category:'Family',law:'Family – Child Custody / Guardianship',label:'Visitation rights enforcement',
+ input:'Court gave me visitation rights but my wife refuses to send the children on weekends. How do I enforce the order?',
+ expectPrimary:'Family – Child Custody / Guardianship',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T035',category:'Family',law:'Family – Child Custody / Guardianship',label:'Mother wants to relocate with child',
+ input:'I got a job in Canada. I have sole custody. Can I take my 8-year-old daughter abroad without the father\'s consent?',
+ expectPrimary:'Family – Child Custody / Guardianship',expectInResults:['NRI / OCI – Overseas Indian Legal Issues'],minConf:50,difficulty:'medium'},
+
+{id:'T036',category:'Family',law:'Family – Child Custody / Guardianship',label:'Grandparent seeking guardianship',
+ input:'Both parents of my grandchild are drug addicts and unfit. Can I, as the grandfather, apply for legal guardianship of the child?',
+ expectPrimary:'Family – Child Custody / Guardianship',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T037',category:'Family',law:'Family – Child Custody / Guardianship',label:'Child abducted by spouse',
+ input:'My husband took our daughter to his parents\' home in another state and is refusing to return her. I want an urgent custody order.',
+ expectPrimary:'Family – Child Custody / Guardianship',expectInResults:[],minConf:55,difficulty:'easy'},
+
+{id:'T038',category:'Family',law:'Family – Child Custody / Guardianship',label:'Custody of infant — breastfeeding',
+ input:'My daughter is only 11 months old. My husband wants custody. Does the law say infants should be with the mother?',
+ expectPrimary:'Family – Child Custody / Guardianship',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T039',category:'Family',law:'Family – Child Custody / Guardianship',label:'Child prefers to live with father',
+ input:'My 13-year-old son says he wants to live with his father. Will the court consider his wishes?',
+ expectPrimary:'Family – Child Custody / Guardianship',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T040',category:'Family',law:'Family – Child Custody / Guardianship',label:'Father alleges mother is unfit',
+ input:'I want to challenge my wife\'s custody because she has a psychiatric illness and is on medication. The children\'s safety is at risk.',
+ expectPrimary:'Family – Child Custody / Guardianship',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T041',category:'Family',law:'Family – Child Custody / Guardianship',label:'Custody across religions',
+ input:'My husband converted to Islam and wants to raise our children as Muslim. I am Hindu. How is custody decided?',
+ expectPrimary:'Family – Child Custody / Guardianship',expectInResults:[],minConf:45,difficulty:'hard'},
+
+{id:'T042',category:'Family',law:'Family – Child Custody / Guardianship',label:'Custody and school admission conflict',
+ input:'My wife has custody but she enrolled our daughter in a school I disagree with. Can I get joint custody or challenge the school decision?',
+ expectPrimary:'Family – Child Custody / Guardianship',expectInResults:[],minConf:45,difficulty:'medium'},
+
+{id:'T043',category:'Family',law:'Family – Child Custody / Guardianship',label:'Emergency custody due to violence',
+ input:'My husband hit our child during a fight. I want emergency custody immediately and want him to have no access.',
+ expectPrimary:'Family – Child Custody / Guardianship',expectInResults:['Family – Domestic Violence'],minConf:55,difficulty:'easy'},
+
+{id:'T044',category:'Family',law:'Family – Child Custody / Guardianship',label:'Custody modification after remarriage',
+ input:'My ex-wife has remarried and her new husband behaves badly with my son. Can I apply to modify the custody order?',
+ expectPrimary:'Family – Child Custody / Guardianship',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T045',category:'Family',law:'Family – Child Custody / Guardianship',label:'Hague Convention — child brought back',
+ input:'My wife took our child to Germany without permission. She says she will not return. What legal remedy do I have in India?',
+ expectPrimary:'Family – Child Custody / Guardianship',expectInResults:['NRI / OCI – Overseas Indian Legal Issues'],minConf:50,difficulty:'hard'},
+
+{id:'T046',category:'Family',law:'Family – Child Custody / Guardianship',label:'Father seeking custody after DV case',
+ input:'My wife filed a false domestic violence case against me. I want to get custody of my 5-year-old. Can I?',
+ expectPrimary:'Family – Child Custody / Guardianship',expectInResults:['Family – Domestic Violence'],minConf:50,difficulty:'medium'},
+
+// ─────────────────────────────────────────────────────────────
+// FAMILY – MAINTENANCE / ALIMONY  T047-T058
+// ─────────────────────────────────────────────────────────────
+{id:'T047',category:'Family',law:'Family – Maintenance / Alimony',label:'Wife seeking maintenance',
+ input:'My husband has kicked me out of the house and stopped paying for my expenses. I need maintenance from him. How much can I claim?',
+ expectPrimary:'Family – Maintenance / Alimony',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T048',category:'Family',law:'Family – Maintenance / Alimony',label:'Sec 125 CrPC maintenance',
+ input:'My husband earns Rs 80,000 a month. He has left me and our two children. I want to file for maintenance under Sec 125 CrPC.',
+ expectPrimary:'Family – Maintenance / Alimony',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T049',category:'Family',law:'Family – Maintenance / Alimony',label:'Permanent alimony after divorce',
+ input:'The court has granted us divorce. Now I want to claim permanent alimony. My husband owns a business.',
+ expectPrimary:'Family – Maintenance / Alimony',expectInResults:['Family – Divorce (Contested)'],minConf:55,difficulty:'medium'},
+
+{id:'T050',category:'Family',law:'Family – Maintenance / Alimony',label:'Husband seeking maintenance from wife',
+ input:'I am disabled and unable to work. My wife earns well but has left me. Can I claim maintenance from her?',
+ expectPrimary:'Family – Maintenance / Alimony',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T051',category:'Family',law:'Family – Maintenance / Alimony',label:'Children\'s education expenses',
+ input:'My ex-husband refuses to pay for our children\'s school fees and medical expenses even though he earns Rs 1 lakh/month.',
+ expectPrimary:'Family – Maintenance / Alimony',expectInResults:[],minConf:55,difficulty:'easy'},
+
+{id:'T052',category:'Family',law:'Family – Maintenance / Alimony',label:'Maintenance default enforcement',
+ input:'The court ordered my husband to pay Rs 20,000 maintenance monthly. He has not paid for 6 months. How do I enforce this?',
+ expectPrimary:'Family – Maintenance / Alimony',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T053',category:'Family',law:'Family – Maintenance / Alimony',label:'Interim maintenance during divorce proceedings',
+ input:'My divorce case is pending. I have no income. Can I get interim maintenance from my husband while the case is going on?',
+ expectPrimary:'Family – Maintenance / Alimony',expectInResults:['Family – Divorce (Contested)'],minConf:55,difficulty:'easy'},
+
+{id:'T054',category:'Family',law:'Family – Maintenance / Alimony',label:'Maintenance stopped after wife remarries',
+ input:'I was getting maintenance from my ex-husband. I recently remarried. He has stopped payment. Is this correct?',
+ expectPrimary:'Family – Maintenance / Alimony',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T055',category:'Family',law:'Family – Maintenance / Alimony',label:'Stridhan recovery',
+ input:'My husband has kept all my gold jewellery and gifts from my parents. He refuses to return them. Is this stridhan?',
+ expectPrimary:'Family – Maintenance / Alimony',expectInResults:['Family – Domestic Violence'],minConf:45,difficulty:'medium'},
+
+{id:'T056',category:'Family',law:'Family – Maintenance / Alimony',label:'Muslim wife — mahr and iddat',
+ input:'My husband has divorced me with triple talaq. I need maintenance during my iddat period and recovery of mahr. What is my right?',
+ expectPrimary:'Family – Maintenance / Alimony',expectInResults:[],minConf:45,difficulty:'hard'},
+
+{id:'T057',category:'Family',law:'Family – Maintenance / Alimony',label:'Aged parent maintenance',
+ input:'My son earns well but refuses to maintain me. I am 70 years old with no income. What law protects me?',
+ expectPrimary:'Family – Maintenance / Alimony',expectInResults:[],minConf:45,difficulty:'medium'},
+
+{id:'T058',category:'Family',law:'Family – Maintenance / Alimony',label:'Alimony quantum dispute',
+ input:'My wife is demanding Rs 1 crore as one-time alimony. I earn Rs 50,000/month. Is this legally valid? What is a fair amount?',
+ expectPrimary:'Family – Maintenance / Alimony',expectInResults:[],minConf:50,difficulty:'medium'},
+
+// ─────────────────────────────────────────────────────────────
+// FAMILY – DOMESTIC VIOLENCE  T059-T068
+// ─────────────────────────────────────────────────────────────
+{id:'T059',category:'Family',law:'Family – Domestic Violence',label:'Protection order needed urgently',
+ input:'My husband beats me and my children. I am scared he will kill me. I need urgent protection. What legal steps can I take immediately?',
+ expectPrimary:'Family – Domestic Violence',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T060',category:'Family',law:'Family – Domestic Violence',label:'Economic abuse — no money given',
+ input:'My husband controls all money. He gives me nothing for household expenses and takes my salary. Is this domestic violence?',
+ expectPrimary:'Family – Domestic Violence',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T061',category:'Family',law:'Family – Domestic Violence',label:'Residence order — thrown out of house',
+ input:'My husband threw me out of our shared house. Can I get a residence order to return and stay in the matrimonial home?',
+ expectPrimary:'Family – Domestic Violence',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T062',category:'Family',law:'Family – Domestic Violence',label:'FIR under Protection of Women from Domestic Violence Act',
+ input:'My in-laws and husband have been harassing me. I want to file a complaint under the Domestic Violence Act.',
+ expectPrimary:'Family – Domestic Violence',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T063',category:'Family',law:'Family – Domestic Violence',label:'Verbal abuse and threats',
+ input:'My husband constantly shouts at me, calls me names, and threatens to kill me. He has never hit me. Is this domestic violence?',
+ expectPrimary:'Family – Domestic Violence',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T064',category:'Family',law:'Family – Domestic Violence',label:'Dowry harassment by in-laws',
+ input:'My mother-in-law and sister-in-law harass me daily for dowry. My husband watches and says nothing. What action can I take?',
+ expectPrimary:'Family – Domestic Violence',expectInResults:['Family – Divorce (Contested)'],minConf:55,difficulty:'easy'},
+
+{id:'T065',category:'Family',law:'Family – Domestic Violence',label:'Live-in partner violence',
+ input:'I am in a live-in relationship and my partner beats me and threatens me. Does the Domestic Violence Act protect me?',
+ expectPrimary:'Family – Domestic Violence',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T066',category:'Family',law:'Family – Domestic Violence',label:'Second wife — DV Act rights',
+ input:'My husband has a second wife. He has stopped coming home and providing for me and my children. Can I file under the DV Act?',
+ expectPrimary:'Family – Domestic Violence',expectInResults:['Family – Maintenance / Alimony'],minConf:45,difficulty:'hard'},
+
+{id:'T067',category:'Family',law:'Family – Domestic Violence',label:'In-laws assaulting daughter-in-law',
+ input:'My brother-in-law and father-in-law physically attacked me when I refused to give them money. Can I file a DV case?',
+ expectPrimary:'Family – Domestic Violence',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T068',category:'Family',law:'Family – Domestic Violence',label:'Child witness to violence',
+ input:'My husband has never hit me but beats our children in my presence. Is this domestic violence against me?',
+ expectPrimary:'Family – Domestic Violence',expectInResults:[],minConf:45,difficulty:'hard'},
+
+// ─────────────────────────────────────────────────────────────
+// SUCCESSION – HINDU SUCCESSION / INHERITANCE  T069-T082
+// ─────────────────────────────────────────────────────────────
+{id:'T069',category:'Succession & Inheritance',law:'Property – Hindu Succession / Inheritance Dispute',label:'Daughter denied ancestral property',
+ input:'My father passed away without a will. My brothers are refusing to give me my share in the ancestral agricultural land. What are my rights?',
+ expectPrimary:'Property – Hindu Succession / Inheritance Dispute',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T070',category:'Succession & Inheritance',law:'Property – Hindu Succession / Inheritance Dispute',label:'Son vs daughter in self-acquired property',
+ input:'My father died intestate. He had self-acquired flat. My brother says only sons inherit. Is that true under Hindu Succession Act?',
+ expectPrimary:'Property – Hindu Succession / Inheritance Dispute',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T071',category:'Succession & Inheritance',law:'Property – Hindu Succession / Inheritance Dispute',label:'Widow\'s share in husband\'s property',
+ input:'My husband died without a will. His brothers say I have no right to his property. What is a widow\'s right under Hindu Succession Act?',
+ expectPrimary:'Property – Hindu Succession / Inheritance Dispute',expectInResults:[],minConf:55,difficulty:'easy'},
+
+{id:'T072',category:'Succession & Inheritance',law:'Property – Hindu Succession / Inheritance Dispute',label:'Coparcenary property dispute',
+ input:'We are three brothers and our grandfather\'s ancestral property has never been partitioned. I want my one-third share. How do I proceed?',
+ expectPrimary:'Property – Hindu Succession / Inheritance Dispute',expectInResults:['Civil – Partition Suit'],minConf:55,difficulty:'medium'},
+
+{id:'T073',category:'Succession & Inheritance',law:'Property – Hindu Succession / Inheritance Dispute',label:'2005 amendment — daughter\'s right',
+ input:'My father passed away in 2010. We had an ancestral property. Can I as a daughter claim my share under the 2005 Hindu Succession amendment?',
+ expectPrimary:'Property – Hindu Succession / Inheritance Dispute',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T074',category:'Succession & Inheritance',law:'Property – Hindu Succession / Inheritance Dispute',label:'Mother\'s share in children\'s estate',
+ input:'My son died in an accident without a will. He had savings and a flat. As his mother, do I have a right to inherit?',
+ expectPrimary:'Property – Hindu Succession / Inheritance Dispute',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T075',category:'Succession & Inheritance',law:'Property – Hindu Succession / Inheritance Dispute',label:'Class I heirs dispute',
+ input:'My father died without a will. He had a wife, two sons, and a daughter. How is his estate divided under Hindu Succession Act?',
+ expectPrimary:'Property – Hindu Succession / Inheritance Dispute',expectInResults:[],minConf:55,difficulty:'easy'},
+
+{id:'T076',category:'Succession & Inheritance',law:'Succession – Will Dispute / Probate',label:'Will challenged as forged',
+ input:'My father\'s will gives everything to my brother but we believe it is forged. Father was not in good mental health when it was signed.',
+ expectPrimary:'Succession – Will Dispute / Probate',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T077',category:'Succession & Inheritance',law:'Succession – Will Dispute / Probate',label:'Probate application',
+ input:'My mother left a registered will naming me as sole executor. How do I apply for probate to get access to her bank accounts and property?',
+ expectPrimary:'Succession – Will Dispute / Probate',expectInResults:[],minConf:55,difficulty:'easy'},
+
+{id:'T078',category:'Succession & Inheritance',law:'Succession – Will Dispute / Probate',label:'Will registered vs unregistered',
+ input:'My father wrote a will but did not register it. He has now died. Is an unregistered will valid?',
+ expectPrimary:'Succession – Will Dispute / Probate',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T079',category:'Succession & Inheritance',law:'Succession – Will Dispute / Probate',label:'Testamentary capacity challenged',
+ input:'My uncle made a will when he had dementia. We want to challenge this will as he lacked mental capacity.',
+ expectPrimary:'Succession – Will Dispute / Probate',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T080',category:'Succession & Inheritance',law:'Succession – Will Dispute / Probate',label:'Multiple wills — which is valid',
+ input:'My father made three wills at different times. The latest will gives everything to a charity. Earlier wills favour the family. Which will prevails?',
+ expectPrimary:'Succession – Will Dispute / Probate',expectInResults:[],minConf:50,difficulty:'hard'},
+
+{id:'T081',category:'Succession & Inheritance',law:'Succession – Will Dispute / Probate',label:'Letters of administration — no will',
+ input:'My husband died without a will. His bank is refusing to release funds to me. How do I get letters of administration?',
+ expectPrimary:'Succession – Will Dispute / Probate',expectInResults:['Property – Hindu Succession / Inheritance Dispute'],minConf:50,difficulty:'medium'},
+
+{id:'T082',category:'Succession & Inheritance',law:'Succession – Will Dispute / Probate',label:'Undue influence in will making',
+ input:'My elderly mother made a new will giving her property to her servant who was caring for her. We suspect undue influence.',
+ expectPrimary:'Succession – Will Dispute / Probate',expectInResults:[],minConf:50,difficulty:'medium'},
+
+// ─────────────────────────────────────────────────────────────
+// PROPERTY  T083-T110
+// ─────────────────────────────────────────────────────────────
+{id:'T083',category:'Property',law:'Property – Transfer of Property / Sale Deed Dispute',label:'Fraudulent sale of ancestral property',
+ input:'My brother forged my signature on a sale deed and sold our ancestral property without my consent. What legal action can I take?',
+ expectPrimary:'Property – Transfer of Property / Sale Deed Dispute',expectInResults:['Criminal – BNS (Fraud / Cheating)'],minConf:55,difficulty:'medium'},
+
+{id:'T084',category:'Property',law:'Property – Transfer of Property / Sale Deed Dispute',label:'Builder not registering flat',
+ input:'I paid full amount for a flat 4 years ago. The builder is refusing to register the sale deed. What can I do?',
+ expectPrimary:'Property – Transfer of Property / Sale Deed Dispute',expectInResults:['Property – RERA Disputes / Builder Fraud'],minConf:50,difficulty:'medium'},
+
+{id:'T085',category:'Property',law:'Property – Transfer of Property / Sale Deed Dispute',label:'Power of attorney misuse in property',
+ input:'My father gave a general power of attorney to his nephew. The nephew sold the property without my father\'s knowledge. Is this valid?',
+ expectPrimary:'Property – Transfer of Property / Sale Deed Dispute',expectInResults:['Criminal – BNS (Fraud / Cheating)'],minConf:50,difficulty:'medium'},
+
+{id:'T086',category:'Property',law:'Property – Transfer of Property / Sale Deed Dispute',label:'Agreement to sell not honoured',
+ input:'The seller took advance money and then sold the property to someone else. I have a registered agreement to sell. What is my remedy?',
+ expectPrimary:'Property – Transfer of Property / Sale Deed Dispute',expectInResults:['Civil – Specific Performance / Declaration'],minConf:50,difficulty:'medium'},
+
+{id:'T087',category:'Property',law:'Property – Boundary Dispute / Encroachment',label:'Neighbour encroaching on land',
+ input:'My neighbour has constructed a boundary wall 2 feet inside my registered land. I have a survey report confirming encroachment.',
+ expectPrimary:'Property – Boundary Dispute / Encroachment',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T088',category:'Property',law:'Property – Boundary Dispute / Encroachment',label:'Government land encroachment',
+ input:'The municipality has built a road that passes through 5 feet of my registered property. They have not given me any notice or compensation.',
+ expectPrimary:'Property – Boundary Dispute / Encroachment',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T089',category:'Property',law:'Property – Boundary Dispute / Encroachment',label:'Neighbour blocking shared passage',
+ input:'My neighbour has blocked the common passage between our houses. I cannot reach my own home without using this path.',
+ expectPrimary:'Property – Boundary Dispute / Encroachment',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T090',category:'Property',law:'Property – Rent Dispute / Tenant Eviction',label:'Tenant not vacating after notice',
+ input:'My tenant\'s lease expired 6 months ago. He refuses to vacate despite legal notice. How do I evict him?',
+ expectPrimary:'Property – Rent Dispute / Tenant Eviction',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T091',category:'Property',law:'Property – Rent Dispute / Tenant Eviction',label:'Rent not paid for 3 months',
+ input:'My tenant has not paid rent for 3 months. He is also damaging my property. I want to evict him immediately.',
+ expectPrimary:'Property – Rent Dispute / Tenant Eviction',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T092',category:'Property',law:'Property – Rent Dispute / Tenant Eviction',label:'Old tenant claiming ownership',
+ input:'My tenant has been living in my property since 1985. He now claims he has ownership rights because he has been there so long.',
+ expectPrimary:'Property – Rent Dispute / Tenant Eviction',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T093',category:'Property',law:'Property – Rent Dispute / Tenant Eviction',label:'Landlord denying repairs',
+ input:'My landlord refuses to do basic repairs — no water supply and roof is leaking. He threatens eviction when I complain.',
+ expectPrimary:'Property – Rent Dispute / Tenant Eviction',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T094',category:'Property',law:'Property – RERA Disputes / Builder Fraud',label:'Builder delayed possession',
+ input:'The builder promised possession 3 years ago. The project is still incomplete. I am paying EMI and rent both. What are my rights under RERA?',
+ expectPrimary:'Property – RERA Disputes / Builder Fraud',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T095',category:'Property',law:'Property – RERA Disputes / Builder Fraud',label:'Builder changed floor plan',
+ input:'The builder changed the flat\'s layout from approved plan without informing me. The carpet area has been reduced by 100 sq ft.',
+ expectPrimary:'Property – RERA Disputes / Builder Fraud',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T096',category:'Property',law:'Property – RERA Disputes / Builder Fraud',label:'Builder refusing OC / registration',
+ input:'My flat has been constructed but the builder is refusing to get the Occupancy Certificate and register the flat. What can I do under RERA?',
+ expectPrimary:'Property – RERA Disputes / Builder Fraud',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T097',category:'Property',law:'Property – RERA Disputes / Builder Fraud',label:'Builder project abandoned',
+ input:'The builder has abandoned the housing project midway and is not responding to calls. I have paid Rs 40 lakhs. Can I get a refund?',
+ expectPrimary:'Property – RERA Disputes / Builder Fraud',expectInResults:['Consumer – Product Defect / Service Deficiency'],minConf:55,difficulty:'medium'},
+
+// ─────────────────────────────────────────────────────────────
+// EMPLOYMENT  T098-T120
+// ─────────────────────────────────────────────────────────────
+{id:'T098',category:'Employment',law:'Employment – Wrongful Termination / Illegal Dismissal',label:'Terminated without notice',
+ input:'My company terminated me without any notice or reason. I had a 3-month notice period in my contract. What legal action can I take?',
+ expectPrimary:'Employment – Wrongful Termination / Illegal Dismissal',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T099',category:'Employment',law:'Employment – Wrongful Termination / Illegal Dismissal',label:'Fired after raising complaint',
+ input:'I raised a complaint about financial irregularities in my company. The next week I was terminated. This is retaliatory dismissal.',
+ expectPrimary:'Employment – Wrongful Termination / Illegal Dismissal',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T100',category:'Employment',law:'Employment – Wrongful Termination / Illegal Dismissal',label:'Forced resignation under pressure',
+ input:'My manager threatened me with a bad performance review if I didn\'t resign. I was forced to sign a resignation. Is this legal?',
+ expectPrimary:'Employment – Wrongful Termination / Illegal Dismissal',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T101',category:'Employment',law:'Employment – Salary Dues / PF / Gratuity',label:'Salary not paid for 3 months',
+ input:'My employer has not paid my salary for the past 3 months despite me continuing to work. What action can I take to recover salary?',
+ expectPrimary:'Employment – Salary Dues / PF / Gratuity',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T102',category:'Employment',law:'Employment – Salary Dues / PF / Gratuity',label:'PF not deposited by employer',
+ input:'My employer has been deducting PF from my salary for 2 years but has not deposited it with EPFO. How do I file a complaint?',
+ expectPrimary:'Employment – Salary Dues / PF / Gratuity',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T103',category:'Employment',law:'Employment – Salary Dues / PF / Gratuity',label:'Gratuity withheld after 10 years',
+ input:'I worked for a company for 12 years. They are refusing to pay my gratuity saying I resigned. Am I not entitled to gratuity?',
+ expectPrimary:'Employment – Salary Dues / PF / Gratuity',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T104',category:'Employment',law:'Employment – Harassment at Workplace (POSH)',label:'Sexual harassment by manager',
+ input:'My male manager has been making inappropriate sexual comments and touching me without consent. I want to file a POSH complaint.',
+ expectPrimary:'Employment – Harassment at Workplace (POSH)',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T105',category:'Employment',law:'Employment – Harassment at Workplace (POSH)',label:'No ICC in company',
+ input:'I was sexually harassed at work but my company has no Internal Complaints Committee. What is my alternative?',
+ expectPrimary:'Employment – Harassment at Workplace (POSH)',expectInResults:[],minConf:60,difficulty:'medium'},
+
+{id:'T106',category:'Employment',law:'Employment – Harassment at Workplace (POSH)',label:'POSH complaint dismissed unfairly',
+ input:'I filed a POSH complaint but the ICC dismissed it without proper inquiry. What is my remedy?',
+ expectPrimary:'Employment – Harassment at Workplace (POSH)',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T107',category:'Employment',law:'Shops & Establishments Act – Labour Compliance',label:'Shop not following working hours',
+ input:'My employer makes us work 14 hours a day without overtime pay in a retail shop. Is this legal under Shops and Establishments Act?',
+ expectPrimary:'Shops & Establishments Act – Labour Compliance',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T108',category:'Employment',law:'Shops & Establishments Act – Labour Compliance',label:'No leave given in a commercial establishment',
+ input:'My employer at this medical shop does not give me any weekly off or annual leave. What are my rights under the Shops Act?',
+ expectPrimary:'Shops & Establishments Act – Labour Compliance',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T109',category:'Employment',law:'Employment – Wrongful Termination / Illegal Dismissal',label:'Termination of pregnant employee',
+ input:'My company terminated me when I told them I was pregnant. This seems discriminatory. What legal protection do I have?',
+ expectPrimary:'Employment – Wrongful Termination / Illegal Dismissal',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T110',category:'Employment',law:'Employment – Salary Dues / PF / Gratuity',label:'ESI benefits denied',
+ input:'I was injured at work and needed hospitalisation. My employer had been deducting ESI but the ESI office says I am not registered. What now?',
+ expectPrimary:'Employment – Salary Dues / PF / Gratuity',expectInResults:[],minConf:50,difficulty:'medium'},
+
+// ─────────────────────────────────────────────────────────────
+// CYBER CRIME  T111-T128
+// ─────────────────────────────────────────────────────────────
+{id:'T111',category:'Cyber Crime',law:'Cyber – Online Fraud / Financial Cyber Crime',label:'UPI payment fraud',
+ input:'I received a call from someone pretending to be from my bank. They got my OTP and transferred Rs 85,000 from my account. How do I get it back?',
+ expectPrimary:'Cyber – Online Fraud / Financial Cyber Crime',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T112',category:'Cyber Crime',law:'Cyber – Online Fraud / Financial Cyber Crime',label:'Online investment scam',
+ input:'I invested Rs 2 lakhs in an online trading platform that promised 30% daily returns. The site went dark and I cannot withdraw money.',
+ expectPrimary:'Cyber – Online Fraud / Financial Cyber Crime',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T113',category:'Cyber Crime',law:'Cyber – Online Fraud / Financial Cyber Crime',label:'KYC fraud — SIM swap',
+ input:'Fraudsters did a SIM swap using fake KYC documents. They then accessed my bank account and transferred all savings.',
+ expectPrimary:'Cyber – Online Fraud / Financial Cyber Crime',expectInResults:[],minConf:60,difficulty:'medium'},
+
+{id:'T114',category:'Cyber Crime',law:'Cyber – Online Harassment / Cyberstalking / Defamation',label:'Fake profile on social media',
+ input:'Someone created a fake Instagram profile using my photos and is sending obscene messages to my contacts. What legal action can I take?',
+ expectPrimary:'Cyber – Online Harassment / Cyberstalking / Defamation',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T115',category:'Cyber Crime',law:'Cyber – Online Harassment / Cyberstalking / Defamation',label:'Ex-boyfriend posting intimate photos',
+ input:'My ex-boyfriend is threatening to post intimate photographs of me on social media unless I meet him. This is blackmail.',
+ expectPrimary:'Cyber – Online Harassment / Cyberstalking / Defamation',expectInResults:['Criminal – BNS (Fraud / Cheating)'],minConf:60,difficulty:'easy'},
+
+{id:'T116',category:'Cyber Crime',law:'Cyber – Online Harassment / Cyberstalking / Defamation',label:'Cyberstalking by unknown person',
+ input:'An unknown person follows all my online activity, sends threatening messages, and shows up at places I check into. I am terrified.',
+ expectPrimary:'Cyber – Online Harassment / Cyberstalking / Defamation',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T117',category:'Cyber Crime',law:'Cyber – Online Harassment / Cyberstalking / Defamation',label:'Online defamation by ex-employee',
+ input:'A former employee is posting false negative reviews on Google and writing lies about my business on LinkedIn. I want to sue for defamation.',
+ expectPrimary:'Cyber – Online Harassment / Cyberstalking / Defamation',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T118',category:'Cyber Crime',law:'Cyber – Data Theft / Hacking / Corporate Espionage',label:'Company database hacked',
+ input:'Our company\'s customer database was hacked and 50,000 records were stolen. We suspect a competitor was involved.',
+ expectPrimary:'Cyber – Data Theft / Hacking / Corporate Espionage',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T119',category:'Cyber Crime',law:'Cyber – Data Theft / Hacking / Corporate Espionage',label:'Employee leaking trade secrets',
+ input:'Our software engineer copied our entire source code and client database before leaving to join a competitor. This is corporate espionage.',
+ expectPrimary:'Cyber – Data Theft / Hacking / Corporate Espionage',expectInResults:['IP – Trademark / Copyright / Patent Dispute'],minConf:55,difficulty:'medium'},
+
+{id:'T120',category:'Cyber Crime',law:'Cyber – Online Fraud / Financial Cyber Crime',label:'Job offer fraud',
+ input:'I paid Rs 30,000 as registration fee for a job offer that turned out to be fake. The company website has disappeared.',
+ expectPrimary:'Cyber – Online Fraud / Financial Cyber Crime',expectInResults:['Criminal – BNS (Fraud / Cheating)'],minConf:55,difficulty:'easy'},
+
+{id:'T121',category:'Cyber Crime',law:'Cyber – Online Fraud / Financial Cyber Crime',label:'Phishing email bank fraud',
+ input:'I clicked a link in an email that looked like my bank. They stole my net banking credentials and transferred Rs 1.5 lakhs.',
+ expectPrimary:'Cyber – Online Fraud / Financial Cyber Crime',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T122',category:'Cyber Crime',law:'Cyber – Data Theft / Hacking / Corporate Espionage',label:'Personal email hacked',
+ input:'Someone hacked my Gmail account and accessed all my private emails and photos. They are now using this to blackmail me.',
+ expectPrimary:'Cyber – Data Theft / Hacking / Corporate Espionage',expectInResults:['Cyber – Online Harassment / Cyberstalking / Defamation'],minConf:55,difficulty:'medium'},
+
+// ─────────────────────────────────────────────────────────────
+// CRIMINAL  T123-T146
+// ─────────────────────────────────────────────────────────────
+{id:'T123',category:'Criminal',law:'Criminal – BNS (Fraud / Cheating)',label:'Business partner fraud',
+ input:'My business partner took Rs 25 lakhs from investors in our company name and disappeared. I want to file a cheating case.',
+ expectPrimary:'Criminal – BNS (Fraud / Cheating)',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T124',category:'Criminal',law:'Criminal – BNS (Fraud / Cheating)',label:'Matrimonial fraud',
+ input:'A man married me under a false identity claiming to be a software engineer. He was already married. I want to file criminal fraud case.',
+ expectPrimary:'Criminal – BNS (Fraud / Cheating)',expectInResults:['Family – Divorce (Contested)'],minConf:55,difficulty:'medium'},
+
+{id:'T125',category:'Criminal',law:'Criminal – BNS (Fraud / Cheating)',label:'Contractor ran away with advance',
+ input:'I gave a contractor Rs 8 lakhs advance for construction. He took the money and has not done any work. Can I file a criminal case?',
+ expectPrimary:'Criminal – BNS (Fraud / Cheating)',expectInResults:['Civil – Money Recovery / Debt Recovery'],minConf:55,difficulty:'easy'},
+
+{id:'T126',category:'Criminal',law:'Criminal – BNS (Assault / Hurt / Grievous Hurt)',label:'Assault by neighbour',
+ input:'My neighbour attacked me with an iron rod during an argument. I have been hospitalised with a broken arm. I want to file an FIR.',
+ expectPrimary:'Criminal – BNS (Assault / Hurt / Grievous Hurt)',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T127',category:'Criminal',law:'Criminal – BNS (Assault / Hurt / Grievous Hurt)',label:'Acid attack survivor',
+ input:'My former employer threw acid on my face after I refused his advances. I am in hospital. What immediate legal steps can we take?',
+ expectPrimary:'Criminal – BNS (Assault / Hurt / Grievous Hurt)',expectInResults:['Employment – Harassment at Workplace (POSH)'],minConf:60,difficulty:'easy'},
+
+{id:'T128',category:'Criminal',law:'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)',label:'Anticipatory bail in fraud case',
+ input:'Police has registered an FIR against me for cheating. I expect arrest. How do I apply for anticipatory bail?',
+ expectPrimary:'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T129',category:'Criminal',law:'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)',label:'Regular bail in assault case',
+ input:'My brother has been in judicial custody for 3 months in an assault case. We want to apply for bail. What is the procedure?',
+ expectPrimary:'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T130',category:'Criminal',law:'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)',label:'Zero FIR in another state',
+ input:'I was assaulted in Delhi but I live in Mumbai. The Delhi police refused to register FIR. Can I file a Zero FIR in Mumbai?',
+ expectPrimary:'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)',expectInResults:['Criminal – BNS (Assault / Hurt / Grievous Hurt)'],minConf:50,difficulty:'medium'},
+
+{id:'T131',category:'Criminal',law:'Criminal – Cheque Bounce (NI Act Sec 138)',label:'Post-dated cheque dishonoured',
+ input:'A business associate gave me a post-dated cheque of Rs 5 lakhs towards a loan. The cheque bounced with "insufficient funds".',
+ expectPrimary:'Criminal – Cheque Bounce (NI Act Sec 138)',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T132',category:'Criminal',law:'Criminal – Cheque Bounce (NI Act Sec 138)',label:'Cheque bounce in property deal',
+ input:'The buyer gave me a cheque as part payment for land. The cheque was returned unpaid. I want to file case under NI Act Sec 138.',
+ expectPrimary:'Criminal – Cheque Bounce (NI Act Sec 138)',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T133',category:'Criminal',law:'Criminal – Cheque Bounce (NI Act Sec 138)',label:'Multiple cheques bounced',
+ input:'I gave 4 post-dated cheques for a loan repayment. All 4 have bounced. The lender wants to file NI Act cases. What are my defences?',
+ expectPrimary:'Criminal – Cheque Bounce (NI Act Sec 138)',expectInResults:[],minConf:60,difficulty:'medium'},
+
+{id:'T134',category:'Criminal',law:'Criminal – Cheque Bounce (NI Act Sec 138)',label:'Notice period for cheque bounce',
+ input:'My cheque bounced. The payee sent me a legal notice. How long do I have to respond and what happens if I don\'t pay?',
+ expectPrimary:'Criminal – Cheque Bounce (NI Act Sec 138)',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T135',category:'Criminal',law:'Criminal – POCSO (Child Sexual Offences)',label:'Child sexually abused by teacher',
+ input:'My 9-year-old daughter told me her school teacher has been touching her inappropriately. I want to file a POCSO complaint immediately.',
+ expectPrimary:'Criminal – POCSO (Child Sexual Offences)',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T136',category:'Criminal',law:'Criminal – POCSO (Child Sexual Offences)',label:'Child groomed online',
+ input:'An adult man has been sending my 14-year-old son obscene pictures online and asking for photos. This is online POCSO offence.',
+ expectPrimary:'Criminal – POCSO (Child Sexual Offences)',expectInResults:['Cyber – Online Harassment / Cyberstalking / Defamation'],minConf:60,difficulty:'medium'},
+
+{id:'T137',category:'Criminal',law:'Criminal – POCSO (Child Sexual Offences)',label:'Child abuse by relative',
+ input:'My 8-year-old niece has disclosed that her uncle is sexually abusing her. I want to know how to report under POCSO.',
+ expectPrimary:'Criminal – POCSO (Child Sexual Offences)',expectInResults:[],minConf:65,difficulty:'easy'},
+
+// ─────────────────────────────────────────────────────────────
+// CONSUMER  T138-T148
+// ─────────────────────────────────────────────────────────────
+{id:'T138',category:'Consumer',law:'Consumer – Product Defect / Service Deficiency',label:'Defective washing machine',
+ input:'I bought a washing machine 3 months ago. It broke down after 2 weeks. The company is refusing replacement or refund under warranty.',
+ expectPrimary:'Consumer – Product Defect / Service Deficiency',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T139',category:'Consumer',law:'Consumer – Product Defect / Service Deficiency',label:'Hospital medical negligence',
+ input:'The hospital administered the wrong medication to my mother due to negligence. She suffered serious side effects. Is this a consumer case?',
+ expectPrimary:'Consumer – Product Defect / Service Deficiency',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T140',category:'Consumer',law:'Consumer – Product Defect / Service Deficiency',label:'Insurance claim rejected',
+ input:'My health insurance company rejected my claim for heart surgery saying it is a pre-existing condition. I have been with them for 5 years.',
+ expectPrimary:'Consumer – Product Defect / Service Deficiency',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T141',category:'Consumer',law:'Consumer – Product Defect / Service Deficiency',label:'Airline denied boarding',
+ input:'The airline denied me boarding for a flight I had a confirmed ticket for and offered no alternative. I suffered huge business loss.',
+ expectPrimary:'Consumer – Product Defect / Service Deficiency',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T142',category:'Consumer',law:'Consumer – Product Defect / Service Deficiency',label:'Hotel service deficiency',
+ input:'I booked a hotel that was completely different from what was shown on the website. They refused refund when I complained.',
+ expectPrimary:'Consumer – Product Defect / Service Deficiency',expectInResults:[],minConf:55,difficulty:'easy'},
+
+{id:'T143',category:'Consumer',law:'Consumer – Product Defect / Service Deficiency',label:'E-commerce fraud — counterfeit product',
+ input:'I ordered an Apple iPhone on an e-commerce site and received a fake product. The seller refuses return. Can I go to consumer court?',
+ expectPrimary:'Consumer – Product Defect / Service Deficiency',expectInResults:['Cyber – Online Fraud / Financial Cyber Crime'],minConf:55,difficulty:'medium'},
+
+{id:'T144',category:'Consumer',law:'Consumer – Product Defect / Service Deficiency',label:'Telecom excessive billing',
+ input:'My mobile operator has been charging me for services I never subscribed to. After 3 complaints they still have not resolved it.',
+ expectPrimary:'Consumer – Product Defect / Service Deficiency',expectInResults:[],minConf:55,difficulty:'easy'},
+
+{id:'T145',category:'Consumer',law:'Consumer – Product Defect / Service Deficiency',label:'Car dealer fraud',
+ input:'I bought a new car but discovered it had previous accidental damage. The dealer presented it as factory-fresh. Can I get a replacement?',
+ expectPrimary:'Consumer – Product Defect / Service Deficiency',expectInResults:['Criminal – BNS (Fraud / Cheating)'],minConf:55,difficulty:'medium'},
+
+// ─────────────────────────────────────────────────────────────
+// MOTOR ACCIDENT  T146-T157
+// ─────────────────────────────────────────────────────────────
+{id:'T146',category:'Motor Accident',law:'Motor Accident Claims / Personal Injury',label:'Hit by truck — serious injury',
+ input:'I was hit by a truck while riding my motorcycle. I have suffered a broken leg and multiple fractures. I am hospitalised. How do I claim compensation?',
+ expectPrimary:'Motor Accident Claims / Personal Injury',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T147',category:'Motor Accident',law:'Motor Accident Claims / Personal Injury',label:'Death of breadwinner in accident',
+ input:'My husband died in a road accident caused by a reckless bus driver. He was the sole earner. How much compensation can the family claim?',
+ expectPrimary:'Motor Accident Claims / Personal Injury',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T148',category:'Motor Accident',law:'Motor Accident Claims / Personal Injury',label:'Uninsured vehicle accident',
+ input:'The car that hit me was uninsured. The driver ran away. Can I still claim compensation?',
+ expectPrimary:'Motor Accident Claims / Personal Injury',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T149',category:'Motor Accident',law:'Motor Accident Claims / Personal Injury',label:'Hit and run with no identification',
+ input:'A vehicle hit my scooter in a hit and run. I don\'t know the vehicle number. What compensation schemes are available?',
+ expectPrimary:'Motor Accident Claims / Personal Injury',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T150',category:'Motor Accident',law:'Motor Accident Claims / Personal Injury',label:'Compensation calculation — disability',
+ input:'I lost my right hand in a bus accident. I was a carpenter earning Rs 20,000 per month. How is compensation calculated for permanent disability?',
+ expectPrimary:'Motor Accident Claims / Personal Injury',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T151',category:'Motor Accident',law:'Motor Accident Claims / Personal Injury',label:'Pedestrian hit by car',
+ input:'My elderly mother was hit by a speeding car while crossing the road. She has a fractured hip and is 68 years old.',
+ expectPrimary:'Motor Accident Claims / Personal Injury',expectInResults:[],minConf:60,difficulty:'easy'},
+
+// ─────────────────────────────────────────────────────────────
+// RTI  T152-T160
+// ─────────────────────────────────────────────────────────────
+{id:'T152',category:'RTI',law:'RTI – Right to Information Act',label:'Government office not responding',
+ input:'I filed an RTI application with the municipal corporation 3 months ago. No response. What are my options?',
+ expectPrimary:'RTI – Right to Information Act',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T153',category:'RTI',law:'RTI – Right to Information Act',label:'RTI for government job selection',
+ input:'I applied for a government job but was rejected without reasons. I want to file an RTI to get the evaluation sheet and marks.',
+ expectPrimary:'RTI – Right to Information Act',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T154',category:'RTI',law:'RTI – Right to Information Act',label:'RTI to expose corruption',
+ input:'I want to find out how government contract tenders were awarded in my district. I suspect corruption. Can I get tender documents through RTI?',
+ expectPrimary:'RTI – Right to Information Act',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T155',category:'RTI',law:'RTI – Right to Information Act',label:'RTI application rejected',
+ input:'My RTI application was rejected saying the information is exempt. They cited Section 8. Is this valid and what is my appeal process?',
+ expectPrimary:'RTI – Right to Information Act',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T156',category:'RTI',law:'RTI – Right to Information Act',label:'RTI to government hospital',
+ input:'I want the details of medical treatment given to my deceased father at a government hospital. Can I get these through RTI?',
+ expectPrimary:'RTI – Right to Information Act',expectInResults:[],minConf:55,difficulty:'medium'},
+
+// ─────────────────────────────────────────────────────────────
+// CONSTITUTIONAL – PIL / WRIT  T157-T165
+// ─────────────────────────────────────────────────────────────
+{id:'T157',category:'Constitutional',law:'Constitutional – PIL / Writ Petition (High Court / Supreme Court)',label:'Illegal demolition by municipality',
+ input:'The municipality demolished my legally-built house without any notice. I want to challenge this before the High Court.',
+ expectPrimary:'Constitutional – PIL / Writ Petition (High Court / Supreme Court)',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T158',category:'Constitutional',law:'Constitutional – PIL / Writ Petition (High Court / Supreme Court)',label:'PIL against river pollution',
+ input:'Industries are discharging untreated effluents into our river. The pollution board is doing nothing. Can I file a PIL?',
+ expectPrimary:'Constitutional – PIL / Writ Petition (High Court / Supreme Court)',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T159',category:'Constitutional',law:'Constitutional – PIL / Writ Petition (High Court / Supreme Court)',label:'Writ against arbitrary detention',
+ input:'My friend was arrested by police without FIR and has been in custody for 4 days. No production before magistrate. Can we file habeas corpus?',
+ expectPrimary:'Constitutional – PIL / Writ Petition (High Court / Supreme Court)',expectInResults:['Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)'],minConf:55,difficulty:'medium'},
+
+{id:'T160',category:'Constitutional',law:'Constitutional – PIL / Writ Petition (High Court / Supreme Court)',label:'Government employee service dispute',
+ input:'I am a government employee. My seniority was bypassed for promotion without any reason. I want to challenge this.',
+ expectPrimary:'Constitutional – PIL / Writ Petition (High Court / Supreme Court)',expectInResults:[],minConf:45,difficulty:'hard'},
+
+{id:'T161',category:'Constitutional',law:'Constitutional – PIL / Writ Petition (High Court / Supreme Court)',label:'Right to education violation',
+ input:'A private school is refusing admission to children from the economically weaker section under RTE. Can a PIL be filed?',
+ expectPrimary:'Constitutional – PIL / Writ Petition (High Court / Supreme Court)',expectInResults:[],minConf:50,difficulty:'medium'},
+
+// ─────────────────────────────────────────────────────────────
+// TAX  T162-T170
+// ─────────────────────────────────────────────────────────────
+{id:'T162',category:'Tax',law:'Tax – GST / Income Tax / Tax Dispute',label:'Income tax notice for mismatch',
+ input:'I received an income tax notice saying my bank deposits do not match my ITR. How do I respond to this notice?',
+ expectPrimary:'Tax – GST / Income Tax / Tax Dispute',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T163',category:'Tax',law:'Tax – GST / Income Tax / Tax Dispute',label:'GST notice for non-filing',
+ input:'I forgot to file GST returns for 6 months. The department has sent a notice with heavy penalty. What can I do?',
+ expectPrimary:'Tax – GST / Income Tax / Tax Dispute',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T164',category:'Tax',law:'Tax – GST / Income Tax / Tax Dispute',label:'TDS deducted but not reflected',
+ input:'My employer deducted TDS from my salary but it is not showing in my Form 26AS. This is causing issues in my ITR filing.',
+ expectPrimary:'Tax – GST / Income Tax / Tax Dispute',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T165',category:'Tax',law:'Tax – GST / Income Tax / Tax Dispute',label:'Property sale and capital gains tax',
+ input:'I sold my flat for Rs 80 lakhs after buying it for Rs 30 lakhs 5 years ago. Do I need to pay capital gains tax? How can I save it?',
+ expectPrimary:'Tax – GST / Income Tax / Tax Dispute',expectInResults:[],minConf:50,difficulty:'medium'},
+
+{id:'T166',category:'Tax',law:'Tax – GST / Income Tax / Tax Dispute',label:'GST input tax credit dispute',
+ input:'The GST department has disallowed my input tax credit of Rs 5 lakhs saying the supplier did not file returns. What is my remedy?',
+ expectPrimary:'Tax – GST / Income Tax / Tax Dispute',expectInResults:[],minConf:60,difficulty:'medium'},
+
+{id:'T167',category:'Tax',law:'Tax – GST / Income Tax / Tax Dispute',label:'Penalty for non-registration under GST',
+ input:'I run a small business with Rs 22 lakh turnover. I was unaware of GST registration requirement. Now I have a penalty notice.',
+ expectPrimary:'Tax – GST / Income Tax / Tax Dispute',expectInResults:[],minConf:55,difficulty:'medium'},
+
+// ─────────────────────────────────────────────────────────────
+// NRI / OCI  T168-T176
+// ─────────────────────────────────────────────────────────────
+{id:'T168',category:'NRI / OCI',law:'NRI / OCI – Overseas Indian Legal Issues',label:'NRI property dispute in India',
+ input:'I am an NRI living in the UK. My relatives are illegally occupying my property in India. How can I recover my property from abroad?',
+ expectPrimary:'NRI / OCI – Overseas Indian Legal Issues',expectInResults:['Property – Transfer of Property / Sale Deed Dispute'],minConf:55,difficulty:'medium'},
+
+{id:'T169',category:'NRI / OCI',law:'NRI / OCI – Overseas Indian Legal Issues',label:'OCI card holder property restrictions',
+ input:'I am an OCI cardholder settled in Australia. Can I buy agricultural land in India? Are there any property restrictions for OCIs?',
+ expectPrimary:'NRI / OCI – Overseas Indian Legal Issues',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T170',category:'NRI / OCI',law:'NRI / OCI – Overseas Indian Legal Issues',label:'NRI marriage breakdown',
+ input:'My husband is in the USA. He has stopped communicating and is refusing to return. We are both Indian citizens. Can I file divorce in India?',
+ expectPrimary:'NRI / OCI – Overseas Indian Legal Issues',expectInResults:['Family – Divorce (Contested)'],minConf:50,difficulty:'medium'},
+
+{id:'T171',category:'NRI / OCI',law:'NRI / OCI – Overseas Indian Legal Issues',label:'NRI inheritance claim',
+ input:'I am an NRI. My father died in India and left property but my siblings are not including me in the inheritance. What is my right?',
+ expectPrimary:'NRI / OCI – Overseas Indian Legal Issues',expectInResults:['Property – Hindu Succession / Inheritance Dispute'],minConf:50,difficulty:'medium'},
+
+{id:'T172',category:'NRI / OCI',law:'NRI / OCI – Overseas Indian Legal Issues',label:'FEMA violation concern',
+ input:'I am an NRI and have been receiving rental income from India which I never remitted through proper banking channels. Am I in trouble?',
+ expectPrimary:'NRI / OCI – Overseas Indian Legal Issues',expectInResults:[],minConf:50,difficulty:'medium'},
+
+// ─────────────────────────────────────────────────────────────
+// IP  T173-T182
+// ─────────────────────────────────────────────────────────────
+{id:'T173',category:'IP',law:'IP – Trademark / Copyright / Patent Dispute',label:'Competitor using similar trademark',
+ input:'A competitor has registered a trademark that is almost identical to mine. I have been using my brand for 5 years. What can I do?',
+ expectPrimary:'IP – Trademark / Copyright / Patent Dispute',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T174',category:'IP',law:'IP – Trademark / Copyright / Patent Dispute',label:'Copyright infringement — book',
+ input:'Someone has copy-pasted large portions of my published book and published it under their own name. This is copyright infringement.',
+ expectPrimary:'IP – Trademark / Copyright / Patent Dispute',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T175',category:'IP',law:'IP – Trademark / Copyright / Patent Dispute',label:'Software code theft',
+ input:'My former employee took our proprietary software code and is selling it under a different name. We want to file an IP infringement case.',
+ expectPrimary:'IP – Trademark / Copyright / Patent Dispute',expectInResults:['Cyber – Data Theft / Hacking / Corporate Espionage'],minConf:55,difficulty:'medium'},
+
+{id:'T176',category:'IP',law:'IP – Trademark / Copyright / Patent Dispute',label:'Patent dispute — invention stolen',
+ input:'I disclosed my invention to a company during negotiations. They filed a patent for my invention without my consent.',
+ expectPrimary:'IP – Trademark / Copyright / Patent Dispute',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T177',category:'IP',law:'IP – Trademark / Copyright / Patent Dispute',label:'Domain name dispute',
+ input:'Someone registered a domain name identical to my trademark to divert my online customers. What remedy do I have?',
+ expectPrimary:'IP – Trademark / Copyright / Patent Dispute',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T178',category:'IP',law:'IP – Trademark / Copyright / Patent Dispute',label:'Film music copyright dispute',
+ input:'A Bollywood production house used my original composition in their film without credit or payment. I have proof of prior publication.',
+ expectPrimary:'IP – Trademark / Copyright / Patent Dispute',expectInResults:[],minConf:55,difficulty:'medium'},
+
+// ─────────────────────────────────────────────────────────────
+// CIVIL  T179-T195
+// ─────────────────────────────────────────────────────────────
+{id:'T179',category:'Civil',law:'Civil – Money Recovery / Debt Recovery',label:'Personal loan not returned',
+ input:'I lent Rs 5 lakhs to my friend 2 years ago with a written agreement. He is refusing to repay. How do I recover the money?',
+ expectPrimary:'Civil – Money Recovery / Debt Recovery',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T180',category:'Civil',law:'Civil – Money Recovery / Debt Recovery',label:'Business dues not paid',
+ input:'A client owes me Rs 18 lakhs for services delivered. Despite multiple reminders and legal notice they have not paid.',
+ expectPrimary:'Civil – Money Recovery / Debt Recovery',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T181',category:'Civil',law:'Civil – Money Recovery / Debt Recovery',label:'Promissory note recovery',
+ input:'I have a signed promissory note for Rs 3 lakhs from a borrower who has now gone silent. How do I use this in court?',
+ expectPrimary:'Civil – Money Recovery / Debt Recovery',expectInResults:[],minConf:60,difficulty:'medium'},
+
+{id:'T182',category:'Civil',law:'Civil – Partition Suit',label:'Brothers refusing to partition ancestral property',
+ input:'My father died and left an ancestral house. My 3 brothers are living in it and refusing to give me my share or sell the property.',
+ expectPrimary:'Civil – Partition Suit',expectInResults:['Property – Hindu Succession / Inheritance Dispute'],minConf:60,difficulty:'easy'},
+
+{id:'T183',category:'Civil',law:'Civil – Partition Suit',label:'Partition of agricultural land',
+ input:'I own one-fourth share in 20 acres of ancestral agricultural land. My co-sharers will not agree to physical partition. What are my options?',
+ expectPrimary:'Civil – Partition Suit',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T184',category:'Civil',law:'Civil – Partition Suit',label:'Partition of jointly owned shop',
+ input:'Me and my brother jointly own a commercial shop. He has taken over the full shop and is collecting rent without sharing. I want partition.',
+ expectPrimary:'Civil – Partition Suit',expectInResults:[],minConf:55,difficulty:'medium'},
+
+{id:'T185',category:'Civil',law:'Civil – Specific Performance / Declaration',label:'Seller refusing to complete sale',
+ input:'I entered into a sale agreement for land and paid token advance. Now the seller is refusing to complete the deal. Can I force the sale?',
+ expectPrimary:'Civil – Specific Performance / Declaration',expectInResults:['Property – Transfer of Property / Sale Deed Dispute'],minConf:55,difficulty:'medium'},
+
+{id:'T186',category:'Civil',law:'Civil – Specific Performance / Declaration',label:'Declaration that document is void',
+ input:'My uncle has fraudulently got a gift deed registered in his name using forged documents. I want a court declaration that the deed is void.',
+ expectPrimary:'Civil – Specific Performance / Declaration',expectInResults:['Criminal – BNS (Fraud / Cheating)'],minConf:50,difficulty:'medium'},
+
+{id:'T187',category:'Civil',law:'Civil – Specific Performance / Declaration',label:'Specific performance of employment contract',
+ input:'My employer terminated my contract before the agreed project end date. I want the court to enforce the remaining contract period.',
+ expectPrimary:'Civil – Specific Performance / Declaration',expectInResults:['Employment – Wrongful Termination / Illegal Dismissal'],minConf:45,difficulty:'hard'},
+
+// ─────────────────────────────────────────────────────────────
+// LIVELIHOOD – MGNREGA  T188-T194
+// ─────────────────────────────────────────────────────────────
+{id:'T188',category:'Employment',law:'Livelihood – MGNREGA / Right to Work / Government Schemes',label:'MGNREGA wages not paid',
+ input:'I work under MGNREGA in my village. We completed 40 days of work but wages have not been paid for 3 months. Who do I complain to?',
+ expectPrimary:'Livelihood – MGNREGA / Right to Work / Government Schemes',expectInResults:[],minConf:65,difficulty:'easy'},
+
+{id:'T189',category:'Employment',law:'Livelihood – MGNREGA / Right to Work / Government Schemes',label:'Job card not issued',
+ input:'The gram panchayat is refusing to issue me a MGNREGA job card despite repeated applications. Is this legal?',
+ expectPrimary:'Livelihood – MGNREGA / Right to Work / Government Schemes',expectInResults:[],minConf:60,difficulty:'easy'},
+
+{id:'T190',category:'Employment',law:'Livelihood – MGNREGA / Right to Work / Government Schemes',label:'Government scheme benefits denied',
+ input:'I am entitled to Pradhan Mantri Awas Yojana housing but the local authority has not processed my application for 2 years.',
+ expectPrimary:'Livelihood – MGNREGA / Right to Work / Government Schemes',expectInResults:['RTI – Right to Information Act'],minConf:50,difficulty:'medium'},
+
+// ─────────────────────────────────────────────────────────────
+// MULTI-LAW EDGE CASES  T191-T210
+// ─────────────────────────────────────────────────────────────
+{id:'T191',category:'Multi-Law',law:'Family – Divorce (Contested)',label:'DV + divorce + custody combo',
+ input:'My husband beats me, refuses to give maintenance, and has taken our daughter away. I want divorce, custody of my child, and protection.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:['Family – Domestic Violence','Family – Child Custody / Guardianship','Family – Maintenance / Alimony'],minConf:50,difficulty:'easy'},
+
+{id:'T192',category:'Multi-Law',law:'Criminal – BNS (Fraud / Cheating)',label:'Cyber fraud + criminal cheating',
+ input:'Someone hacked into my company email, impersonated me, and instructed my accountant to transfer Rs 50 lakhs to a fake vendor account.',
+ expectPrimary:'Criminal – BNS (Fraud / Cheating)',expectInResults:['Cyber – Online Fraud / Financial Cyber Crime','Cyber – Data Theft / Hacking / Corporate Espionage'],minConf:50,difficulty:'medium'},
+
+{id:'T193',category:'Multi-Law',law:'Property – RERA Disputes / Builder Fraud',label:'RERA + consumer + money recovery',
+ input:'Builder took Rs 60 lakhs, never built the flat, project is scrapped, and refuses refund. What all courts / forums can I approach?',
+ expectPrimary:'Property – RERA Disputes / Builder Fraud',expectInResults:['Consumer – Product Defect / Service Deficiency','Civil – Money Recovery / Debt Recovery'],minConf:50,difficulty:'medium'},
+
+{id:'T194',category:'Multi-Law',law:'Employment – Wrongful Termination / Illegal Dismissal',label:'Termination + salary dues + PF',
+ input:'I was illegally terminated. My last 3 months salary is unpaid, PF not deposited, and gratuity denied. What all claims can I make?',
+ expectPrimary:'Employment – Wrongful Termination / Illegal Dismissal',expectInResults:['Employment – Salary Dues / PF / Gratuity'],minConf:55,difficulty:'easy'},
+
+{id:'T195',category:'Multi-Law',law:'Cyber – Online Harassment / Cyberstalking / Defamation',label:'POCSO + cyber harassment — minor',
+ input:'An adult is sending my 12-year-old child sexual messages on WhatsApp and threatening her. This is both POCSO and cyber crime.',
+ expectPrimary:'Cyber – Online Harassment / Cyberstalking / Defamation',expectInResults:['Criminal – POCSO (Child Sexual Offences)'],minConf:55,difficulty:'medium'},
+
+{id:'T196',category:'Multi-Law',law:'IP – Trademark / Copyright / Patent Dispute',label:'IP theft + corporate espionage',
+ input:'An ex-employee stole our patented technology blueprints and source code and is now working with a competitor to launch a rival product.',
+ expectPrimary:'IP – Trademark / Copyright / Patent Dispute',expectInResults:['Cyber – Data Theft / Hacking / Corporate Espionage'],minConf:50,difficulty:'medium'},
+
+{id:'T197',category:'Multi-Law',law:'Tax – GST / Income Tax / Tax Dispute',label:'Tax + NRI property sale',
+ input:'I am an NRI and I have sold property in India. The buyer deducted TDS at 20%. I want to know my income tax liability and FEMA compliance.',
+ expectPrimary:'Tax – GST / Income Tax / Tax Dispute',expectInResults:['NRI / OCI – Overseas Indian Legal Issues'],minConf:50,difficulty:'medium'},
+
+{id:'T198',category:'Multi-Law',law:'Property – Hindu Succession / Inheritance Dispute',label:'Succession + partition + will challenge',
+ input:'My father\'s will gives all property to my brother. But we have ancestral property too. I want to challenge the will and claim my partition share.',
+ expectPrimary:'Property – Hindu Succession / Inheritance Dispute',expectInResults:['Succession – Will Dispute / Probate','Civil – Partition Suit'],minConf:50,difficulty:'hard'},
+
+{id:'T199',category:'Multi-Law',law:'Criminal – Cheque Bounce (NI Act Sec 138)',label:'Cheque bounce + money recovery',
+ input:'A client gave me two cheques totalling Rs 12 lakhs. Both bounced. I want to file NI Act case and also recover money through civil suit.',
+ expectPrimary:'Criminal – Cheque Bounce (NI Act Sec 138)',expectInResults:['Civil – Money Recovery / Debt Recovery'],minConf:55,difficulty:'easy'},
+
+{id:'T200',category:'Multi-Law',law:'Constitutional – PIL / Writ Petition (High Court / Supreme Court)',label:'PIL + RTI + government accountability',
+ input:'Government officials are misusing public funds in a welfare scheme. I have filed RTI and got documents. Now I want to file a PIL.',
+ expectPrimary:'Constitutional – PIL / Writ Petition (High Court / Supreme Court)',expectInResults:['RTI – Right to Information Act'],minConf:50,difficulty:'medium'},
+
+// ─────────────────────────────────────────────────────────────
+// NEGATIVE / EDGE / STRESS CASES  T201-T215
+// ─────────────────────────────────────────────────────────────
+{id:'T201',category:'Negative / Edge',law:'NEGATIVE',label:'Completely unrelated — cooking query',
+ input:'I want to know the recipe for biryani.',
+ expectPrimary:'NONE',expectInResults:[],minConf:0,difficulty:'easy',isNegative:true},
+
+{id:'T202',category:'Negative / Edge',law:'NEGATIVE',label:'Vague single word — help',
+ input:'help',
+ expectPrimary:'NONE',expectInResults:[],minConf:0,difficulty:'easy',isNegative:true},
+
+{id:'T203',category:'Negative / Edge',law:'NEGATIVE',label:'International law — US employment',
+ input:'My employer in New York fired me without cause. What are my rights under US federal employment law?',
+ expectPrimary:'NONE',expectInResults:[],minConf:25,difficulty:'medium',isNegative:true},
+
+{id:'T204',category:'Negative / Edge',law:'NEGATIVE',label:'Medical query — no legal aspect',
+ input:'I have been having chest pain for 2 days. Should I see a cardiologist?',
+ expectPrimary:'NONE',expectInResults:[],minConf:0,difficulty:'easy',isNegative:true},
+
+{id:'T205',category:'Negative / Edge',law:'NEGATIVE',label:'Financial query — no legal issue',
+ input:'What mutual fund should I invest in for maximum returns in 2025?',
+ expectPrimary:'NONE',expectInResults:[],minConf:0,difficulty:'easy',isNegative:true},
+
+{id:'T206',category:'Negative / Edge',law:'NEGATIVE',label:'Very short ambiguous input',
+ input:'problem with husband',
+ expectPrimary:'NONE',expectInResults:[],minConf:30,difficulty:'easy',isNegative:true},
+
+{id:'T207',category:'Negative / Edge',law:'NEGATIVE',label:'Gibberish input',
+ input:'asdfghjkl 123 qwerty zxcv',
+ expectPrimary:'NONE',expectInResults:[],minConf:0,difficulty:'easy',isNegative:true},
+
+{id:'T208',category:'Negative / Edge',law:'NEGATIVE',label:'Legal query but for animal/pet',
+ input:'My neighbor\'s dog bit my child. The child had to get 5 stitches. What action can I take?',
+ expectPrimary:'Criminal – BNS (Assault / Hurt / Grievous Hurt)',expectInResults:[],minConf:25,difficulty:'hard',isNegative:false},
+
+{id:'T209',category:'Negative / Edge',law:'NEGATIVE',label:'Overseas jurisdiction — Dubai',
+ input:'My employer in Dubai has not paid salary for 2 months. They are a UAE company. Can I sue in India?',
+ expectPrimary:'NONE',expectInResults:[],minConf:25,difficulty:'hard',isNegative:true},
+
+{id:'T210',category:'Negative / Edge',law:'NEGATIVE',label:'Extremely long rambling input',
+ input:'It all started 15 years ago when I was a young man living in a small town and my father was a farmer who had 10 acres of land that he had bought from his savings and there was a time when the revenue records were not properly maintained and we had a neighbour who was a powerful politician who wanted our land and one day he came with some goondas and threatened us and then things got complicated because my father was unwell and he signed some papers under pressure and later we found out that those papers were a sale deed and the land was transferred and I need some help.',
+ expectPrimary:'Property – Transfer of Property / Sale Deed Dispute',expectInResults:['Criminal – BNS (Fraud / Cheating)'],minConf:30,difficulty:'hard',isNegative:false},
+
+{id:'T211',category:'Negative / Edge',law:'NEGATIVE',label:'Emoji-only input',
+ input:'😭😭 help me please 🙏',
+ expectPrimary:'NONE',expectInResults:[],minConf:0,difficulty:'easy',isNegative:true},
+
+{id:'T212',category:'Negative / Edge',law:'NEGATIVE',label:'Numbers only',
+ input:'138 498A 406',
+ expectPrimary:'NONE',expectInResults:[],minConf:20,difficulty:'medium',isNegative:true},
+
+{id:'T213',category:'Negative / Edge',law:'NEGATIVE',label:'Mix of Hindi and English',
+ input:'Mera husband mujhe maar raha hai aur mujhe divorce chahiye. Meri beti ke saath bura behaviour karta hai.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:['Family – Domestic Violence'],minConf:30,difficulty:'hard',isNegative:false},
+
+{id:'T214',category:'Negative / Edge',law:'NEGATIVE',label:'Very technical legal jargon without context',
+ input:'I require information pertaining to the applicability of Section 406 IPC read with Section 498A vis-à-vis the provisions of the Protection of Women from Domestic Violence Act 2005 in matrimonial proceedings.',
+ expectPrimary:'Family – Domestic Violence',expectInResults:['Family – Divorce (Contested)'],minConf:40,difficulty:'hard',isNegative:false},
+
+{id:'T215',category:'Negative / Edge',law:'NEGATIVE',label:'Multiple completely unrelated topics',
+ input:'I want to divorce my wife, also my company cheated me out of salary, and I want to file an RTI, and my tenant is not leaving.',
+ expectPrimary:'Family – Divorce (Contested)',expectInResults:['Employment – Salary Dues / PF / Gratuity','RTI – Right to Information Act','Property – Rent Dispute / Tenant Eviction'],minConf:30,difficulty:'hard',isNegative:false},
+
+]; // end TEST_CASES
+
+// ══════════════════════════════════════════════════════════════
+//  TEST RUNNER
+// ══════════════════════════════════════════════════════════════
+let RESULTS = [];
+let FILTERED = [];
+
+function runAll(){
+  if(typeof analyzeMultipleLaws !== 'function'){
+    alert('laws-client.js not loaded. Open this page from the SatLegal server (not file://).');
+    return;
+  }
+  RESULTS=[];
+  document.getElementById('spinner').style.display='block';
+  document.getElementById('resultsWrap').style.display='none';
+  document.getElementById('bkSection').style.display='none';
+  document.getElementById('hdrStatus').textContent='Running…';
+  setTimeout(()=>{
+    TEST_CASES.forEach(tc=>{
+      const raw = analyzeMultipleLaws(tc.input,{});
+      const top3 = raw.slice(0,3);
+      const top = raw[0];
+      const topConf = top ? top.confidence : 0;
+      const topType = top ? top.caseType : '';
+      let status;
+      if(tc.isNegative){
+        status = topConf < 30 ? 'PASS' : 'FAIL';
+      } else {
+        const primary = top3.some(r=>r.caseType===tc.expectPrimary);
+        status = (primary && topConf >= tc.minConf) ? 'PASS' : 'FAIL';
+      }
+      const missingExpected = (tc.expectInResults||[]).filter(e=>!raw.some(r=>r.caseType===e));
+      RESULTS.push({tc,top3,topConf,topType,status,missingExpected});
+    });
+    renderAll();
+    document.getElementById('spinner').style.display='none';
+    document.getElementById('hdrStatus').textContent='Done — '+RESULTS.filter(r=>r.status==='PASS').length+' / '+RESULTS.length+' passed';
+  },100);
+}
+
+function renderAll(){
+  applyFilters();
+  renderBreakdown();
+  renderSummary();
+}
+
+function renderSummary(){
+  const pass=RESULTS.filter(r=>r.status==='PASS').length;
+  const fail=RESULTS.filter(r=>r.status==='FAIL').length;
+  const skip=RESULTS.filter(r=>r.status==='SKIP').length;
+  const total=RESULTS.length;
+  document.getElementById('cTotal').textContent=total;
+  document.getElementById('cPass').textContent=pass;
+  document.getElementById('cFail').textContent=fail;
+  document.getElementById('cSkip').textContent=skip;
+  document.getElementById('cRate').textContent=total?Math.round(pass/total*100)+'%':'—';
+}
+
+function renderBreakdown(){
+  const cats={};
+  RESULTS.forEach(r=>{
+    const c=r.tc.category;
+    if(!cats[c])cats[c]={pass:0,fail:0,skip:0};
+    cats[c][r.status.toLowerCase()]++;
+  });
+  const body=document.getElementById('bkBody');
+  body.innerHTML='';
+  Object.entries(cats).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([cat,v])=>{
+    const total=v.pass+v.fail+v.skip;
+    const rate=total?Math.round(v.pass/total*100):0;
+    body.innerHTML+=`<tr>
+      <td><strong>${cat}</strong></td><td>${total}</td>
+      <td><span class="pill p">${v.pass}</span></td>
+      <td><span class="pill f">${v.fail}</span></td>
+      <td><strong>${rate}%</strong></td>
+      <td><div class="prog"><div class="prog-inner" style="width:${rate}%"></div></div></td>
+    </tr>`;
+  });
+  document.getElementById('bkSection').style.display='block';
+}
+
+function applyFilters(){
+  const cat=document.getElementById('filterCat').value;
+  const status=document.getElementById('filterStatus').value;
+  const diff=document.getElementById('filterDiff').value;
+  const q=document.getElementById('searchQ').value.toLowerCase();
+  FILTERED=RESULTS.filter(r=>{
+    if(cat && r.tc.category!==cat) return false;
+    if(status && r.status!==status) return false;
+    if(diff && r.tc.difficulty!==diff) return false;
+    if(q && !r.tc.input.toLowerCase().includes(q) && !r.tc.label.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  document.getElementById('visCount').textContent=FILTERED.length;
+  renderTable();
+  document.getElementById('resultsWrap').style.display=FILTERED.length?'block':'none';
+}
+
+function renderTable(){
+  const body=document.getElementById('rtBody');
+  body.innerHTML='';
+  FILTERED.forEach((r,i)=>{
+    const {tc,top3,topConf,topType,status,missingExpected}=r;
+    const confColor = topConf>=60?'#138808':topConf>=40?'#e67e22':'#c0392b';
+    const rowClass = status==='PASS'?'pass-row':status==='FAIL'?'fail-row':'skip-row';
+    const statusHtml = status==='PASS'
+      ? '<span class="status-pass">✓ PASS</span>'
+      : status==='FAIL'
+      ? '<span class="status-fail">✗ FAIL</span>'
+      : '<span class="status-skip">— SKIP</span>';
+    const diffHtml = tc.difficulty==='easy'
+      ? `<span class="diff-easy">●</span> easy`
+      : tc.difficulty==='medium'
+      ? `<span class="diff-med">●</span> med`
+      : `<span class="diff-hard">●</span> hard`;
+    const shortInput = tc.input.length>80 ? tc.input.slice(0,77)+'…' : tc.input;
+    const detailId=`det_${tc.id}`;
+    body.innerHTML+=`
+    <tr class="${rowClass}">
+      <td><button class="expand-btn" onclick="toggleDetail('${detailId}')">▸</button></td>
+      <td><span class="id-badge">${tc.id}</span></td>
+      <td><span class="cat-tag">${tc.category}</span></td>
+      <td style="font-size:11px;max-width:140px">${tc.law==='NEGATIVE'?'<em style="color:var(--muted)">Negative</em>':tc.law}</td>
+      <td style="max-width:200px;font-size:12px" title="${tc.input}">${shortInput}</td>
+      <td style="max-width:160px;font-size:11px">${topType||'<em style="color:var(--muted)">None detected</em>'}</td>
+      <td>
+        <div class="conf-bar">
+          <span class="conf-num" style="color:${confColor}">${topConf||0}</span>
+          <div class="conf-mini"><div class="conf-fill" style="width:${Math.min(topConf,100)}%;background:${confColor}"></div></div>
+        </div>
+      </td>
+      <td>${diffHtml}</td>
+      <td>${statusHtml}</td>
+    </tr>
+    <tr class="detail-row" id="${detailId}">
+      <td colspan="9" class="detail-cell">
+        <div class="detail-grid">
+          <div class="dg-box">
+            <h4>Test Input</h4>
+            <p>${tc.input}</p>
+          </div>
+          <div class="dg-box">
+            <h4>Expected</h4>
+            <p><strong>Primary:</strong> ${tc.expectPrimary||'NONE'}</p>
+            <p><strong>Min Conf:</strong> ${tc.minConf}</p>
+            ${tc.expectInResults&&tc.expectInResults.length?`<p><strong>Also in results:</strong> ${tc.expectInResults.map(e=>`<span class="match-chip">${e}</span>`).join('')}</p>`:''}
+          </div>
+          <div class="dg-box">
+            <h4>Actual Top 3 Results</h4>
+            ${top3.map((t,j)=>`<p>${j+1}. <strong>${t.caseType}</strong> — conf: ${t.confidence}</p>`).join('')||'<p><em>No results</em></p>'}
+          </div>
+          <div class="dg-box">
+            <h4>Analysis</h4>
+            <p><strong>Status:</strong> ${status}</p>
+            ${missingExpected&&missingExpected.length?`<p><strong>Missing expected:</strong> ${missingExpected.map(e=>`<span class="miss-chip">${e}</span>`).join('')}</p>`:''}
+            <p><strong>Category:</strong> ${tc.category} | <strong>Difficulty:</strong> ${tc.difficulty}</p>
+            ${tc.isNegative?'<p><em>Negative test — expects no strong detection (conf &lt; 30)</em></p>':''}
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  });
+  document.getElementById('resultTitle').textContent = `(${FILTERED.length} shown)`;
+}
+
+function toggleDetail(id){
+  const row=document.getElementById(id);
+  const btn=row.previousElementSibling.querySelector('.expand-btn');
+  if(row.classList.contains('open')){
+    row.classList.remove('open');
+    btn.textContent='▸';
+  } else {
+    row.classList.add('open');
+    btn.textContent='▾';
+  }
+}
+
+function clearResults(){
+  RESULTS=[];FILTERED=[];
+  document.getElementById('rtBody').innerHTML='';
+  document.getElementById('bkBody').innerHTML='';
+  document.getElementById('resultsWrap').style.display='none';
+  document.getElementById('bkSection').style.display='none';
+  document.getElementById('cTotal').textContent=0;
+  document.getElementById('cPass').textContent=0;
+  document.getElementById('cFail').textContent=0;
+  document.getElementById('cSkip').textContent=0;
+  document.getElementById('cRate').textContent='—';
+  document.getElementById('visCount').textContent=0;
+  document.getElementById('hdrStatus').textContent='Ready to run';
+}
+
+function exportCSV(){
+  if(!RESULTS.length){alert('Run tests first.');return;}
+  const rows=[['ID','Category','Law','Label','Input','Expected Primary','Min Conf','Actual Top Result','Actual Conf','Status','Difficulty']];
+  RESULTS.forEach(r=>{
+    rows.push([r.tc.id,r.tc.category,r.tc.law,r.tc.label,
+      '"'+r.tc.input.replace(/"/g,'""')+'"',
+      r.tc.expectPrimary||'NONE',r.tc.minConf,
+      r.topType||'',r.topConf||0,r.status,r.tc.difficulty]);
+  });
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='satlegal_test_results.csv';
+  a.click();
+}
+
+// Show total count on load
+window.addEventListener('load',()=>{
+  document.getElementById('cTotal').textContent=TEST_CASES.length;
+  document.getElementById('visCount').textContent=0;
+  document.getElementById('hdrStatus').textContent='Ready — '+TEST_CASES.length+' test cases loaded';
+});
+</script>
+</body>
+</html>

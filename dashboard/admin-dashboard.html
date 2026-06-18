@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard – SatLegal</title>
+  <style>
+/* ── Inlined global styles (tricolor theme) ── */
+/* ═══════════════════════════════════════════════════════════════════
+   SatLegal – Pure Indian Tricolor Theme
+   Saffron  ·  White  ·  Green  (no blue, no navy)
+═══════════════════════════════════════════════════════════════════ */
+:root {
+  /* ── Saffron family ──────────────────────────────────────────── */
+  --sf-900:  #7A3800;   /* darkest saffron-brown */
+  --sf-800:  #B35100;
+  --sf-700:  #E07000;
+  --sf-600:  #FF8800;   /* rich saffron */
+  --sf-500:  #FF9933;   /* standard saffron */
+  --sf-400:  #FFB366;
+  --sf-300:  #FFCC99;
+  --sf-200:  #FFE4C2;
+  --sf-100:  #FFF4E6;
+  --sf-50:   #FFFAF4;
+
+  /* ── Green family ────────────────────────────────────────────── */
+  --gr-900:  #062206;   /* darkest forest green */
+  --gr-800:  #0D3D0D;
+  --gr-700:  #145214;
+  --gr-600:  #1A6B1A;
+  --gr-500:  #138808;   /* standard India green */
+  --gr-400:  #2EAD22;
+  --gr-300:  #5CC852;
+  --gr-200:  #A8E8A4;
+  --gr-100:  #D4F5D2;
+  --gr-50:   #F0FBF0;
+
+  /* ── Semantic roles ──────────────────────────────────────────── */
+  --primary:      var(--sf-500);
+  --primary-dk:   var(--sf-700);
+  --primary-lt:   var(--sf-100);
+  --success:      var(--gr-500);
+  --success-dk:   var(--gr-700);
+  --success-lt:   var(--gr-50);
+
+  /* Dark backgrounds = deep forest green (replaces navy) */
+  --dark:         var(--gr-800);
+  --dark2:        var(--gr-900);
+  --dark3:        var(--gr-700);
+
+  --warning:      #CC8800;
+  --danger:       #C0392B;
+  --danger-lt:    #FDECEA;
+
+  /* ── Neutrals ────────────────────────────────────────────────── */
+  --text:         #1A1A1A;
+  --text-light:   #6B7280;
+  --border:       #E5E7EB;
+  --bg-light:     #FAFAFA;
+  --white:        #FFFFFF;
+  --shadow:       0 2px 15px rgba(19,136,8,0.07);
+  --shadow-md:    0 6px 28px rgba(19,136,8,0.12);
+  --radius:       8px;
+  --font:         'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* ── Legacy aliases (backward compat with HTML inline styles) ─ */
+  --saffron:      var(--sf-500);
+  --saffron-dk:   var(--sf-700);
+  --saffron-lt:   var(--sf-100);
+  --green:        var(--gr-500);
+  --green-dk:     var(--gr-700);
+  --green-lt:     var(--gr-50);
+  --chakra-blue:  var(--sf-600);   /* remapped: no blue */
+  --navy:         var(--gr-800);   /* remapped: dark green */
+  --navy-dk:      var(--gr-900);
+  --navy-mid:     var(--gr-700);
+  --accent:       var(--sf-600);   /* remapped: saffron */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg-light);
+  line-height: 1.6;
+}
+
+a { color: var(--sf-700); text-decoration: none; }
+a:hover { color: var(--sf-900); text-decoration: underline; }
+
+/* ── Tricolor stripe utility ─────────────────────────────────── */
+.tricolor-stripe {
+  height: 4px;
+  background: linear-gradient(to right,
+    var(--sf-500) 33.33%,
+    #fff        33.33% 66.66%,
+    var(--gr-500) 66.66%);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary       { background: var(--sf-500); color: #fff; }
+.btn-primary:hover { background: var(--sf-700); color: #fff; text-decoration: none; }
+
+.btn-success       { background: var(--gr-500); color: #fff; }
+.btn-success:hover { background: var(--gr-700); color: #fff; text-decoration: none; }
+
+.btn-dark          { background: var(--gr-800); color: #fff; }
+.btn-dark:hover    { background: var(--gr-900); color: #fff; text-decoration: none; }
+
+.btn-outline       { background: transparent; border: 2px solid var(--sf-500); color: var(--sf-700); }
+.btn-outline:hover { background: var(--sf-500); color: #fff; text-decoration: none; }
+
+.btn-outline-white       { background: transparent; border: 2px solid rgba(255,255,255,0.7); color: #fff; }
+.btn-outline-white:hover { background: rgba(255,255,255,0.15); color: #fff; text-decoration: none; }
+
+.btn-outline-green       { background: transparent; border: 2px solid var(--gr-500); color: var(--gr-600); }
+.btn-outline-green:hover { background: var(--gr-500); color: #fff; text-decoration: none; }
+
+.btn-danger        { background: var(--danger); color: #fff; }
+.btn-danger:hover  { background: #962D22; color: #fff; text-decoration: none; }
+
+.btn-sm    { padding: 6px 14px; font-size: 13px; }
+.btn-lg    { padding: 14px 32px; font-size: 16px; }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn-block { width: 100%; justify-content: center; }
+
+/* ── Cards ───────────────────────────────────────────────────── */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--sf-100);
+}
+.card-title { font-size: 18px; font-weight: 700; color: var(--gr-800); }
+
+/* ── Forms ───────────────────────────────────────────────────── */
+.form-group { margin-bottom: 18px; }
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: var(--gr-800);
+}
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: var(--font);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fff;
+}
+.form-control:focus {
+  outline: none;
+  border-color: var(--sf-500);
+  box-shadow: 0 0 0 3px rgba(255,153,51,0.18);
+}
+.form-control.error { border-color: var(--danger); }
+.form-hint  { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+.form-error { font-size: 12px; color: var(--danger); margin-top: 4px; display: none; }
+.form-error.show { display: block; }
+textarea.form-control { resize: vertical; min-height: 100px; }
+select.form-control   { cursor: pointer; }
+
+/* ── Alerts ──────────────────────────────────────────────────── */
+.alert {
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.alert-success { background: var(--gr-50);   color: var(--gr-800);  border-left: 4px solid var(--gr-500); }
+.alert-danger  { background: var(--danger-lt); color: #6B1A15;       border-left: 4px solid var(--danger); }
+.alert-warning { background: #FFF8E6;         color: #6B3E00;        border-left: 4px solid var(--sf-600); }
+.alert-info    { background: var(--sf-50);    color: var(--sf-900);  border-left: 4px solid var(--sf-500); }
+
+/* ── Badges ──────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge-success  { background: var(--gr-100);  color: var(--gr-800); }
+.badge-danger   { background: var(--danger-lt); color: #962D22; }
+.badge-warning  { background: #FFF3CD;         color: #7A4F00; }
+.badge-primary  { background: var(--sf-100);   color: var(--sf-800); }
+.badge-info     { background: var(--sf-50);    color: var(--sf-700); }
+.badge-dark     { background: var(--gr-800);   color: #fff; }
+.badge-new      { background: var(--gr-600);   color: #fff; }
+
+/* ── Navigation ──────────────────────────────────────────────── */
+.navbar {
+  background: var(--white);
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 65px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 12px rgba(19,136,8,0.10);
+  border-bottom: 3px solid transparent;
+  border-image: linear-gradient(to right,
+    var(--sf-500) 33.33%,
+    #fff          33.33% 66.66%,
+    var(--gr-500) 66.66%) 1;
+}
+.navbar-brand {
+  font-size: 23px;
+  font-weight: 900;
+  text-decoration: none;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+}
+.brand-sat   { color: var(--sf-600); }
+.brand-legal { color: var(--gr-600); }
+.brand-dot   { color: var(--sf-300); font-size: 10px; vertical-align: super; margin-left: 1px; }
+.nav-links { display: flex; align-items: center; gap: 8px; }
+.nav-links a {
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.nav-links a:hover,
+.nav-links a.active { color: var(--sf-700); background: var(--sf-100); text-decoration: none; }
+
+/* ── Dashboard Layout ────────────────────────────────────────── */
+.dashboard-layout { display: flex; min-height: calc(100vh - 65px); }
+.sidebar {
+  width: 245px;
+  background: var(--gr-800);   /* deep forest green — no blue */
+  padding: 20px 0;
+  flex-shrink: 0;
+  position: sticky;
+  top: 65px;
+  height: calc(100vh - 65px);
+  overflow-y: auto;
+}
+.sidebar::before {
+  content: '';
+  display: block;
+  height: 4px;
+  background: linear-gradient(to right,
+    var(--sf-500) 33.33%,
+    #fff          33.33% 66.66%,
+    var(--gr-400) 66.66%);
+  margin-bottom: 16px;
+}
+.sidebar-section {
+  padding: 10px 18px 5px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.38);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  color: rgba(255,255,255,0.72);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.sidebar-link:hover  { color: #fff; background: rgba(255,255,255,0.08); text-decoration: none; }
+.sidebar-link.active {
+  color: #fff;
+  background: rgba(255,153,51,0.18);
+  border-right: 3px solid var(--sf-500);
+}
+.sidebar-link .badge { margin-left: auto; }
+.main-content { flex: 1; padding: 30px; max-width: 1100px; }
+
+/* ── Stats Cards ─────────────────────────────────────────────── */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.stat-card.saffron-accent::after { background: var(--sf-500); }
+.stat-card.green-accent::after   { background: var(--gr-500); }
+.stat-card.warm-accent::after    { background: var(--sf-700); }
+.stat-card.forest-accent::after  { background: var(--gr-700); }
+
+.stat-icon {
+  width: 50px; height: 50px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.stat-icon.orange { background: var(--sf-100);  color: var(--sf-700); }
+.stat-icon.green  { background: var(--gr-50);   color: var(--gr-600); }
+.stat-icon.amber  { background: #FFF3CD;         color: #7A4F00; }
+.stat-icon.forest { background: var(--gr-100);  color: var(--gr-800); }
+.stat-icon.red    { background: var(--danger-lt); color: var(--danger); }
+/* legacy aliases */
+.stat-icon.blue   { background: var(--sf-100);  color: var(--sf-700); }
+.stat-icon.navy   { background: var(--gr-50);   color: var(--gr-700); }
+
+.stat-number { font-size: 28px; font-weight: 800; color: var(--gr-800); line-height: 1; }
+.stat-label  { font-size: 13px; color: var(--text-light); margin-top: 3px; }
+
+/* ── Table ───────────────────────────────────────────────────── */
+.table-wrapper { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+thead th {
+  background: linear-gradient(to right, var(--gr-800), var(--gr-700));
+  color: #fff;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 13px;
+}
+thead th:first-child { border-radius: 6px 0 0 0; }
+thead th:last-child  { border-radius: 0 6px 0 0; }
+tbody td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
+tbody tr:hover { background: var(--sf-50); }
+tbody tr:last-child td { border-bottom: none; }
+
+/* ── Progress Bar ────────────────────────────────────────────── */
+.progress-bar  { height: 8px; background: #E5E7EB; border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+.progress-fill.orange { background: var(--sf-500); }
+.progress-fill.green  { background: var(--gr-500); }
+.progress-fill.amber  { background: var(--sf-700); }
+.progress-fill.red    { background: var(--danger); }
+/* legacy */
+.progress-fill.blue   { background: var(--sf-600); }
+
+/* ── Score Display ───────────────────────────────────────────── */
+.score-circle {
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  font-size: 26px; font-weight: 800;
+  border: 5px solid;
+}
+.score-circle.high   { border-color: var(--gr-500);  color: var(--gr-600); }
+.score-circle.medium { border-color: var(--sf-500);  color: var(--sf-700); }
+.score-circle.low    { border-color: var(--danger);  color: var(--danger); }
+.score-circle small  { font-size: 11px; font-weight: 500; }
+
+/* ── Loader ──────────────────────────────────────────────────── */
+.loader {
+  width: 36px; height: 36px;
+  border: 4px solid var(--sf-200);
+  border-top-color: var(--sf-500);
+  border-right-color: var(--gr-500);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 20px auto;
+}
+.loading-overlay {
+  position: fixed; inset: 0;
+  background: rgba(10,40,10,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.loading-overlay.show { display: flex; }
+.loading-box {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: var(--radius);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  border-top: 4px solid var(--sf-500);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Modal ───────────────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(10,40,10,0.5);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-backdrop.show { display: flex; }
+.modal {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 30px;
+  width: 100%;
+  max-width: 550px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideIn 0.2s ease;
+  border-top: 4px solid var(--sf-500);
+  box-shadow: var(--shadow-md);
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.modal-header h3 { font-size: 18px; font-weight: 700; color: var(--gr-800); }
+.modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-light); line-height: 1; transition: color 0.2s; }
+.modal-close:hover { color: var(--danger); }
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+/* ── Steps Indicator ─────────────────────────────────────────── */
+.steps { display: flex; align-items: center; margin-bottom: 30px; }
+.step  { display: flex; align-items: center; flex: 1; }
+.step-num {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--text-light);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px;
+  flex-shrink: 0;
+}
+.step.active .step-num  { background: var(--sf-500); color: #fff; }
+.step.done   .step-num  { background: var(--gr-500); color: #fff; }
+.step-label  { font-size: 12px; color: var(--text-light); margin-left: 8px; white-space: nowrap; }
+.step.active .step-label { color: var(--sf-700); font-weight: 600; }
+.step.done   .step-label { color: var(--gr-700); font-weight: 600; }
+.step-line  { flex: 1; height: 2px; background: var(--border); margin: 0 8px; }
+.step.done  .step-line  { background: var(--gr-400); }
+
+/* ── Law Selection Cards ─────────────────────────────────────── */
+.law-card {
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #fff;
+}
+.law-card:hover    { border-color: var(--sf-400); box-shadow: var(--shadow); background: var(--sf-50); }
+.law-card.selected { border-color: var(--sf-500); background: var(--sf-100); }
+.law-card-check {
+  width: 22px; height: 22px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px;
+  transition: all 0.2s;
+}
+.law-card.selected .law-card-check { background: var(--sf-500); border-color: var(--sf-500); color: #fff; }
+.law-confidence { font-size: 22px; font-weight: 800; color: var(--sf-700); }
+.law-name    { font-weight: 700; font-size: 15px; color: var(--gr-800); }
+.law-act     { font-size: 13px; color: var(--text-light); margin-top: 3px; }
+.law-priority { font-size: 11px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ── Section heading with tricolor underline ─────────────────── */
+.section-heading {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--gr-800);
+  text-align: center;
+  margin-bottom: 8px;
+  position: relative;
+  padding-bottom: 14px;
+}
+.section-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 72px; height: 4px;
+  background: linear-gradient(to right,
+    var(--sf-500) 33.33%,
+    #fff          33.33% 66.66%,
+    var(--gr-500) 66.66%);
+  border-radius: 2px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .navbar { padding: 0 15px; }
+  .dashboard-layout { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: static; }
+  .sidebar::before { margin-bottom: 8px; }
+  .main-content { padding: 15px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  table { font-size: 13px; }
+  thead th, tbody td { padding: 8px 10px; }
+}
+
+/* ── Utilities ───────────────────────────────────────────────── */
+.text-primary  { color: var(--sf-600); }
+.text-success  { color: var(--gr-500); }
+.text-danger   { color: var(--danger); }
+.text-dark     { color: var(--gr-800); }
+.text-muted    { color: var(--text-light); }
+.text-center   { text-align: center; }
+.font-bold     { font-weight: 700; }
+.mt-10 { margin-top: 10px; }
+.mt-20 { margin-top: 20px; }
+.mt-30 { margin-top: 30px; }
+.mb-10 { margin-bottom: 10px; }
+.mb-20 { margin-bottom: 20px; }
+.flex         { display: flex; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-center  { display: flex; justify-content: center; align-items: center; }
+.gap-10 { gap: 10px; }
+.gap-15 { gap: 15px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+.empty-state { text-align: center; padding: 50px 20px; color: var(--text-light); }
+.empty-state-icon { font-size: 48px; margin-bottom: 15px; }
+.empty-state p { font-size: 15px; }
+
+/* ── Toast notifications ─────────────────────────────────────── */
+#toast-container {
+  position: fixed;
+  top: 80px; right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toast {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 20px rgba(19,136,8,0.12);
+  padding: 14px 18px;
+  min-width: 280px; max-width: 380px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastIn 0.3s ease;
+  border-left: 4px solid var(--gr-500);
+}
+.toast.error   { border-left-color: var(--danger); }
+.toast.warning { border-left-color: var(--sf-600); }
+.toast.info    { border-left-color: var(--sf-500); }
+.toast-icon { font-size: 18px; }
+.toast-msg  { font-size: 14px; flex: 1; color: var(--text); }
+@keyframes toastIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* ── Demo Banner ─────────────────────────────────────────────── */
+.demo-banner {
+  background: linear-gradient(90deg, var(--gr-900), var(--gr-800));
+  color: #fff;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 13px;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  border-bottom: 3px solid var(--sf-500);
+}
+
+</style>
+  <!-- SheetJS for Excel export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    .tab-nav { display: flex; gap: 3px; margin-bottom: 20px; border-bottom: 2px solid var(--border); flex-wrap: wrap; }
+    .tab-btn { padding: 9px 16px; background: none; border: none; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-light); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; white-space: nowrap; }
+    .tab-btn.active { color: var(--saffron-dk); border-bottom-color: var(--saffron); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .admin-badge { background: #e74c3c; color: #fff; font-size: 11px; padding: 2px 7px; border-radius: 10px; font-weight: 700; margin-left: 5px; }
+    /* Chart bars */
+    .bar-chart { display: flex; flex-direction: column; gap: 8px; }
+    .bar-row { display: flex; align-items: center; gap: 8px; }
+    .bar-label { font-size: 12px; color: var(--dark); min-width: 180px; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+    .bar-track { flex: 1; height: 20px; background: var(--bg-light); border-radius: 4px; overflow: hidden; position: relative; }
+    .bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; background: var(--saffron); display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; }
+    .bar-fill.green { background: var(--green); }
+    .bar-fill.blue { background: #3498db; }
+    .bar-count { font-size: 11px; font-weight: 700; color: #fff; white-space: nowrap; }
+    .bar-total { font-size: 11px; color: var(--text-light); min-width: 30px; text-align: right; }
+    /* Donut-like pie */
+    .pie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+    .pie-item { background: var(--bg-light); border-radius: 8px; padding: 14px; text-align: center; }
+    .pie-pct { font-size: 28px; font-weight: 800; }
+    .pie-label { font-size: 12px; color: var(--text-light); margin-top: 3px; }
+    /* Filters */
+    .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 16px; background: var(--bg-light); padding: 14px; border-radius: 8px; }
+    .filter-bar .form-group { margin-bottom: 0; flex: 1; min-width: 140px; }
+    .filter-bar label { font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px; }
+    .filter-bar input, .filter-bar select { font-size: 13px; padding: 7px 10px; }
+    .export-bar { display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 12px; flex-wrap: wrap; }
+    /* Lawyer onboard form */
+    .onboard-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 600px) { .onboard-form { grid-template-columns: 1fr; } .bar-label { min-width: 130px; max-width: 130px; } }
+    /* Metric cards */
+    .metric-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .metric-card { background: #fff; border-radius: 10px; padding: 16px; box-shadow: var(--shadow); text-align: center; border-left: 4px solid var(--saffron); }
+    .metric-card.green { border-left-color: var(--green); }
+    .metric-card.red { border-left-color: var(--danger); }
+    .metric-card.blue { border-left-color: #3498db; }
+    .metric-num { font-size: 28px; font-weight: 800; color: var(--dark); }
+    .metric-label { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+    /* Trend chart */
+    .trend-bars { display: flex; align-items: flex-end; gap: 4px; height: 80px; }
+    .trend-bar { flex: 1; background: var(--saffron); border-radius: 3px 3px 0 0; min-width: 20px; cursor: pointer; transition: background 0.2s; }
+    .trend-bar:hover { background: var(--saffron-dk); }
+    .trend-labels { display: flex; gap: 4px; justify-content: space-between; margin-top: 4px; }
+    .trend-labels span { flex: 1; font-size: 9px; color: var(--text-light); text-align: center; }
+  </style>
+</head>
+<body>
+<div id="loading-overlay" class="loading-overlay"><div class="loading-box"><div class="loader"></div><p style="margin-top:10px;color:#666">Loading...</p></div></div>
+
+<nav class="navbar" style="background:var(--dark2)">
+  <a href="/" class="navbar-brand"><span class="brand-sat">Sat</span><span class="brand-legal">Legal</span><span class="brand-dot">.in</span></a>
+  <div class="nav-links">
+    <span style="color:#e94560;font-size:13px;font-weight:700">🔐 Admin Panel</span>
+    <button onclick="Auth.logout()" class="btn btn-danger btn-sm">Logout</button>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <div style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:8px">
+      <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.5px">Admin Portal</div>
+      <div style="color:#fff;font-weight:700;font-size:14px" id="adminName">SatLegal Admin</div>
+    </div>
+    <div class="sidebar-section">Analytics</div>
+    <a href="#" class="sidebar-link active" onclick="switchTab('overview', this)">📊 Overview</a>
+    <a href="#" class="sidebar-link" onclick="switchTab('analytics', this)">📈 Law Analytics</a>
+    <div class="sidebar-section">Management</div>
+    <a href="#" class="sidebar-link" onclick="switchTab('lawyers', this)">⚖️ Lawyers <span class="admin-badge" id="pendingCount">0</span></a>
+    <a href="#" class="sidebar-link" onclick="switchTab('onboard', this)">➕ Onboard Lawyer</a>
+    <a href="#" class="sidebar-link" onclick="switchTab('users', this)">👥 Users</a>
+    <a href="#" class="sidebar-link" onclick="switchTab('inquiries', this)">📋 Inquiries</a>
+    <div class="sidebar-section">Data</div>
+    <a href="#" class="sidebar-link" onclick="switchTab('export', this)">⬇️ Export Data</a>
+    <div class="sidebar-section">Content</div>
+    <a href="/dashboard/admin-cms.html" class="sidebar-link" style="background:rgba(255,153,51,0.12);color:var(--sf-300);border-left:3px solid var(--sf-500)">✏️ Content Manager <span style="font-size:9px;background:var(--sf-600);color:#fff;padding:1px 5px;border-radius:6px;margin-left:4px">CMS</span></a>
+    <a href="/dashboard/admin-analytics.html" class="sidebar-link">📈 Analytics Report</a>
+    <div style="padding:16px;margin-top:auto">
+      <button onclick="Auth.logout()" class="btn btn-danger btn-sm" style="width:100%">Logout</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- ── OVERVIEW ─────────────────────────────────────────────────────── -->
+    <div id="tab-overview" class="tab-content active">
+      <div class="flex-between mb-20">
+        <div>
+          <h1 style="font-size:22px;font-weight:800">Platform Overview</h1>
+          <p style="color:var(--text-light);font-size:13px">SatLegal admin dashboard</p>
+        </div>
+        <button onclick="loadAll()" class="btn btn-outline btn-sm">🔄 Refresh</button>
+      </div>
+      <div class="metric-row" id="statsGrid"></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px" id="mini-charts">
+        <div class="card">
+          <div class="card-header"><span class="card-title">📈 Monthly Inquiries (12m)</span></div>
+          <div id="trendChart" style="padding:8px">Loading...</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">⚖️ Top 5 Laws Searched</span></div>
+          <div id="topLawsMini" style="padding:8px">Loading...</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Recent Users</span></div>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Name</th><th>Email</th><th>State</th><th>Gender</th><th>Joined</th></tr></thead>
+            <tbody id="recentUsersBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LAW ANALYTICS ─────────────────────────────────────────────────── -->
+    <div id="tab-analytics" class="tab-content">
+      <div class="flex-between mb-20">
+        <h2 style="font-size:20px;font-weight:700">Law Analytics</h2>
+        <button onclick="loadAnalytics()" class="btn btn-outline btn-sm">🔄 Refresh</button>
+      </div>
+
+      <div class="filter-bar" style="margin-bottom:20px">
+        <div class="form-group">
+          <label>From Date</label>
+          <input type="date" id="an-from" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>To Date</label>
+          <input type="date" id="an-to" class="form-control" />
+        </div>
+        <button onclick="loadAnalytics()" class="btn btn-primary btn-sm" style="align-self:flex-end;margin-bottom:0">Filter</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+        <div class="card">
+          <div class="card-header"><span class="card-title">👤 By Gender</span></div>
+          <div id="genderChart" style="padding:12px">Loading...</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">🏢 By User Type</span></div>
+          <div id="userTypeChart" style="padding:12px">Loading...</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header"><span class="card-title">⚖️ Laws Searched Most</span></div>
+        <div id="topLawsChart" style="padding:12px">Loading...</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card">
+          <div class="card-header"><span class="card-title">🗺️ Top States</span></div>
+          <div id="geoChart" style="padding:12px">Loading...</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">⚖️ Laws by Gender</span></div>
+          <div id="lawsByGenderTable" style="padding:12px;max-height:300px;overflow-y:auto">Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LAWYERS ────────────────────────────────────────────────────────── -->
+    <div id="tab-lawyers" class="tab-content">
+      <div class="flex-between mb-20">
+        <h2 style="font-size:20px;font-weight:700">Lawyer Management</h2>
+      </div>
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="filterLawyers('pending', this)">⏳ Pending</button>
+        <button class="tab-btn" onclick="filterLawyers('approved', this)">✅ Approved</button>
+        <button class="tab-btn" onclick="filterLawyers('rejected', this)">❌ Rejected</button>
+        <button class="tab-btn" onclick="filterLawyers('all', this)">All</button>
+      </div>
+      <div class="card" style="padding:0">
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Name</th><th>Email</th><th>Bar Council No.</th><th>State</th><th>Exp.</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="lawyersBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ONBOARD LAWYER ─────────────────────────────────────────────────── -->
+    <div id="tab-onboard" class="tab-content">
+      <h2 style="font-size:20px;font-weight:700;margin-bottom:6px">Onboard New Lawyer</h2>
+      <p style="color:var(--text-light);font-size:14px;margin-bottom:20px">Create a verified lawyer account directly. Lawyer signup is not public-facing.</p>
+
+      <div class="card" style="max-width:700px">
+        <div id="onboardAlert"></div>
+        <form id="onboardForm">
+          <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)">👤 Personal Details</div>
+          <div class="onboard-form">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" id="ol-name" class="form-control" required placeholder="Advocate Ramesh Kumar" />
+            </div>
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" id="ol-email" class="form-control" required placeholder="ramesh@example.com" />
+            </div>
+            <div class="form-group">
+              <label>Phone *</label>
+              <input type="tel" id="ol-phone" class="form-control" required placeholder="+91-XXXXXXXXXX" />
+            </div>
+            <div class="form-group">
+              <label>Password (temp) *</label>
+              <input type="text" id="ol-password" class="form-control" required placeholder="Temp password to share with lawyer" value="SatLegal@2024" />
+            </div>
+          </div>
+
+          <div style="font-size:13px;font-weight:700;color:var(--dark);margin:16px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border)">⚖️ Professional Details</div>
+          <div class="onboard-form">
+            <div class="form-group">
+              <label>Bar Council Number *</label>
+              <input type="text" id="ol-barnum" class="form-control" required placeholder="MH/1234/2015" />
+            </div>
+            <div class="form-group">
+              <label>Bar Council State *</label>
+              <select id="ol-barstate" class="form-control" required>
+                <option value="">Select State</option>
+                <option>Bar Council of Maharashtra & Goa</option><option>Bar Council of Delhi</option>
+                <option>Bar Council of Karnataka</option><option>Bar Council of Tamil Nadu & Puducherry</option>
+                <option>Bar Council of Gujarat</option><option>Bar Council of Rajasthan</option>
+                <option>Bar Council of Uttar Pradesh</option><option>Bar Council of West Bengal</option>
+                <option>Bar Council of Punjab & Haryana</option><option>Bar Council of Kerala</option>
+                <option>Other State Bar Council</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Years of Experience *</label>
+              <input type="number" id="ol-exp" class="form-control" required placeholder="5" min="0" max="60" />
+            </div>
+            <div class="form-group">
+              <label>Consultation Fee (₹) *</label>
+              <input type="number" id="ol-fee" class="form-control" required placeholder="500" min="0" />
+            </div>
+            <div class="form-group">
+              <label>City *</label>
+              <input type="text" id="ol-city" class="form-control" required placeholder="Mumbai" />
+            </div>
+            <div class="form-group">
+              <label>State *</label>
+              <select id="ol-state" class="form-control" required>
+                <option value="">Select</option>
+                <option>Maharashtra</option><option>Delhi</option><option>Karnataka</option>
+                <option>Tamil Nadu</option><option>Gujarat</option><option>Rajasthan</option>
+                <option>Uttar Pradesh</option><option>West Bengal</option><option>Punjab</option>
+                <option>Kerala</option><option>Andhra Pradesh</option><option>Telangana</option>
+                <option>Bihar</option><option>Madhya Pradesh</option><option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top:8px">
+            <label>Specialisations * (select all that apply)</label>
+            <div id="spec-checkboxes" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+              ${['Family – Divorce (Contested)','Family – Mutual Consent Divorce','Family – Child Custody / Guardianship','Family – Maintenance / Alimony','Family – Domestic Violence','Property – Hindu Succession / Inheritance Dispute','Succession – Will Dispute / Probate','Property – Transfer of Property / Sale Deed Dispute','Employment – Wrongful Termination / Illegal Dismissal','Employment – Salary Dues / PF / Gratuity','Employment – Harassment at Workplace (POSH)','Cyber – Online Fraud / Financial Cyber Crime','Cyber – Online Harassment / Cyberstalking / Defamation','Criminal – BNS (Fraud / Cheating)','Criminal – BNS (Assault / Hurt / Grievous Hurt)','Criminal – BNSS (Bail / Anticipatory Bail)','Consumer – Product Defect / Service Deficiency','Motor Accident Claims / Personal Injury','Civil – Money Recovery / Debt Recovery'].map(s => `<label style="font-size:12px;display:flex;align-items:center;gap:4px;background:var(--bg-light);padding:4px 10px;border-radius:20px;cursor:pointer;border:1px solid var(--border)"><input type="checkbox" value="${s}" style="margin:0"> ${s}</label>`).join('')}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Bio (optional)</label>
+            <textarea id="ol-bio" class="form-control" rows="3" placeholder="Brief professional bio..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="onboardBtn">✅ Onboard This Lawyer</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── USERS ──────────────────────────────────────────────────────────── -->
+    <div id="tab-users" class="tab-content">
+      <div class="flex-between mb-10">
+        <h2 style="font-size:20px;font-weight:700">Registered Users</h2>
+      </div>
+      <div class="filter-bar">
+        <div class="form-group">
+          <label>Search</label>
+          <input type="text" id="u-search" class="form-control" placeholder="Name or email" oninput="loadUsers()" />
+        </div>
+        <div class="form-group">
+          <label>Gender</label>
+          <select id="u-gender" class="form-control" onchange="loadUsers()">
+            <option value="">All</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+            <option value="prefer_not_to_say">Not Disclosed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>User Type</label>
+          <select id="u-type" class="form-control" onchange="loadUsers()">
+            <option value="">All</option>
+            <option value="individual">Individual</option>
+            <option value="business">Business</option>
+            <option value="student">Student</option>
+            <option value="ngo">NGO</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>State</label>
+          <input type="text" id="u-state" class="form-control" placeholder="e.g. Maharashtra" oninput="loadUsers()" />
+        </div>
+      </div>
+      <div class="card" style="padding:0">
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Gender</th><th>State</th><th>Type</th><th>Joined</th></tr></thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── INQUIRIES ──────────────────────────────────────────────────────── -->
+    <div id="tab-inquiries" class="tab-content">
+      <div class="flex-between mb-10">
+        <h2 style="font-size:20px;font-weight:700">All Inquiries</h2>
+      </div>
+      <div class="filter-bar">
+        <div class="form-group">
+          <label>Search Issue</label>
+          <input type="text" id="inq-search" class="form-control" placeholder="Keyword in description" oninput="loadInquiries()" />
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="inq-status" class="form-control" onchange="loadInquiries()">
+            <option value="">All</option>
+            <option value="draft">Draft</option>
+            <option value="analyzing">Analyzing</option>
+            <option value="assessed">Assessed</option>
+            <option value="lawyer_requested">Lawyer Requested</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Law Type</label>
+          <input type="text" id="inq-law" class="form-control" placeholder="e.g. Divorce" oninput="loadInquiries()" />
+        </div>
+      </div>
+      <div class="card" style="padding:0">
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Inquiry ID</th><th>User</th><th>Description</th><th>Laws</th><th>Win%</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody id="inquiriesBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EXPORT ─────────────────────────────────────────────────────────── -->
+    <div id="tab-export" class="tab-content">
+      <h2 style="font-size:20px;font-weight:700;margin-bottom:6px">Export Data</h2>
+      <p style="color:var(--text-light);font-size:14px;margin-bottom:20px">Export data to Excel (.xlsx) for offline analysis.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <!-- Export Users -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">👥 Export Users</span></div>
+          <div style="padding:16px">
+            <div class="form-group">
+              <label style="font-size:12px">Gender Filter</label>
+              <select id="exp-u-gender" class="form-control" style="font-size:13px">
+                <option value="">All Genders</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+                <option value="prefer_not_to_say">Not Disclosed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px">User Type Filter</label>
+              <select id="exp-u-type" class="form-control" style="font-size:13px">
+                <option value="">All Types</option>
+                <option value="individual">Individual</option>
+                <option value="business">Business</option>
+                <option value="student">Student</option>
+                <option value="ngo">NGO</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px">State Filter</label>
+              <input type="text" id="exp-u-state" class="form-control" style="font-size:13px" placeholder="e.g. Maharashtra" />
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div class="form-group">
+                <label style="font-size:12px">From Date</label>
+                <input type="date" id="exp-u-from" class="form-control" style="font-size:13px" />
+              </div>
+              <div class="form-group">
+                <label style="font-size:12px">To Date</label>
+                <input type="date" id="exp-u-to" class="form-control" style="font-size:13px" />
+              </div>
+            </div>
+            <button onclick="exportData('users')" class="btn btn-primary btn-sm" style="width:100%">⬇️ Export Users to Excel</button>
+          </div>
+        </div>
+
+        <!-- Export Inquiries -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">📋 Export Inquiries</span></div>
+          <div style="padding:16px">
+            <div class="form-group">
+              <label style="font-size:12px">Law Type Filter</label>
+              <input type="text" id="exp-i-law" class="form-control" style="font-size:13px" placeholder="e.g. Divorce" />
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px">Status Filter</label>
+              <select id="exp-i-status" class="form-control" style="font-size:13px">
+                <option value="">All Statuses</option>
+                <option value="draft">Draft</option>
+                <option value="assessed">Assessed</option>
+                <option value="lawyer_requested">Lawyer Requested</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div class="form-group">
+                <label style="font-size:12px">From Date</label>
+                <input type="date" id="exp-i-from" class="form-control" style="font-size:13px" />
+              </div>
+              <div class="form-group">
+                <label style="font-size:12px">To Date</label>
+                <input type="date" id="exp-i-to" class="form-control" style="font-size:13px" />
+              </div>
+            </div>
+            <button onclick="exportData('inquiries')" class="btn btn-primary btn-sm" style="width:100%">⬇️ Export Inquiries to Excel</button>
+          </div>
+        </div>
+
+        <!-- Export Analytics -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">📊 Export Law Analytics</span></div>
+          <div style="padding:16px">
+            <p style="font-size:13px;color:var(--text-light);margin-bottom:12px">Export a summary of all laws searched, with counts.</p>
+            <button onclick="exportData('analytics')" class="btn btn-primary btn-sm" style="width:100%">⬇️ Export Analytics to Excel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Lawyer Detail Modal -->
+<div id="lawyerModal" class="modal-backdrop">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <h3 id="lawyerModalTitle">Lawyer Details</h3>
+      <button class="modal-close" onclick="closeModal('lawyerModal')">×</button>
+    </div>
+    <div id="lawyerModalBody"></div>
+    <div id="lawyerModalActions" class="flex-between mt-20"></div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+if (!Auth.requireRole('admin')) {}
+
+// Set admin name
+const _adminUser = Auth.getUser();
+if (_adminUser) document.getElementById('adminName').textContent = _adminUser.name || 'Admin';
+
+// ── Overview ────────────────────────────────────────────────────────────────
+async function loadOverview() {
+  try {
+    const data = await API.getAdminStats();
+    const s = data.stats;
+    document.getElementById('pendingCount').textContent = s.pendingLawyers || 0;
+
+    document.getElementById('statsGrid').innerHTML = `
+      <div class="metric-card blue"><div class="metric-num">${s.totalUsers}</div><div class="metric-label">Total Users</div></div>
+      <div class="metric-card green"><div class="metric-num">${s.approvedLawyers}</div><div class="metric-label">Active Lawyers</div></div>
+      <div class="metric-card"><div class="metric-num">${s.pendingLawyers}</div><div class="metric-label">Pending Lawyers</div></div>
+      <div class="metric-card red"><div class="metric-num">${s.totalInquiries}</div><div class="metric-label">Total Inquiries</div></div>
+      <div class="metric-card green"><div class="metric-num">${s.totalLeads}</div><div class="metric-label">Total Leads</div></div>
+    `;
+
+    // Recent users table
+    document.getElementById('recentUsersBody').innerHTML = (data.recentUsers || []).map(u => `
+      <tr>
+        <td style="font-weight:600">${u.name}</td>
+        <td>${u.email}</td>
+        <td>${u.state || '—'}</td>
+        <td>${fmt.gender(u.gender)}</td>
+        <td>${fmt.date(u.createdAt)}</td>
+      </tr>`).join('') || '<tr><td colspan="5" class="text-center text-muted">No users yet</td></tr>';
+  } catch (err) { Toast.error('Failed to load stats: ' + err.message); }
+
+  // Load mini-analytics
+  try {
+    const an = await API.getAdminAnalytics();
+    const { topLaws, monthlyTrend } = an.analytics;
+
+    // Top 5 laws mini
+    const maxCount = Math.max(...(topLaws.slice(0,5).map(l => l.count)), 1);
+    document.getElementById('topLawsMini').innerHTML = `<div class="bar-chart">` +
+      topLaws.slice(0, 5).map(l => `
+        <div class="bar-row">
+          <div class="bar-label" title="${l._id}">${l._id.replace(/^(Family|Property|Employment|Criminal|Cyber|Consumer|Civil|Succession|Shops|Motor|Livelihood) – /, '')}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(l.count/maxCount*100)}%"><span class="bar-count">${l.count}</span></div></div>
+        </div>`).join('') + `</div>`;
+
+    // Monthly trend
+    if (monthlyTrend && monthlyTrend.length > 0) {
+      const maxT = Math.max(...monthlyTrend.map(m => m.count), 1);
+      const months = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      document.getElementById('trendChart').innerHTML = `
+        <div class="trend-bars">${monthlyTrend.map(m => `<div class="trend-bar" style="height:${Math.max(8, Math.round(m.count/maxT*70))}px" title="${months[m._id.month]} ${m._id.year}: ${m.count}"></div>`).join('')}</div>
+        <div class="trend-labels">${monthlyTrend.map(m => `<span>${months[m._id.month]}${m._id.month === 1 ? "<br>'" + String(m._id.year).slice(-2) : ''}</span>`).join('')}</div>
+      `;
+    } else {
+      document.getElementById('trendChart').innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-light);font-size:13px">No data yet</div>';
+    }
+  } catch(e) { console.warn('analytics mini failed', e); }
+}
+
+// ── Law Analytics ────────────────────────────────────────────────────────────
+async function loadAnalytics() {
+  const from = document.getElementById('an-from')?.value || '';
+  const to = document.getElementById('an-to')?.value || '';
+  let params = '';
+  if (from) params += `from=${from}&`;
+  if (to)   params += `to=${to}`;
+
+  Loader.show();
+  try {
+    const data = await API.getAdminAnalytics(params);
+    const { topLaws, genderBreakdown, userTypeBreakdown, geographyBreakdown, lawsByGender } = data.analytics;
+
+    // Top laws chart
+    const maxL = Math.max(...topLaws.map(l => l.count), 1);
+    document.getElementById('topLawsChart').innerHTML = `<div class="bar-chart">` +
+      topLaws.map(l => `
+        <div class="bar-row">
+          <div class="bar-label" title="${l._id}">${l._id}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(l.count/maxL*100)}%"><span class="bar-count">${l.count}</span></div></div>
+          <div class="bar-total">${l.count}</div>
+        </div>`).join('') + `</div>`;
+
+    // Gender chart
+    const totalG = genderBreakdown.reduce((s, g) => s + g.count, 0) || 1;
+    const genderMap = { male: '👨 Male', female: '👩 Female', other: '🏳️ Other', prefer_not_to_say: '🔒 Not Disclosed' };
+    const genderColors = { male: '#3498db', female: '#e84393', other: '#9b59b6', prefer_not_to_say: '#95a5a6' };
+    document.getElementById('genderChart').innerHTML = `<div class="pie-grid">` +
+      genderBreakdown.map(g => `
+        <div class="pie-item" style="border-left:4px solid ${genderColors[g._id]||'#ccc'}">
+          <div class="pie-pct" style="color:${genderColors[g._id]||'#ccc'}">${Math.round(g.count/totalG*100)}%</div>
+          <div class="pie-label">${genderMap[g._id]||g._id}</div>
+          <div style="font-size:11px;color:var(--text-light)">${g.count} users</div>
+        </div>`).join('') + `</div>`;
+
+    // User type chart
+    const totalU = userTypeBreakdown.reduce((s, u) => s + u.count, 0) || 1;
+    const utColors = { individual: '#FF9933', business: '#27ae60', student: '#3498db', ngo: '#9b59b6', other: '#95a5a6' };
+    document.getElementById('userTypeChart').innerHTML = `<div class="pie-grid">` +
+      userTypeBreakdown.map(u => `
+        <div class="pie-item" style="border-left:4px solid ${utColors[u._id]||'#ccc'}">
+          <div class="pie-pct" style="color:${utColors[u._id]||'#ccc'}">${Math.round(u.count/totalU*100)}%</div>
+          <div class="pie-label" style="text-transform:capitalize">${u._id}</div>
+          <div style="font-size:11px;color:var(--text-light)">${u.count} users</div>
+        </div>`).join('') + `</div>`;
+
+    // Geography
+    const maxGeo = Math.max(...geographyBreakdown.map(g => g.count), 1);
+    document.getElementById('geoChart').innerHTML = `<div class="bar-chart">` +
+      geographyBreakdown.map(g => `
+        <div class="bar-row">
+          <div class="bar-label">${g._id}</div>
+          <div class="bar-track"><div class="bar-fill green" style="width:${Math.round(g.count/maxGeo*100)}%"><span class="bar-count">${g.count}</span></div></div>
+        </div>`).join('') + `</div>`;
+
+    // Laws by gender table
+    const lgMap = {};
+    lawsByGender.forEach(item => {
+      if (!lgMap[item._id.law]) lgMap[item._id.law] = {};
+      lgMap[item._id.law][item._id.gender] = item.count;
+    });
+    const rows = Object.entries(lgMap).slice(0, 20);
+    document.getElementById('lawsByGenderTable').innerHTML = `
+      <table style="width:100%;font-size:12px;border-collapse:collapse">
+        <thead><tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:6px">Law</th><th>👨 M</th><th>👩 F</th><th>Other</th></tr></thead>
+        <tbody>${rows.map(([law, gd]) => `
+          <tr style="border-bottom:1px solid var(--bg-light)">
+            <td style="padding:5px;font-weight:600;font-size:11px">${law.replace(/^[^–]+– /, '')}</td>
+            <td style="text-align:center;color:#3498db">${gd.male||0}</td>
+            <td style="text-align:center;color:#e84393">${gd.female||0}</td>
+            <td style="text-align:center;color:#95a5a6">${(gd.other||0)+(gd.prefer_not_to_say||0)}</td>
+          </tr>`).join('')}</tbody>
+      </table>`;
+
+  } catch (err) { Toast.error('Analytics failed: ' + err.message); }
+  finally { Loader.hide(); }
+}
+
+// ── Lawyers ──────────────────────────────────────────────────────────────────
+async function loadLawyers(status = 'pending') {
+  const tbody = document.getElementById('lawyersBody');
+  tbody.innerHTML = '<tr><td colspan="7" class="text-center" style="padding:30px">Loading...</td></tr>';
+  try {
+    const data = await API.getLawyers(status !== 'all' ? `status=${status}` : '');
+    if (!data.lawyers?.length) {
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted" style="padding:40px">No ${status === 'all' ? '' : status} lawyers.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = data.lawyers.map(l => `
+      <tr>
+        <td style="font-weight:600">${l.userId?.name || '—'}</td>
+        <td style="font-size:12px">${l.userId?.email || '—'}</td>
+        <td><code style="font-size:11px">${l.barCouncilNumber}</code></td>
+        <td style="font-size:12px">${l.barCouncilState}</td>
+        <td>${l.yearsOfExperience}y</td>
+        <td>${fmt.status(l.status)}</td>
+        <td>
+          <button onclick="openLawyerDetail('${l._id}')" class="btn btn-outline btn-sm">View</button>
+          ${l.status === 'pending' ? `<button onclick="verifyLawyer('${l._id}','approved')" class="btn btn-success btn-sm" style="margin-left:3px">✅</button>` : ''}
+          ${l.status === 'pending' ? `<button onclick="verifyLawyer('${l._id}','rejected')" class="btn btn-danger btn-sm" style="margin-left:3px">❌</button>` : ''}
+          ${l.status === 'approved' ? `<button onclick="verifyLawyer('${l._id}','suspended')" class="btn btn-danger btn-sm" style="margin-left:3px">Suspend</button>` : ''}
+        </td>
+      </tr>`).join('');
+  } catch (err) { Toast.error(err.message); }
+}
+
+async function openLawyerDetail(id) {
+  Loader.show();
+  try {
+    const data = await API.getLawyerDetail(id);
+    const l = data.profile;
+    document.getElementById('lawyerModalTitle').textContent = l.userId?.name || 'Lawyer Details';
+    document.getElementById('lawyerModalBody').innerHTML = `
+      <table style="width:100%;font-size:13px;border-collapse:collapse">
+        <tr><td style="padding:7px;font-weight:600;width:40%;vertical-align:top">Name:</td><td>${l.userId?.name}</td></tr>
+        <tr><td style="padding:7px;font-weight:600">Email:</td><td>${l.userId?.email}</td></tr>
+        <tr><td style="padding:7px;font-weight:600">Phone:</td><td>${l.userId?.phone}</td></tr>
+        <tr><td style="padding:7px;font-weight:600">Bar Council No:</td><td>${l.barCouncilNumber}</td></tr>
+        <tr><td style="padding:7px;font-weight:600">State:</td><td>${l.barCouncilState}</td></tr>
+        <tr><td style="padding:7px;font-weight:600">Experience:</td><td>${l.yearsOfExperience} years</td></tr>
+        <tr><td style="padding:7px;font-weight:600">City, State:</td><td>${l.city}, ${l.state}</td></tr>
+        <tr><td style="padding:7px;font-weight:600;vertical-align:top">Specialisations:</td><td style="font-size:12px">${(l.specializations||[]).join('<br>')}</td></tr>
+        <tr><td style="padding:7px;font-weight:600">Consultation Fee:</td><td>₹${l.feeStructure?.consultationFee||'—'}</td></tr>
+        <tr><td style="padding:7px;font-weight:600">Status:</td><td>${fmt.status(l.status)}</td></tr>
+      </table>`;
+    document.getElementById('lawyerModalActions').innerHTML = `
+      <button onclick="closeModal('lawyerModal')" class="btn btn-outline">Close</button>
+      <div style="display:flex;gap:8px">
+        ${l.status === 'pending' ? `<button onclick="verifyLawyer('${l._id}','rejected');closeModal('lawyerModal')" class="btn btn-danger btn-sm">Reject</button>` : ''}
+        ${l.status === 'pending' ? `<button onclick="verifyLawyer('${l._id}','approved');closeModal('lawyerModal')" class="btn btn-success">✅ Approve</button>` : ''}
+        ${l.status === 'approved' ? `<button onclick="verifyLawyer('${l._id}','suspended');closeModal('lawyerModal')" class="btn btn-danger">Suspend</button>` : ''}
+      </div>`;
+    document.getElementById('lawyerModal').classList.add('show');
+  } catch (err) { Toast.error(err.message); }
+  finally { Loader.hide(); }
+}
+
+async function verifyLawyer(id, status) {
+  try {
+    await API.verifyLawyer(id, { status });
+    Toast.success(`Lawyer ${status}!`);
+    closeModal('lawyerModal');
+    loadLawyers();
+    loadOverview();
+  } catch (err) { Toast.error(err.message); }
+}
+
+function filterLawyers(status, btn) {
+  document.querySelectorAll('#tab-lawyers .tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  loadLawyers(status);
+}
+
+// ── Onboard Lawyer ────────────────────────────────────────────────────────────
+document.getElementById('onboardForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const alertEl = document.getElementById('onboardAlert');
+  const btn = document.getElementById('onboardBtn');
+  alertEl.innerHTML = '';
+  btn.disabled = true; btn.textContent = 'Onboarding...';
+
+  const specializations = Array.from(document.querySelectorAll('#spec-checkboxes input:checked')).map(c => c.value);
+  if (specializations.length === 0) {
+    alertEl.innerHTML = '<div class="alert alert-danger">Please select at least one specialisation.</div>';
+    btn.disabled = false; btn.textContent = '✅ Onboard This Lawyer';
+    return;
+  }
+
+  try {
+    const data = await API.onboardLawyer({
+      name: document.getElementById('ol-name').value,
+      email: document.getElementById('ol-email').value,
+      phone: document.getElementById('ol-phone').value,
+      password: document.getElementById('ol-password').value,
+      barCouncilNumber: document.getElementById('ol-barnum').value,
+      barCouncilState: document.getElementById('ol-barstate').value,
+      yearsOfExperience: document.getElementById('ol-exp').value,
+      specializations,
+      city: document.getElementById('ol-city').value,
+      state: document.getElementById('ol-state').value,
+      consultationFee: document.getElementById('ol-fee').value,
+      bio: document.getElementById('ol-bio').value
+    });
+    alertEl.innerHTML = `<div class="alert alert-success">✅ ${data.message}</div>`;
+    document.getElementById('onboardForm').reset();
+    loadOverview();
+  } catch (err) {
+    alertEl.innerHTML = `<div class="alert alert-danger">❌ ${err.message}</div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = '✅ Onboard This Lawyer';
+  }
+});
+
+// ── Users ────────────────────────────────────────────────────────────────────
+async function loadUsers() {
+  const tbody = document.getElementById('usersBody');
+  const p = new URLSearchParams({
+    search: document.getElementById('u-search')?.value || '',
+    gender: document.getElementById('u-gender')?.value || '',
+    userType: document.getElementById('u-type')?.value || '',
+    state: document.getElementById('u-state')?.value || ''
+  }).toString();
+  try {
+    const data = await API.getAdminUsers(p);
+    tbody.innerHTML = (data.users || []).map(u => `
+      <tr>
+        <td style="font-weight:600">${u.name}</td>
+        <td style="font-size:12px">${u.email}</td>
+        <td style="font-size:12px">${u.phone||'—'}</td>
+        <td>${fmt.gender(u.gender)}</td>
+        <td>${u.state||'—'}</td>
+        <td style="text-transform:capitalize">${u.userType||'—'}</td>
+        <td>${fmt.date(u.createdAt)}</td>
+      </tr>`).join('') || '<tr><td colspan="7" class="text-center text-muted" style="padding:30px">No users found.</td></tr>';
+  } catch (err) { Toast.error(err.message); }
+}
+
+// ── Inquiries ────────────────────────────────────────────────────────────────
+async function loadInquiries() {
+  const tbody = document.getElementById('inquiriesBody');
+  const p = new URLSearchParams({
+    search: document.getElementById('inq-search')?.value || '',
+    status: document.getElementById('inq-status')?.value || '',
+    lawType: document.getElementById('inq-law')?.value || ''
+  }).toString();
+  try {
+    const data = await API.getAdminInquiries(p);
+    tbody.innerHTML = (data.inquiries || []).map(inq => {
+      const scores = inq.probabilityScores || [];
+      const bestScore = scores.length > 0 ? Math.max(...scores.map(s => s.overallScore)) : null;
+      return `
+        <tr>
+          <td><code style="font-size:11px">${inq.inquiryId}</code></td>
+          <td style="font-size:12px">${inq.userId?.name||'—'}<br><span style="color:var(--text-light);font-size:11px">${inq.userId?.state||''}</span></td>
+          <td style="max-width:180px;font-size:12px">${(inq.description||'').substring(0,60)}…</td>
+          <td style="font-size:11px">${(inq.applicableLaws||[]).map(l=>l.caseType.split(' – ')[1]||l.caseType).slice(0,2).join(', ')}</td>
+          <td style="text-align:center">${bestScore !== null ? `<span style="font-weight:700;color:${bestScore>=60?'var(--green)':bestScore>=40?'var(--saffron)':'var(--danger)'}">${bestScore}%</span>` : '—'}</td>
+          <td>${fmt.status(inq.status)}</td>
+          <td>${fmt.date(inq.createdAt)}</td>
+        </tr>`;
+    }).join('') || '<tr><td colspan="7" class="text-center text-muted" style="padding:30px">No inquiries found.</td></tr>';
+  } catch (err) { Toast.error(err.message); }
+}
+
+// ── Export ───────────────────────────────────────────────────────────────────
+async function exportData(type) {
+  Loader.show();
+  try {
+    let data, params, filename;
+    if (type === 'users') {
+      params = new URLSearchParams({ gender: document.getElementById('exp-u-gender').value, userType: document.getElementById('exp-u-type').value, state: document.getElementById('exp-u-state').value, from: document.getElementById('exp-u-from').value, to: document.getElementById('exp-u-to').value }).toString();
+      const res = await API.exportUsers(params);
+      data = res.data; filename = 'SatLegal_Users.xlsx';
+    } else if (type === 'inquiries') {
+      params = new URLSearchParams({ lawType: document.getElementById('exp-i-law').value, status: document.getElementById('exp-i-status').value, from: document.getElementById('exp-i-from').value, to: document.getElementById('exp-i-to').value }).toString();
+      const res = await API.exportInquiries(params);
+      data = res.data; filename = 'SatLegal_Inquiries.xlsx';
+    } else {
+      const res = await API.exportAnalytics();
+      data = res.data; filename = 'SatLegal_LawAnalytics.xlsx';
+    }
+
+    if (!data || data.length === 0) { Toast.warning('No data to export.'); return; }
+
+    // Create XLSX using SheetJS
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Data');
+    XLSX.writeFile(wb, filename);
+    Toast.success(`Exported ${data.length} records to ${filename}`);
+  } catch (err) { Toast.error('Export failed: ' + err.message); }
+  finally { Loader.hide(); }
+}
+
+// ── Tab Switching ────────────────────────────────────────────────────────────
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (el) el.classList.add('active');
+  if (tab === 'overview')   loadOverview();
+  if (tab === 'analytics')  loadAnalytics();
+  if (tab === 'lawyers')    loadLawyers('pending');
+  if (tab === 'users')      loadUsers();
+  if (tab === 'inquiries')  loadInquiries();
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+// ── Formatters ───────────────────────────────────────────────────────────────
+const fmt = {
+  date: (d) => d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' }) : '—',
+  status: (s) => {
+    const map = { pending: '⏳ Pending', approved: '✅ Approved', rejected: '❌ Rejected', suspended: '🚫 Suspended', draft: '📝 Draft', analyzing: '🔍 Analyzing', assessed: '📊 Assessed', lawyer_requested: '⚖️ Lawyer Req.', completed: '✅ Done', archived: '📦 Archived' };
+    return `<span style="font-size:11px">${map[s] || s}</span>`;
+  },
+  gender: (g) => {
+    const m = { male: '👨 Male', female: '👩 Female', other: '🏳️ Other', prefer_not_to_say: '—' };
+    return m[g] || g || '—';
+  }
+};
+
+function loadAll() { loadOverview(); }
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+loadOverview();
+</script>
+</body>
+</html>

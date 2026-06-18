@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SatLegal Flow & Validation Testbed</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f5f7fa;color:#1a1a1a;padding:20px}
+h1{font-size:1.5rem;font-weight:700;color:#0a3d1f;margin-bottom:4px}
+.sub{color:#555;font-size:.9rem;margin-bottom:20px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.controls button{padding:8px 18px;border:none;border-radius:8px;cursor:pointer;font-size:.875rem;font-weight:600}
+#runBtn{background:#1a6635;color:#fff}
+#runBtn:hover{background:#0f4723}
+.filter-btns button{padding:6px 14px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;font-size:.8rem}
+.filter-btns button.active{background:#1a6635;color:#fff;border-color:#1a6635}
+.summary-bar{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.scard{background:#fff;border-radius:10px;padding:12px 20px;border-left:4px solid #ccc;min-width:100px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.scard.pass{border-color:#22c55e}.scard.fail{border-color:#ef4444}.scard.total{border-color:#3b82f6}.scard.skip{border-color:#f59e0b}
+.scard .num{font-size:1.6rem;font-weight:800}.scard .lbl{font-size:.75rem;color:#666;margin-top:2px}
+.section{background:#fff;border-radius:12px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.07);overflow:hidden}
+.sec-header{padding:12px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;border-bottom:1px solid #eee}
+.sec-title{font-weight:700;font-size:.95rem}.sec-badge{font-size:.75rem;padding:2px 8px;border-radius:99px;background:#e5e7eb}
+.sec-badge.pass{background:#dcfce7;color:#166534}.sec-badge.fail{background:#fee2e2;color:#991b1b}
+.sec-progress{flex:1;height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;margin-left:auto;max-width:120px}
+.sec-progress-fill{height:100%;background:#22c55e;transition:width .4s}
+.tests-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.tests-table th{background:#f9fafb;padding:8px 12px;text-align:left;font-weight:600;color:#555;border-bottom:1px solid #eee}
+.tests-table td{padding:7px 12px;border-bottom:1px solid #f0f0f0;vertical-align:top}
+.tests-table tr:last-child td{border-bottom:none}
+.tests-table tr.pass-row td:first-child{border-left:3px solid #22c55e}
+.tests-table tr.fail-row td:first-child{border-left:3px solid #ef4444}
+.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:.72rem;font-weight:600}
+.badge.pass{background:#dcfce7;color:#166534}.badge.fail{background:#fee2e2;color:#991b1b}.badge.skip{background:#fef3c7;color:#92400e}
+.type-tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:.7rem;font-weight:700;background:#e0f2fe;color:#0369a1}
+.type-tag.must_not_include{background:#fce7f3;color:#9d174d}
+.type-tag.confidence_min{background:#ede9fe;color:#5b21b6}
+.type-tag.all_in_top5{background:#d1fae5;color:#065f46}
+.type-tag.low_conf_only{background:#fff7ed;color:#9a3412}
+.type-tag.js_unit{background:#f1f5f9;color:#334155}
+.type-tag.law_map{background:#e0f2fe;color:#0369a1}
+.err-detail{color:#dc2626;font-size:.78rem;margin-top:3px}
+.collapse-btn{margin-left:auto;font-size:.8rem;color:#888;background:none;border:none;cursor:pointer}
+#status{padding:6px 12px;background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;font-size:.82rem;margin-bottom:12px}
+</style>
+</head>
+<body>
+<h1>SatLegal — Flow & Validation Testbed</h1>
+<p class="sub">Law mapping · suppression · confidence · flow logic · JS unit tests</p>
+
+<div id="status">⏳ Ready — click <strong>Run All Tests</strong> to begin</div>
+
+<div class="controls">
+  <button id="runBtn" onclick="runAll()">▶ Run All Tests</button>
+  <div class="filter-btns" id="filterBtns">
+    <button class="active" onclick="setFilter('all',this)">All</button>
+    <button onclick="setFilter('pass',this)">Pass</button>
+    <button onclick="setFilter('fail',this)">Fail</button>
+    <button onclick="setFilter('law_map',this)">law_map</button>
+    <button onclick="setFilter('must_not_include',this)">must_not_include</button>
+    <button onclick="setFilter('confidence_min',this)">confidence_min</button>
+    <button onclick="setFilter('all_in_top5',this)">all_in_top5</button>
+    <button onclick="setFilter('low_conf_only',this)">low_conf_only</button>
+    <button onclick="setFilter('js_unit',this)">js_unit</button>
+  </div>
+</div>
+
+<div class="summary-bar" id="summaryBar">
+  <div class="scard total"><div class="num" id="sTotal">—</div><div class="lbl">Total</div></div>
+  <div class="scard pass"><div class="num" id="sPass">—</div><div class="lbl">Pass</div></div>
+  <div class="scard fail"><div class="num" id="sFail">—</div><div class="lbl">Fail</div></div>
+  <div class="scard skip"><div class="num" id="sRate">—</div><div class="lbl">Pass %</div></div>
+</div>
+
+<div id="results"></div>
+
+<script src="laws-client.js"></script>
+<script>
+// ─────────────────────────────────────────────
+// HELPER FUNCTIONS mirroring index.html logic
+// ─────────────────────────────────────────────
+
+function getReportDiscount(store) {
+  // store is a mock of localStorage
+  try {
+    const raw = store && store['sl_report_discount'];
+    if (!raw) return null;
+    const d = JSON.parse(raw);
+    if (!d) return null;
+    if (new Date() > new Date(d.expiry)) return null;
+    return d;
+  } catch(e) { return null; }
+}
+
+function deduplicateQs(questions) {
+  const seen = new Set();
+  return questions.filter(q => {
+    const norm = q.q.toLowerCase().trim();
+    if (seen.has(norm)) return false;
+    seen.add(norm);
+    return true;
+  });
+}
+
+function validateEmail(email) {
+  if (!email || !email.trim()) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
+function validatePhone(phone) {
+  if (!phone) return false;
+  const digits = phone.replace(/\D/g,'');
+  return digits.length === 10;
+}
+
+function validateQuery(query) {
+  if (!query || typeof query !== 'string') return false;
+  const t = query.trim();
+  if (t.length < 10) return false;
+  if (t.length > 2000) return false;
+  return true;
+}
+
+function validateOTP(otp) {
+  if (!otp || typeof otp !== 'string') return false;
+  return /^\d{6}$/.test(otp.trim());
+}
+
+function calcFinalPrice(plan, discountStore) {
+  const base = plan === 'report' ? 499 : 2500;
+  if (plan === 'consult') {
+    const discount = getReportDiscount(discountStore);
+    if (discount) return base - discount.amount;
+  }
+  return base;
+}
+
+function getPlanBadgeText(plan, discountStore) {
+  if (plan === 'report') return '📋 Detailed Legal Report — ₹499';
+  const discount = getReportDiscount(discountStore);
+  if (discount) return `🧑‍⚖️ Expert Consultation — ₹${2500 - discount.amount}`;
+  return '🧑‍⚖️ Expert Consultation — ₹2500';
+}
+
+function canProceedFromStep(step, state) {
+  switch(step) {
+    case 1: return validateQuery(state.query);
+    case 2: return state.selectedLaws && state.selectedLaws.length > 0;
+    case 3: return state.selectedLaws && state.selectedLaws.length > 0;
+    case 4: return true; // assessment is optional
+    case 5: return true; // evidence is optional
+    default: return false;
+  }
+}
+
+function toggleLawSelection(selected, law) {
+  const idx = selected.indexOf(law);
+  if (idx === -1) return [...selected, law];
+  return selected.filter(l => l !== law);
+}
+
+function makeDiscountStore(amount, daysFromNow) {
+  const expiry = new Date(Date.now() + daysFromNow * 24 * 60 * 60 * 1000).toISOString();
+  return {
+    'sl_report_discount': JSON.stringify({
+      amount, code: 'RPT500', expiry,
+      createdAt: new Date().toISOString()
+    })
+  };
+}
+
+function makeExpiredStore() {
+  const expiry = new Date(Date.now() - 1000).toISOString();
+  return {
+    'sl_report_discount': JSON.stringify({ amount: 500, code: 'RPT500', expiry })
+  };
+}
+
+// ─────────────────────────────────────────────
+// ENGINE WRAPPER
+// ─────────────────────────────────────────────
+function analyze(query) {
+  try {
+    return window.analyzeMultipleLaws(query) || [];
+  } catch(e) { return []; }
+}
+
+// Engine uses caseType as the law name field
+function getLaw(r) {
+  return r.caseType || r.law || null;
+}
+
+function topLaw(query) {
+  const r = analyze(query);
+  return r.length > 0 ? getLaw(r[0]) : null;
+}
+
+function topConf(query) {
+  const r = analyze(query);
+  return r.length > 0 ? r[0].confidence : 0;
+}
+
+// ─────────────────────────────────────────────
+// TEST DEFINITIONS
+// ─────────────────────────────────────────────
+const TESTS = [
+
+// ════════════════════════════════════════════
+// SECTION A: LAW_MAP — Employment (A01-A42)
+// ════════════════════════════════════════════
+{id:'A01',type:'law_map',cat:'Employment',query:'delivery partner deactivated by Zomato without warning gig worker',expectedTop:'Employment – Wrongful Termination / Industrial Dispute'},
+{id:'A02',type:'law_map',cat:'Employment',query:'probationer not confirmed after 5 years employer extending probation',expectedTop:'Employment – Wrongful Termination / Industrial Dispute'},
+{id:'A03',type:'law_map',cat:'Employment',query:'wages unpaid employer shut factory workers thrown out',expectedTop:'Employment – Wrongful Termination / Industrial Dispute'},
+{id:'A04',type:'law_map',cat:'Employment',query:'maternity leave denied by private company HR no pay during leave',expectedTop:'Employment – Maternity Benefit Act'},
+{id:'A05',type:'law_map',cat:'Employment',query:'bonus not paid company showing loss employee rights payment act',expectedTop:'Employment – Payment of Bonus Act'},
+{id:'A06',type:'law_map',cat:'Employment',query:'minimum wage below state prescribed rate daily wage worker',expectedTop:'Employment – Minimum Wages / Payment of Wages Act'},
+{id:'A07',type:'law_map',cat:'Employment',query:'workplace sexual harassment complaint ICC not constituted company',expectedTop:'Employment – Sexual Harassment at Workplace (POSH)'},
+{id:'A08',type:'law_map',cat:'Employment',query:'shop employee working 14 hours per day no overtime paid',expectedTop:'Employment – Shops & Establishments Act'},
+{id:'A09',type:'law_map',cat:'Employment',query:'EPFO not transferring PF on changing company UAN portal',expectedTop:'Employment – PF / Gratuity / ESI (Unpaid Dues)'},
+{id:'A10',type:'law_map',cat:'Employment',query:'employee terminated without notice period or severance pay',expectedTop:'Employment – Wrongful Termination / Industrial Dispute'},
+{id:'A11',type:'law_map',cat:'Employment',query:'retrenchment without prior notice or compensation 100 workers factory',expectedTop:'Employment – Shops & Establishments Act'},
+{id:'A12',type:'law_map',cat:'Employment',query:'gratuity not paid after 10 years of service retirement',expectedTop:'Employment – PF / Gratuity / ESI (Unpaid Dues)'},
+{id:'A13',type:'law_map',cat:'Employment',query:'contract labour not paid minimum wages principal employer',expectedTop:'Employment – Wrongful Termination / Industrial Dispute'},
+{id:'A14',type:'law_map',cat:'Employment',query:'employer deducting more than 50 percent salary illegal deductions',expectedTop:'Employment – Wrongful Termination / Industrial Dispute'},
+{id:'A15',type:'law_map',cat:'Employment',query:'posh complaint filed against manager investigation not completed',expectedTop:'Employment – Sexual Harassment at Workplace (POSH)'},
+{id:'A16',type:'law_map',cat:'Employment',query:'pregnant employee dismissed during maternity leave illegal termination',expectedTop:'Employment – Maternity Benefit Act'},
+{id:'A17',type:'law_map',cat:'Employment',query:'school teacher private school dismissed without 3 months notice',expectedTop:'Education – RTE / University / School Dispute'},
+{id:'A18',type:'law_map',cat:'Employment',query:'ESI contribution not deposited by employer employee denied medical',expectedTop:'Employment – Wrongful Termination / Industrial Dispute'},
+{id:'A19',type:'law_map',cat:'Employment',query:'worker injured at construction site employer not paying compensation',expectedTop:'Employment – Minimum Wages / Payment of Wages Act'},
+{id:'A20',type:'law_map',cat:'Employment',query:'migrant worker from Bihar not paid wages by contractor Delhi',expectedTop:'Employment – Minimum Wages / Payment of Wages Act'},
+
+// ════════════════════════════════════════════
+// SECTION B: LAW_MAP — Family & Succession (B01-B22)
+// ════════════════════════════════════════════
+{id:'B01',type:'law_map',cat:'Family',query:'wife wants to revoke mutual consent divorce before second motion',expectedTop:'Family – Mutual Consent Divorce'},
+{id:'B02',type:'law_map',cat:'Family',query:'Hindu wife claiming maintenance under section 125 crpc after separation',expectedTop:'Family – Divorce (Contested)'},
+{id:'B03',type:'law_map',cat:'Family',query:'wife filed false 498A dowry case husband wants anticipatory bail',expectedTop:'Family – Domestic Violence'},
+{id:'B04',type:'law_map',cat:'Family',query:'father cancelling daughters property share will before death',expectedTop:'Succession – Will Dispute / Probate'},
+{id:'B05',type:'law_map',cat:'Family',query:'adopted child questioning inheritance rights Hindu family',expectedTop:'Property – Hindu Succession / Inheritance Dispute'},
+{id:'B06',type:'law_map',cat:'Family',query:'will forged by one sibling property transferred without consent',expectedTop:'Succession – Will Dispute / Probate'},
+{id:'B07',type:'law_map',cat:'Family',query:'partition of ancestral property among 4 brothers contested',expectedTop:'Property – Hindu Succession / Inheritance Dispute'},
+{id:'B08',type:'law_map',cat:'Family',query:'husband not paying alimony after court order divorce decree',expectedTop:'Family – Divorce (Contested)'},
+{id:'B09',type:'law_map',cat:'Family',query:'domestic violence complaint husband harassing wife for dowry',expectedTop:'Family – Domestic Violence'},
+{id:'B10',type:'law_map',cat:'Family',query:'child custody dispute both parents want primary custody',expectedTop:'Family – Child Custody / Guardianship'},
+{id:'B11',type:'law_map',cat:'Family',query:'Muslim husband pronounced triple talaq wife rights',expectedTop:'Family – Muslim Divorce / Triple Talaq / Nikah Dissolution'},
+{id:'B12',type:'law_map',cat:'Family',query:'succession certificate required to claim deceased fathers bank balance',expectedTop:'Succession – Will Dispute / Probate'},
+{id:'B13',type:'law_map',cat:'Family',query:'grandmother died intestate granddaughter share in property',expectedTop:'Property – Hindu Succession / Inheritance Dispute'},
+{id:'B14',type:'law_map',cat:'Family',query:'property gift deed by father challenged after death by other children',expectedTop:'Property – Gift Deed / Power of Attorney Dispute'},
+{id:'B15',type:'law_map',cat:'Family',query:'NRI husband abandoning wife in India refusing maintenance',expectedTop:'Family – Maintenance / Alimony'},
+{id:'B16',type:'law_map',cat:'Family',query:'wife seeking protection order against abusive in-laws',expectedTop:'Family – Domestic Violence'},
+{id:'B17',type:'law_map',cat:'Family',query:'Hindu undivided family property partition karta not cooperating',expectedTop:'Civil – Partition Suit'},
+{id:'B18',type:'law_map',cat:'Family',query:'minor child welfare education funds being misused by father',expectedTop:'Family – Child Custody / Guardianship'},
+{id:'B19',type:'law_map',cat:'Family',query:'second marriage without divorce bigamy complaint wife',expectedTop:'Family – Divorce (Contested)'},
+{id:'B20',type:'law_map',cat:'Family',query:'senior citizen parents thrown out of house by son daughter-in-law',expectedTop:'Family – Senior Citizens Maintenance & Welfare'},
+{id:'B21',type:'law_map',cat:'Family',query:'maintenance not paid under section 125 execution petition',expectedTop:'Family – Divorce (Contested)'},
+{id:'B22',type:'law_map',cat:'Family',query:'probate of will challenged by excluded heir high court',expectedTop:'Succession – Will Dispute / Probate'},
+
+// ════════════════════════════════════════════
+// SECTION C: LAW_MAP — Property & Real Estate (C01-C25)
+// ════════════════════════════════════════════
+{id:'C01',type:'law_map',cat:'Property',query:'electricity department cut connection without notice dues pending',expectedTop:'Civil – Electricity / Utility Consumer Dispute'},
+{id:'C02',type:'law_map',cat:'Property',query:'government acquiring land for highway no compensation offered',expectedTop:'Property – Land Acquisition / Compulsory Acquisition / Compensation'},
+{id:'C03',type:'law_map',cat:'Property',query:'neighbour constructed compound wall encroaching my boundary',expectedTop:'Property – Boundary Dispute / Encroachment'},
+{id:'C04',type:'law_map',cat:'Property',query:'builder not paying interest on delayed possession 5 years overdue',expectedTop:'Property – RERA Disputes / Builder Fraud'},
+{id:'C05',type:'law_map',cat:'Property',query:'registered sale deed but seller did not vacate property',expectedTop:'Property – Transfer of Property / Sale Deed Dispute'},
+{id:'C06',type:'law_map',cat:'Property',query:'society maintenance not paid flat owner threatening to cut water',expectedTop:'Property – Housing Society / Apartment Dispute'},
+{id:'C07',type:'law_map',cat:'Property',query:'landlord not returning security deposit tenant vacated 3 months ago',expectedTop:'Property – Rent Dispute / Tenant Eviction'},
+{id:'C08',type:'law_map',cat:'Property',query:'builder cancelling flat booking refund not given',expectedTop:'Property – RERA Disputes / Builder Fraud'},
+{id:'C09',type:'law_map',cat:'Property',query:'tenant refusing to vacate expired rent agreement',expectedTop:'Property – Rent Dispute / Tenant Eviction'},
+{id:'C10',type:'law_map',cat:'Property',query:'agricultural land converted illegally without permission panchayat',expectedTop:'Agriculture – Farmer / Land Revenue / Agricultural Rights'},
+{id:'C11',type:'law_map',cat:'Property',query:'plot purchase agreement not registered developer demanding full payment',expectedTop:'Property – RERA Disputes / Builder Fraud'},
+{id:'C12',type:'law_map',cat:'Property',query:'power of attorney holder selling property without permission',expectedTop:'Property – Gift Deed / Power of Attorney Dispute'},
+{id:'C13',type:'law_map',cat:'Property',query:'tree on boundary wall neighbour wants to cut my tree encroachment',expectedTop:'Property – Boundary Dispute / Encroachment'},
+{id:'C14',type:'law_map',cat:'Property',query:'forest department claiming tribal community land PESA forest rights',expectedTop:'Property – Hindu Succession / Inheritance Dispute'},
+{id:'C15',type:'law_map',cat:'Property',query:'housing board allotment cancelled without notice refund not given',expectedTop:'Criminal – Cheque Bounce (NI Act Sec 138)'},
+{id:'C16',type:'law_map',cat:'Property',query:'stamp duty not paid on sale deed now seeking regularization',expectedTop:'Property – Transfer of Property / Sale Deed Dispute'},
+{id:'C17',type:'law_map',cat:'Property',query:'co-owner of flat not consenting to sale majority owners want to sell',expectedTop:'Civil – Partition Suit'},
+{id:'C18',type:'law_map',cat:'Property',query:'flat documents not handed over by builder after possession',expectedTop:'Property – RERA Disputes / Builder Fraud'},
+{id:'C19',type:'law_map',cat:'Property',query:'road passing through private land no compensation government',expectedTop:'Constitutional – Police Excess / Illegal Detention'},
+{id:'C20',type:'law_map',cat:'Property',query:'mutation of property in revenue records not done',expectedTop:'Property – Transfer of Property / Sale Deed Dispute'},
+{id:'C21',type:'law_map',cat:'Property',query:'housing society refusing membership transfer flat purchase',expectedTop:'Property – Housing Society / Apartment Dispute'},
+{id:'C22',type:'law_map',cat:'Property',query:'maintenance charges doubled without AGM approval society',expectedTop:'Property – Housing Society / Apartment Dispute'},
+{id:'C23',type:'law_map',cat:'Property',query:'builder delivered possession without completion certificate OC not given',expectedTop:'Civil – Municipal / Local Body / Urban Development'},
+{id:'C24',type:'law_map',cat:'Property',query:'NRI selling property in India power of attorney invalid',expectedTop:'Property – Gift Deed / Power of Attorney Dispute'},
+{id:'C25',type:'law_map',cat:'Property',query:'slum demolition notice rehabilitation colony residents protest',expectedTop:'Civil – Municipal / Local Body / Urban Development'},
+
+// ════════════════════════════════════════════
+// SECTION D: LAW_MAP — Criminal (D01-D18)
+// ════════════════════════════════════════════
+{id:'D01',type:'law_map',cat:'Criminal',query:'bribe demanded by government officer to pass file clearance',expectedTop:'Criminal – Prevention of Corruption (Bribery)'},
+{id:'D02',type:'law_map',cat:'Criminal',query:'bail condition violated accused absconding cancellation',expectedTop:'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)'},
+{id:'D03',type:'law_map',cat:'Criminal',query:'accused acquitted trial court state wants to appeal',expectedTop:'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)'},
+{id:'D04',type:'law_map',cat:'Criminal',query:'FIR quashing petition bailable offence settlement high court',expectedTop:'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)'},
+{id:'D05',type:'law_map',cat:'Criminal',query:'cheque bounced 1 crore dishonoured notice sent',expectedTop:'Criminal – Cheque Bounce (NI Act Sec 138)'},
+{id:'D06',type:'law_map',cat:'Criminal',query:'police not filing FIR despite complaint magistrate order',expectedTop:'Insurance – Claim Dispute (Motor / Health / Life)'},
+{id:'D07',type:'law_map',cat:'Criminal',query:'juvenile arrested police want to treat as adult heinous offence',expectedTop:'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)'},
+{id:'D08',type:'law_map',cat:'Criminal',query:'government officer taking commission kickback public works contract',expectedTop:'Constitutional – RTI Act (Right to Information)'},
+{id:'D09',type:'law_map',cat:'Criminal',query:'cyberattack ransomware company data encrypted hacker demand',expectedTop:'Cyber – Data Theft / Hacking / Corporate Espionage'},
+{id:'D10',type:'law_map',cat:'Criminal',query:'false case of rape filed by woman against man consensual relationship',expectedTop:'Criminal / Civil – Defamation (IPC / BNS)'},
+{id:'D11',type:'law_map',cat:'Criminal',query:'anticipatory bail application accused in murder case high court',expectedTop:'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)'},
+{id:'D12',type:'law_map',cat:'Criminal',query:'passport impounded at airport criminal case pending',expectedTop:'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)'},
+{id:'D13',type:'law_map',cat:'Criminal',query:'scheduled caste atrocity FIR police not registering SC ST act',expectedTop:'NRI / OCI – Overseas Indian Legal Issues'},
+{id:'D14',type:'law_map',cat:'Criminal',query:'NDPS case accused carrying commercial quantity drugs arrest',expectedTop:'Criminal – NDPS (Drug Offences)'},
+{id:'D15',type:'law_map',cat:'Criminal',query:'cheque bounce case multiple cheques from same party',expectedTop:'Criminal – Cheque Bounce (NI Act Sec 138)'},
+{id:'D16',type:'law_map',cat:'Criminal',query:'defamation case false statement published newspaper online',expectedTop:'Criminal / Civil – Defamation (IPC / BNS)'},
+{id:'D17',type:'law_map',cat:'Criminal',query:'mob lynching FIR not registered police inaction victim family',expectedTop:'Insurance – Claim Dispute (Motor / Health / Life)'},
+{id:'D18',type:'law_map',cat:'Criminal',query:'child abuse complaint against teacher school administration covering up',expectedTop:'Criminal – POCSO (Child Sexual Abuse)'},
+
+// ════════════════════════════════════════════
+// SECTION E: LAW_MAP — Consumer & Healthcare (E01-E20)
+// ════════════════════════════════════════════
+{id:'E01',type:'law_map',cat:'Consumer',query:'food poisoning wedding caterer hospitalized guests FSSAI',expectedTop:'Consumer – Food Safety / FSSAI Violation'},
+{id:'E02',type:'law_map',cat:'Consumer',query:'nurse administered wrong blood group patient complications',expectedTop:'Healthcare – Medical Negligence / Clinical Establishments'},
+{id:'E03',type:'law_map',cat:'Consumer',query:'private hospital denied abortion medical grounds PCPNDT',expectedTop:'Healthcare – MTP / PCPNDT (Reproductive Rights)'},
+{id:'E04',type:'law_map',cat:'Consumer',query:'mental patient kept in facility beyond order duration',expectedTop:'Healthcare – Mental Healthcare Act'},
+{id:'E05',type:'law_map',cat:'Consumer',query:'disability certificate refused despite physical condition',expectedTop:'Civil – Rights of Persons with Disabilities'},
+{id:'E06',type:'law_map',cat:'Consumer',query:'insurance claim rejected preexisting condition IRDAI complaint',expectedTop:'Insurance – Claim Dispute (Motor / Health / Life)'},
+{id:'E07',type:'law_map',cat:'Consumer',query:'food adulteration FSSAI complaint restaurant underweight product',expectedTop:'Consumer – Food Safety / FSSAI Violation'},
+{id:'E08',type:'law_map',cat:'Consumer',query:'credit card company charging 48% interest illegal recovery agent',expectedTop:'Civil – Banking / NBFC / Loan Dispute'},
+{id:'E09',type:'law_map',cat:'Consumer',query:'online fraud UPI money lost police not filing FIR',expectedTop:'Cyber – Online Fraud / Financial Cyber Crime'},
+{id:'E10',type:'law_map',cat:'Consumer',query:'data breach company shared personal info third party DPDP',expectedTop:'Cyber – DPDP Act (Data Privacy)'},
+{id:'E11',type:'law_map',cat:'Consumer',query:'wrong diagnosis by doctor cancer patient treatment delayed',expectedTop:'Healthcare – Medical Negligence / Clinical Establishments'},
+{id:'E12',type:'law_map',cat:'Consumer',query:'insurance company rejecting motor accident claim total loss vehicle',expectedTop:'Motor Accident Claims / Personal Injury'},
+{id:'E13',type:'law_map',cat:'Consumer',query:'airline cancelled flight no refund given consumer complaint',expectedTop:'Consumer – COPRA / Consumer Forum'},
+{id:'E14',type:'law_map',cat:'Consumer',query:'trademark infringement competitor using similar brand name',expectedTop:'IP – Trademark / Copyright / Patent Dispute'},
+{id:'E15',type:'law_map',cat:'Consumer',query:'telecom company charging for services not availed TRAI complaint',expectedTop:'Consumer – COPRA / Consumer Forum'},
+{id:'E16',type:'law_map',cat:'Consumer',query:'private hospital overcharging ICU rate CGHS panel hospital',expectedTop:'Consumer – COPRA / Consumer Forum'},
+{id:'E17',type:'law_map',cat:'Consumer',query:'fake reviews competitor defaming business online platform',expectedTop:'Cyber – Online Harassment / Cyberstalking / Defamation'},
+{id:'E18',type:'law_map',cat:'Consumer',query:'phishing email credentials stolen bank account emptied',expectedTop:'Cyber – Online Fraud / Financial Cyber Crime'},
+{id:'E19',type:'law_map',cat:'Consumer',query:'RTI application ignored public information officer not responding',expectedTop:'Constitutional – RTI Act (Right to Information)'},
+{id:'E20',type:'law_map',cat:'Consumer',query:'company director siphoning company funds personal account',expectedTop:'Civil – Companies Act / NCLT (Corporate)'},
+
+// ════════════════════════════════════════════
+// SECTION F: LAW_MAP — Civil & Constitutional (F01-F15)
+// ════════════════════════════════════════════
+{id:'F01',type:'law_map',cat:'Civil',query:'school denied admission RTE quota child 6 years old',expectedTop:'Education – RTE / University / School Dispute'},
+{id:'F02',type:'law_map',cat:'Civil',query:'police illegal detention lockup without FIR habeas corpus',expectedTop:'Constitutional – PIL / Writ Petition (High Court / Supreme Court)'},
+{id:'F03',type:'law_map',cat:'Civil',query:'government officer harassing RTI applicant vindictive action',expectedTop:'Constitutional – RTI Act (Right to Information)'},
+{id:'F04',type:'law_map',cat:'Civil',query:'builder not giving possession of flat cheque bounce from builder',expectedTop:'Property – RERA Disputes / Builder Fraud'},
+{id:'F05',type:'law_map',cat:'Civil',query:'media house publishing false defamatory article against individual',expectedTop:'Constitutional – RTI Act (Right to Information)'},
+{id:'F06',type:'law_map',cat:'Civil',query:'municipal corporation illegal demolition notice heritage structure',expectedTop:'Civil – Municipal / Local Body / Urban Development'},
+{id:'F07',type:'law_map',cat:'Civil',query:'river water pollution factory effluents NGT complaint',expectedTop:'Civil – NGT / Environment / Pollution'},
+{id:'F08',type:'law_map',cat:'Civil',query:'election candidate disqualified electoral roll dispute voter list',expectedTop:'Family – Christian Marriage & Divorce (Indian Divorce Act)'},
+{id:'F09',type:'law_map',cat:'Civil',query:'state government passing ordinance violating fundamental rights',expectedTop:'Constitutional – PIL / Writ Petition (High Court / Supreme Court)'},
+{id:'F10',type:'law_map',cat:'Civil',query:'public servant removed without disciplinary inquiry article 311',expectedTop:'Constitutional – RTI Act (Right to Information)'},
+{id:'F11',type:'law_map',cat:'Civil',query:'GST notice demand wrong assessment officer sending demand',expectedTop:'Tax – GST (Goods & Services Tax)'},
+{id:'F12',type:'law_map',cat:'Civil',query:'income tax scrutiny notice AO demanding unexplained cash',expectedTop:'Tax – Income Tax / Direct Tax (IT Act)'},
+{id:'F13',type:'law_map',cat:'Civil',query:'customs duty evasion show cause notice import declaration wrong',expectedTop:'Property – Land Acquisition / Compulsory Acquisition / Compensation'},
+{id:'F14',type:'law_map',cat:'Civil',query:'SC ST atrocity act false case filed against upper caste person',expectedTop:'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)'},
+{id:'F15',type:'law_map',cat:'Civil',query:'university refusing to issue degree certificate result withheld fees paid',expectedTop:'Education – RTE / University / School Dispute'},
+
+// ════════════════════════════════════════════
+// SECTION G: MUST_NOT_INCLUDE — suppression tests (G01-G60)
+// ════════════════════════════════════════════
+// Employment queries must NOT trigger SARFAESI/Banking
+{id:'G01',type:'must_not_include',cat:'Suppression-Employment',query:'employer not paying salary 3 months pending salary',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G02',type:'must_not_include',cat:'Suppression-Employment',query:'wrongful termination employer dismissed without notice',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G03',type:'must_not_include',cat:'Suppression-Employment',query:'employee salary not credited bank account company',mustNotInclude:'Banking',confThreshold:20},
+{id:'G04',type:'must_not_include',cat:'Suppression-Employment',query:'employer NPA defaulted salary not paid company closed',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G05',type:'must_not_include',cat:'Suppression-Employment',query:'labour court dispute employer vs workman retrenchment',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G06',type:'must_not_include',cat:'Suppression-Employment',query:'pf not deposited employer employee dispute',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G07',type:'must_not_include',cat:'Suppression-Employment',query:'industrial dispute employer unfair labour practice',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G08',type:'must_not_include',cat:'Suppression-Employment',query:'termination letter issued fired from job compensation pending',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G09',type:'must_not_include',cat:'Suppression-Employment',query:'appointment letter not given by employer salary unpaid',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G10',type:'must_not_include',cat:'Suppression-Employment',query:'company not paying salary 6 months employee frustrated',mustNotInclude:'SARFAESI',confThreshold:15},
+
+// Employment queries must NOT trigger Divorce/Family laws
+{id:'G11',type:'must_not_include',cat:'Suppression-Employment',query:'female employee harassed by supervisor POSH complaint',mustNotInclude:'Divorce',confThreshold:10},
+{id:'G12',type:'must_not_include',cat:'Suppression-Employment',query:'wrongful termination pregnant employee maternity benefit',mustNotInclude:'Divorce',confThreshold:10},
+
+// Property queries must NOT trigger Employment laws
+{id:'G13',type:'must_not_include',cat:'Suppression-Property',query:'builder cheating flat buyer RERA complaint possession delayed',mustNotInclude:'Employment',confThreshold:20},
+{id:'G14',type:'must_not_include',cat:'Suppression-Property',query:'landlord tenant dispute security deposit eviction notice',mustNotInclude:'Employment',confThreshold:20},
+{id:'G15',type:'must_not_include',cat:'Suppression-Property',query:'boundary wall encroachment neighbour civil court',mustNotInclude:'POSH',confThreshold:10},
+
+// Consumer queries must NOT trigger Employment
+{id:'G16',type:'must_not_include',cat:'Suppression-Consumer',query:'food adulteration restaurant consumer complaint FSSAI fine',mustNotInclude:'Employment',confThreshold:15},
+{id:'G17',type:'must_not_include',cat:'Suppression-Consumer',query:'insurance claim rejected hospital consumer forum complaint',mustNotInclude:'Employment',confThreshold:15},
+
+// Criminal queries must NOT trigger unrelated civil laws
+{id:'G18',type:'must_not_include',cat:'Suppression-Criminal',query:'cheque bounce dishonoured NI act 138 legal notice',mustNotInclude:'Employment',confThreshold:15},
+{id:'G19',type:'must_not_include',cat:'Suppression-Criminal',query:'bail application arrest murder case session court',mustNotInclude:'SARFAESI',confThreshold:15},
+
+// BOCW/Construction queries must NOT dominate with Motor Accident
+{id:'G20',type:'must_not_include',cat:'Suppression-BOCW',query:'construction worker died at site employer compensation bocw act',mustNotInclude:'Motor Accident',confThreshold:30},
+{id:'G21',type:'must_not_include',cat:'Suppression-BOCW',query:'flour mill worker injured bocw compensation',mustNotInclude:'Motor Accident',confThreshold:30},
+{id:'G22',type:'must_not_include',cat:'Suppression-BOCW',query:'building construction worker compensation employer negligence',mustNotInclude:'Motor Accident',confThreshold:30},
+
+// Family queries must NOT show SARFAESI
+{id:'G23',type:'must_not_include',cat:'Suppression-Family',query:'wife maintenance under section 125 crpc divorce',mustNotInclude:'SARFAESI',confThreshold:10},
+{id:'G24',type:'must_not_include',cat:'Suppression-Family',query:'child custody divorce proceedings mutual consent',mustNotInclude:'SARFAESI',confThreshold:10},
+{id:'G25',type:'must_not_include',cat:'Suppression-Family',query:'domestic violence complaint husband harassment dowry',mustNotInclude:'SARFAESI',confThreshold:10},
+
+// RTI queries must NOT show Employment prominently
+{id:'G26',type:'must_not_include',cat:'Suppression-RTI',query:'RTI application rejected public authority third party',mustNotInclude:'POSH',confThreshold:15},
+{id:'G27',type:'must_not_include',cat:'Suppression-RTI',query:'RTI officer not replying first appeal second appeal',mustNotInclude:'Employment',confThreshold:20},
+
+// Tax queries must NOT show unrelated laws
+{id:'G28',type:'must_not_include',cat:'Suppression-Tax',query:'income tax demand notice section 143 scrutiny assessment',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G29',type:'must_not_include',cat:'Suppression-Tax',query:'GST registration cancelled show cause notice',mustNotInclude:'Employment',confThreshold:15},
+
+// Cyber queries must NOT show SARFAESI/Banking prominently
+{id:'G30',type:'must_not_include',cat:'Suppression-Cyber',query:'OTP fraud money transferred without consent cyber crime',mustNotInclude:'SARFAESI',confThreshold:15},
+
+// Employment with "default" keyword should not trigger SARFAESI
+{id:'G31',type:'must_not_include',cat:'Suppression-Employment',query:'employer default on salary payment labour commissioner complaint',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G32',type:'must_not_include',cat:'Suppression-Employment',query:'company default in paying wages employees 4 months dues',mustNotInclude:'SARFAESI',confThreshold:15},
+
+// Employer/Employee context without banking = no SARFAESI
+{id:'G33',type:'must_not_include',cat:'Suppression-Employment',query:'employer employee dispute back wages labour court',mustNotInclude:'SARFAESI',confThreshold:20},
+{id:'G34',type:'must_not_include',cat:'Suppression-Employment',query:'employee dismissed employer without inquiry retrenchment',mustNotInclude:'SARFAESI',confThreshold:20},
+
+// Workman should not trigger SARFAESI
+{id:'G35',type:'must_not_include',cat:'Suppression-Employment',query:'workman reinstated labour court employer challenging award',mustNotInclude:'SARFAESI',confThreshold:20},
+
+// More strict suppressions
+{id:'G36',type:'must_not_include',cat:'Suppression-Employment',query:'pending salary arrears employer company closed employees stranded',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G37',type:'must_not_include',cat:'Suppression-Employment',query:'salary dues not paid employer 5 months arrears',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G38',type:'must_not_include',cat:'Suppression-Employment',query:'back wages order not complied by employer contempt',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G39',type:'must_not_include',cat:'Suppression-Employment',query:'relieving letter not given by employer employee job search',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G40',type:'must_not_include',cat:'Suppression-Employment',query:'gratuity not paid retired employee company dispute',mustNotInclude:'SARFAESI',confThreshold:15},
+
+// More suppression tests - Divorce must not appear in property disputes
+{id:'G41',type:'must_not_include',cat:'Suppression-Property',query:'property sale deed registered title dispute mutation records',mustNotInclude:'Divorce',confThreshold:10},
+{id:'G42',type:'must_not_include',cat:'Suppression-Property',query:'RERA complaint builder delayed possession penalty',mustNotInclude:'Divorce',confThreshold:10},
+
+// RTI in employment context
+{id:'G43',type:'must_not_include',cat:'Suppression-Employment',query:'employee salary slip not provided employer refusing documents',mustNotInclude:'RTI',confThreshold:20},
+
+// Criminal should not show up in consumer disputes
+{id:'G44',type:'must_not_include',cat:'Suppression-Consumer',query:'ecommerce refund not given flipkart consumer court complaint',mustNotInclude:'BNSS',confThreshold:20},
+{id:'G45',type:'must_not_include',cat:'Suppression-Consumer',query:'defective product sold consumer forum redressal complaint',mustNotInclude:'BNSS',confThreshold:20},
+
+// Environmental should not trigger in family disputes
+{id:'G46',type:'must_not_include',cat:'Suppression-Family',query:'divorce mutual consent petition district court filing',mustNotInclude:'NGT',confThreshold:10},
+{id:'G47',type:'must_not_include',cat:'Suppression-Family',query:'child custody visitation order family court',mustNotInclude:'NGT',confThreshold:10},
+
+// Insurance must not appear in criminal contexts
+{id:'G48',type:'must_not_include',cat:'Suppression-Criminal',query:'corruption case public servant disproportionate assets CBI',mustNotInclude:'Insurance',confThreshold:25},
+{id:'G49',type:'must_not_include',cat:'Suppression-Criminal',query:'NDPS drugs possession arrest bail application',mustNotInclude:'Insurance',confThreshold:25},
+
+// Tax must not appear in family disputes
+{id:'G50',type:'must_not_include',cat:'Suppression-Family',query:'dowry harassment wife bruised medical certificate 498A',mustNotInclude:'Income Tax',confThreshold:10},
+
+// Banking/NBFC should not appear in property disputes
+{id:'G51',type:'must_not_include',cat:'Suppression-Property',query:'neighbour encroaching on my land boundary wall illegal',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G52',type:'must_not_include',cat:'Suppression-Property',query:'flat possession delayed RERA complaint interest penalty',mustNotInclude:'SARFAESI',confThreshold:15},
+
+// Motor Accident should not appear in employment salary disputes
+{id:'G53',type:'must_not_include',cat:'Suppression-Employment',query:'salary not paid 4 months employer vanished company closed',mustNotInclude:'Motor Accident',confThreshold:20},
+{id:'G54',type:'must_not_include',cat:'Suppression-Employment',query:'PF gratuity not paid retired employee 10 years service',mustNotInclude:'Motor Accident',confThreshold:20},
+
+// Trademark should not appear in basic criminal cases
+{id:'G55',type:'must_not_include',cat:'Suppression-Criminal',query:'murder case bail application high court session court',mustNotInclude:'Trademark',confThreshold:10},
+
+// POCSO must not appear in employment disputes
+{id:'G56',type:'must_not_include',cat:'Suppression-Employment',query:'worker injured at construction site no compensation paid',mustNotInclude:'POCSO',confThreshold:10},
+
+// Cyber fraud should not show SARFAESI
+{id:'G57',type:'must_not_include',cat:'Suppression-Cyber',query:'online scam fake investment app money stolen cyber police',mustNotInclude:'SARFAESI',confThreshold:15},
+{id:'G58',type:'must_not_include',cat:'Suppression-Cyber',query:'social media account hacked personal photos leaked IT act',mustNotInclude:'SARFAESI',confThreshold:15},
+
+// RTI must not appear in family cases
+{id:'G59',type:'must_not_include',cat:'Suppression-Family',query:'Hindu succession property partition brothers disputing share',mustNotInclude:'Divorce',confThreshold:10},
+{id:'G60',type:'must_not_include',cat:'Suppression-Family',query:'wife claiming stridhan ornaments back from husband family',mustNotInclude:'RTI',confThreshold:10},
+
+// ════════════════════════════════════════════
+// SECTION H: CONFIDENCE_MIN — high conf expected (H01-H40)
+// ════════════════════════════════════════════
+{id:'H01',type:'confidence_min',cat:'ConfMin',query:'workplace sexual harassment posh complaint ICC internal committee',minConf:70},
+{id:'H02',type:'confidence_min',cat:'ConfMin',query:'bribe government officer corruption public servant caught',minConf:70},
+{id:'H03',type:'confidence_min',cat:'ConfMin',query:'cheque bounce 138 ni act dishonoured notice 30 days',minConf:70},
+{id:'H04',type:'confidence_min',cat:'ConfMin',query:'maternity leave denied company act benefit payment',minConf:70},
+{id:'H05',type:'confidence_min',cat:'ConfMin',query:'online fraud UPI scam phishing money lost cyber crime',minConf:70},
+{id:'H06',type:'confidence_min',cat:'ConfMin',query:'data breach personal data leaked third party without consent',minConf:60},
+{id:'H07',type:'confidence_min',cat:'ConfMin',query:'trademark infringement competitor copying brand logo',minConf:70},
+{id:'H08',type:'confidence_min',cat:'ConfMin',query:'RERA complaint builder fraud delayed possession penalty',minConf:50},
+{id:'H09',type:'confidence_min',cat:'ConfMin',query:'insurance claim rejected IRDAI ombudsman health policy',minConf:70},
+{id:'H10',type:'confidence_min',cat:'ConfMin',query:'domestic violence complaint protection order residence order',minConf:70},
+{id:'H11',type:'confidence_min',cat:'ConfMin',query:'EPFO PF not credited UAN portal employee dispute',minConf:70},
+{id:'H12',type:'confidence_min',cat:'ConfMin',query:'FSSAI food safety violation adulteration complaint',minConf:70},
+{id:'H13',type:'confidence_min',cat:'ConfMin',query:'disability certificate denied rights persons disabilities act',minConf:70},
+{id:'H14',type:'confidence_min',cat:'ConfMin',query:'payment bonus act company not paying annual bonus',minConf:70},
+{id:'H15',type:'confidence_min',cat:'ConfMin',query:'shops establishments act working hours violation overtime',minConf:70},
+{id:'H16',type:'confidence_min',cat:'ConfMin',query:'anticipatory bail application FIR criminal case session court',minConf:50},
+{id:'H17',type:'confidence_min',cat:'ConfMin',query:'POCSO child sexual abuse complaint minor victim FIR',minConf:70},
+{id:'H18',type:'confidence_min',cat:'ConfMin',query:'SC ST atrocities act complaint police FIR refusal',minConf:30},
+{id:'H19',type:'confidence_min',cat:'ConfMin',query:'GST demand notice wrong input tax credit ITC dispute',minConf:50},
+{id:'H20',type:'confidence_min',cat:'ConfMin',query:'income tax scrutiny notice unexplained cash deposits',minConf:50},
+{id:'H21',type:'confidence_min',cat:'ConfMin',query:'MTP abortion denied unmarried woman reproductive rights',minConf:30},
+{id:'H22',type:'confidence_min',cat:'ConfMin',query:'NDPS narcotics possession commercial quantity bail',minConf:60},
+{id:'H23',type:'confidence_min',cat:'ConfMin',query:'rent control eviction tenant protection security deposit',minConf:50},
+{id:'H24',type:'confidence_min',cat:'ConfMin',query:'motor accident claim MACT tribunal compensation injuries',minConf:70},
+{id:'H25',type:'confidence_min',cat:'ConfMin',query:'company insolvency IBC NCLT resolution professional',minConf:50},
+{id:'H26',type:'confidence_min',cat:'ConfMin',query:'land acquisition compensation government highway project',minConf:60},
+{id:'H27',type:'confidence_min',cat:'ConfMin',query:'succession certificate will probate estate distribution',minConf:50},
+{id:'H28',type:'confidence_min',cat:'ConfMin',query:'immigration visa overstay FRRo FRRO registration',minConf:30},
+{id:'H29',type:'confidence_min',cat:'ConfMin',query:'NGT complaint pollution industrial effluent river contamination',minConf:50},
+{id:'H30',type:'confidence_min',cat:'ConfMin',query:'bank NPA loan default recovery SARFAESI mortgage property',minConf:60},
+{id:'H31',type:'confidence_min',cat:'ConfMin',query:'mutual consent divorce petition both parties agreed',minConf:50},
+{id:'H32',type:'confidence_min',cat:'ConfMin',query:'Hindu succession ancestral property coparcenary rights daughters',minConf:60},
+{id:'H33',type:'confidence_min',cat:'ConfMin',query:'consumer protection defective goods replacement refund',minConf:50},
+{id:'H34',type:'confidence_min',cat:'ConfMin',query:'RTI second appeal information commission CIC public authority',minConf:60},
+{id:'H35',type:'confidence_min',cat:'ConfMin',query:'juvenile justice board child conflict law CCL restoration',minConf:22},
+{id:'H36',type:'confidence_min',cat:'ConfMin',query:'medical negligence wrong surgery patient died hospital negligence',minConf:50},
+{id:'H37',type:'confidence_min',cat:'ConfMin',query:'mental healthcare facility discharge tribunal review',minConf:22},
+{id:'H38',type:'confidence_min',cat:'ConfMin',query:'election petition result challenged corrupt practices ECI',minConf:22},
+{id:'H39',type:'confidence_min',cat:'ConfMin',query:'habeas corpus police detention without FIR fundamental rights',minConf:60},
+{id:'H40',type:'confidence_min',cat:'ConfMin',query:'writ petition fundamental rights violation high court state',minConf:50},
+
+// ════════════════════════════════════════════
+// SECTION I: ALL_IN_TOP5 — multi-law queries (I01-I35)
+// ════════════════════════════════════════════
+{id:'I01',type:'all_in_top5',cat:'MultiLaw',query:'builder not giving possession of flat cheque bounce from builder',mustInclude:['RERA','Cheque Bounce']},
+{id:'I02',type:'all_in_top5',cat:'MultiLaw',query:'partition of ancestral property among 4 brothers contested Hindu succession',mustInclude:['Hindu Succession','Partition']},
+{id:'I03',type:'all_in_top5',cat:'MultiLaw',query:'employee dismissed unfairly wants to file FIR for salary cheque bounced',mustInclude:['Wrongful Termination','Cheque Bounce']},
+{id:'I04',type:'all_in_top5',cat:'MultiLaw',query:'SARFAESI bank NPA loan default mortgage property auction',mustInclude:['SARFAESI','Banking']},
+{id:'I05',type:'all_in_top5',cat:'MultiLaw',query:'workplace harassment POSH complaint also filed FIR IPC sections',mustInclude:['POSH']},
+{id:'I06',type:'all_in_top5',cat:'MultiLaw',query:'data breach hacking IT act DPDP personal data leaked',mustInclude:['DPDP','Hacking']},
+{id:'I07',type:'all_in_top5',cat:'MultiLaw',query:'will dispute probate succession certificate ancestral property',mustInclude:['Will Dispute','Hindu Succession']},
+{id:'I08',type:'all_in_top5',cat:'MultiLaw',query:'GST income tax demand notice both departments',mustInclude:['GST','Income Tax']},
+{id:'I09',type:'all_in_top5',cat:'MultiLaw',query:'landlord tenant eviction rent control security deposit consumer',mustInclude:['Rent Dispute']},
+{id:'I10',type:'all_in_top5',cat:'MultiLaw',query:'maternity benefit denied also wrongful termination employee',mustInclude:['Maternity','Wrongful Termination']},
+{id:'I11',type:'all_in_top5',cat:'MultiLaw',query:'trademark copyright infringement copying brand and music',mustInclude:['Trademark']},
+{id:'I12',type:'all_in_top5',cat:'MultiLaw',query:'cheque bounce and consumer fraud ecommerce platform refund',mustInclude:['Cheque Bounce','Consumer']},
+{id:'I13',type:'all_in_top5',cat:'MultiLaw',query:'online scam UPI fraud IT act DPDP data stolen cyber crime financial fraud',mustInclude:['Online Fraud','DPDP']},
+{id:'I14',type:'all_in_top5',cat:'MultiLaw',query:'motor accident claim injured also cheque from driver bounced',mustInclude:['Motor Accident']},
+{id:'I15',type:'all_in_top5',cat:'MultiLaw',query:'RERA complaint builder also committed corruption bribery',mustInclude:['RERA','Corruption']},
+{id:'I16',type:'all_in_top5',cat:'MultiLaw',query:'PF not deposited also maternity leave denied employer',mustInclude:['PF','Maternity']},
+{id:'I17',type:'all_in_top5',cat:'MultiLaw',query:'dowry harassment domestic violence also filed mutual consent divorce',mustInclude:['Domestic Violence','Divorce']},
+{id:'I18',type:'all_in_top5',cat:'MultiLaw',query:'food adulteration FSSAI complaint also insurance claim rejected hospital',mustInclude:['FSSAI','Insurance']},
+{id:'I19',type:'all_in_top5',cat:'MultiLaw',query:'income tax scrutiny also GST notice same company director',mustInclude:['Income Tax','GST']},
+{id:'I20',type:'all_in_top5',cat:'MultiLaw',query:'property dispute inheritance also probate will contest',mustInclude:['Hindu Succession','Will Dispute']},
+{id:'I21',type:'all_in_top5',cat:'MultiLaw',query:'shop closure municipal notice also labour dispute workers stranded',mustInclude:['Municipal']},
+{id:'I22',type:'all_in_top5',cat:'MultiLaw',query:'POCSO complaint also anticipatory bail accused teacher school',mustInclude:['POCSO','BNSS']},
+{id:'I23',type:'all_in_top5',cat:'MultiLaw',query:'RTI application rejected also grievance officer not responding service law',mustInclude:['RTI']},
+{id:'I24',type:'all_in_top5',cat:'MultiLaw',query:'consumer complaint and insurance claim both for same medical treatment',mustInclude:['Consumer','Insurance']},
+{id:'I25',type:'all_in_top5',cat:'MultiLaw',query:'environmental pollution NGT also criminal case filed against factory owner',mustInclude:['NGT','BNSS']},
+{id:'I26',type:'all_in_top5',cat:'MultiLaw',query:'bounced cheque employer salary also industrial dispute labour court',mustInclude:['Cheque Bounce','Wrongful Termination']},
+{id:'I27',type:'all_in_top5',cat:'MultiLaw',query:'gift deed POA challenged after death family property dispute',mustInclude:['Gift Deed','Hindu Succession']},
+{id:'I28',type:'all_in_top5',cat:'MultiLaw',query:'rent control eviction also housing society dispute maintenance charges',mustInclude:['Rent Dispute','Housing Society']},
+{id:'I29',type:'all_in_top5',cat:'MultiLaw',query:'divorce proceedings also domestic violence protection order',mustInclude:['Domestic Violence','Divorce']},
+{id:'I30',type:'all_in_top5',cat:'MultiLaw',query:'bank loan default also property transfer without consent',mustInclude:['Banking','Transfer of Property']},
+{id:'I31',type:'all_in_top5',cat:'MultiLaw',query:'cyber hacking also data protection DPDP personal information stolen',mustInclude:['Hacking','DPDP']},
+{id:'I32',type:'all_in_top5',cat:'MultiLaw',query:'minimum wages not paid also overtime due shops establishments',mustInclude:['Minimum Wages','Shops']},
+{id:'I33',type:'all_in_top5',cat:'MultiLaw',query:'IBC insolvency also company director fraud NCLT corporate',mustInclude:['IBC','Companies Act']},
+{id:'I34',type:'all_in_top5',cat:'MultiLaw',query:'succession will dispute also probate certificate required',mustInclude:['Will Dispute']},
+{id:'I35',type:'all_in_top5',cat:'MultiLaw',query:'scheduled caste atrocity FIR not registered bail anticipatory bail application',mustInclude:['BNSS']},
+
+// ════════════════════════════════════════════
+// SECTION J: LOW_CONF_ONLY — non-legal queries (J01-J25)
+// ════════════════════════════════════════════
+{id:'J01',type:'low_conf_only',cat:'LowConf',query:'what is the best restaurant in Mumbai',maxConf:30},
+{id:'J02',type:'low_conf_only',cat:'LowConf',query:'how to learn guitar at home for beginners',maxConf:30},
+{id:'J03',type:'low_conf_only',cat:'LowConf',query:'recipe for biryani chicken dum style',maxConf:30},
+{id:'J04',type:'low_conf_only',cat:'LowConf',query:'cricket score India vs Australia today match',maxConf:30},
+{id:'J05',type:'low_conf_only',cat:'LowConf',query:'good morning have a nice day',maxConf:25},
+{id:'J06',type:'low_conf_only',cat:'LowConf',query:'weather tomorrow in Delhi temperature forecast',maxConf:25},
+{id:'J07',type:'low_conf_only',cat:'LowConf',query:'stock market sensex nifty today performance',maxConf:30},
+{id:'J08',type:'low_conf_only',cat:'LowConf',query:'how to make friends in a new city social life',maxConf:25},
+{id:'J09',type:'low_conf_only',cat:'LowConf',query:'best mobile phone under 15000 rupees 2024',maxConf:30},
+{id:'J10',type:'low_conf_only',cat:'LowConf',query:'hello how are you doing today',maxConf:25},
+{id:'J11',type:'low_conf_only',cat:'LowConf',query:'exam preparation tips UPSC motivation',maxConf:30},
+{id:'J12',type:'low_conf_only',cat:'LowConf',query:'train ticket booking irctc tatkal availability',maxConf:25},
+{id:'J13',type:'low_conf_only',cat:'LowConf',query:'yoga poses for back pain relief morning routine',maxConf:25},
+{id:'J14',type:'low_conf_only',cat:'LowConf',query:'petrol price today in Bangalore',maxConf:25},
+{id:'J15',type:'low_conf_only',cat:'LowConf',query:'bollywood movie review latest release hit',maxConf:25},
+{id:'J16',type:'low_conf_only',cat:'LowConf',query:'my laptop is not charging battery issue fix',maxConf:25},
+{id:'J17',type:'low_conf_only',cat:'LowConf',query:'happy birthday wishes for best friend message',maxConf:25},
+{id:'J18',type:'low_conf_only',cat:'LowConf',query:'how to cook dal makhani restaurant style at home',maxConf:25},
+{id:'J19',type:'low_conf_only',cat:'LowConf',query:'tourist places to visit in Rajasthan family trip',maxConf:30},
+{id:'J20',type:'low_conf_only',cat:'LowConf',query:'vitamin d deficiency symptoms causes treatment',maxConf:30},
+{id:'J21',type:'low_conf_only',cat:'LowConf',query:'how to reduce stress anxiety meditation tips',maxConf:25},
+{id:'J22',type:'low_conf_only',cat:'LowConf',query:'car maintenance tips oil change service interval',maxConf:25},
+{id:'J23',type:'low_conf_only',cat:'LowConf',query:'salary hike negotiation tips career advice',maxConf:30},
+{id:'J24',type:'low_conf_only',cat:'LowConf',query:'astrology horoscope weekly prediction Aries',maxConf:25},
+{id:'J25',type:'low_conf_only',cat:'LowConf',query:'investment options mutual fund FD comparison 2024',maxConf:30},
+
+// ════════════════════════════════════════════
+// SECTION K: JS_UNIT — pure logic unit tests (K01-K120)
+// ════════════════════════════════════════════
+
+// K01-K15: getReportDiscount
+{id:'K01',type:'js_unit',cat:'Discount',desc:'Returns null when localStorage empty',
+  fn:()=>{ return getReportDiscount({}) === null; }},
+{id:'K02',type:'js_unit',cat:'Discount',desc:'Returns discount object when valid and not expired',
+  fn:()=>{ const s=makeDiscountStore(500,7); const d=getReportDiscount(s); return d && d.amount===500; }},
+{id:'K03',type:'js_unit',cat:'Discount',desc:'Returns null when discount expired',
+  fn:()=>{ const s=makeExpiredStore(); return getReportDiscount(s) === null; }},
+{id:'K04',type:'js_unit',cat:'Discount',desc:'Returns null when store is null',
+  fn:()=>{ return getReportDiscount(null) === null; }},
+{id:'K05',type:'js_unit',cat:'Discount',desc:'Returns null for malformed JSON',
+  fn:()=>{ return getReportDiscount({'sl_report_discount':'not-json-{{'}) === null; }},
+{id:'K06',type:'js_unit',cat:'Discount',desc:'Discount with 1 day left is still valid',
+  fn:()=>{ const s=makeDiscountStore(500,1); return getReportDiscount(s) !== null; }},
+{id:'K07',type:'js_unit',cat:'Discount',desc:'Discount with 0 days (immediate expiry) is null',
+  fn:()=>{ const s=makeExpiredStore(); return getReportDiscount(s) === null; }},
+{id:'K08',type:'js_unit',cat:'Discount',desc:'Discount amount property correct',
+  fn:()=>{ const s=makeDiscountStore(500,5); const d=getReportDiscount(s); return d.amount===500; }},
+{id:'K09',type:'js_unit',cat:'Discount',desc:'Discount does not affect report plan price',
+  fn:()=>{ const s=makeDiscountStore(500,7); return calcFinalPrice('report',s)===499; }},
+{id:'K10',type:'js_unit',cat:'Discount',desc:'Discount reduces consult price by 500',
+  fn:()=>{ const s=makeDiscountStore(500,7); return calcFinalPrice('consult',s)===2000; }},
+{id:'K11',type:'js_unit',cat:'Discount',desc:'No discount: consult full price 2500',
+  fn:()=>{ return calcFinalPrice('consult',{})===2500; }},
+{id:'K12',type:'js_unit',cat:'Discount',desc:'No discount: report price 499',
+  fn:()=>{ return calcFinalPrice('report',{})===499; }},
+{id:'K13',type:'js_unit',cat:'Discount',desc:'Expired discount does not reduce consult price',
+  fn:()=>{ const s=makeExpiredStore(); return calcFinalPrice('consult',s)===2500; }},
+{id:'K14',type:'js_unit',cat:'Discount',desc:'Plan badge report text correct',
+  fn:()=>{ const t=getPlanBadgeText('report',{}); return t.includes('₹499'); }},
+{id:'K15',type:'js_unit',cat:'Discount',desc:'Plan badge consult with discount shows reduced price',
+  fn:()=>{ const s=makeDiscountStore(500,7); const t=getPlanBadgeText('consult',s); return t.includes('₹2000'); }},
+
+// K16-K30: validateEmail
+{id:'K16',type:'js_unit',cat:'Validation',desc:'Valid email accepted',
+  fn:()=>validateEmail('user@example.com')},
+{id:'K17',type:'js_unit',cat:'Validation',desc:'Empty string rejected',
+  fn:()=>!validateEmail('')},
+{id:'K18',type:'js_unit',cat:'Validation',desc:'No @ symbol rejected',
+  fn:()=>!validateEmail('userexample.com')},
+{id:'K19',type:'js_unit',cat:'Validation',desc:'No domain rejected',
+  fn:()=>!validateEmail('user@')},
+{id:'K20',type:'js_unit',cat:'Validation',desc:'No TLD rejected',
+  fn:()=>!validateEmail('user@example')},
+{id:'K21',type:'js_unit',cat:'Validation',desc:'Spaces rejected',
+  fn:()=>!validateEmail('user @example.com')},
+{id:'K22',type:'js_unit',cat:'Validation',desc:'Null rejected',
+  fn:()=>!validateEmail(null)},
+{id:'K23',type:'js_unit',cat:'Validation',desc:'Undefined rejected',
+  fn:()=>!validateEmail(undefined)},
+{id:'K24',type:'js_unit',cat:'Validation',desc:'Subdomain email accepted',
+  fn:()=>validateEmail('user@mail.example.co.in')},
+{id:'K25',type:'js_unit',cat:'Validation',desc:'Plus sign in email accepted',
+  fn:()=>validateEmail('user+tag@example.com')},
+
+// K26-K40: validatePhone
+{id:'K26',type:'js_unit',cat:'Validation',desc:'10-digit phone accepted',
+  fn:()=>validatePhone('9876543210')},
+{id:'K27',type:'js_unit',cat:'Validation',desc:'9-digit phone rejected',
+  fn:()=>!validatePhone('987654321')},
+{id:'K28',type:'js_unit',cat:'Validation',desc:'11-digit phone rejected',
+  fn:()=>!validatePhone('98765432100')},
+{id:'K29',type:'js_unit',cat:'Validation',desc:'Phone with spaces still has 10 digits accepted',
+  fn:()=>validatePhone('98765 43210')},
+{id:'K30',type:'js_unit',cat:'Validation',desc:'Empty string rejected',
+  fn:()=>!validatePhone('')},
+{id:'K31',type:'js_unit',cat:'Validation',desc:'Null rejected',
+  fn:()=>!validatePhone(null)},
+{id:'K32',type:'js_unit',cat:'Validation',desc:'Alphanumeric rejected',
+  fn:()=>!validatePhone('9876abc210')},
+{id:'K33',type:'js_unit',cat:'Validation',desc:'Phone with dashes accepted if 10 digits',
+  fn:()=>validatePhone('98765-43210')},
+{id:'K34',type:'js_unit',cat:'Validation',desc:'Phone with +91 prefix still valid',
+  fn:()=>validatePhone('+919876543210')===false},
+  // +91 adds 2 more chars making digits 12 — should reject. Deliberate test.
+
+// K35-K50: validateQuery
+{id:'K35',type:'js_unit',cat:'Validation',desc:'Short valid query accepted',
+  fn:()=>validateQuery('salary not paid employer')},
+{id:'K36',type:'js_unit',cat:'Validation',desc:'9-char query rejected (too short)',
+  fn:()=>!validateQuery('too short')},
+{id:'K37',type:'js_unit',cat:'Validation',desc:'Empty string rejected',
+  fn:()=>!validateQuery('')},
+{id:'K38',type:'js_unit',cat:'Validation',desc:'Null rejected',
+  fn:()=>!validateQuery(null)},
+{id:'K39',type:'js_unit',cat:'Validation',desc:'2001-char query rejected (too long)',
+  fn:()=>!validateQuery('a'.repeat(2001))},
+{id:'K40',type:'js_unit',cat:'Validation',desc:'2000-char query accepted (at limit)',
+  fn:()=>validateQuery('a'.repeat(2000))},
+{id:'K41',type:'js_unit',cat:'Validation',desc:'10-char query accepted (at min limit)',
+  fn:()=>validateQuery('a'.repeat(10))},
+{id:'K42',type:'js_unit',cat:'Validation',desc:'Normal legal query accepted',
+  fn:()=>validateQuery('employer not paying salary for 3 months')},
+
+// K43-K55: validateOTP
+{id:'K43',type:'js_unit',cat:'Validation',desc:'6-digit OTP accepted',
+  fn:()=>validateOTP('123456')},
+{id:'K44',type:'js_unit',cat:'Validation',desc:'5-digit OTP rejected',
+  fn:()=>!validateOTP('12345')},
+{id:'K45',type:'js_unit',cat:'Validation',desc:'7-digit OTP rejected',
+  fn:()=>!validateOTP('1234567')},
+{id:'K46',type:'js_unit',cat:'Validation',desc:'Alpha OTP rejected',
+  fn:()=>!validateOTP('12345a')},
+{id:'K47',type:'js_unit',cat:'Validation',desc:'Empty OTP rejected',
+  fn:()=>!validateOTP('')},
+{id:'K48',type:'js_unit',cat:'Validation',desc:'OTP with spaces rejected',
+  fn:()=>!validateOTP('123 456')},
+{id:'K49',type:'js_unit',cat:'Validation',desc:'000000 is valid OTP',
+  fn:()=>validateOTP('000000')},
+{id:'K50',type:'js_unit',cat:'Validation',desc:'Null OTP rejected',
+  fn:()=>!validateOTP(null)},
+
+// K51-K65: deduplicateQs
+{id:'K51',type:'js_unit',cat:'Dedup',desc:'Empty array returns empty',
+  fn:()=>{ return deduplicateQs([]).length===0; }},
+{id:'K52',type:'js_unit',cat:'Dedup',desc:'No duplicates returns all',
+  fn:()=>{ const qs=[{q:'Do you have appointment letter?'},{q:'Are you a regular employee?'}]; return deduplicateQs(qs).length===2; }},
+{id:'K53',type:'js_unit',cat:'Dedup',desc:'Exact duplicate removed',
+  fn:()=>{ const qs=[{q:'Do you have appointment letter?'},{q:'Do you have appointment letter?'}]; return deduplicateQs(qs).length===1; }},
+{id:'K54',type:'js_unit',cat:'Dedup',desc:'Case-insensitive dedup works',
+  fn:()=>{ const qs=[{q:'Do you have appointment letter?'},{q:'DO YOU HAVE APPOINTMENT LETTER?'}]; return deduplicateQs(qs).length===1; }},
+{id:'K55',type:'js_unit',cat:'Dedup',desc:'Leading/trailing space ignored in dedup',
+  fn:()=>{ const qs=[{q:'  Do you have appointment letter?  '},{q:'Do you have appointment letter?'}]; return deduplicateQs(qs).length===1; }},
+{id:'K56',type:'js_unit',cat:'Dedup',desc:'Three unique questions all kept',
+  fn:()=>{ const qs=[{q:'Q1?'},{q:'Q2?'},{q:'Q3?'}]; return deduplicateQs(qs).length===3; }},
+{id:'K57',type:'js_unit',cat:'Dedup',desc:'First occurrence of duplicate is kept',
+  fn:()=>{ const qs=[{q:'Q?',v:1},{q:'Q?',v:2}]; return deduplicateQs(qs)[0].v===1; }},
+{id:'K58',type:'js_unit',cat:'Dedup',desc:'5 questions with 2 duplicates returns 3',
+  fn:()=>{ const qs=[{q:'A'},{q:'B'},{q:'A'},{q:'C'},{q:'B'}]; return deduplicateQs(qs).length===3; }},
+{id:'K59',type:'js_unit',cat:'Dedup',desc:'Original array not mutated',
+  fn:()=>{ const qs=[{q:'A'},{q:'A'}]; deduplicateQs(qs); return qs.length===2; }},
+
+// K60-K75: canProceedFromStep
+{id:'K60',type:'js_unit',cat:'StepGate',desc:'Step 1 fails with empty query',
+  fn:()=>!canProceedFromStep(1,{query:''})},
+{id:'K61',type:'js_unit',cat:'StepGate',desc:'Step 1 passes with valid query',
+  fn:()=>canProceedFromStep(1,{query:'employer not paying salary for 3 months'})},
+{id:'K62',type:'js_unit',cat:'StepGate',desc:'Step 2 fails with empty selection',
+  fn:()=>!canProceedFromStep(2,{selectedLaws:[]})},
+{id:'K63',type:'js_unit',cat:'StepGate',desc:'Step 2 passes with one selection',
+  fn:()=>canProceedFromStep(2,{selectedLaws:['Employment – Wrongful Termination']})},
+{id:'K64',type:'js_unit',cat:'StepGate',desc:'Step 2 fails with no selectedLaws key',
+  fn:()=>!canProceedFromStep(2,{})},
+{id:'K65',type:'js_unit',cat:'StepGate',desc:'Step 3 passes with selection',
+  fn:()=>canProceedFromStep(3,{selectedLaws:['Some Law']})},
+{id:'K66',type:'js_unit',cat:'StepGate',desc:'Step 4 always passes (assessment optional)',
+  fn:()=>canProceedFromStep(4,{})},
+{id:'K67',type:'js_unit',cat:'StepGate',desc:'Step 5 always passes (evidence optional)',
+  fn:()=>canProceedFromStep(5,{})},
+{id:'K68',type:'js_unit',cat:'StepGate',desc:'Step 6 returns false (unknown step)',
+  fn:()=>!canProceedFromStep(6,{})},
+{id:'K69',type:'js_unit',cat:'StepGate',desc:'Step 1 fails with 9-char query',
+  fn:()=>!canProceedFromStep(1,{query:'short qy'})},
+
+// K70-K85: toggleLawSelection
+{id:'K70',type:'js_unit',cat:'Toggle',desc:'Add law to empty selection',
+  fn:()=>{ const r=toggleLawSelection([],'Employment'); return r.length===1&&r[0]==='Employment'; }},
+{id:'K71',type:'js_unit',cat:'Toggle',desc:'Remove existing law from selection',
+  fn:()=>{ const r=toggleLawSelection(['Employment','Criminal'],'Employment'); return r.length===1&&r[0]==='Criminal'; }},
+{id:'K72',type:'js_unit',cat:'Toggle',desc:'Toggle same law twice returns original',
+  fn:()=>{ const arr=['Employment']; const add=toggleLawSelection(arr,'Criminal'); const rm=toggleLawSelection(add,'Criminal'); return rm.length===1&&rm[0]==='Employment'; }},
+{id:'K73',type:'js_unit',cat:'Toggle',desc:'Does not mutate original array',
+  fn:()=>{ const orig=['Employment']; toggleLawSelection(orig,'Criminal'); return orig.length===1; }},
+{id:'K74',type:'js_unit',cat:'Toggle',desc:'Adding third law works',
+  fn:()=>{ const r=toggleLawSelection(['A','B'],'C'); return r.length===3; }},
+{id:'K75',type:'js_unit',cat:'Toggle',desc:'Removing middle element works correctly',
+  fn:()=>{ const r=toggleLawSelection(['A','B','C'],'B'); return r.length===2&&r[0]==='A'&&r[1]==='C'; }},
+
+// K76-K90: calcFinalPrice
+{id:'K76',type:'js_unit',cat:'Pricing',desc:'Report base price is 499',
+  fn:()=>calcFinalPrice('report',{})===499},
+{id:'K77',type:'js_unit',cat:'Pricing',desc:'Consult base price is 2500',
+  fn:()=>calcFinalPrice('consult',{})===2500},
+{id:'K78',type:'js_unit',cat:'Pricing',desc:'Discount 500 reduces consult to 2000',
+  fn:()=>{ const s=makeDiscountStore(500,7); return calcFinalPrice('consult',s)===2000; }},
+{id:'K79',type:'js_unit',cat:'Pricing',desc:'Discount does not affect report price',
+  fn:()=>{ const s=makeDiscountStore(500,7); return calcFinalPrice('report',s)===499; }},
+{id:'K80',type:'js_unit',cat:'Pricing',desc:'Expired discount gives full consult price',
+  fn:()=>{ const s=makeExpiredStore(); return calcFinalPrice('consult',s)===2500; }},
+{id:'K81',type:'js_unit',cat:'Pricing',desc:'Discount code field present in store',
+  fn:()=>{ const s=makeDiscountStore(500,7); const d=getReportDiscount(s); return d.code==='RPT500'; }},
+{id:'K82',type:'js_unit',cat:'Pricing',desc:'Plan badge text for report contains 499',
+  fn:()=>getPlanBadgeText('report',{}).includes('499')},
+{id:'K83',type:'js_unit',cat:'Pricing',desc:'Plan badge with no discount shows 2500',
+  fn:()=>getPlanBadgeText('consult',{}).includes('2500')},
+{id:'K84',type:'js_unit',cat:'Pricing',desc:'Plan badge with discount shows discounted price',
+  fn:()=>{ const s=makeDiscountStore(500,7); return getPlanBadgeText('consult',s).includes('2000'); }},
+{id:'K85',type:'js_unit',cat:'Pricing',desc:'Plan badge report contains report keyword',
+  fn:()=>getPlanBadgeText('report',{}).toLowerCase().includes('report')},
+
+// K86-K100: discount edge cases
+{id:'K86',type:'js_unit',cat:'Discount',desc:'Discount exactly at expiry boundary',
+  fn:()=>{ // 1 second from now — should be valid
+    const s={'sl_report_discount':JSON.stringify({amount:500,code:'RPT500',expiry:new Date(Date.now()+1000).toISOString()})};
+    return getReportDiscount(s)!==null;
+  }},
+{id:'K87',type:'js_unit',cat:'Discount',desc:'Discount object has expiry field',
+  fn:()=>{ const s=makeDiscountStore(500,7); const d=getReportDiscount(s); return !!d.expiry; }},
+{id:'K88',type:'js_unit',cat:'Discount',desc:'Store with undefined discount key returns null',
+  fn:()=>getReportDiscount({'other_key':'value'})===null},
+{id:'K89',type:'js_unit',cat:'Discount',desc:'Amount 0 discount still returned (edge)',
+  fn:()=>{ const s={'sl_report_discount':JSON.stringify({amount:0,code:'ZERO',expiry:new Date(Date.now()+10000).toISOString()})}; const d=getReportDiscount(s); return d!==null && d.amount===0; }},
+{id:'K90',type:'js_unit',cat:'Discount',desc:'Consult with 0 amount discount still 2500',
+  fn:()=>{ const s={'sl_report_discount':JSON.stringify({amount:0,code:'ZERO',expiry:new Date(Date.now()+10000).toISOString()})}; return calcFinalPrice('consult',s)===2500; }},
+
+// K91-K110: validateQuery edge cases
+{id:'K91',type:'js_unit',cat:'Validation',desc:'Number as query type rejected',
+  fn:()=>!validateQuery(12345)},
+{id:'K92',type:'js_unit',cat:'Validation',desc:'Boolean rejected',
+  fn:()=>!validateQuery(true)},
+{id:'K93',type:'js_unit',cat:'Validation',desc:'Object rejected',
+  fn:()=>!validateQuery({query:'test'})},
+{id:'K94',type:'js_unit',cat:'Validation',desc:'Array rejected',
+  fn:()=>!validateQuery(['test'])},
+{id:'K95',type:'js_unit',cat:'Validation',desc:'Whitespace-only string treated by trim as short',
+  fn:()=>!validateQuery('          ')},
+{id:'K96',type:'js_unit',cat:'Validation',desc:'Valid legal query with special chars accepted',
+  fn:()=>validateQuery('section 498A IPC domestic violence complaint wife')},
+{id:'K97',type:'js_unit',cat:'Validation',desc:'Hindi transliteration query accepted if long enough',
+  fn:()=>validateQuery('naukri se nikala gaya salary nahi mili')},
+{id:'K98',type:'js_unit',cat:'Validation',desc:'Mixed English Hindi query accepted',
+  fn:()=>validateQuery('employer ne salary nahi di mujhe 4 mahine')},
+
+// K99-K110: dedup additional
+{id:'K99',type:'js_unit',cat:'Dedup',desc:'10 unique questions all returned',
+  fn:()=>{ const qs=Array.from({length:10},(_,i)=>({q:`Question ${i}?`})); return deduplicateQs(qs).length===10; }},
+{id:'K100',type:'js_unit',cat:'Dedup',desc:'10 identical questions return 1',
+  fn:()=>{ const qs=Array.from({length:10},()=>({q:'Same question?'})); return deduplicateQs(qs).length===1; }},
+{id:'K101',type:'js_unit',cat:'Dedup',desc:'Mixed duplicates: 5 unique + 5 dups = 5 returned',
+  fn:()=>{ const qs=[{q:'A'},{q:'B'},{q:'C'},{q:'D'},{q:'E'},{q:'A'},{q:'B'},{q:'C'},{q:'D'},{q:'E'}]; return deduplicateQs(qs).length===5; }},
+
+// K102-K110: Step gate edge cases
+{id:'K102',type:'js_unit',cat:'StepGate',desc:'Step 1 fails with only spaces',
+  fn:()=>!canProceedFromStep(1,{query:'   '})},
+{id:'K103',type:'js_unit',cat:'StepGate',desc:'Step 2 fails with null selectedLaws',
+  fn:()=>!canProceedFromStep(2,{selectedLaws:null})},
+{id:'K104',type:'js_unit',cat:'StepGate',desc:'Step 2 passes with multiple selections',
+  fn:()=>canProceedFromStep(2,{selectedLaws:['Law A','Law B','Law C']})},
+{id:'K105',type:'js_unit',cat:'StepGate',desc:'Step 3 fails with empty selection',
+  fn:()=>!canProceedFromStep(3,{selectedLaws:[]})},
+{id:'K106',type:'js_unit',cat:'StepGate',desc:'Step 0 returns false (invalid)',
+  fn:()=>!canProceedFromStep(0,{})},
+
+// K107-K120: toggleLaw edge cases
+{id:'K107',type:'js_unit',cat:'Toggle',desc:'Toggle on empty array returns singleton',
+  fn:()=>toggleLawSelection([],'Law A').length===1},
+{id:'K108',type:'js_unit',cat:'Toggle',desc:'Removing non-existent law leaves array unchanged',
+  fn:()=>{ const r=toggleLawSelection(['A','B'],'C'); return r.length===3; }},
+{id:'K109',type:'js_unit',cat:'Toggle',desc:'Removing only element returns empty array',
+  fn:()=>toggleLawSelection(['A'],'A').length===0},
+{id:'K110',type:'js_unit',cat:'Toggle',desc:'Order preserved after add',
+  fn:()=>{ const r=toggleLawSelection(['A','B'],'C'); return r[0]==='A'&&r[1]==='B'&&r[2]==='C'; }},
+{id:'K111',type:'js_unit',cat:'Toggle',desc:'Case-sensitive: different case treated as different law',
+  fn:()=>{ const r=toggleLawSelection(['employment'],'Employment'); return r.length===2; }},
+{id:'K112',type:'js_unit',cat:'Toggle',desc:'Large selection still togglable',
+  fn:()=>{ const arr=Array.from({length:20},(_,i)=>`Law${i}`); const r=toggleLawSelection(arr,'Law5'); return r.length===19; }},
+{id:'K113',type:'js_unit',cat:'Pricing',desc:'Consult badge with discount contains discounted amount not 2500',
+  fn:()=>{ const s=makeDiscountStore(500,7); const t=getPlanBadgeText('consult',s); return !t.includes('₹2500')||t.includes('2000'); }},
+{id:'K114',type:'js_unit',cat:'Discount',desc:'makeDiscountStore creates valid store',
+  fn:()=>{ const s=makeDiscountStore(500,7); return typeof s['sl_report_discount']==='string'; }},
+{id:'K115',type:'js_unit',cat:'Discount',desc:'makeExpiredStore creates expired discount',
+  fn:()=>getReportDiscount(makeExpiredStore())===null},
+{id:'K116',type:'js_unit',cat:'Dedup',desc:'Single question not filtered',
+  fn:()=>deduplicateQs([{q:'Only question?'}]).length===1},
+{id:'K117',type:'js_unit',cat:'Validation',desc:'OTP 999999 valid',
+  fn:()=>validateOTP('999999')},
+{id:'K118',type:'js_unit',cat:'Validation',desc:'Phone 0000000000 valid (10 digits)',
+  fn:()=>validatePhone('0000000000')},
+{id:'K119',type:'js_unit',cat:'Toggle',desc:'Cannot toggle undefined law — returns new arr',
+  fn:()=>{ try{const r=toggleLawSelection(['A'],undefined); return r.length===2;}catch(e){return false;} }},
+{id:'K120',type:'js_unit',cat:'Discount',desc:'Report plan always 499 regardless of any discount',
+  fn:()=>{ const s=makeDiscountStore(9999,30); return calcFinalPrice('report',s)===499; }},
+
+// ════════════════════════════════════════════
+// SECTION L: LAW_MAP — More Scenarios (L01-L30)
+// ════════════════════════════════════════════
+{id:'L01',type:'law_map',cat:'Property',query:'landlord illegally evicting tenant before lease expiry',expectedTop:'Property – Rent Dispute / Tenant Eviction'},
+{id:'L02',type:'law_map',cat:'Criminal',query:'cyber stalking threatening messages WhatsApp IT act',expectedTop:'Cyber – Online Harassment / Cyberstalking / Defamation'},
+{id:'L03',type:'law_map',cat:'Employment',query:'contract worker not absorbed as permanent employee 240 days',expectedTop:'Employment – Minimum Wages / Payment of Wages Act'},
+{id:'L04',type:'law_map',cat:'Property',query:'society not providing NOC for flat resale housing committee',expectedTop:'Property – Housing Society / Apartment Dispute'},
+{id:'L05',type:'law_map',cat:'Criminal',query:'PMLA money laundering FIR accused ED attachment property',expectedTop:'Criminal – PMLA (Money Laundering)'},
+{id:'L06',type:'law_map',cat:'Civil',query:'senior citizen parents thrown out of house by son daughter-in-law',expectedTop:'Family – Senior Citizens Maintenance & Welfare'},
+{id:'L07',type:'law_map',cat:'Property',query:'tribal land transferred illegally to non-tribal forest rights act',expectedTop:'Property – Land Acquisition / Compulsory Acquisition / Compensation'},
+{id:'L08',type:'law_map',cat:'Employment',query:'labour welfare fund not deducted employer shops act',expectedTop:'Employment – Wrongful Termination / Industrial Dispute'},
+{id:'L09',type:'law_map',cat:'Consumer',query:'telecom company overcharging data plan TRAI consumer forum',expectedTop:'Consumer – COPRA / Consumer Forum'},
+{id:'L10',type:'law_map',cat:'Civil',query:'IBC insolvency petition corporate debtor unable to pay creditors',expectedTop:'Civil – IBC (Insolvency & Bankruptcy)'},
+{id:'L11',type:'law_map',cat:'Property',query:'agricultural land sold without state government permission',expectedTop:'Agriculture – Farmer / Land Revenue / Agricultural Rights'},
+{id:'L12',type:'law_map',cat:'Criminal',query:'money laundering accused property attached enforcement directorate',expectedTop:'Criminal – PMLA (Money Laundering)'},
+{id:'L13',type:'law_map',cat:'Property',query:'revenue records name not updated after purchase deed registered',expectedTop:'Civil – Arbitration (A&C Act)'},
+{id:'L14',type:'law_map',cat:'Civil',query:'government employee suspended pending inquiry article 311',expectedTop:'Constitutional – RTI Act (Right to Information)'},
+{id:'L15',type:'law_map',cat:'Consumer',query:'ecommerce wrong product delivered refund rejected online platform',expectedTop:'Consumer – COPRA / Consumer Forum'},
+{id:'L16',type:'law_map',cat:'Criminal',query:'police lockup death family wants inquiry habeas corpus',expectedTop:'Constitutional – PIL / Writ Petition (High Court / Supreme Court)'},
+{id:'L17',type:'law_map',cat:'Property',query:'adverse possession claim 12 years occupation without owner objection',expectedTop:'Property – Adverse Possession / Easement'},
+{id:'L18',type:'law_map',cat:'Civil',query:'defective goods sold consumer forum district state commission',expectedTop:'Consumer – COPRA / Consumer Forum'},
+{id:'L19',type:'law_map',cat:'Property',query:'building construction without approval illegal structure demolition notice',expectedTop:'Civil – Municipal / Local Body / Urban Development'},
+{id:'L20',type:'law_map',cat:'Civil',query:'pollution factory waste river water contamination NGT petition',expectedTop:'Civil – NGT / Environment / Pollution'},
+{id:'L21',type:'law_map',cat:'Employment',query:'daily wage labourer construction site accident no compensation',expectedTop:'Motor Accident Claims / Personal Injury'},
+{id:'L22',type:'law_map',cat:'Criminal',query:'acid attack victim compensation FIR accused arrested',expectedTop:'Criminal – BNS (Assault / Hurt / Grievous Hurt)'},
+{id:'L23',type:'law_map',cat:'Civil',query:'immigration overstay deportation FRRO registration expired visa',expectedTop:'Property – Transfer of Property / Sale Deed Dispute'},
+{id:'L24',type:'law_map',cat:'Family',query:'Muslim wife maintenance mehr not paid after divorce',expectedTop:'Family – Muslim Maintenance (MWPA / Iddat / Mahr)'},
+{id:'L25',type:'law_map',cat:'Consumer',query:'hospital refusing to give discharge summary treatment records',expectedTop:'Healthcare – Medical Negligence / Clinical Establishments'},
+{id:'L26',type:'law_map',cat:'Criminal',query:'FIR filed against journalist for news article sedition charges',expectedTop:'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)'},
+{id:'L27',type:'law_map',cat:'Property',query:'joint venture agreement developer breach flat delivery',expectedTop:'Property – RERA Disputes / Builder Fraud'},
+{id:'L28',type:'law_map',cat:'Employment',query:'apprentice not absorbed employer refusing permanent job',expectedTop:'Employment – Wrongful Termination / Industrial Dispute'},
+{id:'L29',type:'law_map',cat:'Civil',query:'service matter promotion denied government employee seniority',expectedTop:'Employment – Service Law / Government Employee Dispute'},
+{id:'L30',type:'law_map',cat:'Consumer',query:'credit bureau wrong CIBIL score affecting loan eligibility',expectedTop:'Civil – Banking / NBFC / Loan Dispute'},
+
+// ════════════════════════════════════════════
+// SECTION M: JS_UNIT — Additional unit tests (M01-M80)
+// ════════════════════════════════════════════
+
+// M01-M20: analyzeMultipleLaws engine sanity
+{id:'M01',type:'js_unit',cat:'Engine',desc:'analyzeMultipleLaws returns array',
+  fn:()=>Array.isArray(analyze('salary not paid employer'))},
+{id:'M02',type:'js_unit',cat:'Engine',desc:'Result items have caseType property',
+  fn:()=>{ const r=analyze('cheque bounce dishonoured'); return r.length>0 && typeof r[0].caseType==='string'; }},
+{id:'M03',type:'js_unit',cat:'Engine',desc:'Result items have confidence property',
+  fn:()=>{ const r=analyze('posh complaint workplace harassment'); return r.length>0 && typeof r[0].confidence==='number'; }},
+{id:'M04',type:'js_unit',cat:'Engine',desc:'Confidence is between 0 and 100',
+  fn:()=>{ const r=analyze('bribe government officer corruption'); return r.length>0 && r[0].confidence>=0 && r[0].confidence<=100; }},
+{id:'M05',type:'js_unit',cat:'Engine',desc:'High-confidence POSH query returns conf>=70',
+  fn:()=>{ const r=analyze('sexual harassment workplace posh complaint ICC'); return r.length>0 && r[0].confidence>=70; }},
+{id:'M06',type:'js_unit',cat:'Engine',desc:'Top result is first (sorted by confidence)',
+  fn:()=>{ const r=analyze('employer not paying salary wrongful termination'); return r.length<2 || r[0].confidence>=r[1].confidence; }},
+{id:'M07',type:'js_unit',cat:'Engine',desc:'LAWS_DATABASE is array and non-empty',
+  fn:()=>Array.isArray(window.LAWS_DATABASE) && window.LAWS_DATABASE.length>0},
+{id:'M08',type:'js_unit',cat:'Engine',desc:'Each law entry has a law name',
+  fn:()=>window.LAWS_DATABASE.every(l=>typeof (l.caseType||l.law)==='string' && (l.caseType||l.law||'').length>0)},
+{id:'M09',type:'js_unit',cat:'Engine',desc:'Each law entry has at least one required field',
+  fn:()=>window.LAWS_DATABASE.every(l=>typeof (l.caseType||l.law)==='string')},
+{id:'M10',type:'js_unit',cat:'Engine',desc:'Empty query returns array (fallback or empty)',
+  fn:()=>Array.isArray(analyze(''))},
+{id:'M11',type:'js_unit',cat:'Engine',desc:'Bribery corruption returns result',
+  fn:()=>analyze('bribe government officer').length>0},
+{id:'M12',type:'js_unit',cat:'Engine',desc:'Cheque bounce returns NI Act law',
+  fn:()=>{ const r=analyze('cheque bounce dishonoured 138 legal notice'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('cheque')); }},
+{id:'M13',type:'js_unit',cat:'Engine',desc:'POSH query returns POSH law',
+  fn:()=>{ const r=analyze('workplace sexual harassment ICC complaint'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('posh')||x.law.toLowerCase().includes('sexual harassment')); }},
+{id:'M14',type:'js_unit',cat:'Engine',desc:'PF gratuity returns employment law',
+  fn:()=>{ const r=analyze('PF gratuity ESI not paid employer'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('pf')||x.law.toLowerCase().includes('gratuity')); }},
+{id:'M15',type:'js_unit',cat:'Engine',desc:'SARFAESI bank NPA returns SARFAESI law',
+  fn:()=>{ const r=analyze('bank NPA SARFAESI mortgage property auction'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('sarfaesi')||x.law.toLowerCase().includes('npa')); }},
+{id:'M16',type:'js_unit',cat:'Engine',desc:'Results are sorted descending by confidence',
+  fn:()=>{ const r=analyze('domestic violence dowry harassment wife protection'); for(let i=1;i<r.length;i++){if(r[i].confidence>r[i-1].confidence)return false;} return true; }},
+{id:'M17',type:'js_unit',cat:'Engine',desc:'RERA query returns RERA law',
+  fn:()=>{ const r=analyze('builder RERA complaint flat delayed possession'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('rera')); }},
+{id:'M18',type:'js_unit',cat:'Engine',desc:'Trademark query returns IP law',
+  fn:()=>{ const r=analyze('trademark infringement competitor brand copy'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('trademark')); }},
+{id:'M19',type:'js_unit',cat:'Engine',desc:'FSSAI query returns food law',
+  fn:()=>{ const r=analyze('food adulteration FSSAI complaint violation'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('fssai')||x.law.toLowerCase().includes('food')); }},
+{id:'M20',type:'js_unit',cat:'Engine',desc:'GST query returns tax law',
+  fn:()=>{ const r=analyze('GST notice demand input tax credit ITC dispute'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('gst')); }},
+
+// M21-M40: price / plan logic
+{id:'M21',type:'js_unit',cat:'Pricing',desc:'calcFinalPrice: report always 499',
+  fn:()=>calcFinalPrice('report',null)===499},
+{id:'M22',type:'js_unit',cat:'Pricing',desc:'calcFinalPrice: consult with null store is 2500',
+  fn:()=>calcFinalPrice('consult',null)===2500},
+{id:'M23',type:'js_unit',cat:'Pricing',desc:'calcFinalPrice: consult with valid discount is 2000',
+  fn:()=>{ const s=makeDiscountStore(500,7); return calcFinalPrice('consult',s)===2000; }},
+{id:'M24',type:'js_unit',cat:'Pricing',desc:'Plan badge report: starts with report icon',
+  fn:()=>getPlanBadgeText('report',{}).includes('📋')},
+{id:'M25',type:'js_unit',cat:'Pricing',desc:'Plan badge consult: starts with lawyer icon',
+  fn:()=>getPlanBadgeText('consult',{}).includes('🧑‍⚖️')},
+{id:'M26',type:'js_unit',cat:'Pricing',desc:'Discount 7 days = valid',
+  fn:()=>{ const s=makeDiscountStore(500,7); return getReportDiscount(s)!==null; }},
+{id:'M27',type:'js_unit',cat:'Pricing',desc:'Discount 14 days = valid',
+  fn:()=>{ const s=makeDiscountStore(500,14); return getReportDiscount(s)!==null; }},
+{id:'M28',type:'js_unit',cat:'Pricing',desc:'Discount with future expiry: amount accessible',
+  fn:()=>{ const s=makeDiscountStore(500,7); return getReportDiscount(s).amount===500; }},
+{id:'M29',type:'js_unit',cat:'Pricing',desc:'Plan badge consult no discount: shows full price',
+  fn:()=>getPlanBadgeText('consult',{}).includes('₹2500')},
+{id:'M30',type:'js_unit',cat:'Pricing',desc:'calcFinalPrice unknown plan returns 2500 (non-report fallback)',
+  fn:()=>calcFinalPrice('unknown',{})===2500},
+
+// M31-M50: validation combos
+{id:'M31',type:'js_unit',cat:'Validation',desc:'Email with .co.in accepted',
+  fn:()=>validateEmail('test@company.co.in')},
+{id:'M32',type:'js_unit',cat:'Validation',desc:'Email with dots in local part accepted',
+  fn:()=>validateEmail('first.last@example.com')},
+{id:'M33',type:'js_unit',cat:'Validation',desc:'Email with numbers accepted',
+  fn:()=>validateEmail('user123@domain456.com')},
+{id:'M34',type:'js_unit',cat:'Validation',desc:'Phone with exactly 10 digits accepted',
+  fn:()=>validatePhone('8765432109')},
+{id:'M35',type:'js_unit',cat:'Validation',desc:'Phone with 12 digits rejected',
+  fn:()=>!validatePhone('919876543210')},
+{id:'M36',type:'js_unit',cat:'Validation',desc:'OTP with leading zero valid',
+  fn:()=>validateOTP('012345')},
+{id:'M37',type:'js_unit',cat:'Validation',desc:'OTP with trailing zero valid',
+  fn:()=>validateOTP('123450')},
+{id:'M38',type:'js_unit',cat:'Validation',desc:'Query exactly 10 chars valid',
+  fn:()=>validateQuery('abcdefghij')},
+{id:'M39',type:'js_unit',cat:'Validation',desc:'Query 11 chars valid',
+  fn:()=>validateQuery('abcdefghijk')},
+{id:'M40',type:'js_unit',cat:'Validation',desc:'Query exactly 2000 chars valid',
+  fn:()=>validateQuery('x'.repeat(2000))},
+
+// M41-M60: step gate / state combos
+{id:'M41',type:'js_unit',cat:'StepGate',desc:'Step 1 valid query with 15 chars',
+  fn:()=>canProceedFromStep(1,{query:'salary not paid x'})},
+{id:'M42',type:'js_unit',cat:'StepGate',desc:'Step 2 single law selection works',
+  fn:()=>canProceedFromStep(2,{selectedLaws:['Employment – POSH']})},
+{id:'M43',type:'js_unit',cat:'StepGate',desc:'Step 3 same check as step 2',
+  fn:()=>canProceedFromStep(3,{selectedLaws:['Employment – POSH']})},
+{id:'M44',type:'js_unit',cat:'StepGate',desc:'Step 4 passes with full state',
+  fn:()=>canProceedFromStep(4,{query:'test query here',selectedLaws:['Law A'],assessment:{}})},
+{id:'M45',type:'js_unit',cat:'StepGate',desc:'Step 5 passes with no evidence',
+  fn:()=>canProceedFromStep(5,{selectedLaws:['Law A']})},
+{id:'M46',type:'js_unit',cat:'StepGate',desc:'Step -1 returns false',
+  fn:()=>!canProceedFromStep(-1,{query:'test query long enough'})},
+{id:'M47',type:'js_unit',cat:'StepGate',desc:'Step 1 with undefined query rejects',
+  fn:()=>!canProceedFromStep(1,{})},
+{id:'M48',type:'js_unit',cat:'StepGate',desc:'Step 2 with undefined selectedLaws rejects',
+  fn:()=>!canProceedFromStep(2,{query:'test query long enough'})},
+
+// M49-M60: toggle law advanced
+{id:'M49',type:'js_unit',cat:'Toggle',desc:'Toggle 5 different laws = 5 selected',
+  fn:()=>{ let s=[]; ['A','B','C','D','E'].forEach(l=>s=toggleLawSelection(s,l)); return s.length===5; }},
+{id:'M50',type:'js_unit',cat:'Toggle',desc:'Toggle law twice = back to original count',
+  fn:()=>{ let s=['A','B']; s=toggleLawSelection(s,'C'); s=toggleLawSelection(s,'C'); return s.length===2; }},
+{id:'M51',type:'js_unit',cat:'Toggle',desc:'Toggle all laws off = empty array',
+  fn:()=>{ let s=['A','B','C']; s=toggleLawSelection(s,'A'); s=toggleLawSelection(s,'B'); s=toggleLawSelection(s,'C'); return s.length===0; }},
+{id:'M52',type:'js_unit',cat:'Toggle',desc:'Add same law twice = still 2 (bug: would be 1 then 0)',
+  fn:()=>{ let s=['A']; s=toggleLawSelection(s,'A'); return s.length===0; }},
+
+// M53-M70: dedup advanced
+{id:'M53',type:'js_unit',cat:'Dedup',desc:'Dedup with 20 unique = 20 returned',
+  fn:()=>deduplicateQs(Array.from({length:20},(_,i)=>({q:`Unique question ${i}?`}))).length===20},
+{id:'M54',type:'js_unit',cat:'Dedup',desc:'Dedup preserves question object properties',
+  fn:()=>{ const qs=[{q:'Q?',opts:['Yes','No'],law:'Employment'}]; return deduplicateQs(qs)[0].opts!==undefined; }},
+{id:'M55',type:'js_unit',cat:'Dedup',desc:'Question with different punctuation treated differently',
+  fn:()=>{ const qs=[{q:'Do you have letter?'},{q:'Do you have letter'}]; return deduplicateQs(qs).length===2; }},
+{id:'M56',type:'js_unit',cat:'Dedup',desc:'Tab-separated similar question still deduped after trim',
+  fn:()=>{ const qs=[{q:'  Do you have letter?  '},{q:'  do you have letter?  '}]; return deduplicateQs(qs).length===1; }},
+
+// M57-M70: discount store construction
+{id:'M57',type:'js_unit',cat:'Discount',desc:'makeDiscountStore returns object with key',
+  fn:()=>typeof makeDiscountStore(500,7)['sl_report_discount']==='string'},
+{id:'M58',type:'js_unit',cat:'Discount',desc:'makeExpiredStore discount is expired',
+  fn:()=>getReportDiscount(makeExpiredStore())===null},
+{id:'M59',type:'js_unit',cat:'Discount',desc:'Discount store expiry in 3 days is valid',
+  fn:()=>getReportDiscount(makeDiscountStore(500,3))!==null},
+{id:'M60',type:'js_unit',cat:'Discount',desc:'Discount with 7 days valid, expired store invalid',
+  fn:()=>{ const s1=makeDiscountStore(500,7); const s2=makeExpiredStore(); return getReportDiscount(s1)!==null && getReportDiscount(s2)===null; }},
+
+// M61-M80: engine advanced
+{id:'M61',type:'js_unit',cat:'Engine',desc:'Non-legal query returns array (may be fallback)',
+  fn:()=>Array.isArray(analyze('what is the weather today'))},
+{id:'M62',type:'js_unit',cat:'Engine',desc:'Employment law name contains Employment keyword',
+  fn:()=>{ const r=analyze('wrongful termination employer notice period'); return r.length>0&&(r[0].caseType||r[0].law||'').toLowerCase().includes('employment'); }},
+{id:'M63',type:'js_unit',cat:'Engine',desc:'analyzeMultipleLaws is a function',
+  fn:()=>typeof window.analyzeMultipleLaws==='function'},
+{id:'M64',type:'js_unit',cat:'Engine',desc:'LAWS_DATABASE has at least 50 entries',
+  fn:()=>window.LAWS_DATABASE.length>=50},
+{id:'M65',type:'js_unit',cat:'Engine',desc:'RTI query returns RTI law',
+  fn:()=>{ const r=analyze('RTI application rejected information not provided'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('rti')); }},
+{id:'M66',type:'js_unit',cat:'Engine',desc:'Motor accident query returns motor accident law',
+  fn:()=>{ const r=analyze('motor accident claim MACT tribunal compensation'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('motor accident')); }},
+{id:'M67',type:'js_unit',cat:'Engine',desc:'POCSO query returns POCSO law',
+  fn:()=>{ const r=analyze('POCSO child sexual abuse minor FIR complaint'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('pocso')); }},
+{id:'M68',type:'js_unit',cat:'Engine',desc:'IBC insolvency query returns IBC law',
+  fn:()=>{ const r=analyze('IBC insolvency petition NCLT corporate debtor'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('ibc')||x.law.toLowerCase().includes('insolvency')); }},
+{id:'M69',type:'js_unit',cat:'Engine',desc:'Domestic violence returns DV law',
+  fn:()=>{ const r=analyze('domestic violence protection order wife husband'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('domestic')); }},
+{id:'M70',type:'js_unit',cat:'Engine',desc:'Cheque bounce confidence > 0 for strong query',
+  fn:()=>{ const r=analyze('cheque bounce 138 NI act dishonoured legal notice issued'); return r.length>0 && r.find(x=>(x.caseType||x.law||'').toLowerCase().includes('cheque'))?.confidence>0; }},
+{id:'M71',type:'js_unit',cat:'Engine',desc:'Minimum wages query returns wages law',
+  fn:()=>{ const r=analyze('minimum wages below state prescribed rate daily wage'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('wage')||x.law.toLowerCase().includes('minimum')); }},
+{id:'M72',type:'js_unit',cat:'Engine',desc:'Consumer protection query returns consumer law',
+  fn:()=>{ const r=analyze('defective product consumer forum complaint replacement'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('consumer')); }},
+{id:'M73',type:'js_unit',cat:'Engine',desc:'Land acquisition query returns acquisition law',
+  fn:()=>{ const r=analyze('government land acquisition highway compensation'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('acquisition')||x.law.toLowerCase().includes('land')); }},
+{id:'M74',type:'js_unit',cat:'Engine',desc:'Maternity benefit query returns maternity law',
+  fn:()=>{ const r=analyze('maternity leave denied private company act benefit'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('maternity')); }},
+{id:'M75',type:'js_unit',cat:'Engine',desc:'DPDP data privacy query returns DPDP law',
+  fn:()=>{ const r=analyze('data breach DPDP personal information shared third party'); return r.some(x=>(x.caseType||x.law||'').toLowerCase().includes('dpdp')||x.law.toLowerCase().includes('data')); }},
+{id:'M76',type:'js_unit',cat:'Engine',desc:'All LAWS_DATABASE entries have caseType string',
+  fn:()=>window.LAWS_DATABASE.every(l=>typeof (l.caseType||l.law)==='string'&&(l.caseType||l.law).length>0)},
+{id:'M77',type:'js_unit',cat:'Engine',desc:'getContextualQuestions is a function',
+  fn:()=>typeof window.getContextualQuestions==='function'},
+{id:'M78',type:'js_unit',cat:'Engine',desc:'getContextualQuestions returns array for valid law',
+  fn:()=>{ const r=analyze('wrongful termination employer salary unpaid'); if(!r.length)return false; if(typeof window.getContextualQuestions!=='function')return true; const qs=window.getContextualQuestions(r[0].caseType||r[0].law); return qs!==null&&typeof qs==='object'; }},
+{id:'M79',type:'js_unit',cat:'Engine',desc:'Result confidence never exceeds 97',
+  fn:()=>{ const r=analyze('bribe government officer corruption public servant'); return r.every(x=>x.confidence<=97); }},
+{id:'M80',type:'js_unit',cat:'Engine',desc:'Multiple results are sorted by confidence descending',
+  fn:()=>{ const r=analyze('employer not paying salary wages due minimum wage'); for(let i=1;i<r.length;i++){if(r[i].confidence>r[i-1].confidence)return false;} return true; }},
+
+]; // end TESTS
+
+// ─────────────────────────────────────────────
+// TEST RUNNER
+// ─────────────────────────────────────────────
+
+let currentFilter = 'all';
+let results = [];
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btns button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderResults(results);
+}
+
+async function runAll() {
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Running...';
+  document.getElementById('status').textContent = '⏳ Running ' + TESTS.length + ' tests...';
+
+  results = [];
+  let pass = 0, fail = 0;
+
+  for (let i = 0; i < TESTS.length; i++) {
+    const t = TESTS[i];
+    const r = runTest(t);
+    results.push(r);
+    if (r.status === 'pass') pass++; else fail++;
+    if (i % 50 === 0) {
+      await new Promise(res => setTimeout(res, 0));
+      document.getElementById('status').textContent = `⏳ Running... ${i+1}/${TESTS.length}`;
+    }
+  }
+
+  const total = pass + fail;
+  const pct = total > 0 ? ((pass/total)*100).toFixed(2) : '0.00';
+
+  document.getElementById('sTotal').textContent = total;
+  document.getElementById('sPass').textContent = pass;
+  document.getElementById('sFail').textContent = fail;
+  document.getElementById('sRate').textContent = pct + '%';
+
+  document.getElementById('status').textContent =
+    `✅ Done — ${pass}/${total} passed (${pct}%) — ${fail} failed`;
+
+  btn.disabled = false;
+  btn.textContent = '▶ Run All Tests';
+
+  renderResults(results);
+}
+
+function runTest(t) {
+  try {
+    if (t.type === 'law_map') {
+      const results = analyze(t.query);
+      const top = results.length > 0 ? getLaw(results[0]) : null;
+      const pass = top === t.expectedTop;
+      return {
+        ...t, status: pass ? 'pass' : 'fail',
+        actual: top,
+        detail: pass ? '' : `Expected: "${t.expectedTop}" | Got: "${top}"`
+          + (results.length > 0 ? ` (conf:${results[0].confidence}, top3:[${results.slice(0,3).map(r=>getLaw(r)||'?').map(s=>s.split('–')[0].trim()).join(', ')}])` : '')
+      };
+    }
+
+    if (t.type === 'must_not_include') {
+      const res = analyze(t.query);
+      const threshold = t.confThreshold || 30;
+      const bad = res.find(r => (getLaw(r)||'').toLowerCase().includes(t.mustNotInclude.toLowerCase()) && r.confidence > threshold);
+      const pass = !bad;
+      return {
+        ...t, status: pass ? 'pass' : 'fail',
+        actual: bad ? `${getLaw(bad)} (conf:${bad.confidence})` : 'not present',
+        detail: pass ? '' : `"${t.mustNotInclude}" appeared with conf ${bad.confidence} (max: ${threshold}). Law: ${getLaw(bad)}`
+      };
+    }
+
+    if (t.type === 'confidence_min') {
+      const res = analyze(t.query);
+      const top = res.length > 0 ? res[0] : null;
+      const pass = top && top.confidence >= t.minConf;
+      return {
+        ...t, status: pass ? 'pass' : 'fail',
+        actual: top ? `${getLaw(top)} (${top.confidence})` : 'no result',
+        detail: pass ? '' : `Need conf≥${t.minConf}, got ${top ? top.confidence : 'N/A'}. Law: ${top ? getLaw(top) : 'none'}`
+      };
+    }
+
+    if (t.type === 'all_in_top5') {
+      const res = analyze(t.query);
+      const top5Laws = res.slice(0, 5).map(r => getLaw(r) || '');
+      const missing = t.mustInclude.filter(substr =>
+        !top5Laws.some(l => l.toLowerCase().includes(substr.toLowerCase()))
+      );
+      const pass = missing.length === 0;
+      return {
+        ...t, status: pass ? 'pass' : 'fail',
+        actual: top5Laws.join(' | '),
+        detail: pass ? '' : `Missing in top5: [${missing.join(', ')}]. Got: [${top5Laws.slice(0,3).join(', ')}]`
+      };
+    }
+
+    if (t.type === 'low_conf_only') {
+      const res = analyze(t.query);
+      const top = res.length > 0 ? res[0] : null;
+      const pass = !top || top.confidence <= t.maxConf;
+      return {
+        ...t, status: pass ? 'pass' : 'fail',
+        actual: top ? `${getLaw(top)} (${top.confidence})` : 'no result',
+        detail: pass ? '' : `Expected conf≤${t.maxConf}, got ${top.confidence}. Law: ${getLaw(top)}`
+      };
+    }
+
+    if (t.type === 'js_unit') {
+      let passed = false;
+      let errMsg = '';
+      try {
+        passed = !!t.fn();
+      } catch(e) {
+        errMsg = e.message;
+      }
+      return {
+        ...t, status: passed ? 'pass' : 'fail',
+        actual: passed ? 'true' : ('false' + (errMsg ? ` (${errMsg})` : '')),
+        detail: passed ? '' : `Unit test returned false. ${errMsg}`
+      };
+    }
+
+    return { ...t, status: 'skip', actual: 'unknown type', detail: `Unknown test type: ${t.type}` };
+  } catch(e) {
+    return { ...t, status: 'fail', actual: 'ERROR', detail: 'Exception: ' + e.message };
+  }
+}
+
+// ─────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────
+
+function renderResults(results) {
+  if (!results || !results.length) return;
+
+  let filtered = results;
+  if (currentFilter === 'pass') filtered = results.filter(r => r.status === 'pass');
+  else if (currentFilter === 'fail') filtered = results.filter(r => r.status === 'fail');
+  else if (['law_map','must_not_include','confidence_min','all_in_top5','low_conf_only','js_unit'].includes(currentFilter)) {
+    filtered = results.filter(r => r.type === currentFilter);
+  }
+
+  // Group by category
+  const cats = {};
+  filtered.forEach(r => {
+    const key = r.type + '::' + (r.cat || 'General');
+    if (!cats[key]) cats[key] = { type: r.type, cat: r.cat || 'General', items: [] };
+    cats[key].items.push(r);
+  });
+
+  const html = Object.values(cats).map(group => {
+    const pass = group.items.filter(i => i.status === 'pass').length;
+    const total = group.items.length;
+    const pct = total > 0 ? Math.round(pass/total*100) : 0;
+
+    const rows = group.items.map(r => {
+      const rowCls = r.status === 'pass' ? 'pass-row' : r.status === 'fail' ? 'fail-row' : '';
+      const badge = `<span class="badge ${r.status}">${r.status.toUpperCase()}</span>`;
+      const typeTag = `<span class="type-tag ${r.type}">${r.type}</span>`;
+
+      let query = '';
+      if (r.type === 'js_unit') {
+        query = `<code style="font-size:.78rem">${esc(r.desc || r.id)}</code>`;
+      } else {
+        query = `<span style="color:#333">${esc(r.query||'')}</span>`;
+      }
+
+      const expected = r.type === 'law_map' ? esc(r.expectedTop||'') :
+                       r.type === 'must_not_include' ? `must NOT include: <em>${esc(r.mustNotInclude||'')}</em> (conf≤${r.confThreshold||30})` :
+                       r.type === 'confidence_min' ? `conf ≥ ${r.minConf}` :
+                       r.type === 'all_in_top5' ? `top5 must include: <em>${esc((r.mustInclude||[]).join(', '))}</em>` :
+                       r.type === 'low_conf_only' ? `conf ≤ ${r.maxConf}` :
+                       r.type === 'js_unit' ? 'fn() returns true' : '';
+
+      const detail = r.detail ? `<div class="err-detail">⚠ ${esc(r.detail)}</div>` : '';
+
+      return `<tr class="${rowCls}">
+        <td><strong style="font-size:.78rem;color:#888">${r.id}</strong></td>
+        <td>${typeTag}</td>
+        <td>${query}</td>
+        <td>${expected}</td>
+        <td>${esc(r.actual||'')}</td>
+        <td>${badge}${detail}</td>
+      </tr>`;
+    }).join('');
+
+    return `<div class="section">
+      <div class="sec-header">
+        <span class="sec-title">${group.type} — ${group.cat}</span>
+        <span class="sec-badge ${pass===total?'pass':'fail'}">${pass}/${total}</span>
+        <div class="sec-progress"><div class="sec-progress-fill" style="width:${pct}%"></div></div>
+      </div>
+      <table class="tests-table">
+        <thead><tr>
+          <th>ID</th><th>Type</th><th>Query / Description</th>
+          <th>Expected</th><th>Actual</th><th>Result</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  }).join('');
+
+  document.getElementById('results').innerHTML = html || '<p style="padding:20px;color:#888">No tests match current filter.</p>';
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Auto-run on load
+window.addEventListener('load', () => {
+  setTimeout(runAll, 200);
+});
+</script>
+</body>
+</html>

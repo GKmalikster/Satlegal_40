@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Your Legal Analysis Report – SatLegal</title>
+<style>
+:root{
+  --sf-500:#FF9933;--sf-600:#FF8800;--sf-700:#E07000;
+  --sf-100:#FFF4E6;--sf-200:#FFE4C2;--sf-300:#FFCC99;
+  --gr-500:#138808;--gr-600:#1A6B1A;--gr-700:#145214;--gr-800:#0D3D0D;
+  --gr-50:#F0FBF0;--gr-100:#D4F5D2;--gr-200:#A8E6A0;
+  --danger:#C0392B;--danger-lt:#FDECEA;
+  --text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;
+  --bg:#F4F6F8;--white:#fff;
+  --font:'Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:var(--bg);line-height:1.6}
+a{text-decoration:none;color:inherit}
+
+/* Tricolor top bar */
+.tribar{height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
+
+/* Nav */
+.nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:900;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.nav-brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:900;color:var(--gr-800)}
+.nav-brand span{color:var(--sf-500)}
+.nav-right{display:flex;gap:10px;align-items:center}
+.btn-print{background:var(--sf-500);color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-print:hover{background:var(--sf-600)}
+.btn-back{background:#fff;color:var(--gr-700);border:1.5px solid var(--border);padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
+
+/* Hero */
+.rpt-hero{background:linear-gradient(135deg,var(--gr-800) 0%,var(--gr-600) 60%,#1E8A1E 100%);padding:32px 24px 28px;text-align:center;color:#fff;position:relative;overflow:hidden}
+.rpt-hero::before{content:'⚖️';font-size:180px;position:absolute;right:-20px;top:-30px;opacity:.06;line-height:1}
+.rpt-hero h1{font-size:24px;font-weight:900;margin-bottom:6px;letter-spacing:-.3px}
+.rpt-hero .tagline{font-size:13px;color:rgba(255,255,255,.7);margin-bottom:12px}
+.rpt-hero-meta{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:8px 16px;font-size:12px;color:rgba(255,255,255,.85);flex-wrap:wrap;justify-content:center;gap:12px}
+.rpt-hero-meta span{display:flex;align-items:center;gap:4px}
+
+/* Paid badge */
+.paid-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#1DB954,#158A3E);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;margin-bottom:12px;letter-spacing:.3px}
+
+/* Body */
+.rpt-body{max-width:860px;margin:0 auto;padding:28px 20px 60px}
+
+/* Disclaimer */
+.disclaimer-box{background:#FFFBF0;border:1.5px solid #FFD580;border-radius:10px;padding:14px 18px;margin-bottom:22px;font-size:12px;color:#7A5800;line-height:1.7;display:flex;gap:10px}
+.disclaimer-box .disc-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+
+/* Section card */
+.rpt-section{background:#fff;border-radius:14px;border:1px solid var(--border);padding:22px 24px;margin-bottom:18px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.rpt-sec-title{font-size:15px;font-weight:800;color:var(--gr-800);margin-bottom:16px;display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:2px solid var(--sf-200)}
+.rpt-sec-title .sec-badge{font-size:10px;font-weight:700;background:var(--gr-50);color:var(--gr-700);border:1px solid var(--gr-200);padding:2px 8px;border-radius:6px;margin-left:auto}
+
+/* Case summary */
+.case-summary-box{background:var(--gr-50);border:1px solid var(--gr-200);border-radius:10px;padding:16px 18px;font-size:13px;line-height:1.7}
+.cs-label{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--gr-700);letter-spacing:.5px;margin-bottom:4px}
+.cs-query{font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px;font-style:italic;line-height:1.5}
+.cs-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.cs-chip{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-lt);background:#fff;border:1px solid var(--border);border-radius:6px;padding:3px 9px}
+
+/* Win probability */
+.win-card{border-radius:12px;padding:22px 20px;text-align:center}
+.win-card.strong{background:linear-gradient(135deg,var(--gr-50),#E8F8E8);border:2px solid var(--gr-200)}
+.win-card.moderate{background:linear-gradient(135deg,#FFF8E0,#FFFAED);border:2px solid #FFE082}
+.win-card.weak{background:linear-gradient(135deg,var(--danger-lt),#FFF0EE);border:2px solid #FFCDD2}
+.win-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.win-label.strong{color:var(--gr-600)}.win-label.moderate{color:#B8860B}.win-label.weak{color:var(--danger)}
+.win-pct{font-size:52px;font-weight:900;line-height:1;margin:6px 0}
+.win-pct.strong{color:var(--gr-600)}.win-pct.moderate{color:#E0A800}.win-pct.weak{color:var(--danger)}
+.win-bar-wrap{width:100%;height:12px;background:var(--border);border-radius:6px;overflow:hidden;margin:12px auto;max-width:340px}
+.win-bar{height:100%;border-radius:6px;transition:width 1.2s ease}
+.win-reasoning{font-size:13px;color:var(--text-lt);font-style:italic;margin-bottom:14px}
+.win-factors{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:12px;color:var(--text-lt)}
+.win-factor{display:flex;align-items:center;gap:5px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:5px 12px}
+.win-factor strong{color:var(--text);font-size:13px}
+
+/* Laws */
+.law-item{border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:10px;transition:box-shadow .2s}
+.law-item:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.law-item:last-child{margin:0}
+.li-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}
+.li-name{font-size:14px;font-weight:800;color:var(--gr-800);line-height:1.3}
+.li-conf{background:var(--gr-50);color:var(--gr-700);border:1px solid var(--gr-200);font-size:11px;font-weight:800;padding:3px 10px;border-radius:8px;white-space:nowrap}
+.li-act{font-size:11px;color:var(--text-lt);margin-bottom:8px}
+.sec-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.sec-chip{font-size:10px;font-weight:600;background:var(--sf-100);color:var(--sf-700);border:1px solid var(--sf-200);padding:2px 8px;border-radius:5px}
+.li-tip{font-size:12px;color:var(--text-lt);line-height:1.5;padding:8px 10px;background:var(--bg);border-radius:7px;border-left:3px solid var(--sf-300)}
+.li-urg-row{display:flex;align-items:center;gap:8px;margin-top:8px}
+.li-urg{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:.3px}
+.li-urg.high{background:var(--danger-lt);color:var(--danger)}
+.li-urg.medium{background:#FFF3E0;color:#E07000}
+.li-urg.low{background:var(--gr-50);color:var(--gr-700)}
+.li-limit{font-size:11px;color:var(--text-lt)}
+
+/* Docs */
+.doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:560px){.doc-grid{grid-template-columns:1fr}}
+.doc-card{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+.doc-icon{font-size:16px;flex-shrink:0}
+.doc-body{flex:1}
+.doc-name{font-size:12px;font-weight:600;color:var(--text);line-height:1.3}
+.doc-badge{display:inline-block;font-size:9px;font-weight:800;padding:1px 6px;border-radius:4px;margin-top:2px;text-transform:uppercase}
+.doc-badge.critical{background:var(--danger-lt);color:var(--danger)}
+.doc-badge.supporting{background:var(--sf-100);color:var(--sf-700)}
+
+/* Timeline / Action Steps */
+.timeline{position:relative;padding-left:28px}
+.timeline::before{content:'';position:absolute;left:11px;top:8px;bottom:8px;width:2px;background:var(--sf-200)}
+.tl-step{position:relative;margin-bottom:18px}
+.tl-step:last-child{margin:0}
+.tl-dot{position:absolute;left:-28px;top:2px;width:24px;height:24px;border-radius:50%;background:var(--sf-500);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px var(--sf-100)}
+.tl-dot.urgent{background:var(--danger);box-shadow:0 0 0 3px var(--danger-lt)}
+.tl-content h4{font-size:13px;font-weight:800;color:var(--gr-800);margin-bottom:3px}
+.tl-content p{font-size:12px;color:var(--text-lt);line-height:1.6}
+.tl-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;background:var(--danger-lt);color:var(--danger);border-radius:5px;padding:1px 7px;margin-bottom:4px}
+.tl-tag.normal{background:var(--gr-50);color:var(--gr-700)}
+
+/* Lawyer card */
+.lawyer-card{border:2px solid var(--gr-200);border-radius:14px;overflow:hidden}
+.lc-header{background:linear-gradient(135deg,var(--gr-50),#fff);padding:18px 20px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--gr-100)}
+.lc-icon{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--gr-800),var(--gr-600));display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.lc-name{font-size:17px;font-weight:900;color:var(--gr-800)}
+.lc-spec{font-size:12px;color:var(--gr-600);margin-top:2px}
+.lc-loc{font-size:11px;color:var(--text-lt);margin-top:2px}
+.lc-rating{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--sf-700);font-weight:700;margin-top:4px}
+.lc-body{padding:18px 20px}
+.lc-features{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.lc-feat{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-lt)}
+.lc-feat::before{content:'✓';color:var(--gr-600);font-weight:900;font-size:13px}
+.btn-book{background:linear-gradient(135deg,var(--sf-500),#FF7A00);color:#fff;border:none;padding:14px 28px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:var(--font);transition:.2s;width:100%;margin-bottom:10px}
+.btn-book:hover{background:linear-gradient(135deg,#FF8800,#E06000);transform:translateY(-1px)}
+.book-note{text-align:center;font-size:11px;color:var(--text-lt);line-height:1.5}
+
+/* Report ID footer */
+.report-footer{background:var(--gr-800);color:rgba(255,255,255,.6);text-align:center;padding:18px;font-size:11px;margin-top:8px}
+.report-footer strong{color:rgba(255,255,255,.9)}
+
+/* Print */
+@media print{
+  .nav{display:none}
+  .btn-print,.btn-back{display:none}
+  body{background:#fff}
+  .rpt-section{box-shadow:none;border:1px solid #ccc}
+  .rpt-hero{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="tribar"></div>
+
+<nav class="nav">
+  <div class="nav-brand">Sat<span>Legal</span></div>
+  <div class="nav-right">
+    <button class="btn-back" onclick="history.back()">← Back</button>
+    <button class="btn-print" onclick="window.print()">⬇ Download PDF</button>
+  </div>
+</nav>
+
+<div class="rpt-hero">
+  <div class="paid-badge">✅ VERIFIED PAYMENT · FULL REPORT UNLOCKED</div>
+  <h1>📊 Your Legal Analysis Report</h1>
+  <p class="tagline">AI-powered analysis of your legal situation — prepared exclusively for you</p>
+  <div class="rpt-hero-meta">
+    <span>👤 Rajesh Kumar Sharma</span>
+    <span>📧 rajesh.sharma@gmail.com</span>
+    <span>📅 14 June 2026, 11:42 AM</span>
+    <span>🆔 Report #SL-2026-0614-8742</span>
+    <span>💳 Paid ₹499</span>
+  </div>
+</div>
+
+<div class="rpt-body">
+
+  <!-- Disclaimer -->
+  <div class="disclaimer-box">
+    <div class="disc-icon">⚠️</div>
+    <div>
+      <strong style="color:#5A3F00">Professional Disclaimer:</strong> This report is AI-generated for informational and educational purposes only. It does not constitute legal advice or establish a lawyer-client relationship. The analysis is based solely on the facts you described. Laws cited are indicative — consult a qualified lawyer before taking any legal action. SatLegal shall not be liable for outcomes arising from use of this report.
+    </div>
+  </div>
+
+  <!-- 1. Case Summary -->
+  <div class="rpt-section">
+    <div class="rpt-sec-title">📄 Case Summary <span class="sec-badge">YOUR SITUATION</span></div>
+    <div class="case-summary-box">
+      <div class="cs-label">Issue You Described</div>
+      <div class="cs-query">"I was working as a Senior Software Engineer at TechSolutions Pvt Ltd for 4 years. Last month my employer fired me without any notice or reason. My salary for the last 2 months is also pending (₹1.2 lakh total). They have not given me relieving letter, experience letter, or settled my PF and gratuity. HR is not responding to my emails."</div>
+      <div class="cs-meta">
+        <div class="cs-chip">🏭 Employment Matter</div>
+        <div class="cs-chip">📍 Bengaluru, Karnataka</div>
+        <div class="cs-chip">⚖️ 3 Laws Applicable</div>
+        <div class="cs-chip">📎 0 Documents Uploaded</div>
+        <div class="cs-chip">❓ 6 Questions Answered</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Win Probability -->
+  <div class="rpt-section">
+    <div class="rpt-sec-title">📊 Case Strength Assessment <span class="sec-badge">AI ANALYSIS</span></div>
+    <div class="win-card strong">
+      <div class="win-label strong">Strong Case</div>
+      <div class="win-pct strong" id="winPct">78%</div>
+      <div class="win-bar-wrap">
+        <div class="win-bar" id="winBar" style="width:0%;background:var(--gr-500)"></div>
+      </div>
+      <div class="win-reasoning">Your case has strong legal grounds. Wrongful termination without notice + unpaid wages are well-established violations under Indian Labour Law with clear statutory remedies and time-bound processes.</div>
+      <div class="win-factors">
+        <div class="win-factor">⚖️ Law match: <strong>92%</strong></div>
+        <div class="win-factor">❓ Q&amp;A strength: <strong>85%</strong></div>
+        <div class="win-factor">⏰ Limitation: <strong>3 years (ID Act)</strong></div>
+        <div class="win-factor">⚡ Urgency: <strong>High</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Applicable Laws -->
+  <div class="rpt-section">
+    <div class="rpt-sec-title">⚖️ Applicable Indian Laws & Sections <span class="sec-badge">3 LAWS IDENTIFIED</span></div>
+
+    <!-- Law 1 -->
+    <div class="law-item">
+      <div class="li-header">
+        <div class="li-name">Employment – Wrongful Termination / Industrial Dispute</div>
+        <div class="li-conf">92% match</div>
+      </div>
+      <div class="li-act">Industrial Disputes Act, 1947 + Shops &amp; Establishments Act (Karnataka) + BNS</div>
+      <div class="sec-chips">
+        <span class="sec-chip">Sec 25F ID Act (Retrenchment)</span>
+        <span class="sec-chip">Sec 25G (Last-in-first-out)</span>
+        <span class="sec-chip">Sec 25H (Re-employment)</span>
+        <span class="sec-chip">Sec 33C (Recovery of dues)</span>
+        <span class="sec-chip">Karnataka Shops &amp; Estab. Act</span>
+      </div>
+      <div class="li-tip">⚡ Wrongful termination without notice in a company with 100+ employees violates Sec 25F of the Industrial Disputes Act. You are entitled to retrenchment compensation (15 days salary per year of service) + 1-month notice pay. File with the Labour Commissioner in Bengaluru within 3 years.</div>
+      <div class="li-urg-row">
+        <span class="li-urg high">High Urgency</span>
+        <span class="li-limit">⏱ 3-year limitation period | File complaint ASAP to preserve rights</span>
+      </div>
+    </div>
+
+    <!-- Law 2 -->
+    <div class="law-item">
+      <div class="li-header">
+        <div class="li-name">Employment – PF / Gratuity / ESI (Unpaid Dues)</div>
+        <div class="li-conf">88% match</div>
+      </div>
+      <div class="li-act">Employees' Provident Funds &amp; Misc. Provisions Act, 1952 + Payment of Gratuity Act, 1972</div>
+      <div class="sec-chips">
+        <span class="sec-chip">EPF Act Sec 7A (Recovery)</span>
+        <span class="sec-chip">Gratuity Act Sec 4</span>
+        <span class="sec-chip">Gratuity Act Sec 8 (Recovery)</span>
+        <span class="sec-chip">EPFO Grievance Portal</span>
+      </div>
+      <div class="li-tip">💰 After 4 years and 240+ days in the 5th year, you are entitled to gratuity (15 days × 4 years × last drawn monthly salary ÷ 26). Raise PF non-deposit grievance at epfindia.gov.in — the EPFO can levy penalty on employer. For gratuity, send notice to employer; if unpaid within 30 days, file with the Controlling Authority (Labour Commissioner).</div>
+      <div class="li-urg-row">
+        <span class="li-urg high">High Urgency</span>
+        <span class="li-limit">⏱ Gratuity claim within 30 days of termination | PF transfer anytime</span>
+      </div>
+    </div>
+
+    <!-- Law 3 -->
+    <div class="law-item">
+      <div class="li-header">
+        <div class="li-name">Civil – Money Recovery / Debt Recovery (Unpaid Salary)</div>
+        <div class="li-conf">74% match</div>
+      </div>
+      <div class="li-act">Payment of Wages Act, 1936 + Code on Wages, 2019 + CPC (Civil Suit for Recovery)</div>
+      <div class="sec-chips">
+        <span class="sec-chip">Payment of Wages Act Sec 15</span>
+        <span class="sec-chip">Sec 3 (Deduction rules)</span>
+        <span class="sec-chip">Code on Wages 2019</span>
+        <span class="sec-chip">CPC Order 37 (Summary Suit)</span>
+      </div>
+      <div class="li-tip">🏛️ For unpaid salary, you can file a claim under the Payment of Wages Act before the Authority for Payment of Wages (Labour Court). Alternatively, send a legal notice demanding payment within 15 days. If unresolved, file a Civil Suit for money recovery — claim interest at 18% p.a. on the delayed salary amount.</div>
+      <div class="li-urg-row">
+        <span class="li-urg medium">Medium Urgency</span>
+        <span class="li-limit">⏱ File within 1 year from date salary was due (Payment of Wages Act)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Document Checklist -->
+  <div class="rpt-section">
+    <div class="rpt-sec-title">📎 Document Checklist <span class="sec-badge">14 DOCUMENTS</span></div>
+    <p style="font-size:12px;color:var(--text-lt);margin-bottom:14px">Gather these documents before approaching a lawyer or filing a complaint. <span style="color:var(--danger);font-weight:700">Red = Critical · </span><span style="color:var(--sf-700);font-weight:700">Orange = Supporting</span></p>
+    <div class="doc-grid">
+      <div class="doc-card"><div class="doc-icon">📑</div><div class="doc-body"><div class="doc-name">Offer Letter / Appointment Letter</div><div class="doc-badge critical">Critical</div></div></div>
+      <div class="doc-card"><div class="doc-icon">📑</div><div class="doc-body"><div class="doc-name">Salary Slips (last 6 months)</div><div class="doc-badge critical">Critical</div></div></div>
+      <div class="doc-card"><div class="doc-icon">📑</div><div class="doc-body"><div class="doc-name">Termination Letter (if any)</div><div class="doc-badge critical">Critical</div></div></div>
+      <div class="doc-card"><div class="doc-icon">📑</div><div class="doc-body"><div class="doc-name">Form 16 / IT Returns (proof of employment)</div><div class="doc-badge critical">Critical</div></div></div>
+      <div class="doc-card"><div class="doc-icon">📑</div><div class="doc-body"><div class="doc-name">Bank account statements (salary credits)</div><div class="doc-badge critical">Critical</div></div></div>
+      <div class="doc-card"><div class="doc-icon">📑</div><div class="doc-body"><div class="doc-name">Employment Contract / Bond (if any)</div><div class="doc-badge critical">Critical</div></div></div>
+      <div class="doc-card"><div class="doc-icon">📋</div><div class="doc-body"><div class="doc-name">Email correspondence with HR (screenshots)</div><div class="doc-badge supporting">Supporting</div></div></div>
+      <div class="doc-card"><div class="doc-icon">📋</div><div class="doc-body"><div class="doc-name">UAN (Universal Account Number) for PF</div><div class="doc-badge supporting">Supporting</div></div></div>
+      <div class="doc-card"><div class="doc-icon">📋</div><div class="doc-body"><div class="doc-name">PF passbook / EPFO statement</div><div class="doc-badge supporting">Supporting</div></div></div>
+      <div class="doc-card"><div class="doc-icon">📋</div><div class="doc-body"><div class="doc-name">Aadhaar Card (identity proof)</div><div class="doc-badge supporting">Supporting</div></div></div>
+      <div class="doc-card"><div class="doc-icon">📋</div><div class="doc-body"><div class="doc-name">ID card / Access card issued by company</div><div class="doc-badge supporting">Supporting</div></div></div>
+      <div class="doc-card"><div class="doc-icon">📋</div><div class="doc-body"><div class="doc-name">Performance reviews / appraisal letters</div><div class="doc-badge supporting">Supporting</div></div></div>
+      <div class="doc-card"><div class="doc-icon">📋</div><div class="doc-body"><div class="doc-name">WhatsApp/message evidence with employer</div><div class="doc-badge supporting">Supporting</div></div></div>
+      <div class="doc-card"><div class="doc-icon">📋</div><div class="doc-body"><div class="doc-name">Company registration / CIN (from MCA portal)</div><div class="doc-badge supporting">Supporting</div></div></div>
+    </div>
+  </div>
+
+  <!-- 5. Action Plan -->
+  <div class="rpt-section">
+    <div class="rpt-sec-title">🗺️ Your Legal Action Plan <span class="sec-badge">5 STEPS</span></div>
+    <div class="timeline">
+
+      <div class="tl-step">
+        <div class="tl-dot urgent">1</div>
+        <div class="tl-content">
+          <div class="tl-tag">🔥 Do Within 7 Days</div>
+          <h4>Send a Formal Demand Letter to Employer</h4>
+          <p>Write to the HR Head and MD/CEO demanding: (a) pending salary of ₹1.2 lakh, (b) relieving letter, (c) experience certificate, (d) Full &amp; Final settlement with gratuity calculation, (e) PF transfer form. Give them 15 days to comply. Keep delivery proof (registered post / courier with acknowledgement).</p>
+        </div>
+      </div>
+
+      <div class="tl-step">
+        <div class="tl-dot urgent">2</div>
+        <div class="tl-content">
+          <div class="tl-tag">🔥 Do Within 7 Days</div>
+          <h4>Raise EPFO Grievance for PF Non-Deposit</h4>
+          <p>Log in to epfindia.gov.in → Member Portal → "Register Grievance". Select category "Employer Not Depositing Contribution". The EPFO can summon your employer, levy interest (12% p.a.) and penalties, and even initiate prosecution. This is free and often the fastest channel.</p>
+        </div>
+      </div>
+
+      <div class="tl-step">
+        <div class="tl-dot">3</div>
+        <div class="tl-content">
+          <div class="tl-tag normal">✅ After 15 Days</div>
+          <h4>File with the Labour Commissioner (If Employer Ignores)</h4>
+          <p>If the employer does not respond within 15 days of your demand letter, file a conciliation application with the Assistant Labour Commissioner (ALC) in Bengaluru under the Industrial Disputes Act. No advocate is needed at this stage — this is free. The ALC will call both parties for conciliation (settlement meeting).</p>
+        </div>
+      </div>
+
+      <div class="tl-step">
+        <div class="tl-dot">4</div>
+        <div class="tl-content">
+          <div class="tl-tag normal">✅ Simultaneously</div>
+          <h4>Send Legal Notice via Advocate for Salary Recovery</h4>
+          <p>Have a lawyer send a formal legal notice under the Payment of Wages Act, 1936 demanding all dues within 15 days. This creates legal record and is admissible in court. If unpaid, file a claim before the Authority for Payment of Wages (which adjudicates within 3–6 months) or approach Civil Court with a summary suit under CPC Order 37.</p>
+        </div>
+      </div>
+
+      <div class="tl-step">
+        <div class="tl-dot">5</div>
+        <div class="tl-content">
+          <div class="tl-tag normal">✅ Final Step</div>
+          <h4>File Labour Court / Civil Court Case (If Needed)</h4>
+          <p>If conciliation fails, the Labour Commissioner will issue a failure certificate. File an industrial dispute application before the Labour Court for reinstatement or compensation (3 months' salary per year as back wages). Simultaneously file money recovery suit for ₹1.2 lakh salary. Criminal complaint under BNS 316 (breach of trust) can also be filed if employer continues to withhold funds fraudulently.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 6. Lawyer Recommendation -->
+  <div class="rpt-section">
+    <div class="rpt-sec-title">🏛️ Matched Legal Expert <span class="sec-badge">VERIFIED LAWYER</span></div>
+    <div class="lawyer-card">
+      <div class="lc-header">
+        <div class="lc-icon">⚖️</div>
+        <div>
+          <div class="lc-name">Vikram Nair &amp; Associates</div>
+          <div class="lc-spec">Labour Law · Employment Disputes · Industrial Disputes Act · POSH</div>
+          <div class="lc-loc">📍 Bengaluru, Karnataka · Also available online</div>
+          <div class="lc-rating">★ ★ ★ ★ ★ 4.8 · 120+ employment cases · 92% resolution rate</div>
+        </div>
+      </div>
+      <div class="lc-body">
+        <p style="font-size:13px;color:var(--text-lt);margin-bottom:14px">Vikram Nair &amp; Associates specialises in employment disputes, wrongful termination, and labour law. They have successfully represented clients before the Bengaluru Labour Court, Karnataka High Court, and EPFO authorities. Consultation includes a review of all your documents and a step-by-step action strategy.</p>
+        <div class="lc-features">
+          <div class="lc-feat">Verified Bar Council Member</div>
+          <div class="lc-feat">30-minute online consultation</div>
+          <div class="lc-feat">Legal notice drafting included</div>
+          <div class="lc-feat">Available in Hindi + Kannada</div>
+          <div class="lc-feat">Fixed fee ₹2,500 (no hidden costs)</div>
+          <div class="lc-feat">Labour Court filing support</div>
+        </div>
+        <button class="btn-book">📞 Book ₹2,500 Consultation →</button>
+        <div class="book-note">30-minute session · Includes review of your case + drafted legal notice · Secure payment</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="report-footer">
+  Report ID: <strong>SL-2026-0614-8742</strong> &nbsp;|&nbsp; Generated: 14 June 2026, 11:42 AM IST &nbsp;|&nbsp; <strong>SatLegal</strong> · AI-Powered Legal Guidance Platform &nbsp;|&nbsp; Not legal advice — for informational use only
+</div>
+
+<script>
+// Animate win bar on load
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    document.getElementById('winBar').style.width = '78%';
+  }, 400);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Indian Law Library – Plain English Guide | SatLegal</title>
+  <meta name="description" content="Understand every major Indian law in plain English. Family law, criminal law, property, employment, cyber, consumer rights and more – explained simply by SatLegal." />
+  <link rel="icon" type="image/png" href="/assets/logo.png" />
+  <style>
+    :root {
+      --sf-50:#FFF8F0;--sf-100:#FFE8C8;--sf-200:#FFD49A;--sf-300:#FFB84D;--sf-500:#FF9933;--sf-600:#E5891E;--sf-700:#CC6B00;--sf-800:#8B4500;
+      --gr-50:#F0F9F0;--gr-100:#CCEECC;--gr-200:#99DD99;--gr-300:#66CC66;--gr-500:#138808;--gr-600:#0F6E06;--gr-700:#0A5204;--gr-800:#0D3D0D;
+      --bg:#f8f9fa;--surface:#ffffff;--text:#1a1a2e;--text-secondary:#5c5c7a;--border:#e2e6ea;
+      --radius:12px;--shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.12);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+    a{text-decoration:none;color:inherit}
+
+    /* NAV — Unified White Navbar */
+    .sl-tribar{height:4px;background:linear-gradient(90deg,#FF9933 33.33%,#fff 33.33%,#fff 66.66%,#138808 66.66%)}
+    .navbar{background:#fff;padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(0,0,0,.07);border-bottom:1px solid #E5E7EB;height:64px;font-family:'Segoe UI',system-ui,sans-serif}
+    .navbar-brand{display:flex;align-items:center;gap:4px;text-decoration:none;font-size:22px;font-weight:900}
+    .navbar-brand .s{color:#FF9933}.navbar-brand .l{color:#1A6B1A}.navbar-brand .d{font-size:11px;color:#6B7280;font-weight:400;margin-left:2px}
+    .nav-links{display:flex;gap:2px;align-items:center}
+    .nav-links a{color:#0D3D0D;text-decoration:none;font-size:14px;font-weight:500;padding:7px 13px;border-radius:6px;transition:.2s}
+    .nav-links a:hover,.nav-links a.active{color:#145214;background:#F0FBF0}
+    .nav-actions{display:flex;align-items:center;gap:8px}
+    .btn-nav-login{color:#145214;border:2px solid #138808;padding:7px 16px;border-radius:8px;font-weight:700;font-size:13px;background:transparent;text-decoration:none;transition:.2s}
+    .btn-nav-login:hover{background:#F0FBF0}
+    .btn-nav-signup{background:#FF9933;color:#fff;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:.2s}
+    .btn-nav-signup:hover{background:#E07000}
+    .btn-nav-admin{color:#6B7280;border:1px solid #D1D5DB;padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;background:transparent;transition:.2s;text-decoration:none}
+    .btn-nav-admin:hover{background:#F3F4F6;color:#374151}
+    @media(max-width:768px){.nav-links,.nav-actions{display:none}}
+
+    /* HERO — Tricolor */
+    .hero{
+      background:linear-gradient(135deg,
+        #E07000 0%,#FF9933 18%,#FFB347 30%,#FFD699 40%,
+        #ffffff 50%,
+        #A8E8A4 60%,#5CC852 72%,#138808 85%,#0D6B05 100%);
+      padding:56px 24px 48px;text-align:center;position:relative;overflow:hidden
+    }
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(255,255,255,.15) 0%,transparent 70%);pointer-events:none}
+    .hero h1{color:#fff;font-size:clamp(22px,3.5vw,38px);font-weight:800;margin-bottom:10px;line-height:1.2;text-shadow:0 2px 10px rgba(0,0,0,.25);position:relative;z-index:1}
+    .hero h1 span{color:rgba(255,255,255,.9)}
+    .hero p{color:rgba(255,255,255,.9);font-size:1rem;max-width:600px;margin:0 auto 24px;text-shadow:0 1px 4px rgba(0,0,0,.18);position:relative;z-index:1}
+    .hero-search{display:flex;gap:10px;max-width:560px;margin:0 auto;position:relative;z-index:1}
+    .hero-search input{flex:1;padding:14px 18px;border-radius:30px;border:none;font-size:1rem;background:rgba(255,255,255,.95);outline:none;font-family:'Segoe UI',system-ui,sans-serif}
+    .hero-search input:focus{background:#fff;box-shadow:0 0 0 3px rgba(255,153,51,.4)}
+    .hero-search button{background:var(--sf-500);color:#fff;border:none;border-radius:30px;padding:14px 24px;font-size:1rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Segoe UI',system-ui,sans-serif}
+    .hero-search button:hover{background:var(--sf-600)}
+    .hero-stats{display:flex;gap:32px;justify-content:center;margin-top:24px;position:relative;z-index:1}
+    .h-stat{color:rgba(255,255,255,.9);text-align:center}
+    .h-stat strong{display:block;font-size:1.6rem;color:#fff;font-weight:800;text-shadow:0 2px 6px rgba(0,0,0,.2)}
+    .h-stat span{font-size:.8rem;opacity:.85}
+
+    /* MAIN LAYOUT */
+    .container{max-width:1200px;margin:0 auto;padding:0 20px}
+    .main-layout{display:grid;grid-template-columns:260px 1fr;gap:28px;padding:36px 0 60px}
+
+    /* SIDEBAR */
+    .sidebar{position:sticky;top:72px;height:fit-content}
+    .sidebar-card{background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:1px solid var(--border)}
+    .sidebar-title{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-secondary);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+    .cat-nav a{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;text-decoration:none;color:var(--text);font-size:.88rem;font-weight:500;transition:.15s;margin-bottom:2px}
+    .cat-nav a:hover,.cat-nav a.active{background:var(--sf-50);color:var(--sf-700);border-left:3px solid var(--sf-500)}
+    .cat-nav a .cat-count{margin-left:auto;font-size:.75rem;background:var(--gr-50);color:var(--gr-700);padding:2px 7px;border-radius:10px;font-weight:600}
+    .quick-actions{margin-top:16px}
+    .quick-btn{display:block;width:100%;background:var(--gr-800);color:#fff;border:none;border-radius:8px;padding:11px 14px;font-size:.87rem;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;margin-bottom:8px;transition:.15s}
+    .quick-btn:hover{background:var(--gr-700)}
+    .quick-btn.secondary{background:var(--sf-500)}
+    .quick-btn.secondary:hover{background:var(--sf-600)}
+
+    /* LAW CARDS */
+    .section-header{margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px}
+    .section-header h2{font-size:1.4rem;font-weight:800;color:var(--text)}
+    .section-header .cat-badge{background:var(--gr-50);color:var(--gr-700);border:1px solid var(--gr-200);border-radius:20px;padding:4px 14px;font-size:.8rem;font-weight:700}
+    .law-cards{display:grid;gap:20px;margin-bottom:48px}
+    .law-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;transition:.2s}
+    .law-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+    .law-card-header{padding:18px 20px 14px;display:flex;align-items:flex-start;gap:14px;cursor:pointer}
+    .law-icon{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+    .law-card-meta{flex:1}
+    .law-name{font-size:1.05rem;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:4px}
+    .law-act{font-size:.8rem;color:var(--text-secondary);font-weight:500}
+    .law-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+    .tag{font-size:.72rem;padding:2px 9px;border-radius:12px;font-weight:600}
+    .tag-cat{background:var(--sf-50);color:var(--sf-700);border:1px solid var(--sf-100)}
+    .tag-urgency-high{background:#FFF0F0;color:#c0392b;border:1px solid #ffcdd2}
+    .tag-urgency-medium{background:#FFF8E1;color:#e65100;border:1px solid #ffe082}
+    .tag-urgency-low{background:#E8F5E9;color:#1b5e20;border:1px solid var(--gr-200)}
+    .expand-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:.75rem;color:var(--text-secondary);cursor:pointer;white-space:nowrap;transition:.15s;margin-top:2px}
+    .expand-btn:hover{background:var(--sf-50);border-color:var(--sf-300);color:var(--sf-700)}
+
+    .law-card-body{display:none;padding:0 20px 20px;border-top:1px solid var(--border)}
+    .law-card-body.open{display:block}
+    .law-card-summary{font-size:.93rem;color:var(--text);line-height:1.8;padding:14px 0 10px}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
+    .info-box{background:var(--bg);border-radius:8px;padding:12px 14px;border:1px solid var(--border)}
+    .info-box-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-secondary);margin-bottom:8px}
+    .info-box ul{list-style:none;padding:0}
+    .info-box li{font-size:.83rem;color:var(--text);padding:3px 0 3px 14px;position:relative;line-height:1.5}
+    .info-box li::before{content:'›';position:absolute;left:0;color:var(--sf-500);font-weight:700}
+    .scenario-list{margin-top:12px}
+    .scenario-item{background:linear-gradient(135deg,var(--sf-50),#fff);border-left:3px solid var(--sf-400,#FFB84D);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:8px;font-size:.87rem;color:var(--text);line-height:1.6}
+    .scenario-item strong{color:var(--sf-700);display:block;margin-bottom:2px;font-size:.8rem;text-transform:uppercase;letter-spacing:.3px}
+    .limitation-box{display:inline-flex;align-items:center;gap:6px;background:var(--gr-50);border:1px solid var(--gr-200);border-radius:8px;padding:8px 14px;font-size:.83rem;color:var(--gr-800);font-weight:600;margin-top:12px}
+    .cta-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+    .cta-btn{padding:10px 18px;border-radius:8px;font-size:.87rem;font-weight:700;cursor:pointer;border:none;transition:.15s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+    .cta-btn-primary{background:var(--gr-800);color:#fff}
+    .cta-btn-primary:hover{background:var(--gr-700)}
+    .cta-btn-outline{background:#fff;color:var(--sf-600);border:1.5px solid var(--sf-400,#FFB84D)}
+    .cta-btn-outline:hover{background:var(--sf-50)}
+
+    /* DISCLAIMER */
+    .disclaimer{background:#FFF8E1;border-top:3px solid var(--sf-300);padding:24px;text-align:center;font-size:.83rem;color:var(--sf-800);line-height:1.7;margin-top:0}
+    .disclaimer strong{display:block;font-size:.9rem;margin-bottom:4px}
+
+    /* NO RESULTS */
+    .no-results{text-align:center;padding:48px 20px;color:var(--text-secondary)}
+    .no-results .nr-icon{font-size:3rem;margin-bottom:12px}
+
+    /* Scroll target highlight */
+    .law-section:target .section-header{background:var(--sf-50);border-radius:8px;padding:8px 12px;margin-bottom:16px}
+
+    @media(max-width:768px){
+      .main-layout{grid-template-columns:1fr}
+      .sidebar{display:none}
+      .hero h1{font-size:1.7rem}
+      .hero-stats{gap:16px}
+      .info-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="sl-tribar"></div>
+<nav class="navbar" id="mainNav">
+  <a href="index.html" class="navbar-brand"><img src="assets/logo.svg" alt="SatLegal" style="height:56px;width:auto"></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="legal-topics.html">Legal Topics</a>
+    <a href="laws-reference.html" class="active">Laws Library</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="about.html">About Us</a>
+  </div>
+  <div class="nav-actions">
+    <a href="auth/admin-login.html" class="btn-nav-admin" title="Admin Console">⚙️ Admin</a>
+    <a href="index.html" class="btn-nav-login">Login</a>
+    <a href="index.html" class="btn-nav-signup">⚡ Sign Up Free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <h1>🏛️ Indian Law Library<br><span>Plain English for Every Indian</span></h1>
+    <p>Understand your legal rights with clarity — every major Indian law explained in simple language, with real-world scenarios and what to do next.</p>
+    <div class="hero-search">
+      <input type="text" id="heroSearch" placeholder="Search any law, act, or situation…" oninput="liveSearch()" />
+      <button onclick="liveSearch()">Search</button>
+    </div>
+    <div class="hero-stats">
+      <div class="h-stat"><strong id="statLaws">38</strong><span>Indian Laws</span></div>
+      <div class="h-stat"><strong id="statCats">11</strong><span>Categories</span></div>
+      <div class="h-stat"><strong>100%</strong><span>Plain English</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<div class="container">
+<div class="main-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">Browse by Category</div>
+      <nav class="cat-nav" id="catNav">
+        <a href="#all" onclick="filterSection('all',this)" class="active">📚 All Laws <span class="cat-count" id="cnt-all">38</span></a>
+        <a href="#family" onclick="filterSection('Family',this)">👨‍👩‍👧 Family & Marriage <span class="cat-count">8</span></a>
+        <a href="#property" onclick="filterSection('Property',this)">🏠 Property <span class="cat-count">6</span></a>
+        <a href="#criminal" onclick="filterSection('Criminal',this)">⚖️ Criminal <span class="cat-count">6</span></a>
+        <a href="#cyber" onclick="filterSection('Cyber',this)">🔒 Cyber & IT <span class="cat-count">3</span></a>
+        <a href="#succession" onclick="filterSection('Succession',this)">📜 Succession & Wills <span class="cat-count">2</span></a>
+        <a href="#constitutional" onclick="filterSection('Constitutional',this)">🇮🇳 Constitutional <span class="cat-count">2</span></a>
+        <a href="#nri" onclick="filterSection('NRI',this)">✈️ NRI / Overseas <span class="cat-count">1</span></a>
+        <a href="#ip" onclick="filterSection('IP',this)">💡 IP Rights <span class="cat-count">1</span></a>
+      </nav>
+      <div class="quick-actions">
+        <a href="index.html" class="quick-btn secondary">🔍 Analyse My Case</a>
+        <a href="/legal-topics.html" class="quick-btn">📋 Topic Browser</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main id="mainContent">
+    <div id="lawLibrary"></div>
+    <div class="no-results" id="noResults" style="display:none">
+      <div class="nr-icon">🔍</div>
+      <h3>No laws found</h3>
+      <p>Try a different search term — e.g. "divorce", "cheque bounce", "property", "NRI"</p>
+    </div>
+  </main>
+
+</div><!-- main-layout -->
+</div><!-- container -->
+
+<!-- DISCLAIMER -->
+<div class="disclaimer">
+  <strong>📢 Legal Disclaimer</strong>
+  The content provided on this website is for informational purposes only and should not be relied upon as a substitute for legal advice. Recipients are advised to consult with qualified legal counsel before implementing any recommendations herein. SatLegal shall not be liable for actions taken based on this information.
+  <div style="margin-top:10px;font-size:12px">
+    <a href="privacy-policy.html" style="color:var(--sf-700);margin-right:12px">Privacy Policy</a>
+    <a href="terms-conditions.html" style="color:var(--sf-700)">Terms &amp; Conditions</a>
+  </div>
+</div>
+
+<!-- CHATBOT -->
+<script src="js/chatbot.js"></script>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// LAW REFERENCE DATA  (self-contained, no LAWS_DATABASE dep)
+// ══════════════════════════════════════════════════════════
+const REF_LAWS = [
+  // ── FAMILY ─────────────────────────────────────────────
+  {
+    id:'hindu-marriage', section:'Family', icon:'💍', iconBg:'#FFF0F5',
+    name:'Hindu Marriage Act, 1955 – Divorce & Matrimonial Rights',
+    act:'Hindu Marriage Act, 1955 (Sec 13, 13B, 9, 10, 24, 25)',
+    urgency:'medium',
+    summary:'Governs marriage, divorce, judicial separation, restitution of conjugal rights, and alimony for Hindus, Buddhists, Jains and Sikhs. Divorce may be sought on grounds of cruelty, adultery, desertion, conversion, mental disorder, and more. Mutual consent divorce (Sec 13B) is faster — both spouses agree, live apart 1+ year, and file jointly.',
+    whenToUse:['When you want to get divorced (contested or mutual)','When your spouse has deserted you for 2+ years','When you are facing cruelty — mental or physical','When you need interim or permanent maintenance/alimony','When you want judicial separation without divorce'],
+    keyPoints:['Sec 13 – Divorce grounds: cruelty, adultery, desertion, conversion, mental disorder','Sec 13B – Mutual Consent Divorce: 1 year separation + cooling period of 6 months (waivable)','Sec 9 – Restitution of Conjugal Rights: force cohabitation — rarely granted','Sec 24 – Maintenance pendente lite (during case)','Sec 25 – Permanent alimony after divorce','Sec 26 – Custody of children during/after divorce'],
+    scenarios:[
+      {title:'Scenario 1', text:'Husband verbally abuses and threatens wife for 3 years. Wife can file for divorce under Sec 13(1)(ia) – mental cruelty. Court grants divorce + permanent alimony.'},
+      {title:'Scenario 2', text:'Both spouses agree to separate after 2 years of marriage. They sign a settlement (alimony agreed, no children). File Sec 13B petition. Decree in 6–18 months.'},
+      {title:'Scenario 3', text:'Husband leaves and has not returned for 4 years with no communication. Wife files on ground of desertion (2+ years). Court grants ex-parte divorce if husband untraceable.'}
+    ],
+    limitation:'No fixed limitation; file at earliest opportunity',
+    link:'/'
+  },
+  {
+    id:'domestic-violence', section:'Family', icon:'🛡️', iconBg:'#FFF0F5',
+    name:'Protection of Women from Domestic Violence Act, 2005',
+    act:'PWDVA 2005 + BNS Sec 85/86 (Dowry Cruelty)',
+    urgency:'high',
+    summary:'Protects women from physical, sexual, verbal, emotional, and economic abuse by any family member or intimate partner. Provides emergency protection orders, right to reside in the matrimonial home, monetary relief, and custody orders — all through a Magistrate (not the High Court). Quicker and cheaper than civil court.',
+    whenToUse:['Physical violence by husband or in-laws','Mental or emotional abuse, threats, name-calling','Economic deprivation — not giving money, controlling finances','Dowry demands and harassment','Thrown out of the matrimonial home'],
+    keyPoints:['Sec 12 – Application to Magistrate (through Protection Officer)','Sec 18 – Protection Order: prohibits husband/abuser from contacting/approaching you','Sec 19 – Residence Order: right to stay in matrimonial home, cannot be evicted','Sec 20 – Monetary Relief: maintenance, medical expenses, property loss','Sec 21 – Child Custody Order','BNS Sec 85 – Dowry demand (up to 3 years)','BNS Sec 86 – Cruelty (up to 3 years)'],
+    scenarios:[
+      {title:'Scenario 1', text:'Husband physically assaults wife. She approaches District Protection Officer, gets interim protection order within 3 days prohibiting husband from entering home.'},
+      {title:'Scenario 2', text:'In-laws demand dowry, abuse wife verbally. Wife files DV complaint + BNS Sec 85. FIR registered. In-laws arrested. Magistrate orders ₹15,000/month maintenance.'}
+    ],
+    limitation:'No strict limitation — file as soon as possible',
+    link:'/'
+  },
+  {
+    id:'child-custody', section:'Family', icon:'👶', iconBg:'#FFF0F5',
+    name:'Child Custody & Guardianship Laws',
+    act:'Guardians and Wards Act, 1890 + Hindu Minority and Guardianship Act, 1956',
+    urgency:'high',
+    summary:'Courts decide child custody based on the paramount principle of "best interests of the child." Physical custody (who the child lives with) and legal custody (who makes decisions) can be split or shared. Courts consider age, gender, parent\'s stability, child\'s expressed preference (if above ~9 years), and any abuse history.',
+    whenToUse:['During or after divorce proceedings','Spouse taking away children without consent','Denying visitation/access rights','Child abducted by the other parent','Seeking urgent interim custody'],
+    keyPoints:['GWA Sec 17 – Welfare of minor as the paramount consideration','HMGA Sec 6 – Father is natural guardian; mother is natural guardian of child below 5','Sec 26 HMA – Custody can be decided in divorce proceedings itself','Courts prefer maternal custody for very young children (below 5)','For NRI custody disputes, Hague Convention may apply'],
+    scenarios:[
+      {title:'Scenario 1', text:'Father takes 7-year-old daughter to his parents after separation. Mother files urgent custody petition. Court grants interim custody to mother (preferred for girls) pending final hearing.'},
+      {title:'Scenario 2', text:'After mutual divorce, father gets custody of 12-year-old son. Mother denied access. Mother files contempt + variation of custody order. Court orders regular weekly access.'}
+    ],
+    limitation:'Urgent – file immediately for safety of child',
+    link:'/'
+  },
+  {
+    id:'maintenance', section:'Family', icon:'💸', iconBg:'#FFF0F5',
+    name:'Maintenance & Alimony Law (BNSS Sec 144)',
+    act:'BNSS Sec 144 (formerly CrPC Sec 125) + HMA Sec 24 & 25 + DV Act Sec 20',
+    urgency:'high',
+    summary:'A spouse, ex-spouse, or children can claim maintenance if they cannot maintain themselves. BNSS Sec 144 allows even a separated wife to claim from her husband. Courts consider the husband\'s income and the wife\'s actual needs. Maintenance is typically 15–25% of the husband\'s net income. A divorced woman can also claim permanent alimony.',
+    whenToUse:['Husband not giving monthly household money','After separation/divorce, no income','Children\'s school/medical expenses not being paid','Deserted wife needing immediate relief','Muslim women after divorce (under MWPR Act)'],
+    keyPoints:['BNSS Sec 144 – Maintenance to wife, child, parents (even during marriage if desertion/cruelty)','HMA Sec 24 – Pendente lite (during divorce case)','HMA Sec 25 – Permanent alimony (after divorce decree)','DV Act Sec 20 – Monetary relief including rent, medical, losses','Formula: typically 15-25% of husband\'s monthly income','Maintenance can be claimed even before divorce is final'],
+    scenarios:[
+      {title:'Scenario 1', text:'Husband earns ₹80,000/month, wife has no income, 2 children. Wife files BNSS 144. Court orders ₹15,000/month for wife + ₹5,000/child.'},
+      {title:'Scenario 2', text:'Muslim wife divorced by husband (talaq). Files petition under Muslim Women Protection Act. Court directs ₹2 lakh fair provision + ₹30,000 mehr.'}
+    ],
+    limitation:'3 years from denial of maintenance',
+    link:'/'
+  },
+  {
+    id:'inheritance-hsa', section:'Family', icon:'🏡', iconBg:'#FFF0F5',
+    name:'Hindu Succession Act, 1956 (Amended 2005)',
+    act:'Hindu Succession Act, 1956',
+    urgency:'medium',
+    summary:'Governs inheritance of property when a Hindu dies without leaving a Will (intestate). The landmark 2005 Amendment gave daughters equal rights as sons in ancestral (joint family / coparcenary) property — even if the daughter was born before 2005. Class I heirs (sons, daughters, widow, mother) get equal shares.',
+    whenToUse:['Father or mother died without a Will','Ancestral property that brothers are not sharing fairly','Daughter being denied her share in family property','Need to challenge unequal division of family property','NRI claiming share in Indian ancestral property'],
+    keyPoints:['Sec 6 (post-2005) – Daughter is a coparcener with the same rights as son in joint family property','Sec 8 – Class I heirs inherit equally (sons, daughters, widow, mother)','Sec 14 – Any property owned by a Hindu female becomes her absolute property','Property acquired before 2005 amendment also covered (Supreme Court – Vineeta Sharma case, 2020)','Self-acquired property can be disposed of by Will; ancestral property cannot be easily disposed of unilaterally'],
+    scenarios:[
+      {title:'Scenario 1', text:'Father died intestate in 2023. He had 2 sons and 1 daughter. All three are equal Class I heirs — each gets 1/3 share. Daughter cannot be denied her share.'},
+      {title:'Scenario 2', text:'3 brothers refuse to give sister her share in grandfather\'s agricultural land (pre-2005 acquisition). She files partition suit. Court upholds 2005 amendment — she gets equal share.'}
+    ],
+    limitation:'12 years from accrual of right',
+    link:'/'
+  },
+  {
+    id:'will-probate', section:'Succession', icon:'📜', iconBg:'#F0F4FF',
+    name:'Will, Probate & Succession Certificate',
+    act:'Indian Succession Act, 1925 + Hindu Succession Act, 1956',
+    urgency:'medium',
+    summary:'A Will is a legal document expressing a person\'s wishes for distributing their property after death. Probate is a court certification that the Will is genuine. A Succession Certificate is needed for movable assets (bank accounts, shares) when there is no Will. Legal Heir Certificate is issued by the revenue authority for government records.',
+    whenToUse:['Challenging a Will as forged or made under undue influence','Getting bank accounts/investments released after death','Applying for probate in Maharashtra, WB, or Chennai','Obtaining a succession certificate for movable property','Claiming as an intestate heir'],
+    keyPoints:['Indian Succession Act Sec 57 – Probate mandatory in Presidency Towns (Mumbai, Kolkata, Chennai)','Sec 63 – Will must be signed by testator + 2 witnesses','Sec 213 – Executor\'s right to act and represent estate','Probate grants executor the right to administer the estate','Succession Certificate: issued by District Judge, needed for debts & securities','Legal Heir Certificate: issued by Tahsildar/Revenue officer'],
+    scenarios:[
+      {title:'Scenario 1', text:'Eldest son presents a Will that was made 1 month before father\'s death, when father was ill. Other children challenge it. Court orders medical examination and witness inquiry into testamentary capacity.'},
+      {title:'Scenario 2', text:'Husband dies intestate in Mumbai, leaving shares worth ₹12 lakh. Wife applies for Succession Certificate to the District Court. Certificate issued in 3–4 months.'}
+    ],
+    limitation:'12 years from death',
+    link:'/'
+  },
+  // ── PROPERTY ───────────────────────────────────────────
+  {
+    id:'rera', section:'Property', icon:'🏗️', iconBg:'#F0F8FF',
+    name:'RERA – Real Estate (Regulation and Development) Act, 2016',
+    act:'RERA 2016',
+    urgency:'medium',
+    summary:'RERA protects home buyers from builder delays, specification changes, and fraud. Every residential project above 500 sq.m or 8 apartments must be registered with the state RERA authority. Builders must deliver on time or pay interest at SBI MCLR+2% on all amounts paid. Buyers can seek refund + interest if delay exceeds the agreed date.',
+    whenToUse:['Builder not giving possession on time','Builder changed flat specifications without consent','Builder cancelled booking unfairly','Want to check if a project is RERA-registered','Builder has gone into insolvency'],
+    keyPoints:['Sec 18 – Penalty for delay: refund + interest (SBI MCLR+2%) or continue with compensation','Sec 19 – Buyer rights: on-time possession, as per specification, structural defect 5-year warranty','Sec 31 – Any person can file complaint with RERA Authority','Sec 71 – RERA authority can impose up to 5% penalty on registered amount for violations','Sec 89 – RERA is in addition to, not instead of, Consumer Protection Act'],
+    scenarios:[
+      {title:'Scenario 1', text:'Agreed possession was June 2022 but builder delayed to March 2024. Buyer gets interest at 9.6%/year on ₹40 lakh paid — approximately ₹7 lakh interest. RERA order in 3–6 months.'},
+      {title:'Scenario 2', text:'Builder stopped construction mid-way and is unresponsive. Buyer files RERA + Consumer Court complaint. Court orders refund of ₹55 lakh + 9% interest + ₹2 lakh for mental agony.'}
+    ],
+    limitation:'3 years from cause of action',
+    link:'/'
+  },
+  {
+    id:'transfer-property', section:'Property', icon:'📋', iconBg:'#F0F8FF',
+    name:'Transfer of Property Act, 1882',
+    act:'Transfer of Property Act, 1882 + Registration Act, 1908',
+    urgency:'high',
+    summary:'Governs how property in India is legally transferred — through sale, mortgage, lease, gift, or exchange. All immovable property transfers above ₹100 value must be registered. Sec 53A gives protection to buyers who pay consideration and take possession even without a registered deed (part performance). Specific performance can be sought if the seller backs out after the agreement.',
+    whenToUse:['Seller backing out of sale agreement after receiving advance','Unregistered sale deed — is it valid?','Property sold through fraudulent Power of Attorney','Gift deed being challenged by family','Mortgage dispute — lender threatening to sell property'],
+    keyPoints:['Sec 54 – Sale of immovable property must be through registered instrument','Sec 53A – Part performance protects buyer who paid and took possession','Sec 55 – Seller must deliver good title, free from encumbrances','Sec 58 – Mortgage: property as security for loan','Sec 105 – Lease: creating tenancy rights','Registration Act Sec 17 – Compulsory registration for immovable property'],
+    scenarios:[
+      {title:'Scenario 1', text:'Buyer pays ₹10 lakh advance, seller backs out saying "price has gone up." Buyer files suit for specific performance within 3 years. Court directs seller to execute sale deed.'},
+      {title:'Scenario 2', text:'Seller\'s brother had given PoA to sell property while seller was abroad. Brother sold it to a third party fraudulently. Seller returns, files PoA cancellation + property recovery suit.'}
+    ],
+    limitation:'3 years for specific performance; 12 years for possession',
+    link:'/'
+  },
+  {
+    id:'rent-control', section:'Property', icon:'🏠', iconBg:'#F0F8FF',
+    name:'Rent Control & Tenancy Laws',
+    act:'State Rent Control Acts + Transfer of Property Act Sec 106',
+    urgency:'medium',
+    summary:'Rent control laws (state-specific) protect both landlords and tenants. Tenants cannot be evicted without valid reasons (rent arrears, misuse, personal need) and proper notice. Landlords can recover possession for bona fide personal need, renovation, or non-payment. Security deposits (usually 2–10 months rent) must be returned at end of tenancy.',
+    whenToUse:['Tenant refusing to vacate despite rent arrears','Landlord not returning security deposit','Landlord cutting electricity/water to force eviction','Dispute over rent hike','Tenant subletting without permission'],
+    keyPoints:['TPA Sec 106 – 15-day notice (monthly tenancy) or 6-month notice (annual tenancy)','State Rent Control Acts override TPA for residential tenants','Eviction grounds: rent default, misuse of property, personal need of landlord','Forcible eviction without court order is illegal — tenant can file FIR','Security deposit: typically 2–10 months rent (state-specific)','Registered rental agreement is strongest evidence'],
+    scenarios:[
+      {title:'Scenario 1', text:'Tenant has not paid rent for 8 months. Landlord sends 15-day eviction notice, files eviction suit. Court grants possession decree in 6–12 months.'},
+      {title:'Scenario 2', text:'Landlord cuts electricity and changes locks to force tenant out. Tenant files FIR for criminal trespass + files for restoration of possession. Court issues immediate status quo order.'}
+    ],
+    limitation:'3 years from cause of action',
+    link:'/'
+  },
+  // ── CRIMINAL ───────────────────────────────────────────
+  {
+    id:'bns-overview', section:'Criminal', icon:'⚖️', iconBg:'#FFF5F5',
+    name:'Bharatiya Nyaya Sanhita (BNS), 2023 – New Criminal Code',
+    act:'Bharatiya Nyaya Sanhita, 2023 (Replaces IPC from 1 July 2024)',
+    urgency:'high',
+    summary:'The BNS 2023 replaced the Indian Penal Code (IPC) 1860 from 1 July 2024. All offences now carry updated section numbers but most punishments remain similar or enhanced. Key changes: "terrorism" newly defined, "organized crime" added (Sec 111), community service as punishment for petty offences, and hit-and-run now carries 10 years. The BNSS (new CrPC) and BSA (new Evidence Act) also came into force simultaneously.',
+    whenToUse:['Any criminal offence committed after 1 July 2024','Looking up the correct section number under new law','Cheating, fraud, assault, theft cases','Offences against women and children'],
+    keyPoints:['BNS Sec 103 – Murder (was IPC Sec 302): 10 years to death','BNS Sec 115 – Hurt (was IPC Sec 323): up to 1 year','BNS Sec 317 – Cheating by personation (was IPC Sec 420-related): up to 7 years','BNS Sec 316 – Cheating (was IPC Sec 417/420): 1–7 years','BNS Sec 64 – Rape (was IPC Sec 375/376): minimum 10 years','New: Sec 111 Organized Crime, Sec 113 Terrorism','FIRs under old IPC continue under corresponding BNS sections'],
+    scenarios:[
+      {title:'Scenario 1', text:'Person commits fraud worth ₹5 lakh in August 2024. FIR filed under BNS Sec 318 (cheating with enhanced punishment), not old IPC Sec 420.'},
+      {title:'Scenario 2', text:'Hit-and-run accident in 2024, driver flees. Charged under BNS Sec 106(2): mandatory minimum 10 years (new provision).'}
+    ],
+    limitation:'Varies by offence; no limitation for serious crimes',
+    link:'/'
+  },
+  {
+    id:'cheque-bounce', section:'Criminal', icon:'🏦', iconBg:'#FFF5F5',
+    name:'Cheque Bounce – NI Act Section 138',
+    act:'Negotiable Instruments Act, 1881 – Section 138',
+    urgency:'high',
+    summary:'Cheque bounce (dishonour due to insufficient funds, account closed, or stop payment) is a criminal offence carrying up to 2 years imprisonment + fine of twice the cheque amount. The process is strictly time-bound: (1) Send legal notice within 30 days of dishonour. (2) If no payment in 15 days: file complaint within 1 month. This is one of India\'s most common financial crimes.',
+    whenToUse:['Cheque received as payment has bounced','Promissory note dishonoured','Post-dated cheque not honoured','Company director issued dishonoured cheque','Multiple cheques bounced'],
+    keyPoints:['Sec 138 – Dishonour of cheque: up to 2 years + fine (twice cheque amount)','Sec 141 – Directors/persons in charge of company are also liable for company cheques','Sec 143A – Court can award 20% of cheque amount as interim compensation immediately','Sec 148 – Appellate court can order 20% of penalty as deposit to stop appeal','Process: Dishonour → Bank return memo → Legal notice within 30 days → Wait 15 days → Complaint within 1 month'],
+    scenarios:[
+      {title:'Scenario 1', text:'₹2 lakh cheque bounced for "insufficient funds." Legal notice sent day 25. Accused doesn\'t pay in 15 days. Criminal complaint filed on day 45. Court awards interim compensation of ₹40,000.'},
+      {title:'Scenario 2', text:'Company director Ravi issues cheque from company account that bounces. Both the company AND Ravi are prosecuted. Ravi can\'t escape by saying "it was a company matter."'}
+    ],
+    limitation:'Complaint within 1 month of cause of action (15 days after notice expiry)',
+    link:'/'
+  },
+  {
+    id:'bail-bnss', section:'Criminal', icon:'🔑', iconBg:'#FFF5F5',
+    name:'Bail & Anticipatory Bail (BNSS)',
+    act:'Bharatiya Nagarik Suraksha Sanhita, 2023 (Replaces CrPC)',
+    urgency:'high',
+    summary:'Bail is the release of an accused person from custody with conditions (surety, surrender of passport, etc.). BNSS Sec 479 governs regular bail. BNSS Sec 482 governs anticipatory bail (sought before arrest, when you fear arrest). Default bail: if police don\'t file chargesheet in 60 days (for offences up to 10 years) or 90 days (for serious offences), bail must be granted.',
+    whenToUse:['Arrested by police or fear of arrest','Relative sent to judicial custody','Chargesheet not filed within time limits','Non-bailable offence, need bail from Sessions Court','Bail conditions too stringent — need modification'],
+    keyPoints:['Sec 479 BNSS – Regular Bail: bailable offence = right; non-bailable = court discretion','Sec 482 BNSS – Anticipatory Bail: apply to Sessions Court or High Court before arrest','Default bail: 60/90 days without chargesheet entitles accused to bail','Conditions: surety, passport surrender, reporting to police, no tampering with evidence','Police custody max: 24 hours before production before Magistrate (Sec 187)','BNSS Sec 528 – High Court inherent powers to quash FIR'],
+    scenarios:[
+      {title:'Scenario 1', text:'Accused in a cheating case (non-bailable). Police arrest him. Lawyer files bail application in Sessions Court the next day. Court grants bail on ₹1 lakh surety after 3 days.'},
+      {title:'Scenario 2', text:'Person gets information that police are about to arrest him in a false property case. He files anticipatory bail in High Court. Court grants pre-arrest protection for 6 weeks.'}
+    ],
+    limitation:'Regular bail: no limitation. Anticipatory bail: apply before arrest',
+    link:'/'
+  },
+  // ── CYBER ─────────────────────────────────────────────
+  {
+    id:'cyber-fraud', section:'Cyber', icon:'🔒', iconBg:'#F5FFF5',
+    name:'Cyber Fraud & Online Financial Crime',
+    act:'IT Act 2000 (Amended 2008) + BNS 2023',
+    urgency:'high',
+    summary:'Online financial fraud (UPI fraud, OTP fraud, phishing, fake investment schemes, SIM swapping) is rampant in India. Report to bank AND cybercrime.gov.in within 24 hours for the best chance of fund recovery. Helpline: 1930. Even if you voluntarily shared OTP, the fraudster is still criminally liable under IT Act Sec 66D (cheating by impersonation).',
+    whenToUse:['Money transferred through UPI fraud','Phishing call — shared OTP and money debited','Fake investment/crypto scheme — money lost','SIM swap — phone stopped working, bank account drained','Received fake court/bank/police notice online asking for money'],
+    keyPoints:['Report to bank within 24 hours — may trigger chargeback/freeze','Cybercrime helpline 1930 and cybercrime.gov.in for FIR/complaint','IT Act Sec 66C – Identity theft: 3 years + fine','IT Act Sec 66D – Cheating by impersonation using computer: 3 years + fine','BNS Sec 318 – Cheating (7 years for enhanced cases)','Bank is not liable if you voluntarily shared credentials (but fraudster still liable criminally)'],
+    scenarios:[
+      {title:'Scenario 1', text:'Receives KYC update call. Caller sounds official. Victim shares OTP. ₹85,000 transferred. Victim calls bank and 1930 within 1 hour. Bank freezes beneficiary account. ₹55,000 recovered.'},
+      {title:'Scenario 2', text:'Invested ₹2 lakh in fake crypto app promising 30% monthly returns. App disappears. Victim files cybercrime complaint with transaction IDs and app screenshots. EOW (Economic Offences Wing) investigation begins.'}
+    ],
+    limitation:'File FIR within 3 years; report to bank immediately',
+    link:'/'
+  },
+  {
+    id:'cyber-harassment', section:'Cyber', icon:'📱', iconBg:'#F5FFF5',
+    name:'Cyberstalking, Online Defamation & Harassment',
+    act:'IT Act 2000 Sec 66A, 67 + BNS Sec 351, 356',
+    urgency:'high',
+    summary:'Sharing someone\'s private photos/videos without consent (revenge porn), morphing images, creating fake social media profiles, and cyberstalking are criminal offences. Evidence must be preserved immediately — take screenshots before content is deleted. File a complaint with the State Cyber Crime Cell. Women can also approach National Commission for Women.',
+    whenToUse:['Intimate photos shared without consent (revenge porn)','Fake social media profile impersonating you','Being stalked online — someone tracking your movements','Defamatory posts/videos about you online','Receiving death threats on social media'],
+    keyPoints:['IT Act Sec 67 – Obscene material online: 3–5 years','IT Act Sec 67A – Sexually explicit material: 5–7 years','BNS Sec 77 – Voyeurism (watching/recording private acts): 1–3 years','BNS Sec 351 – Defamation (including online): 2 years + fine','IT Act Sec 69A – Government can direct platform to block/remove content in 72 hours','Preserve evidence before reporting — digital content can be deleted'],
+    scenarios:[
+      {title:'Scenario 1', text:'Ex-partner posts private photos on social media. Victim takes screenshots, files FIR under IT Act Sec 67 and BNS Sec 354C. Platform given 72-hour removal order by police.'},
+      {title:'Scenario 2', text:'Competitor creates fake Twitter profile impersonating a business owner and posts defamatory content. Business owner files complaint under IT Act + BNS 351. IP address traced. Competitor arrested.'}
+    ],
+    limitation:'3 years from incident',
+    link:'/'
+  },
+  // ── CONSUMER ──────────────────────────────────────────
+  {
+    id:'consumer-protection', section:'Consumer', icon:'🛒', iconBg:'#FFFDF0',
+    name:'Consumer Protection Act, 2019',
+    act:'Consumer Protection Act, 2019',
+    urgency:'medium',
+    summary:'You are a "consumer" if you buy goods or hire services for personal use (not for resale). You can complain against companies, hospitals, banks, insurance companies, and e-commerce platforms for defective goods, deficient services, unfair trade practices, and misleading advertisements. Court fees are minimal and you can represent yourself.',
+    whenToUse:['Defective product not replaced or refunded','Insurance claim rejected without valid reason','Hospital/doctor negligence — medical malpractice','Builder fraud (RERA + Consumer Court simultaneously)','E-commerce order — wrong product, fake product'],
+    keyPoints:['Consumer defined: buyer of goods/services for personal use','District Commission: up to ₹50 lakh','State Commission: ₹50 lakh – ₹2 crore','National Commission: above ₹2 crore','Sec 85–86 – Product liability: manufacturer, seller, service provider all liable','Sec 36 – Mediation option before full hearing','Timeline: District Commission typically decides in 3–5 months'],
+    scenarios:[
+      {title:'Scenario 1', text:'Washing machine delivered with defect. Company refuses replacement. Consumer files District Commission complaint. Company ordered to replace + pay ₹5,000 for harassment within 45 days.'},
+      {title:'Scenario 2', text:'Health insurance claim rejected for "non-disclosure" even though policyholder fully disclosed. Consumer Commission orders insurance company to pay ₹3.2 lakh claim + ₹50,000 compensation.'}
+    ],
+    limitation:'2 years from cause of action',
+    link:'/'
+  },
+  // ── CONSTITUTIONAL ─────────────────────────────────────
+  {
+    id:'pil-writ', section:'Constitutional', icon:'🏛️', iconBg:'#F8F5FF',
+    name:'Writ Petition & PIL – Constitutional Remedies',
+    act:'Constitution of India – Articles 32 & 226',
+    urgency:'medium',
+    summary:'A Writ Petition challenges illegal government action or inaction that violates your fundamental rights. A PIL (Public Interest Litigation) is filed by any citizen for public interest — no personal stake needed. High Court writs (Art 226) cover all rights; Supreme Court writs (Art 32) only for fundamental rights. Habeas corpus, mandamus, certiorari, prohibition, and quo warranto are the five types of writs.',
+    whenToUse:['Government authority acting illegally against you','Your fundamental rights violated (speech, equality, liberty)','Challenging an illegal government order/notification','Filing PIL for public interest (environment, roads, corruption)','Seeking release of a person illegally detained (habeas corpus)'],
+    keyPoints:['Article 226 – High Court: can issue any writ for any right (not just fundamental rights)','Article 32 – Supreme Court: writs only for fundamental rights violations','Habeas Corpus: "produce the body" — releases person from illegal detention','Mandamus: directs a public body to perform its duty','Certiorari: quashes a court/tribunal order made without jurisdiction','Exhaustion doctrine: must exhaust alternative remedies first (unless futile)','PIL: locus standi relaxed; any public-spirited person can file'],
+    scenarios:[
+      {title:'Scenario 1', text:'Police detain person for 10 days without FIR or bail. Family files Habeas Corpus in High Court. Court issues rule returnable. Police immediately produces and releases the person.'},
+      {title:'Scenario 2', text:'Municipality fails to repair roads for 5 years despite complaints. Resident files PIL in High Court. Court appoints a monitoring committee. Roads repaired within 4 months.'}
+    ],
+    limitation:'No fixed limitation — but delay weakens case',
+    link:'/'
+  },
+  // ── NRI ───────────────────────────────────────────────
+  {
+    id:'nri-laws', section:'NRI', icon:'✈️', iconBg:'#FFF5FF',
+    name:'NRI Legal Issues – Property, Marriage & FEMA',
+    act:'FEMA 1999 + Hindu Marriage Act + Transfer of Property Act + NRI Policy',
+    urgency:'high',
+    summary:'Non-Resident Indians (NRIs) face unique legal challenges: Power of Attorney (PoA) misuse by relatives to sell their Indian property, matrimonial disputes where the absent spouse is a foreign citizen, FEMA restrictions on property purchases, and child custody when a parent takes a child abroad. Indian courts have jurisdiction over NRI matrimonial cases if the marriage was solemnized in India.',
+    whenToUse:['Relative sold your Indian property using PoA while you were abroad','NRI spouse abandoned you in India and returned abroad','Need to send legal notice to an NRI in a foreign country','Property purchase/sale as an NRI — FEMA compliance','Child taken abroad without your consent'],
+    keyPoints:['NRI can buy residential/commercial property in India (not agricultural land)','FEMA Sec 6 – NRI allowed to invest in India through NRE/NRO account','PoA misuse: file PoA cancellation + FIR + civil injunction immediately','Service of summons abroad: through Letters Rogatory (High Court)','Hague Convention on Child Abduction (not signed by India but Indian courts enforce HC)','Abandonment / cruelty abroad can be ground for divorce in Indian courts'],
+    scenarios:[
+      {title:'Scenario 1', text:'NRI living in USA. Brother used general PoA to sell NRI\'s flat in Pune for ₹80 lakh and pocketed the money. NRI files PoA cancellation + FIR under BNS 316 + civil recovery suit on next visit to India.'},
+      {title:'Scenario 2', text:'NRI husband abandons Indian wife in India and stops maintenance. Wife files for divorce + maintenance in Indian court. Court issues summons via Letters Rogatory to USA. Divorce granted, alimony ordered enforced under MLAT.'}
+    ],
+    limitation:'Depends on matter; consult immediately to prevent time bar',
+    link:'/'
+  },
+  // ── IP ────────────────────────────────────────────────
+  {
+    id:'ip-rights', section:'IP', icon:'💡', iconBg:'#F5FFFF',
+    name:'Intellectual Property – Trademark, Copyright & Patent',
+    act:'Trade Marks Act, 1999 + Copyright Act, 1957 + Patents Act, 1970 + Designs Act, 2000',
+    urgency:'medium',
+    summary:'India\'s IP framework protects trademarks (brand names, logos), copyrights (literary/artistic/software works), patents (inventions), and designs (product appearance). Trademarks are registered with the Trade Marks Registry (validity: 10 years, renewable). Copyright arises automatically on creation. Patents: 20-year protection. Infringement remedies: injunction, damages, delivery up of infringing goods.',
+    whenToUse:['Someone is copying your brand name or logo','Your creative content (music, book, website, software) is being used without permission','Competitor launching a similar product infringing your patent','Need to register a trademark before launching a new brand','Online marketplace selling fake/counterfeit versions of your product'],
+    keyPoints:['Trade Marks Act Sec 18 – Application to Trade Marks Registry (DPIIT)','Registration: ~18–24 months; interim use "TM" symbol freely from filing','Copyright: automatic on creation; no registration needed (but registration creates record)','Patent: invention must be new, inventive step, industrial application; 20-year protection','Design: protects visual appearance; register within 12 months of disclosure','Infringement remedy: Anton Piller order (surprise inspection), injunction, damages'],
+    scenarios:[
+      {title:'Scenario 1', text:'Established restaurant "Spice Garden" finds a new chain using identical name and logo. Files trademark infringement suit in High Court. Interim injunction granted within 2 weeks, preventing further use.'},
+      {title:'Scenario 2', text:'Software developer\'s mobile app code copied verbatim by competitor. Files copyright infringement suit. Court awards injunction + ₹5 lakh damages (fair estimate of loss).'}
+    ],
+    limitation:'3 years from knowledge of infringement (civil); criminal no limitation',
+    link:'/'
+  },
+  // ── MUSLIM FAMILY ─────────────────────────────────────────
+  {
+    id:'muslim-divorce', section:'Family', icon:'🕌', iconBg:'#FFF5E6',
+    name:'Muslim Divorce – Triple Talaq, Nikah Dissolution & Mehr',
+    act:'Muslim Women (Protection of Rights on Marriage) Act, 2019 + Muslim Personal Law (Shariat) Application Act, 1937',
+    urgency:'high',
+    quickTip:'Triple talaq (talaq-e-biddat) is now a criminal offence since 2019. If your husband pronounced triple talaq, you can file an FIR immediately and also claim maintenance under BNSS Sec 144.',
+    summary:'Muslim personal law governs marriage (Nikah), divorce (Talaq), and maintenance for Muslim citizens. Since 2019, instant triple talaq (talaq-e-biddat — pronouncing "talaq" three times at once) is a cognizable, non-bailable criminal offence punishable with up to 3 years imprisonment. Other forms of divorce (Talaq-e-Ahsan, Khulʿ, Mubarat) remain valid. Mehr (dower) is a mandatory right of the wife and recoverable as a debt.',
+    whenToUse:['Husband pronounced triple talaq (instant divorce)','Husband abandoned wife without giving talaq','Wife wants divorce (Khulʿ) but husband refuses','Mehr (Mahr) not paid before or after marriage','Maintenance not given during Iddat period','Nikah validity disputed'],
+    keyPoints:['Muslim Women (Protection of Rights on Marriage) Act 2019 Sec 3 – Triple talaq void and illegal','Sec 4 – Husband liable for imprisonment up to 3 years + fine','Sec 5 – Wife entitled to subsistence allowance + custody of minor children','Muslim Personal Law (Shariat) Act 1937 governs valid divorce forms','Mehr: mandatory at time of Nikah; recoverable as a debt at any time','Khulʿ: wife can seek dissolution through court if husband refuses','BNSS Sec 144 / CrPC Sec 125 – Maintenance for Muslim women also applies'],
+    scenarios:[
+      {title:'Scenario 1', text:'Husband sends "talaq talaq talaq" by WhatsApp message. Wife files FIR under Muslim Women (Protection of Rights on Marriage) Act 2019. Husband arrested. Court grants subsistence allowance of ₹10,000/month + child custody to mother.'},
+      {title:'Scenario 2', text:'Wife wants Khulʿ divorce but husband refuses. Wife files petition in Family Court for dissolution of marriage under Muslim Personal Law. Court dissolves nikah after failed reconciliation, orders return of agreed Mehr to husband.'}
+    ],
+    limitation:'Triple talaq FIR: file immediately; Mehr recovery: 3 years; Maintenance: file anytime',
+    link:'/'
+  },
+  // ── LAND ACQUISITION ──────────────────────────────────────
+  {
+    id:'land-acquisition', section:'Property', icon:'🏗️', iconBg:'#F0FFF0',
+    name:'Land Acquisition – Compulsory Acquisition & Compensation',
+    act:'Right to Fair Compensation and Transparency in Land Acquisition, Rehabilitation and Resettlement Act, 2013 (RFCTLARR)',
+    urgency:'high',
+    quickTip:'Under the 2013 Act you are entitled to 2× market value (rural land) or 1× market value (urban land) plus 100% solatium. You have only 60 days from the Collector\'s award to file a Reference for enhanced compensation.',
+    summary:'When the government (central, state, or any authority) acquires private land for public purposes, the RFCTLARR Act 2013 governs compensation, rehabilitation, and resettlement. Landowners are entitled to 2× the market value (rural) or 1× market value (urban), PLUS a 100% solatium (additional sum), annuity, and rehabilitation package. Farmers losing livelihood get additional compensation. If you disagree with the award, you have 60 days to file a Reference to the Civil Court.',
+    whenToUse:['Government issued a notice for land acquisition','NHAI/Railway/Metro is acquiring your land for a project','Compensation offered is below market value','No compensation received but land physically taken','Social Impact Assessment (SIA) not conducted','You were not offered rehabilitation/resettlement package'],
+    keyPoints:['RFCTLARR Sec 11 – Preliminary notification (SIA, consent where applicable)','Sec 19 – Declaration of acquisition (within 12 months of Sec 11)','Sec 23 – Market value: higher of circle rate or last 3 years transactions','Rural land: 2× market value + 100% solatium = effective 4× payout','Urban land: 1× market value + 100% solatium = effective 2× payout','Sec 64 – Reference to Civil Court within 60 days of award','NH Act / Railway Act acquisitions have different procedures (check with lawyer)','Article 300A Constitution – No deprivation of property without legal authority'],
+    scenarios:[
+      {title:'Scenario 1', text:'NHAI acquires 2 acres of agricultural land in Haryana for highway. Circle rate: ₹25 lakh/acre. Last 3 years average: ₹32 lakh/acre. Compensation payable: ₹32L × 2 (rural multiplier) × 2 (plus solatium) = ₹1.28 crore per acre. Owner files Reference for additional compensation claiming actual market value of ₹45 lakh/acre.'},
+      {title:'Scenario 2', text:'Metro authority takes land without following SIA and consent requirement under RFCTLARR 2013. Landowner files writ petition in High Court. Court sets aside acquisition notice and directs fresh SIA process.'}
+    ],
+    limitation:'Reference to Civil Court: 60 days from Collector\'s award; Writ petition: 3 years (High Court)',
+    link:'/'
+  },
+];
+
+// Count stats
+document.getElementById('statLaws').textContent = REF_LAWS.length;
+const _uniqueSections = [...new Set(REF_LAWS.map(l => l.section))].length;
+const _catEl = document.getElementById('statCats');
+if (_catEl) _catEl.textContent = _uniqueSections;
+document.getElementById('cnt-all').textContent = REF_LAWS.length;
+
+// ── RENDERING ────────────────────────────────────────────
+let currentFilter = 'all';
+let searchTerm = '';
+
+function buildLibrary() {
+  const lib = document.getElementById('lawLibrary');
+  lib.innerHTML = '';
+
+  // Group by section
+  const sections = {};
+  REF_LAWS.forEach((law, idx) => {
+    if (!sections[law.section]) sections[law.section] = [];
+    sections[law.section].push({ ...law, _idx: idx });
+  });
+
+  const sectionOrder = ['Family','Succession','Property','Criminal','Employment','Cyber','Consumer','Tax','Constitutional','NRI','IP'];
+  sectionOrder.forEach(sec => {
+    if (!sections[sec]) return;
+    const filtered = sections[sec].filter(law => matchesSearch(law));
+    if (filtered.length === 0) return;
+
+    const secEl = document.createElement('div');
+    secEl.className = 'law-section';
+    secEl.id = 'sec-' + sec.toLowerCase();
+
+    const secIcons = {Family:'👨‍👩‍👧',Succession:'📜',Property:'🏠',Criminal:'⚖️',Employment:'💼',Cyber:'🔒',Consumer:'🛒',Tax:'💰',Constitutional:'🇮🇳',NRI:'✈️',IP:'💡'};
+
+    secEl.innerHTML = `
+      <div class="section-header">
+        <h2>${secIcons[sec]||'📚'} ${sec === 'Constitutional' ? 'Constitutional & Livelihood' : sec === 'NRI' ? 'NRI / Overseas Indian' : sec === 'IP' ? 'Intellectual Property' : sec} Law</h2>
+        <span class="cat-badge">${filtered.length} law${filtered.length>1?'s':''}</span>
+      </div>
+      <div class="law-cards">
+        ${filtered.map(law => renderCard(law)).join('')}
+      </div>
+    `;
+    lib.appendChild(secEl);
+  });
+
+  document.getElementById('noResults').style.display = lib.innerHTML.trim() === '' ? 'block' : 'none';
+}
+
+function matchesSearch(law) {
+  if (currentFilter !== 'all' && law.section !== currentFilter) return false;
+  if (!searchTerm) return true;
+  const t = searchTerm.toLowerCase();
+  return law.name.toLowerCase().includes(t) ||
+    law.act.toLowerCase().includes(t) ||
+    law.summary.toLowerCase().includes(t) ||
+    (law.whenToUse || []).some(u => u.toLowerCase().includes(t)) ||
+    (law.keyPoints || []).some(k => k.toLowerCase().includes(t));
+}
+
+function renderCard(law) {
+  const urgMap = { high:'tag-urgency-high', medium:'tag-urgency-medium', low:'tag-urgency-low' };
+  const urgLabel = { high:'High Urgency', medium:'Medium Urgency', low:'Low Urgency' };
+  return `
+    <div class="law-card" id="card-${law.id}">
+      <div class="law-card-header" onclick="toggleCard('${law.id}')">
+        <div class="law-icon" style="background:${law.iconBg}">${law.icon}</div>
+        <div class="law-card-meta">
+          <div class="law-name">${law.name}</div>
+          <div class="law-act">${law.act}</div>
+          <div class="law-tags">
+            <span class="tag tag-cat">${law.section}</span>
+            <span class="tag ${urgMap[law.urgency]||'tag-urgency-medium'}">${urgLabel[law.urgency]||'Medium'}</span>
+            ${law.limitation ? `<span class="tag" style="background:#F3F4F6;color:#6b7280;border:1px solid #e5e7eb">⏰ ${law.limitation.split(';')[0]}</span>` : ''}
+          </div>
+        </div>
+        <button class="expand-btn" id="btn-${law.id}">▼ Read More</button>
+      </div>
+      <div class="law-card-body" id="body-${law.id}">
+        ${law.quickTip ? `<div style="display:flex;align-items:flex-start;gap:10px;background:linear-gradient(135deg,var(--gr-50),#fff);border-left:4px solid var(--gr-500);border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:14px"><span style="font-size:18px;flex-shrink:0">💡</span><div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gr-700);margin-bottom:3px">Key Insight</div><div style="font-size:.9rem;color:var(--gr-800);line-height:1.6">${law.quickTip}</div></div></div>` : ''}
+        <p class="law-card-summary">${law.summary}</p>
+
+        <div class="info-grid">
+          <div class="info-box">
+            <div class="info-box-title">🎯 When to Use This Law</div>
+            <ul>${(law.whenToUse||[]).map(u => `<li>${u}</li>`).join('')}</ul>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">📌 Key Legal Points</div>
+            <ul>${(law.keyPoints||[]).slice(0,5).map(k => `<li>${k}</li>`).join('')}</ul>
+          </div>
+        </div>
+
+        ${law.scenarios && law.scenarios.length ? `
+        <div class="scenario-list">
+          <div class="info-box-title" style="margin-bottom:10px">📖 Real-World Scenarios</div>
+          ${law.scenarios.map(s => `<div class="scenario-item"><strong>${s.title}</strong>${s.text}</div>`).join('')}
+        </div>` : ''}
+
+        ${law.limitation ? `<div class="limitation-box">⏰ Limitation Period: ${law.limitation}</div>` : ''}
+
+        <div class="cta-row">
+          <a href="index.html" class="cta-btn cta-btn-primary" onclick="prefillWizard('${law.section}')">🔍 Analyse My Case Under This Law</a>
+          <a href="/legal-topics.html" class="cta-btn cta-btn-outline">📋 View Similar Topics</a>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleCard(id) {
+  const body = document.getElementById('body-' + id);
+  const btn = document.getElementById('btn-' + id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  btn.textContent = isOpen ? '▼ Read More' : '▲ Close';
+
+  // Track view
+  const law = REF_LAWS.find(l => l.id === id);
+  if (law && !isOpen && window.API && window.API.trackSearch) {
+    window.API.trackSearch(law.name, [{ caseType: law.name, lawCategory: law.section, confidence: 100 }], 'reference_page');
+  }
+}
+
+function filterSection(section, el) {
+  currentFilter = section;
+  document.querySelectorAll('.cat-nav a').forEach(a => a.classList.remove('active'));
+  if (el) el.classList.add('active');
+  buildLibrary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+let _searchTimer = null;
+function liveSearch() {
+  searchTerm = document.getElementById('heroSearch').value.trim();
+  if (_searchTimer) clearTimeout(_searchTimer);
+  _searchTimer = setTimeout(buildLibrary, 250);
+}
+
+function prefillWizard(section) {
+  sessionStorage.setItem('wizard_prefill', JSON.stringify({ area: section }));
+}
+
+// Init
+buildLibrary();
+</script>
+</body>
+</html>
