@@ -484,6 +484,13 @@ footer{background:var(--gr-900);color:rgba(255,255,255,.5);padding:40px 20px;tex
 .auth-otp-row{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
 .auth-otp-f{width:44px;height:50px;border:1.5px solid var(--border);border-radius:9px;text-align:center;font-size:20px;font-weight:800;color:var(--gr-800);outline:none;transition:.15s}
 .auth-otp-f:focus{border-color:var(--gr-500);box-shadow:0 0 0 3px rgba(19,136,8,.1)}
+.auth-captcha-box{background:var(--gr-50);border:1.5px solid var(--gr-200);border-radius:12px;padding:14px 16px;margin:16px 0 0}
+.auth-captcha-label{font-size:11px;font-weight:700;color:var(--gr-600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.auth-captcha-row{display:flex;align-items:center;gap:10px}
+.auth-captcha-q{font-size:18px;font-weight:900;color:var(--gr-900);letter-spacing:1px;flex:1}
+.auth-captcha-ans{width:72px;height:40px;border:1.5px solid var(--border);border-radius:8px;text-align:center;font-size:18px;font-weight:800;color:var(--gr-800);outline:none;transition:.15s}
+.auth-captcha-ans:focus{border-color:var(--gr-500);box-shadow:0 0 0 3px rgba(19,136,8,.1)}
+.auth-captcha-refresh{background:none;border:none;font-size:16px;cursor:pointer;color:var(--gr-600);padding:4px;line-height:1;flex-shrink:0}
 .auth-divider{text-align:center;font-size:12px;color:var(--text-lt);margin:14px 0}
 .auth-divider span{padding:0 10px;background:#fff;position:relative;z-index:1}
 .auth-divider::before{content:'';display:block;height:1px;background:var(--border);margin-top:8px;position:relative;top:-8px}
@@ -2342,6 +2349,7 @@ function showAuthModal(plan,amt){
   switchAuthTab(W.email?'login':'signup');
   mo.classList.add('open');
   mo.querySelector('.auth-modal').scrollTop=0;
+  generateSignupCaptcha();
   // Update verify button labels based on free vs paid
   const _isFreeFlow=(amt===0);
   const _verifyLabel=_isFreeFlow?'✅ Verify &amp; Get Free Report':'✅ Verify &amp; Proceed to Payment';
@@ -2369,6 +2377,7 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape"&&document.ge
 function switchAuthTab(tab){
   document.querySelectorAll('.auth-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
   document.querySelectorAll('.auth-form').forEach(f=>f.classList.toggle('active',f.id==='authForm-'+tab));
+  if(tab==='signup')generateSignupCaptcha();
 }
 
 /* OTP digit auto-advance */
@@ -2390,6 +2399,47 @@ function authOtpKey(e,formId){
 
 function authGetOtp(formId){
   return [...document.querySelectorAll('#'+formId+' .auth-otp-f')].map(d=>d.value).join('');
+}
+
+function generateSignupCaptcha(){
+  const ops=['+','+','+','-','-'];
+  const op=ops[Math.floor(Math.random()*ops.length)];
+  let a,b;
+  if(op==='+'){a=Math.floor(Math.random()*20)+1;b=Math.floor(Math.random()*20)+1;}
+  else{a=Math.floor(Math.random()*20)+10;b=Math.floor(Math.random()*a)+1;}
+  window._captchaAnswer=(op==='+'?a+b:a-b);
+  const qEl=document.getElementById('authSignupCaptchaQ');
+  if(qEl)qEl.textContent='What is '+a+' '+op+' '+b+' ?';
+  const ansEl=document.getElementById('authSignupCaptchaAns');
+  if(ansEl){ansEl.value='';ansEl.focus();}
+}
+
+function authSignupSubmit(){
+  const name=(document.getElementById('authSignupName')||{}).value||'';
+  const email=(document.getElementById('authSignupEmail')||{}).value||'';
+  let phone=(document.getElementById('authSignupPhone')||{}).value||'';
+  phone=phone.replace(/\D/g,'');
+  const ans=parseInt((document.getElementById('authSignupCaptchaAns')||{}).value||'',10);
+  if(!name.trim()){toast('Please enter your full name','err');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Enter a valid email address','err');return;}
+  if(phone.length!==10){toast('Enter a valid 10-digit mobile number','err');return;}
+  if(isNaN(ans)||ans!==window._captchaAnswer){toast('Incorrect answer — please try the verification again','err');generateSignupCaptcha();return;}
+  // All valid — create session
+  W.name=name.trim();W.email=email.trim();W.phone=phone;
+  const userData={name:W.name,email:W.email,phone:W.phone,plan:W.selectedPlan,loggedIn:true};
+  localStorage.setItem('sl_user_session',JSON.stringify(userData));
+  const _fc=JSON.parse(localStorage.getItem('sl_flow_config')||'{}');
+  const _payReq=(_fc.paymentRequired!==undefined?_fc.paymentRequired:true)&&!_fc.freeReportAccess;
+  closeAuthModal();
+  if(!_payReq){
+    toast('✅ Account created! Loading your report…');
+    const _u=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
+    const _uid='SL'+Date.now().toString(36).toUpperCase();
+    setTimeout(()=>{genReport(_uid,_u);showStep(6);},400);
+  } else {
+    toast('✅ Verified! Proceeding to payment…');
+    setTimeout(()=>initiateRazorpayPayment(W.selectedPlan,W.selectedPlanAmt),400);
+  }
 }
 
 function authSendOtp(formType){
@@ -2635,26 +2685,16 @@ document.addEventListener('DOMContentLoaded',function(){
             <input class="auth-input" id="authSignupPhone" type="tel" maxlength="10" placeholder="10-digit mobile number" inputmode="numeric">
           </div>
         </div>
-        <button class="auth-btn" onclick="authSendOtp('signup')">Send OTP →</button>
-
-        <!-- OTP block (hidden until OTP sent) -->
-        <div class="auth-otp-block" id="authSignupOtpBlock">
-          <div class="auth-otp-msg" id="authSignupOtpMsg">OTP sent to your number.</div>
-          <div class="auth-form-group" style="text-align:center">
-            <label style="display:block;margin-bottom:10px">Enter 6-digit OTP</label>
-            <div class="auth-otp-row" id="authSignupOtpRow">
-              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authSignupOtpRow')">
-              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authSignupOtpRow')">
-              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authSignupOtpRow')">
-              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authSignupOtpRow')">
-              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authSignupOtpRow')">
-              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authSignupOtpRow')">
-            </div>
+        <!-- Math CAPTCHA -->
+        <div class="auth-captcha-box">
+          <div class="auth-captcha-label">🤖 Verify you're human</div>
+          <div class="auth-captcha-row">
+            <div class="auth-captcha-q" id="authSignupCaptchaQ">Loading…</div>
+            <input class="auth-captcha-ans" id="authSignupCaptchaAns" type="number" placeholder="?" inputmode="numeric" onkeydown="if(event.key==='Enter')authSignupSubmit()">
+            <button class="auth-captcha-refresh" onclick="generateSignupCaptcha()" title="New question" type="button">🔄</button>
           </div>
-          <button class="auth-btn" onclick="authVerifyOtp('signup')">✅ Create Account &amp; Pay</button>
-          <div class="auth-divider"><span>or</span></div>
-          <button class="auth-btn secondary" onclick="authSendOtp('signup')">Resend OTP</button>
         </div>
+        <button class="auth-btn" style="margin-top:18px" onclick="authSignupSubmit()">✅ Create Account &amp; Get Free Report</button>
       </div>
 
       <div class="auth-secure">🔒 Secured by Razorpay · End-to-end encrypted · GST invoice provided</div>
