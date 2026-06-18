@@ -453,7 +453,8 @@ footer{background:var(--gr-900);color:rgba(255,255,255,.5);padding:40px 20px;tex
 ═══════════════════════════════════════════════════════════ */
 .auth-overlay{position:fixed;inset:0;z-index:5000;background:rgba(6,34,6,.88);backdrop-filter:blur(8px);display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
 .auth-overlay.open{display:flex}
-.auth-modal{background:#fff;border-radius:20px;max-width:460px;width:100%;padding:32px 28px 28px;box-shadow:0 28px 80px rgba(0,0,0,.4);animation:acIn .3s cubic-bezier(.34,1.56,.64,1)}
+.auth-modal-wrap{position:relative}
+.auth-modal{position:relative;background:#fff;border-radius:20px;max-width:460px;width:100%;padding:32px 28px 28px;box-shadow:0 28px 80px rgba(0,0,0,.4);animation:acIn .3s cubic-bezier(.34,1.56,.64,1)}
 .auth-plan-banner{background:linear-gradient(135deg,var(--sf-100),var(--gr-50));border:1.5px solid var(--sf-300);border-radius:12px;padding:12px 16px;margin-bottom:22px;display:flex;align-items:center;gap:10px}
 .auth-plan-icon{font-size:24px}
 .auth-plan-info{flex:1}
@@ -463,42 +464,41 @@ footer{background:var(--gr-900);color:rgba(255,255,255,.5);padding:40px 20px;tex
 .auth-tabs{display:flex;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:22px;gap:4px}
 .auth-tab{flex:1;padding:9px;border:none;background:none;border-radius:8px;font-size:13px;font-weight:700;color:var(--text-lt);cursor:pointer;transition:.15s}
 .auth-tab.active{background:#fff;color:var(--gr-800);box-shadow:0 2px 8px rgba(0,0,0,.1)}
-.auth-form{display:none}
-.auth-form.active{display:block}
+.auth-screen{display:none}
+.auth-screen.active{display:block}
 .auth-form-group{margin-bottom:14px}
 .auth-form-group label{display:block;font-size:12px;font-weight:700;color:var(--gr-700);margin-bottom:5px}
-.auth-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;outline:none;transition:.15s;font-family:inherit}
+.auth-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;outline:none;transition:.15s;font-family:inherit;box-sizing:border-box}
 .auth-input:focus{border-color:var(--gr-500);box-shadow:0 0 0 3px rgba(19,136,8,.1)}
-.auth-phone-row{display:flex;align-items:center;gap:0;border:1.5px solid var(--border);border-radius:9px;overflow:hidden;transition:.15s}
-.auth-phone-row:focus-within{border-color:var(--gr-500);box-shadow:0 0 0 3px rgba(19,136,8,.1)}
-.auth-phone-pre{padding:10px 12px;background:var(--bg);border-right:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text-lt);white-space:nowrap}
-.auth-phone-row input{flex:1;padding:11px 14px;border:none;outline:none;font-size:13px;font-family:inherit;background:transparent}
+.auth-pw-wrap{position:relative}
+.auth-pw-wrap .auth-input{padding-right:44px}
+.auth-pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--text-lt);padding:4px;line-height:1}
+.auth-pw-toggle:hover{color:var(--gr-700)}
+.auth-forgot-link{display:block;text-align:right;font-size:12px;color:var(--gr-600);font-weight:600;margin-bottom:4px;cursor:pointer;text-decoration:none}
+.auth-forgot-link:hover{color:var(--gr-800);text-decoration:underline}
 .auth-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--gr-500),var(--gr-700));color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;margin-top:6px;transition:.2s;letter-spacing:.2px}
 .auth-btn:hover{background:linear-gradient(135deg,var(--gr-600),var(--gr-800));transform:translateY(-1px)}
 .auth-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
-.auth-btn.secondary{background:var(--bg);color:var(--gr-700);border:1.5px solid var(--border)}
+.auth-btn.secondary{background:var(--bg);color:var(--gr-700);border:1.5px solid var(--border);margin-top:10px}
 .auth-btn.secondary:hover{background:var(--gr-50);border-color:var(--gr-300)}
-.auth-otp-block{display:none;margin-top:18px}
-.auth-otp-block.visible{display:block}
-.auth-otp-msg{font-size:12px;color:var(--gr-600);font-weight:600;text-align:center;margin-bottom:12px;background:var(--gr-50);border:1px solid var(--gr-200);border-radius:8px;padding:8px 12px}
-.auth-otp-row{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
-.auth-otp-f{width:44px;height:50px;border:1.5px solid var(--border);border-radius:9px;text-align:center;font-size:20px;font-weight:800;color:var(--gr-800);outline:none;transition:.15s}
-.auth-otp-f:focus{border-color:var(--gr-500);box-shadow:0 0 0 3px rgba(19,136,8,.1)}
-.auth-captcha-box{background:var(--gr-50);border:1.5px solid var(--gr-200);border-radius:12px;padding:14px 16px;margin:16px 0 0}
-.auth-captcha-label{font-size:11px;font-weight:700;color:var(--gr-600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.auth-captcha-row{display:flex;align-items:center;gap:10px}
-.auth-captcha-q{font-size:18px;font-weight:900;color:var(--gr-900);letter-spacing:1px;flex:1}
-.auth-captcha-ans{width:72px;height:40px;border:1.5px solid var(--border);border-radius:8px;text-align:center;font-size:18px;font-weight:800;color:var(--gr-800);outline:none;transition:.15s}
-.auth-captcha-ans:focus{border-color:var(--gr-500);box-shadow:0 0 0 3px rgba(19,136,8,.1)}
-.auth-captcha-refresh{background:none;border:none;font-size:16px;cursor:pointer;color:var(--gr-600);padding:4px;line-height:1;flex-shrink:0}
+.auth-switch{text-align:center;font-size:12px;color:var(--text-lt);margin-top:16px}
+.auth-switch a{color:var(--gr-600);font-weight:700;cursor:pointer;text-decoration:none}
+.auth-switch a:hover{color:var(--gr-800);text-decoration:underline}
 .auth-divider{text-align:center;font-size:12px;color:var(--text-lt);margin:14px 0}
 .auth-divider span{padding:0 10px;background:#fff;position:relative;z-index:1}
 .auth-divider::before{content:'';display:block;height:1px;background:var(--border);margin-top:8px;position:relative;top:-8px}
 .auth-secure{text-align:center;font-size:11px;color:var(--text-lt);margin-top:16px}
 .auth-close{position:absolute;top:14px;right:14px;background:rgba(0,0,0,.06);border:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--gr-700);cursor:pointer;line-height:1;z-index:10;transition:.15s}
 .auth-close:hover{background:rgba(0,0,0,.13);color:var(--gr-900)}
-.auth-modal-wrap{position:relative}
-.auth-modal{position:relative}
+.auth-forgot-box{background:var(--gr-50);border:1.5px solid var(--gr-200);border-radius:12px;padding:16px;margin-bottom:18px;font-size:13px;color:var(--gr-800);line-height:1.5}
+.auth-forgot-success{text-align:center;padding:24px 0}
+.auth-forgot-success .auth-success-icon{font-size:48px;margin-bottom:12px}
+.auth-forgot-success h3{font-size:16px;font-weight:800;color:var(--gr-800);margin-bottom:8px}
+.auth-forgot-success p{font-size:13px;color:var(--text-lt);line-height:1.5}
+.auth-back-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--gr-600);cursor:pointer;margin-bottom:16px;background:none;border:none;padding:0;font-family:inherit}
+.auth-back-link:hover{color:var(--gr-900)}
+.auth-pw-strength{height:4px;border-radius:2px;margin-top:6px;transition:.3s;background:var(--border)}
+.auth-pw-hint{font-size:11px;color:var(--text-lt);margin-top:4px}
 
 /* contact capture at doc step */
 .contact-capture{background:linear-gradient(135deg,var(--gr-50),#fff);border:1.5px solid var(--gr-200);border-radius:12px;padding:18px 20px;margin-top:22px}
@@ -2324,9 +2324,12 @@ function selectActionChoice(plan){
 }
 
 /* ════ AUTH MODAL LOGIC ════ */
+const _API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000/api'
+  : '/api';
+
 function showAuthModal(plan,amt){
   const mo=document.getElementById('authModal');if(!mo)return;
-  // plan is a full plan object
   const discount=getReportDiscount();
   const hasDiscount=(plan.type==='consult'&&discount)||(plan.originalPrice&&amt<plan.originalPrice);
   const oldAmt=plan.type==='consult'&&discount?plan.price:(plan.originalPrice||null);
@@ -2338,168 +2341,228 @@ function showAuthModal(plan,amt){
   document.getElementById('authPlanName').textContent=plan.name||'SatLegal Service';
   document.getElementById('authPlanPrice').innerHTML=priceHtml;
   document.getElementById('authPlanNote').textContent=noteHtml;
-  // Pre-fill collected contact
-  const liPhone=document.getElementById('authLoginPhone');
-  const suName=document.getElementById('authSignupName');
-  const suEmail=document.getElementById('authSignupEmail');
-  const suPhone=document.getElementById('authSignupPhone');
-  if(liPhone&&W.phone&&!liPhone.value)liPhone.value=W.phone;
-  if(suEmail&&W.email&&!suEmail.value)suEmail.value=W.email;
-  if(suPhone&&W.phone&&!suPhone.value)suPhone.value=W.phone;
-  // Default to signup tab for new users, login if email known
-  switchAuthTab(W.email?'login':'signup');
+  // Pre-fill known values
+  const lid=document.getElementById('loginUserId');
+  if(lid&&(W.email||W.phone)&&!lid.value)lid.value=W.email||W.phone||'';
+  const sid=document.getElementById('signupUserId');
+  if(sid&&(W.email||W.phone)&&!sid.value)sid.value=W.email||W.phone||'';
+  const sname=document.getElementById('signupName');
+  if(sname&&W.name&&!sname.value)sname.value=W.name;
+  const _isFreeFlow=(amt===0);
+  document.getElementById('authSecureNote').innerHTML=_isFreeFlow
+    ?'🔒 Secured &amp; private · No payment required'
+    :'🔒 Secured by Razorpay · End-to-end encrypted · GST invoice provided';
+  // Default to signup for new users, login if we have their contact
+  switchAuthTab((W.email||W.phone)?'login':'signup');
   mo.classList.add('open');
   mo.querySelector('.auth-modal').scrollTop=0;
-  generateSignupCaptcha();
-  // Update verify button labels based on free vs paid
-  const _isFreeFlow=(amt===0);
-  const _verifyLabel=_isFreeFlow?'✅ Verify &amp; Get Free Report':'✅ Verify &amp; Proceed to Payment';
-  const _createLabel=_isFreeFlow?'✅ Create Account &amp; Get Free Report':'✅ Create Account &amp; Pay';
-  const _secureNote=_isFreeFlow?'🔒 Secured &amp; private · No payment required':'🔒 Secured by Razorpay · End-to-end encrypted · GST invoice provided';
-  const loginVerifyBtn=mo.querySelector('#authForm-login .auth-otp-block .auth-btn:not(.secondary)');
-  const signupVerifyBtn=mo.querySelector('#authForm-signup .auth-otp-block .auth-btn:not(.secondary)');
-  const secureEl=mo.querySelector('.auth-secure');
-  if(loginVerifyBtn)loginVerifyBtn.innerHTML=_verifyLabel;
-  if(signupVerifyBtn)signupVerifyBtn.innerHTML=_createLabel;
-  if(secureEl)secureEl.innerHTML=_secureNote;
 }
 
 function closeAuthModal(){
   const mo=document.getElementById('authModal');
   if(mo)mo.classList.remove('open');
-  // Go back: free flow → step 4 (evidence), paid flow → reopen plan selection
   const _fc=JSON.parse(localStorage.getItem('sl_flow_config')||'{}');
   const _isFree=!((_fc.paymentRequired!==undefined?_fc.paymentRequired:true)&&!_fc.freeReportAccess);
   if(_isFree){showStep(4);}
   else{renderPlanCards();document.getElementById('actionChoiceModal').classList.add('open');}
 }
 
-document.addEventListener("keydown",function(e){if(e.key==="Escape"&&document.getElementById("authModal").classList.contains("open"))closeAuthModal();});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&document.getElementById('authModal').classList.contains('open'))closeAuthModal();
+});
+
 function switchAuthTab(tab){
   document.querySelectorAll('.auth-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-  document.querySelectorAll('.auth-form').forEach(f=>f.classList.toggle('active',f.id==='authForm-'+tab));
-  if(tab==='signup')generateSignupCaptcha();
+  showAuthScreen(tab);
 }
 
-/* OTP digit auto-advance */
-function authOtpKey(e,formId){
-  const inp=e.target;
-  const digits=[...document.querySelectorAll('#'+formId+' .auth-otp-f')];
-  const idx=digits.indexOf(inp);
-  if(e.key>='0'&&e.key<='9'){inp.value=e.key;if(digits[idx+1])digits[idx+1].focus();e.preventDefault();}
-  else if(e.key==='Backspace'){inp.value='';if(idx>0)digits[idx-1].focus();e.preventDefault();}
-  else if(e.key==='ArrowLeft'&&idx>0){digits[idx-1].focus();}
-  else if(e.key==='ArrowRight'&&digits[idx+1]){digits[idx+1].focus();}
-  // Auto-verify when all 6 filled
-  const all=digits.every(d=>d.value.match(/\d/));
-  if(all){
-    const formType=formId==='authLoginOtp'?'login':'signup';
-    setTimeout(()=>authVerifyOtp(formType),120);
+function showAuthScreen(screen){
+  document.querySelectorAll('.auth-screen').forEach(s=>s.classList.toggle('active',s.id==='authScreen-'+screen));
+  const tabs=document.getElementById('authTabs');
+  const title=document.getElementById('authModalTitle');
+  const sub=document.getElementById('authModalSub');
+  if(screen==='forgot'){
+    if(tabs)tabs.style.display='none';
+    if(title)title.textContent='Reset Your Password';
+    if(sub)sub.textContent='We\'ll email you a reset link.';
+    // Reset forgot flow to step 1
+    const s1=document.getElementById('forgotStep1');const s2=document.getElementById('forgotStep2');
+    if(s1)s1.style.display='';if(s2)s2.style.display='none';
+    const fi=document.getElementById('forgotUserId');if(fi)setTimeout(()=>fi.focus(),80);
+  } else {
+    if(tabs)tabs.style.display='';
+    if(title)title.textContent='Sign In to Continue';
+    if(sub)sub.textContent='New or returning? We\'ll get you set up in seconds.';
+    if(screen==='login'){const el=document.getElementById('loginUserId');if(el)setTimeout(()=>el.focus(),80);}
+    if(screen==='signup'){const el=document.getElementById('signupName');if(el)setTimeout(()=>el.focus(),80);}
   }
 }
 
-function authGetOtp(formId){
-  return [...document.querySelectorAll('#'+formId+' .auth-otp-f')].map(d=>d.value).join('');
+/* ── Helpers ── */
+function authTogglePwd(inputId,btn){
+  const inp=document.getElementById(inputId);
+  if(!inp)return;
+  const show=inp.type==='password';
+  inp.type=show?'text':'password';
+  btn.textContent=show?'🙈':'👁';
 }
 
-function generateSignupCaptcha(){
-  const ops=['+','+','+','-','-'];
-  const op=ops[Math.floor(Math.random()*ops.length)];
-  let a,b;
-  if(op==='+'){a=Math.floor(Math.random()*20)+1;b=Math.floor(Math.random()*20)+1;}
-  else{a=Math.floor(Math.random()*20)+10;b=Math.floor(Math.random()*a)+1;}
-  window._captchaAnswer=(op==='+'?a+b:a-b);
-  const qEl=document.getElementById('authSignupCaptchaQ');
-  if(qEl)qEl.textContent='What is '+a+' '+op+' '+b+' ?';
-  const ansEl=document.getElementById('authSignupCaptchaAns');
-  if(ansEl){ansEl.value='';ansEl.focus();}
+function authCheckUserIdType(inp){
+  const v=inp.value.trim();
+  const hint=document.getElementById('signupUserIdHint');
+  if(!hint)return;
+  if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))hint.textContent='✓ Email address — will be your login ID';
+  else if(/^\d{10}$/.test(v.replace(/\D/g,'')))hint.textContent='✓ Mobile number — will be your login ID';
+  else if(v.length>3)hint.textContent='Enter a valid email or 10-digit mobile number';
+  else hint.textContent='';
 }
 
-function authSignupSubmit(){
-  const name=(document.getElementById('authSignupName')||{}).value||'';
-  const email=(document.getElementById('authSignupEmail')||{}).value||'';
-  let phone=(document.getElementById('authSignupPhone')||{}).value||'';
-  phone=phone.replace(/\D/g,'');
-  const ans=parseInt((document.getElementById('authSignupCaptchaAns')||{}).value||'',10);
-  if(!name.trim()){toast('Please enter your full name','err');return;}
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Enter a valid email address','err');return;}
-  if(phone.length!==10){toast('Enter a valid 10-digit mobile number','err');return;}
-  if(isNaN(ans)||ans!==window._captchaAnswer){toast('Incorrect answer — please try the verification again','err');generateSignupCaptcha();return;}
-  // All valid — create session
-  W.name=name.trim();W.email=email.trim();W.phone=phone;
-  const userData={name:W.name,email:W.email,phone:W.phone,plan:W.selectedPlan,loggedIn:true};
-  localStorage.setItem('sl_user_session',JSON.stringify(userData));
+function authPwStrength(inp){
+  const v=inp.value;
+  const bar=document.getElementById('signupPwStrength');
+  const hint=document.getElementById('signupPwHint');
+  if(!bar)return;
+  let score=0;
+  if(v.length>=6)score++;
+  if(v.length>=8)score++;
+  if(/[A-Z]/.test(v))score++;
+  if(/[0-9]/.test(v))score++;
+  if(/[^A-Za-z0-9]/.test(v))score++;
+  const colors=['#e74c3c','#e67e22','#f1c40f','#2ecc71','#27ae60'];
+  const labels=['Too short','Weak','Fair','Good','Strong'];
+  bar.style.background=v.length?colors[Math.min(score-1,4)]:'var(--border)';
+  bar.style.width=v.length?(score*20)+'%':'100%';
+  if(hint)hint.textContent=v.length?(labels[Math.min(score-1,4)]+' password'):'';
+}
+
+function _authOnSuccess(userData, token){
+  W.name=userData.name||'';
+  W.email=userData.email||'';
+  W.phone=userData.phone||'';
+  const session={name:W.name,email:W.email,phone:W.phone,plan:W.selectedPlan,loggedIn:true,token};
+  localStorage.setItem('sl_user_session',JSON.stringify(session));
+  if(token)localStorage.setItem('sl_auth_token',token);
   const _fc=JSON.parse(localStorage.getItem('sl_flow_config')||'{}');
   const _payReq=(_fc.paymentRequired!==undefined?_fc.paymentRequired:true)&&!_fc.freeReportAccess;
   closeAuthModal();
   if(!_payReq){
-    toast('✅ Account created! Loading your report…');
-    const _u=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
+    toast('✅ Welcome'+( W.name?' '+W.name.split(' ')[0]:'')+' ! Loading your report…');
     const _uid='SL'+Date.now().toString(36).toUpperCase();
-    setTimeout(()=>{genReport(_uid,_u);showStep(6);},400);
+    setTimeout(()=>{genReport(_uid,JSON.parse(localStorage.getItem('sl_user_session')||'{}'));showStep(6);},400);
   } else {
-    toast('✅ Verified! Proceeding to payment…');
+    toast('✅ Logged in! Proceeding to payment…');
     setTimeout(()=>initiateRazorpayPayment(W.selectedPlan,W.selectedPlanAmt),400);
   }
 }
 
-function authSendOtp(formType){
-  let phone='';
-  if(formType==='login'){
-    phone=(document.getElementById('authLoginPhone')||{}).value||'';
-    phone=phone.replace(/\D/g,'');
-    if(phone.length!==10){toast('Enter a valid 10-digit mobile number','err');return;}
-  } else {
-    const name=(document.getElementById('authSignupName')||{}).value||'';
-    const email=(document.getElementById('authSignupEmail')||{}).value||'';
-    phone=(document.getElementById('authSignupPhone')||{}).value||'';
-    phone=phone.replace(/\D/g,'');
-    if(!name.trim()){toast('Please enter your full name','err');return;}
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Enter a valid email address','err');return;}
-    if(phone.length!==10){toast('Enter a valid 10-digit mobile number','err');return;}
-    // Store for later
-    W.name=name.trim();W.email=email.trim();W.phone=phone;
+/* ── Login ── */
+async function authLogin(){
+  const userId=(document.getElementById('loginUserId')||{}).value||'';
+  const password=(document.getElementById('loginPassword')||{}).value||'';
+  if(!userId.trim()){toast('Enter your email or mobile number','err');return;}
+  if(!password){toast('Enter your password','err');return;}
+  const btn=document.getElementById('loginSubmitBtn');
+  if(btn){btn.disabled=true;btn.textContent='Logging in…';}
+  try{
+    const resp=await fetch(_API+'/auth/login',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({userId:userId.trim(),password})
+    });
+    const data=await resp.json();
+    if(!resp.ok||!data.success){toast(data.message||'Login failed. Check your credentials.','err');return;}
+    toast('✅ Login successful!');
+    _authOnSuccess(data.user,data.token);
+  } catch(e){
+    // Offline / no backend — fallback to local session
+    const session=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
+    if(session.loggedIn){
+      toast('✅ Welcome back!');
+      _authOnSuccess(session,session.token||'');
+    } else {
+      toast('Unable to connect. Please try again.','err');
+    }
+  } finally {
+    if(btn){btn.disabled=false;btn.textContent='Login →';}
   }
-  // Show OTP block
-  const otpBlock=document.getElementById(formType==='login'?'authLoginOtpBlock':'authSignupOtpBlock');
-  const msgEl=document.getElementById(formType==='login'?'authLoginOtpMsg':'authSignupOtpMsg');
-  if(otpBlock)otpBlock.classList.add('visible');
-  const maskedPhone=phone.slice(0,2)+'XXXXXX'+phone.slice(-2);
-  if(msgEl)msgEl.textContent='✅ OTP sent to +91-'+maskedPhone+'. Valid for 10 minutes.';
-  const firstDigit=otpBlock&&otpBlock.querySelector('.auth-otp-f');
-  if(firstDigit)firstDigit.focus();
-  W._authOtp='123456';W._authPhone=phone;
-  toast('OTP sent to +91-'+maskedPhone);
 }
 
-function authVerifyOtp(formType){
-  const otpId=formType==='login'?'authLoginOtpRow':'authSignupOtpRow';
-  const entered=authGetOtp(otpId);
-  if(entered.length!==6){toast('Enter all 6 OTP digits','err');return;}
-  if(entered!==W._authOtp){toast('Incorrect OTP. Try again.','err');return;}
-  // Auth success — store user session
-  const userData={
-    name:W.name||(formType==='login'?'User':document.getElementById('authSignupName').value)||'User',
-    email:W.email||'',
-    phone:W._authPhone||W.phone||'',
-    plan:W.selectedPlan,
-    loggedIn:true
-  };
-  localStorage.setItem('sl_user_session',JSON.stringify(userData));
-  // Check admin payment toggle
-  const _authFlowCfg=JSON.parse(localStorage.getItem('sl_flow_config')||'{}');
-  const _authPaymentRequired=(_authFlowCfg.paymentRequired!==undefined?_authFlowCfg.paymentRequired:true) && !_authFlowCfg.freeReportAccess;
-  closeAuthModal();
-  if(!_authPaymentRequired){
-    toast('✅ Verified! Loading your report...');
-    const _aUser=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
-    const _aUid='SL'+Date.now().toString(36).toUpperCase();
-    setTimeout(()=>{ genReport(_aUid,_aUser); showStep(6); },400);
-  } else {
-    toast('✅ Verified! Proceeding to payment…');
-    setTimeout(()=>initiateRazorpayPayment(W.selectedPlan,W.selectedPlanAmt),400);
+/* ── Sign Up ── */
+async function authSignup(){
+  const name=(document.getElementById('signupName')||{}).value||'';
+  const userId=(document.getElementById('signupUserId')||{}).value||'';
+  const pw=(document.getElementById('signupPassword')||{}).value||'';
+  const pw2=(document.getElementById('signupConfirm')||{}).value||'';
+  if(!name.trim()){toast('Please enter your full name','err');return;}
+  if(!userId.trim()){toast('Enter your email or mobile number','err');return;}
+  if(pw.length<6){toast('Password must be at least 6 characters','err');return;}
+  if(pw!==pw2){toast('Passwords do not match','err');return;}
+  const btn=document.getElementById('signupSubmitBtn');
+  if(btn){btn.disabled=true;btn.textContent='Creating account…';}
+  try{
+    const resp=await fetch(_API+'/auth/signup',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:name.trim(),userId:userId.trim(),password:pw})
+    });
+    const data=await resp.json();
+    if(!resp.ok||!data.success){
+      const msg=(data.errors&&data.errors[0])?data.errors[0].msg:data.message||'Sign-up failed.';
+      toast(msg,'err');return;
+    }
+    toast('✅ Account created!');
+    W.name=name.trim();W.email=data.user.email||'';W.phone=data.user.phone||'';
+    _authOnSuccess(data.user,data.token);
+  } catch(e){
+    // Offline fallback — create local session
+    W.name=name.trim();W.email=userId.includes('@')?userId.trim():'';W.phone=userId.includes('@')?'':userId.replace(/\D/g,'');
+    toast('✅ Account created! (offline mode)');
+    _authOnSuccess({name:W.name,email:W.email,phone:W.phone},'');
+  } finally {
+    if(btn){btn.disabled=false;btn.textContent='✅ Create Account';}
   }
 }
+
+/* ── Forgot Password ── */
+window._forgotUserId='';
+async function authForgotSubmit(){
+  const userId=(document.getElementById('forgotUserId')||{}).value||'';
+  if(!userId.trim()){toast('Enter your email or mobile number','err');return;}
+  window._forgotUserId=userId.trim();
+  const btn=document.getElementById('forgotSubmitBtn');
+  if(btn){btn.disabled=true;btn.textContent='Sending…';}
+  try{
+    const resp=await fetch(_API+'/auth/forgot-password',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({userId:userId.trim()})
+    });
+    const data=await resp.json();
+    // Always show success (backend never reveals if account exists)
+    const s1=document.getElementById('forgotStep1');const s2=document.getElementById('forgotStep2');
+    if(s1)s1.style.display='none';if(s2)s2.style.display='';
+    const msgEl=document.getElementById('forgotSuccessMsg');
+    if(msgEl)msgEl.innerHTML='A password reset link has been sent to the email linked to that account.<br><br>The link is valid for <strong>1 hour</strong>. Check your spam folder if needed.';
+  } catch(e){
+    const s1=document.getElementById('forgotStep1');const s2=document.getElementById('forgotStep2');
+    if(s1)s1.style.display='none';if(s2)s2.style.display='';
+  } finally {
+    if(btn){btn.disabled=false;btn.textContent='Send Reset Link →';}
+  }
+}
+
+async function authForgotResend(){
+  if(!window._forgotUserId){toast('Please enter your email or mobile again','err');showAuthScreen('forgot');return;}
+  document.getElementById('forgotUserId').value=window._forgotUserId;
+  const s1=document.getElementById('forgotStep1');const s2=document.getElementById('forgotStep2');
+  if(s1)s1.style.display='';if(s2)s2.style.display='none';
+  await authForgotSubmit();
+}
+
+/* Legacy stubs (kept so any external callers don't break) */
+function authSendOtp(){}
+function authVerifyOtp(){}
+function authSignupSubmit(){authSignup();}
+function generateSignupCaptcha(){}
+function authOtpKey(){}
+function authGetOtp(){return '';}
 
 /* ════ RAZORPAY PAYMENT ════ */
 function initiateRazorpayPayment(plan,amt){
@@ -2612,7 +2675,7 @@ document.addEventListener('DOMContentLoaded',function(){
 </div>
 
 <!-- ══════════════════════════════════════════════════════
-     AUTH MODAL — Login / Sign Up → Payment
+     AUTH MODAL — Login / Sign Up / Forgot Password
 ══════════════════════════════════════════════════════ -->
 <div class="auth-overlay" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle" onclick="if(event.target===this)closeAuthModal()">
   <div class="auth-modal-wrap">
@@ -2630,75 +2693,93 @@ document.addEventListener('DOMContentLoaded',function(){
       </div>
 
       <h2 id="authModalTitle" style="font-size:17px;font-weight:900;color:var(--gr-900);margin-bottom:6px">Sign In to Continue</h2>
-      <p style="font-size:12px;color:var(--text-lt);margin-bottom:18px">New or returning? We'll get you set up in seconds.</p>
+      <p id="authModalSub" style="font-size:12px;color:var(--text-lt);margin-bottom:18px">New or returning? We'll get you set up in seconds.</p>
 
-      <!-- Tabs -->
-      <div class="auth-tabs">
+      <!-- Tabs (hidden on forgot-password screen) -->
+      <div class="auth-tabs" id="authTabs">
         <button class="auth-tab" data-tab="signup" onclick="switchAuthTab('signup')">New User — Sign Up</button>
         <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Existing User — Login</button>
       </div>
 
-      <!-- ─── LOGIN FORM ─── -->
-      <div class="auth-form active" id="authForm-login">
+      <!-- ═══ LOGIN SCREEN ═══ -->
+      <div class="auth-screen active" id="authScreen-login">
         <div class="auth-form-group">
-          <label for="authLoginPhone">📱 Mobile Number</label>
-          <div class="auth-phone-row">
-            <span class="auth-phone-pre">🇮🇳 +91</span>
-            <input class="auth-input" id="authLoginPhone" type="tel" maxlength="10" placeholder="10-digit mobile number" inputmode="numeric">
+          <label for="loginUserId">📧 Email or 📱 Mobile Number</label>
+          <input class="auth-input" id="loginUserId" type="text" placeholder="Email address or 10-digit mobile" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('loginPassword').focus()">
+        </div>
+        <div class="auth-form-group">
+          <label for="loginPassword">🔑 Password</label>
+          <div class="auth-pw-wrap">
+            <input class="auth-input" id="loginPassword" type="password" placeholder="Your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')authLogin()">
+            <button class="auth-pw-toggle" type="button" onclick="authTogglePwd('loginPassword',this)" title="Show/hide password">👁</button>
           </div>
         </div>
-        <button class="auth-btn" onclick="authSendOtp('login')">Send OTP →</button>
-
-        <!-- OTP block (hidden until OTP sent) -->
-        <div class="auth-otp-block" id="authLoginOtpBlock">
-          <div class="auth-otp-msg" id="authLoginOtpMsg">OTP sent to your number.</div>
-          <div class="auth-form-group" style="text-align:center">
-            <label style="display:block;margin-bottom:10px">Enter 6-digit OTP</label>
-            <div class="auth-otp-row" id="authLoginOtpRow">
-              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authLoginOtpRow')">
-              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authLoginOtpRow')">
-              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authLoginOtpRow')">
-              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authLoginOtpRow')">
-              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authLoginOtpRow')">
-              <input class="auth-otp-f" type="tel" maxlength="1" inputmode="numeric" onkeydown="authOtpKey(event,'authLoginOtpRow')">
-            </div>
-          </div>
-          <button class="auth-btn" onclick="authVerifyOtp('login')">✅ Verify &amp; Proceed to Payment</button>
-          <div class="auth-divider"><span>or</span></div>
-          <button class="auth-btn secondary" onclick="authSendOtp('login')">Resend OTP</button>
-        </div>
+        <a class="auth-forgot-link" onclick="showAuthScreen('forgot')">Forgot password?</a>
+        <button class="auth-btn" id="loginSubmitBtn" onclick="authLogin()">Login →</button>
+        <div class="auth-switch">New to SatLegal? <a onclick="switchAuthTab('signup')">Create a free account</a></div>
       </div>
 
-      <!-- ─── SIGN UP FORM ─── -->
-      <div class="auth-form" id="authForm-signup">
+      <!-- ═══ SIGN UP SCREEN ═══ -->
+      <div class="auth-screen" id="authScreen-signup">
         <div class="auth-form-group">
-          <label for="authSignupName">👤 Full Name</label>
-          <input class="auth-input" id="authSignupName" type="text" placeholder="Your full name">
+          <label for="signupName">👤 Full Name</label>
+          <input class="auth-input" id="signupName" type="text" placeholder="Your full name" autocomplete="name" onkeydown="if(event.key==='Enter')document.getElementById('signupUserId').focus()">
         </div>
         <div class="auth-form-group">
-          <label for="authSignupEmail">✉️ Email Address</label>
-          <input class="auth-input" id="authSignupEmail" type="email" placeholder="you@example.com">
+          <label for="signupUserId">📧 Email or 📱 Mobile Number <span style="font-weight:400;color:var(--text-lt)">(used as your User ID)</span></label>
+          <input class="auth-input" id="signupUserId" type="text" placeholder="Email address or 10-digit mobile" autocomplete="username" oninput="authCheckUserIdType(this)" onkeydown="if(event.key==='Enter')document.getElementById('signupPassword').focus()">
+          <div id="signupUserIdHint" style="font-size:11px;color:var(--text-lt);margin-top:4px"></div>
         </div>
         <div class="auth-form-group">
-          <label for="authSignupPhone">📱 Mobile Number</label>
-          <div class="auth-phone-row">
-            <span class="auth-phone-pre">🇮🇳 +91</span>
-            <input class="auth-input" id="authSignupPhone" type="tel" maxlength="10" placeholder="10-digit mobile number" inputmode="numeric">
+          <label for="signupPassword">🔑 Create Password <span style="font-weight:400;color:var(--text-lt)">(min 6 characters)</span></label>
+          <div class="auth-pw-wrap">
+            <input class="auth-input" id="signupPassword" type="password" placeholder="Choose a strong password" autocomplete="new-password" oninput="authPwStrength(this)" onkeydown="if(event.key==='Enter')document.getElementById('signupConfirm').focus()">
+            <button class="auth-pw-toggle" type="button" onclick="authTogglePwd('signupPassword',this)" title="Show/hide password">👁</button>
+          </div>
+          <div class="auth-pw-strength" id="signupPwStrength"></div>
+          <div class="auth-pw-hint" id="signupPwHint"></div>
+        </div>
+        <div class="auth-form-group">
+          <label for="signupConfirm">🔑 Confirm Password</label>
+          <div class="auth-pw-wrap">
+            <input class="auth-input" id="signupConfirm" type="password" placeholder="Repeat your password" autocomplete="new-password" onkeydown="if(event.key==='Enter')authSignup()">
+            <button class="auth-pw-toggle" type="button" onclick="authTogglePwd('signupConfirm',this)" title="Show/hide">👁</button>
           </div>
         </div>
-        <!-- Math CAPTCHA -->
-        <div class="auth-captcha-box">
-          <div class="auth-captcha-label">🤖 Verify you're human</div>
-          <div class="auth-captcha-row">
-            <div class="auth-captcha-q" id="authSignupCaptchaQ">Loading…</div>
-            <input class="auth-captcha-ans" id="authSignupCaptchaAns" type="number" placeholder="?" inputmode="numeric" onkeydown="if(event.key==='Enter')authSignupSubmit()">
-            <button class="auth-captcha-refresh" onclick="generateSignupCaptcha()" title="New question" type="button">🔄</button>
-          </div>
-        </div>
-        <button class="auth-btn" style="margin-top:18px" onclick="authSignupSubmit()">✅ Create Account &amp; Get Free Report</button>
+        <button class="auth-btn" id="signupSubmitBtn" onclick="authSignup()">✅ Create Account</button>
+        <div class="auth-switch">Already registered? <a onclick="switchAuthTab('login')">Login here</a></div>
       </div>
 
-      <div class="auth-secure">🔒 Secured by Razorpay · End-to-end encrypted · GST invoice provided</div>
+      <!-- ═══ FORGOT PASSWORD SCREEN ═══ -->
+      <div class="auth-screen" id="authScreen-forgot">
+
+        <!-- Step 1: Enter user ID -->
+        <div id="forgotStep1">
+          <button class="auth-back-link" onclick="showAuthScreen('login')">← Back to Login</button>
+          <div class="auth-forgot-box">
+            Enter your registered email address or mobile number. We'll send a password reset link to your email.
+          </div>
+          <div class="auth-form-group">
+            <label for="forgotUserId">📧 Email or 📱 Mobile Number</label>
+            <input class="auth-input" id="forgotUserId" type="text" placeholder="Email address or 10-digit mobile" onkeydown="if(event.key==='Enter')authForgotSubmit()">
+          </div>
+          <button class="auth-btn" id="forgotSubmitBtn" onclick="authForgotSubmit()">Send Reset Link →</button>
+        </div>
+
+        <!-- Step 2: Success message -->
+        <div id="forgotStep2" style="display:none">
+          <div class="auth-forgot-success">
+            <div class="auth-success-icon">📬</div>
+            <h3>Check Your Email</h3>
+            <p id="forgotSuccessMsg">If an account exists for that email or mobile, a password reset link has been sent.<br><br>The link is valid for <strong>1 hour</strong>. Check your spam folder if you don't see it.</p>
+          </div>
+          <button class="auth-btn secondary" onclick="showAuthScreen('login')">← Back to Login</button>
+          <button class="auth-btn secondary" style="margin-top:8px" onclick="authForgotResend()">Resend Reset Link</button>
+        </div>
+
+      </div>
+
+      <div class="auth-secure" id="authSecureNote">🔒 End-to-end encrypted · Your data is safe</div>
     </div>
   </div>
 </div>
