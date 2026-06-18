@@ -848,9 +848,9 @@ function renderScoreSection() {
   const scores = inquiry.probabilityScores || [];
   if (!scores.length && inquiry.selectedLaws?.length > 0) {
     return `<div class="section-card">
-      <div class="section-card-header"><h3>📊 Probability Scores</h3></div>
+      <div class="section-card-header"><h3>📊 Case Readiness Scores</h3></div>
       <div class="section-card-body">
-        <p class="text-muted">Complete your assessments to calculate probability scores.</p>
+        <p class="text-muted">Complete your assessments to calculate case readiness scores.</p>
         <button onclick="calculateScores()" class="btn btn-primary mt-10">🔮 Calculate My Scores</button>
       </div>
     </div>`;
@@ -859,7 +859,7 @@ function renderScoreSection() {
   return `
     <div class="section-card">
       <div class="section-card-header">
-        <h3>📊 Probability Scores</h3>
+        <h3>📊 Case Readiness Scores</h3>
         <button onclick="calculateScores()" class="btn btn-outline btn-sm">Recalculate</button>
       </div>
       <div class="section-card-body">
@@ -945,7 +945,7 @@ async function calculateScores() {
   Loader.show();
   try {
     await API.calculateScore(inquiryId);
-    Toast.success('Probability scores calculated!');
+    Toast.success('Case Readiness Scores calculated!');
     await loadInquiry();
   } catch (err) { Toast.error(err.message); }
   finally { Loader.hide(); }

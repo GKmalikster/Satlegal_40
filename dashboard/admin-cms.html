@@ -1752,7 +1752,7 @@ document.addEventListener('DOMContentLoaded',function(){
         </div>
         <div class="card" style="text-align:center;padding:16px">
           <div style="font-size:26px;font-weight:900;color:var(--sf-500)" id="kpiAvgWin">0%</div>
-          <div style="font-size:12px;color:var(--text-light);margin-top:4px">Avg. Win Probability</div>
+          <div style="font-size:12px;color:var(--text-light);margin-top:4px">Avg. Case Readiness Score</div>
         </div>
       </div>
 
@@ -1994,7 +1994,7 @@ document.addEventListener('DOMContentLoaded',function(){
             </div>
             <div class="form-group" style="grid-column:1/-1">
               <label class="form-label">Features <span style="font-size:10px;color:var(--text-light)">(one per line, shown as bullet checklist)</span></label>
-              <textarea id="pf-features" class="form-input" rows="4" style="resize:vertical" placeholder="Law mapping + sections&#10;Win probability score&#10;Action plan &amp; next steps"></textarea>
+              <textarea id="pf-features" class="form-input" rows="4" style="resize:vertical" placeholder="Law mapping + sections&#10;Case readiness score&#10;Action plan &amp; next steps"></textarea>
             </div>
             <div class="form-group">
               <label class="form-label">Badge Text <span style="font-size:10px;color:var(--text-light)">(optional, e.g. 🔥 Flash Sale)</span></label>
@@ -2145,7 +2145,7 @@ const DEFAULTS = {
     badge: "🇮🇳 India's Legal Analysis Platform",
     h1: "Understand Your Legal Rights",
     h1span: "Before You Pay a Lawyer",
-    subtitle: "AI-powered analysis across 50+ Indian laws. Answer targeted questions, select applicable laws, get documents checklist and win probability.",
+    subtitle: "AI-powered analysis across 50+ Indian laws. Answer targeted questions, select applicable laws, get documents checklist and case readiness score.",
     ctaPrimary: "Analyse My Case Free ↓",
     ctaPrimaryUrl: "#wizard",
     ctaSecondary: "Create Account",
@@ -2154,7 +2154,7 @@ const DEFAULTS = {
       { num: "50+", label: "Indian Laws Covered" },
       { num: "BNS", label: "& BNSS 2023" },
       { num: "5-Step", label: "Guided Flow" },
-      { num: "AI", label: "Win Probability" }
+      { num: "AI", label: "Case Readiness Score" }
     ]
   },
   features: {
@@ -2163,7 +2163,7 @@ const DEFAULTS = {
     cards: [
       { icon: "⚖️", title: "50+ Laws Covered", desc: "From BNS/BNSS 2023 to Hindu Marriage Act, IT Act, RERA, Labour Laws – all major Indian laws in one place." },
       { icon: "❓", title: "Guided Questions First", desc: "Answer 3-4 targeted questions before law mapping, so results are hyper-accurate and relevant to your situation." },
-      { icon: "📊", title: "Win Probability", desc: "AI-calculated win probability based on your evidence, facts, legal strength, and precedents." },
+      { icon: "📊", title: "Case Readiness Score", desc: "AI-calculated case readiness score based on your evidence, facts, legal strength, and precedents." },
       { icon: "📋", title: "Document Checklist", desc: "Know exactly which documents are critical and which are optional – no surprises when you meet a lawyer." },
       { icon: "💾", title: "Save & Resume", desc: "Save all your analyses in your dashboard and pick up exactly where you left off." },
       { icon: "🛡️", title: "Private & Secure", desc: "Your case details are encrypted and private. We never share your information without your permission." }
@@ -2177,7 +2177,7 @@ const DEFAULTS = {
       { title: "Answer Questions", desc: "3-4 targeted questions refine the analysis." },
       { title: "Select Laws", desc: "Choose from AI-detected applicable laws." },
       { title: "Get Documents", desc: "Complete checklist of required documents." },
-      { title: "Full Report", desc: "Win probability + full analysis (sign in required)." }
+      { title: "Full Report", desc: "Case readiness score + full analysis (sign in required)." }
     ]
   },
   lawsection: {
@@ -2241,7 +2241,7 @@ const DEFAULTS = {
       { q: "Is SatLegal free to use?", a: "Yes! The legal analysis wizard is completely free. You only need to create a free account to save and access your full report." },
       { q: "Is my case information confidential?", a: "Absolutely. Your case details are encrypted and stored securely. We never share your information with third parties." },
       { q: "Does SatLegal replace a lawyer?", a: "No. SatLegal provides legal information and analysis to help you understand your rights and prepare for consultations. For actual legal advice and representation, always consult a qualified advocate." },
-      { q: "How accurate is the win probability?", a: "Our AI win probability is based on the information you provide and legal precedents. It is a preliminary estimate. A qualified lawyer can give a more accurate assessment based on all evidence." }
+      { q: "How accurate is the case readiness score?", a: "Our AI case readiness score is based on the information you provide and legal precedents. It is a preliminary estimate. A qualified lawyer can give a more accurate assessment based on all evidence." }
     ]
   },
   contact: {
@@ -2257,7 +2257,7 @@ const DEFAULTS = {
   },
   seo: {
     homeTitle: "SatLegal – AI-Powered Indian Legal Analysis",
-    homeDesc: "Get AI-powered legal analysis across 50+ Indian laws. Free 5-step guided analysis with win probability and document checklist.",
+    homeDesc: "Get AI-powered legal analysis across 50+ Indian laws. Free 5-step guided analysis with case readiness score and document checklist.",
     ogImage: "",
     canonical: "https://satlegal.in",
     keywords: ["Indian legal analysis","AI legal help India","SatLegal","BNS 2023","legal rights India"]

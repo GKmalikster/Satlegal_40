@@ -773,7 +773,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
         <!-- Step 4 — Case Assessment (NEW) -->
         <div class="wiz-pane" id="p4" role="tabpanel" aria-labelledby="step4-tab">
           <div class="wiz-title">📋 Case Strength Assessment</div>
-          <div class="wiz-sub">Quick fact-checking questions specific to your selected laws — these directly power your win probability score and action plan.</div>
+          <div class="wiz-sub">Quick fact-checking questions specific to your selected laws — these directly power your case readiness score and action plan.</div>
           <div id="assessCont" aria-live="polite"></div>
           <div class="assess-strength" id="assessStrength" style="display:none" aria-live="polite">
             <div class="str-icon" aria-hidden="true">⚖️</div>
@@ -792,7 +792,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
           <div class="analysis-ready-head">
             <div style="font-size:38px;margin-bottom:8px">📊</div>
             <h3>Your Analysis Is Ready</h3>
-            <p>Your preliminary legal analysis has been completed. Sign in or create a free account to access your full report including detailed win probability, action steps, and lawyer matches.</p>
+            <p>Your preliminary legal analysis has been completed. Sign in or create a free account to access your full report including detailed case readiness score, action steps, and lawyer matches.</p>
           </div>
           <div id="analysisSummaryBox" class="analysis-summary-box">
             <div style="font-size:12px;font-weight:700;color:var(--text-lt);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📄 Your Analysis Summary</div>
@@ -804,7 +804,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
           <!-- Pricing CTA -->
           <div class="pricing-cta-wrap" id="signinCtaBox">
             <div class="pricing-cta-title">🎉 Your Analysis Is Ready — Get the Full Report</div>
-            <div class="pricing-cta-sub">Sign up to unlock your complete legal report with action steps, win probability & lawyer match</div>
+            <div class="pricing-cta-sub">Sign up to unlock your complete legal report with action steps, case readiness score & lawyer match</div>
             <div class="pricing-cards-row">
               <div class="pr-card featured">
                 <div class="pr-badge">MOST POPULAR</div>
@@ -814,7 +814,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
                 <div class="pr-price-note">One-time · Instant delivery</div>
                 <ul class="pr-features">
                   <li>AI-powered law mapping</li>
-                  <li>Win probability score</li>
+                  <li>Case readiness score</li>
                   <li>Complete document checklist</li>
                   <li>Step-by-step action plan</li>
                   <li>Limitation period alerts</li>
@@ -898,8 +898,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
       <div class="step-c"><div class="step-num">1</div><h4>Describe Issue</h4><p>Write your problem in plain language — Hindi or English</p></div>
       <div class="step-c"><div class="step-num">2</div><h4>Smart Questions</h4><p>We auto-detect your case and ask specific targeted questions</p></div>
       <div class="step-c"><div class="step-num">3</div><h4>Law Mapping</h4><p>Get ranked list of applicable Indian laws with sections</p></div>
-      <div class="step-c"><div class="step-num">4</div><h4>Add Evidence</h4><p>Upload documents to strengthen your win probability</p></div>
-      <div class="step-c"><div class="step-num">5</div><h4>Full Report</h4><p>Win probability, action steps, and lawyer match — after sign-up</p></div>
+      <div class="step-c"><div class="step-num">4</div><h4>Add Evidence</h4><p>Upload documents to strengthen your case readiness score</p></div>
+      <div class="step-c"><div class="step-num">5</div><h4>Full Report</h4><p>Case readiness score, action steps, and lawyer match — after sign-up</p></div>
     </div>
   </div>
 </section>
@@ -912,7 +912,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
     <div class="feat-grid">
       <div class="feat-card"><div class="feat-icon" style="background:var(--sf-100)">🇮🇳</div><h3>India-First Law Database</h3><p>37+ laws including BNS, POCSO, Muslim Personal Law, RERA, NDPS, IBC, and more — mapped to real Indian courts and sections.</p></div>
       <div class="feat-card"><div class="feat-icon" style="background:var(--gr-50)">🤖</div><h3>Auto-Detection — No Guessing</h3><p>You never need to pick your law category. Our engine reads your description and maps it automatically — in Hindi, English, or Hinglish.</p></div>
-      <div class="feat-card"><div class="feat-icon" style="background:var(--sf-100)">📊</div><h3>Win Probability Score</h3><p>Based on your facts, evidence quality, and law match strength — get an honest assessment before spending on lawyers.</p></div>
+      <div class="feat-card"><div class="feat-icon" style="background:var(--sf-100)">📊</div><h3>Case Readiness Score</h3><p>Based on your facts, evidence quality, and law match strength — get an honest assessment before spending on lawyers.</p></div>
       <div class="feat-card"><div class="feat-icon" style="background:var(--gr-50)">📋</div><h3>Step-by-Step Action Plan</h3><p>Know exactly what to do next: file FIR, send legal notice, which court to approach, what documents to gather.</p></div>
       <div class="feat-card"><div class="feat-icon" style="background:var(--sf-100)">🔒</div><h3>Private by Design</h3><p>Law analysis runs in your browser. Your data is only saved when you create a user ID to unlock the full report.</p></div>
       <div class="feat-card"><div class="feat-icon" style="background:var(--gr-50)">⚖️</div><h3>Verified Lawyer Connect</h3><p>Get matched to verified Indian lawyers by specialization and city — with direct WhatsApp and call access.</p></div>
@@ -1359,7 +1359,7 @@ function getProbingQs(){
      tip:'Prior formal notice strengthens your legal position and is mandatory before certain proceedings like Labour Court.'},
     {id:'evidence_level',question:'What kind of evidence or documentation do you have?',type:'radio',section:'Evidence',
      options:['Strong paper trail — agreements, receipts, emails, screenshots','Some documents but missing key ones','Mainly digital evidence — chats, emails, transaction records','Witness statements or testimony available','Very little documented evidence at this point'],
-     tip:'Evidence quality is the biggest factor in win probability. We\'ll guide you on exactly what\'s needed.'},
+     tip:'Evidence quality is the biggest factor in case readiness score. We\'ll guide you on exactly what\'s needed.'},
     {id:'desired_outcome',question:'What is your primary goal in this matter?',type:'radio',section:'Your Goal',
      options:['Recover money or property','Get criminal action taken against the other party','Get a court order/injunction for protection','Resolve the matter through settlement','Formal legal notice to establish rights','I mainly want to understand my rights first'],
      tip:'Your goal determines the best legal route — criminal complaint vs. civil suit vs. consumer forum vs. negotiation.'}
@@ -2005,10 +2005,10 @@ function genReport(uid,user){
     <div class="case-box"><strong>Issue Described:</strong> ${esc(W.input)}<br/>
     <span style="font-size:11px;color:var(--text-lt);margin-top:6px;display:block">User ID: ${uid} · Name: ${esc(user.name)} · ${now}</span></div></div>`;
 
-  // 2. Win Probability
+  // 2. Case Readiness Score
   h+=`<div class="rs"><div class="rs-title">📊 Case Strength Assessment</div>
     <div class="win-card ${win.level.toLowerCase()}">
-      <div style="font-size:12px;color:var(--text-lt);margin-bottom:5px">Overall Win Probability</div>
+      <div style="font-size:12px;color:var(--text-lt);margin-bottom:5px">Overall Case Readiness</div>
       <div class="win-level ${win.level.toLowerCase()}">${win.level} Case</div>
       <div style="font-size:26px;font-weight:900;color:var(--text);margin-bottom:3px">${win.pct}%</div>
       <div class="win-bar-wrap"><div class="win-bar" style="width:${win.pct}%;background:${win.color}"></div></div>
@@ -2053,7 +2053,7 @@ function closeRpt(){
   resetW();showStep(1);
 }
 
-/* ── Win probability (factors in Step 2 + Step 4 answers) ── */
+/* ── Case readiness score (factors in Step 2 + Step 4 answers) ── */
 function calcWin(laws,ans,files){
   const top=laws[0]||{};
   const lScore=Math.min(100,Math.round((top.confidence||top.score||0)/1.5));
@@ -2199,7 +2199,7 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 const DEFAULT_PLANS=[
   {id:'plan_report_std',name:'Digital Legal Report',type:'report',icon:'📄',price:499,originalPrice:null,
    description:'One-time · Instant delivery · PDF',
-   features:['Law mapping + sections','Win probability score','Action plan & next steps','Document checklist'],
+   features:['Law mapping + sections','Case readiness score','Action plan & next steps','Document checklist'],
    badge:null,active:true,featured:false,startDate:null,endDate:null,couponCode:null},
   {id:'plan_consult_std',name:'Expert Consultation',type:'consult',icon:'🧑‍⚖️',price:2500,originalPrice:null,
    description:'30 min · Verified lawyer · Call/Chat',

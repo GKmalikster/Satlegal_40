@@ -33,7 +33,7 @@ a{text-decoration:none;color:inherit}
 .rpt-section{background:#fff;border-radius:12px;border:1px solid var(--border);padding:24px;margin-bottom:18px}
 .rpt-sec-title{font-size:14px;font-weight:700;color:var(--gr-800);margin-bottom:14px;display:flex;align-items:center;gap:6px;border-bottom:2px solid var(--sf-200);padding-bottom:10px}
 
-/* Win probability */
+/* Case readiness score */
 .win-card{border-radius:10px;padding:20px;text-align:center}
 .win-card.strong{background:var(--gr-50);border:2px solid var(--gr-200)}
 .win-card.moderate{background:#FFF8E0;border:2px solid #FFE082}
@@ -110,7 +110,7 @@ a{text-decoration:none;color:inherit}
     <strong>⚠️ Professional Disclaimer:</strong> This report is for informational and educational purposes only. It does not constitute legal advice or create a lawyer-client relationship. Applicable laws, strengths, and strategies indicated herein are based on the facts described by you. Before taking any legal action, please consult a qualified legal professional. SatLegal shall not be liable for any actions taken based on this report.
   </div>
 
-  <!-- Win Probability -->
+  <!-- Case Readiness Score -->
   <div class="rpt-section">
     <div class="rpt-sec-title">📊 Case Strength Assessment</div>
     <div class="win-card" id="winCard">
@@ -171,7 +171,7 @@ try{report=JSON.parse(localStorage.getItem('sl_pending_report')||'{}')}catch(e){
 const now=new Date().toLocaleString('en-IN',{dateStyle:'long',timeStyle:'short'});
 document.getElementById('rptMeta').textContent=`User: ${user.name||'User'} · ${user.email||''} · Generated: ${now} · Report ID: ${payment.paymentId||'DEMO'}`;
 
-// Win probability calculation
+// Case readiness score calculation
 const laws=report.laws||[];
 const numFiles=report.files||0;
 const numAnswers=Object.keys(report.answers||{}).length;

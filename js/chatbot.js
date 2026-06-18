@@ -55,15 +55,15 @@ const INTENTS = [
 
   // About SatLegal
   { id:'about', patterns: /what.*satlegal|about.*satlegal|who.*you|satlegal.*work|how.*work|what.*do|tell.*about/i,
-    reply: () => `I'm the **SatLegal AI Assistant** 🇮🇳\n\nSatLegal is India's AI-powered legal analysis platform. We help you:\n\n✅ Understand which Indian laws apply to your situation\n✅ Get a **document checklist** before meeting a lawyer\n✅ See your preliminary **win probability**\n✅ Save ₹5,000–₹20,000 on initial consultations\n\n🔍 Our database covers **50+ Indian laws** including the new BNS & BNSS 2023.\n\nThe basic analysis is **100% free**. Want to start?` },
+    reply: () => `I'm the **SatLegal AI Assistant** 🇮🇳\n\nSatLegal is India's AI-powered legal analysis platform. We help you:\n\n✅ Understand which Indian laws apply to your situation\n✅ Get a **document checklist** before meeting a lawyer\n✅ See your preliminary **case readiness score**\n✅ Save ₹5,000–₹20,000 on initial consultations\n\n🔍 Our database covers **50+ Indian laws** including the new BNS & BNSS 2023.\n\nThe basic analysis is **100% free**. Want to start?` },
 
   // Lawyer / legal advice
   { id:'lawyer', patterns: /need.*lawyer|find.*lawyer|recommend.*lawyer|lawyer.*help|advocate|legal.*advice|consult/i,
-    reply: () => `I can help you **prepare** before consulting a lawyer!\n\nHere's how SatLegal helps you get more from your legal consultation:\n\n1️⃣ **Run our free 5-step analysis** – know which laws apply\n2️⃣ **Get your document checklist** – arrive prepared\n3️⃣ **See your win probability** – negotiate from knowledge\n\n💡 Users who run a SatLegal analysis first typically save **₹10,000+** in initial consultation fees because they arrive prepared.\n\nWould you like me to start the analysis for you?` },
+    reply: () => `I can help you **prepare** before consulting a lawyer!\n\nHere's how SatLegal helps you get more from your legal consultation:\n\n1️⃣ **Run our free 5-step analysis** – know which laws apply\n2️⃣ **Get your document checklist** – arrive prepared\n3️⃣ **See your case readiness score** – negotiate from knowledge\n\n💡 Users who run a SatLegal analysis first typically save **₹10,000+** in initial consultation fees because they arrive prepared.\n\nWould you like me to start the analysis for you?` },
 
   // Analyze / start
   { id:'analyse', patterns: /analys|analyze|start|begin|check.*case|assess.*case|legal.*(help|analysis|check)|what.*(law|legal|right)/i,
-    reply: () => `**Let's analyse your legal situation!** 🔍\n\nI can run a full 5-step analysis that will:\n• Identify applicable Indian laws\n• Ask targeted questions\n• Show your document checklist\n• Calculate win probability\n\nTo start, tell me: **What is your legal situation?** (describe it in a few sentences)\n\nOr click the button below to use the full interactive wizard:` ,
+    reply: () => `**Let's analyse your legal situation!** 🔍\n\nI can run a full 5-step analysis that will:\n• Identify applicable Indian laws\n• Ask targeted questions\n• Show your document checklist\n• Calculate case readiness score\n\nTo start, tell me: **What is your legal situation?** (describe it in a few sentences)\n\nOr click the button below to use the full interactive wizard:` ,
     showWizardBtn: true },
 
   // Thanks
