@@ -1730,43 +1730,50 @@ function updateAssessStrength(){
 }
 
 function getAssessmentQs(law){
-  const act=law.actName||'';const a=W.areas[0]||'';
-  if(act.match(/employment|labour|id act|posh|epf/i)||a==='employment'){
+  const act=law.actName||'';
+  const ct=(law.caseType||'').toLowerCase();
+  const isEmployment=act.match(/employment|labour|id act|posh|epf/i)||ct.includes('employment')||ct.includes('wrongful termination')||ct.includes('minimum wages')||ct.includes('gratuity')||ct.includes('pf ');
+  const isProperty=act.match(/rera|transfer of property|registration|builder/i)||ct.includes('rera')||ct.includes('property')||ct.includes('rent dispute')||ct.includes('land acquisition');
+  const isCyber=act.match(/cyber|it act|upi|fraud/i)||ct.includes('cyber')||ct.includes('online fraud');
+  const isFamily=act.match(/family|matrimonial|dowry|dv act|divorce|hma/i)||ct.includes('family')||ct.includes('divorce')||ct.includes('domestic violence')||ct.includes('muslim divorce')||ct.includes('maintenance');
+  const isCriminal=act.match(/criminal|bns|bnss|fir|police|constitution.*police/i)||ct.includes('criminal')||ct.includes('police excess')||ct.includes('illegal detention')||ct.includes('bail')||ct.includes('cheque bounce');
+  const isConsumer=act.match(/consumer|medical negligence|product|defective/i)||ct.includes('consumer')||ct.includes('copra')||ct.includes('medical negligence');
+  if(isEmployment){
     return [
       {q:'Do you have a written appointment letter or employment contract?',opts:['Yes','No','Had it but lost it','Verbal agreement only']},
       {q:'Was there any written warning before your termination?',opts:['Yes — formal show-cause','No written warning given','Verbal warning only','Not applicable']},
       {q:'Was PF/ESIC enrolled and deducted from your salary?',opts:['Yes — enrolled and deducted','Deducted but may not be deposited','Not enrolled by employer','Not sure']},
       {q:'Have you filed a complaint with the Labour Commissioner?',opts:['Yes — complaint filed','No — not yet','Filed online on Shram Portal','Police complaint filed instead']}
     ];
-  } else if(act.match(/rera|transfer of property|registration|builder/i)||a==='property'){
+  } else if(isProperty){
     return [
       {q:'Do you have a registered sale or rent agreement?',opts:['Yes — fully registered','Notarized but not registered','No written agreement','Agreement under process']},
       {q:'Are you currently in possession of the property?',opts:['Yes — in possession','No — denied possession','Partially in possession','Was removed from possession']},
       {q:'Is the project registered under RERA?',opts:['Yes — RERA registered','No — not RERA registered','Not sure','Exempted from RERA']},
       {q:'Have you sent any legal notice to the builder or seller?',opts:['Yes — via lawyer','Yes — personally sent','No — not yet','Builder ignored previous notice']}
     ];
-  } else if(act.match(/cyber|it act|upi|fraud/i)||a==='cyber'){
+  } else if(isCyber){
     return [
       {q:'Have you called the Cybercrime Helpline 1930?',opts:['Yes — within 24 hours','Yes — after 24 hours','No — not yet','Reported to bank only']},
       {q:'Do you have screenshots and transaction IDs?',opts:['Yes — complete records','Partial records only','No evidence collected','Bank statement available']},
       {q:'Have you blocked your card and UPI immediately?',opts:['Yes — blocked immediately','Yes — with some delay','No — not blocked yet','Bank is investigating']},
       {q:'Have you filed a cybercrime complaint online (cybercrime.gov.in)?',opts:['Yes — complaint filed','No — not yet','Police FIR filed instead','Filed with bank only']}
     ];
-  } else if(act.match(/family|matrimonial|dowry|dv act|divorce|hma/i)||a==='family'||a==='muslim_family'){
+  } else if(isFamily){
     return [
       {q:'Do you have your marriage certificate or registration?',opts:['Yes — registered marriage certificate','No certificate but marriage photos/proof exist','No formal registration done','Marriage disputed by other party']},
       {q:'Is there evidence of domestic violence or harassment?',opts:['Yes — medical records or MLC report','Yes — photos or witness testimony','No physical evidence — testimony only','No violence — civil matrimonial dispute']},
       {q:'Have you applied for interim maintenance in court?',opts:['Yes — applied under Sec 24 HMA / DV Act','No — not applied yet','Case filed but maintenance pending','Previously ordered maintenance not being paid']},
       {q:'Do you currently have safe accommodation?',opts:['Yes — living in shared home','Yes — living with family or independently','No — forced to leave matrimonial home','Seeking residence order under DV Act']}
     ];
-  } else if(act.match(/criminal|bns|bnss|fir|police/i)||a==='criminal'){
+  } else if(isCriminal){
     return [
       {q:'Has an FIR been registered with the police?',opts:['Yes — FIR registered','Police refused to register FIR','Written complaint filed, not FIR','Not filed yet']},
       {q:'Was there a medical examination (MLC) done?',opts:['Yes — MLC done at hospital','Medical treatment done but no MLC','No medical treatment needed','MLC pending']},
       {q:'Are there witnesses to the incident?',opts:['Yes — multiple independent witnesses','Yes — one witness (known person)','CCTV or digital evidence available','No witnesses — testimony only']},
       {q:'Have you preserved all evidence?',opts:['Yes — screenshots, calls, documents preserved','Partially preserved','Evidence deleted by the other party','Not sure what to preserve']}
     ];
-  } else if(act.match(/consumer|medical negligence|product|defective/i)||a==='consumer'){
+  } else if(isConsumer){
     return [
       {q:'Do you have purchase proof (invoice, receipt, or order confirmation)?',opts:['Yes — original invoice/bill','Digital receipt or confirmation email','No formal receipt — cash payment','No proof available']},
       {q:'Have you made a written complaint to the seller or company?',opts:['Yes — written complaint with acknowledgment','Yes — email only','No — not yet complained','Company refused to acknowledge']},
