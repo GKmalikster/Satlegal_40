@@ -794,7 +794,7 @@ const LAWS_DATABASE = [
     quickTip: 'Triple talaq (talaq-e-biddat) is now a criminal offence since 2019. A Muslim woman can also seek Khula (divorce by wife) through a court.',
     keywords: {
       exact: ['triple talaq','talaq e biddat','instant talaq','muslim divorce','nikah dissolution','khul divorce','khula','muta marriage','mehr not paid','mahr not given','iddat period maintenance','muslim wife abandoned','muslim woman divorce','muslim marriage act','muslim personal law divorce','shariat divorce','section 2 muslim women act','muslim women act 2019','talaq talaq talaq'],
-      strong: ['muslim divorce','triple talaq','talaq','nikah','mehr','mahr','iddat','khula','zihar','ila','mubarat','lian','faskh','qazi','muslim marriage','shariat','masjid','mosque','halala','nikah halala','muslim woman rights','darul qaza','personal law board','all india muslim personal law board'],
+      strong: ['muslim divorce','triple talaq','talaq','nikah','mehr','mahr','iddat','khula','zihar','mubarat','faskh','qazi','muslim marriage','shariat','masjid','mosque','halala','nikah halala','muslim woman rights','darul qaza','personal law board','all india muslim personal law board'],
       weak: ['muslim','islam','islamic','nikah','talaq','mosque','maulana','qazi','masjid','mehr','mahr','nikahnama','iddat','shariat']
     },
     // NOTE: Remove generic 'divorce','marriage','separation' from weak to prevent false positives on Hindu/civil cases
@@ -2563,7 +2563,7 @@ function getContextualQuestions(description) {
 
   const detectors = {
     family: ['marriage','divorce','husband','wife','spouse','custody','child','maintenance','alimony','matrimon','conjugal','separation','in-laws','dowry','domestic violence'],
-    muslim_family: ['muslim','talaq','triple talaq','nikah','mehr','mahr','iddat','khula','zihar','ila','mubarat','faskh','muslim divorce','muslim wife','shariat','muslim women act'],
+    muslim_family: ['muslim','talaq','triple talaq','nikah','mehr','mahr','iddat','khula','zihar','mubarat','faskh','muslim divorce','muslim wife','shariat','muslim women act'],
     property: ['property','land','house','flat','plot','tenant','landlord','rent','builder','rera','encroach','boundary','sale deed','transfer','partition','mortgage'],
     land_acquisition: ['land acquisition','government taking','acquired land','larr','rfctlarr','collector notice','compulsory acquisition','nhq corridor','highway land','award under land'],
     succession: ['died','death','will','inheritance','succession','heir','intestate','probate','estate','deceased','ancestral','coparcener'],
@@ -2682,6 +2682,9 @@ function analyzeMultipleLaws(userInput, contextualAnswers = {}) {
     const hasDomainSignal = strongHits > 0 || exactHits > 0;
     if (isMuslimSpecific && !hasDomainSignal) confidence = 0;
     if (isChristianSpecific && !hasDomainSignal) confidence = 0;
+
+    // MUSLIM DIVORCE suppression: never show for road accident / motor vehicle context
+    if ((lawCT.includes('muslim divorce') || lawCT.includes('triple talaq') || lawCT.includes('nikah dissolution')) && hasVehicleAccidentSignal) confidence = 0;
 
     // MUSLIM DIVORCE suppression: suppress when Muslim Maintenance signals (mahr, iddat, mwpa) present
     const isMuslimDivorce = lawCT.includes('muslim divorce') || lawCT.includes('triple talaq') || lawCT.includes('nikah');
