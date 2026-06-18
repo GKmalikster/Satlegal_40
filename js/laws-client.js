@@ -2669,11 +2669,14 @@ function analyzeMultipleLaws(userInput, contextualAnswers = {}) {
       }
     }
 
-    // Religion-specific routing bonus
+    // Religion-specific routing bonus — ONLY when case has family/personal law signals
     const religion = contextualAnswers.religion || '';
-    if (religion === 'Muslim' && law.actName.toLowerCase().includes('muslim')) confidence += 20;
-    if (religion === 'Christian' && law.actName.toLowerCase().includes('christian')) confidence += 20;
-    if ((religion === 'Hindu' || religion === 'Sikh/Jain/Buddhist') && law.actName.toLowerCase().includes('hindu')) confidence += 10;
+    const hasFamilyLawSignal = ['divorce','marriage','husband','wife','spouse','talaq','nikah','mehr','mahr',
+      'maintenance','alimony','matrimon','dowry','succession','inheritance','will','probate','custody',
+      'separation','conjugal','personal law','family court','family dispute'].some(s => input.includes(s));
+    if (religion === 'Muslim' && law.actName.toLowerCase().includes('muslim') && hasFamilyLawSignal) confidence += 20;
+    if (religion === 'Christian' && law.actName.toLowerCase().includes('christian') && hasFamilyLawSignal) confidence += 20;
+    if ((religion === 'Hindu' || religion === 'Sikh/Jain/Buddhist') && law.actName.toLowerCase().includes('hindu') && hasFamilyLawSignal) confidence += 10;
 
     // Religion-based SUPPRESSION: Muslim/Christian-specific laws require at least one domain signal
     const lawCT = (law.caseType || '').toLowerCase();
