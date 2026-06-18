@@ -2683,8 +2683,6 @@ function analyzeMultipleLaws(userInput, contextualAnswers = {}) {
     if (isMuslimSpecific && !hasDomainSignal) confidence = 0;
     if (isChristianSpecific && !hasDomainSignal) confidence = 0;
 
-    // MUSLIM DIVORCE suppression: never show for road accident / motor vehicle context
-    if ((lawCT.includes('muslim divorce') || lawCT.includes('triple talaq') || lawCT.includes('nikah dissolution')) && hasVehicleAccidentSignal) confidence = 0;
 
     // MUSLIM DIVORCE suppression: suppress when Muslim Maintenance signals (mahr, iddat, mwpa) present
     const isMuslimDivorce = lawCT.includes('muslim divorce') || lawCT.includes('triple talaq') || lawCT.includes('nikah');
@@ -2741,6 +2739,8 @@ function analyzeMultipleLaws(userInput, contextualAnswers = {}) {
     const isMotorAccidentLaw = lawCT.includes('motor accident');
     const hasLandAcquisitionSignal = ['land acquisition','sarkar ne zameen','government acquiring','land for highway','land taken for','agricultural land acquired','sarkar zameen','muawaza','compulsory acquisition','rfctlarr','larr act','collector notice for land','zameen le li','land being acquired','land for metro','land for railway'].some(s => input.includes(s));
     const hasVehicleAccidentSignal = ['accident','vehicle hit','road accident','met with accident','motor vehicle','mact','hit and run','drunk driver','injured in accident','collision','vehicle crash','car crash','bike accident'].some(s => input.includes(s));
+    // MUSLIM DIVORCE suppression: never show for road accident / motor vehicle context
+    if ((lawCT.includes('muslim divorce') || lawCT.includes('triple talaq') || lawCT.includes('nikah dissolution')) && hasVehicleAccidentSignal) confidence = 0;
     if (isMotorAccidentLaw && hasLandAcquisitionSignal && !hasVehicleAccidentSignal) confidence = 0;
 
     // MOTOR ACCIDENT suppression: suppress when only 'compensation' matches without any vehicle/accident signals
