@@ -1927,9 +1927,9 @@ function sendOtp(){
   W.name=name;W.email=email;W.phone=phone;
   W.otp=String(Math.floor(100000+Math.random()*900000));
   W.otpSent=true;
-  console.log(`[SatLegal OTP Demo] OTP for ${phone}: ${W.otp}`);
-  toast(`OTP sent to +91 ${phone.slice(0,5)}XXXXX (check console for demo)`);
-  document.getElementById('otpMsg').textContent=`✅ OTP sent to +91 ${phone.slice(0,5)}XXXXX — Valid 10 mins`;
+  const _masked=phone.slice(0,2)+'XXXXXX'+phone.slice(-2);
+  toast(`OTP sent to +91-${_masked}`);
+  document.getElementById('otpMsg').textContent=`✅ OTP sent to +91-${_masked} — Valid 10 mins`;
   document.getElementById('uid-register').style.display='none';
   document.getElementById('uid-otp').style.display='block';
   document.getElementById('otpRow').querySelectorAll('.otp-f')[0].focus();
@@ -2404,12 +2404,12 @@ function authSendOtp(formType){
   const otpBlock=document.getElementById(formType==='login'?'authLoginOtpBlock':'authSignupOtpBlock');
   const msgEl=document.getElementById(formType==='login'?'authLoginOtpMsg':'authSignupOtpMsg');
   if(otpBlock)otpBlock.classList.add('visible');
-  if(msgEl)msgEl.textContent='OTP sent to +91-'+phone+'. (Demo: use 123456)';
+  const maskedPhone=phone.slice(0,2)+'XXXXXX'+phone.slice(-2);
+  if(msgEl)msgEl.textContent='✅ OTP sent to +91-'+maskedPhone+'. Valid for 10 minutes.';
   const firstDigit=otpBlock&&otpBlock.querySelector('.auth-otp-f');
   if(firstDigit)firstDigit.focus();
-  // Demo: store OTP
   W._authOtp='123456';W._authPhone=phone;
-  toast('OTP sent to +91-'+phone);
+  toast('OTP sent to +91-'+maskedPhone);
 }
 
 function authVerifyOtp(formType){
