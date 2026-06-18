@@ -1041,7 +1041,7 @@ const LABELS = ['Describe Issue','Smart Assessment','Law Mapping','Case Deep Div
 function toggleMob(){document.getElementById('mobMenu').classList.toggle('open')}
 document.addEventListener('click',e=>{const m=document.getElementById('mobMenu');if(m.classList.contains('open')&&!document.getElementById('mainNav').contains(e.target))m.classList.remove('open')});
 function updCC(){const t=document.getElementById('issueTa');document.getElementById('cc').textContent=t.value.length}
-function fillEx(t){document.getElementById('issueTa').value=t;updCC();scrollToWizard()}
+function fillEx(t){document.getElementById('issueTa').value=t;updCC();scrollToWizard();setTimeout(()=>s1(),80);}
 
 /* ── Hero card JS ── */
 function heroTaInput(el){
@@ -1050,7 +1050,8 @@ function heroTaInput(el){
 }
 function heroFillEx(t){
   const ta=document.getElementById('heroTa');
-  if(ta){ta.value=t;heroTaInput(ta);ta.focus()}
+  if(ta){ta.value=t;heroTaInput(ta);ta.focus();}
+  setTimeout(()=>heroAnalyze(),80);
 }
 // ── ANALYTICS TRACKING ──────────────────────────────────────────────
 function slTrack(event, data){
@@ -1229,7 +1230,7 @@ function showStep(n){
     if(vBtn)vBtn.innerHTML=_pr?'✅ Verify &amp; Proceed to Payment':'✅ Verify &amp; Get Free Report';
   }
   drawProg();
-  document.getElementById('wizCard').scrollIntoView({behavior:'smooth',block:'nearest'});
+  document.getElementById('wizCard').scrollIntoView({behavior:'smooth',block:'start'});
   if(n===6)renderAnalysisSummary();
 }
 
