@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>How It Works – SatLegal AI Legal Analysis</title>
+<meta name="description" content="SatLegal analyses your legal situation in 6 simple steps — describe, answer questions, see applicable laws, assess your case strength, get documents checklist, and download your full report."/>
+<style>
+:root{--sf-500:#FF9933;--sf-600:#E07000;--sf-700:#B35100;--sf-100:#FFF4E6;--sf-200:#FFE4C2;--gr-500:#138808;--gr-600:#1A6B1A;--gr-700:#145214;--gr-800:#0D3D0D;--gr-50:#F0FBF0;--gr-100:#D4F5D2;--text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;--bg:#F8F9FA;--font:'Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:#fff;line-height:1.6}
+a{text-decoration:none;color:inherit}
+.tribar{height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
+.nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:900;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.nav-brand img{height:38px}
+.nav-links{display:flex;gap:4px}
+.nav-links a{font-size:14px;color:var(--gr-800);font-weight:500;padding:7px 13px;border-radius:6px;transition:.2s}
+.nav-links a:hover,.nav-links a.active{background:var(--gr-50);color:var(--gr-700)}
+.nav-actions{display:flex;gap:8px;align-items:center}
+/* Hero */
+.hero{background:linear-gradient(135deg,#E07000 0%,#FF9933 18%,#FFB347 30%,#FFD699 40%,#fff 50%,#A8E8A4 60%,#5CC852 72%,#138808 85%,#0D6B05 100%);padding:60px 24px 52px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(255,255,255,.15) 0%,transparent 70%);pointer-events:none}
+.hero h1{font-size:clamp(26px,4.5vw,48px);font-weight:900;color:#fff;margin-bottom:14px;text-shadow:0 2px 12px rgba(0,0,0,.28);position:relative;z-index:1}
+.hero p{font-size:16px;color:rgba(255,255,255,.9);max-width:580px;margin:0 auto 28px;line-height:1.75;text-shadow:0 1px 4px rgba(0,0,0,.18);position:relative;z-index:1}
+.hero-cta{display:inline-block;background:#fff;color:var(--gr-800);font-size:15px;font-weight:800;padding:14px 32px;border-radius:10px;transition:.2s;position:relative;z-index:1;box-shadow:0 4px 16px rgba(0,0,0,.18)}
+.hero-cta:hover{background:var(--sf-100);transform:translateY(-2px)}
+/* Trust strip */
+.trust-strip{background:#fff;border-bottom:1px solid var(--border);padding:14px 24px;text-align:center;display:flex;justify-content:center;gap:32px;flex-wrap:wrap}
+.trust-item{font-size:13px;color:var(--text-lt);display:flex;align-items:center;gap:6px;font-weight:600}
+.trust-item strong{color:var(--gr-800)}
+/* Steps section */
+.steps-sec{max-width:900px;margin:0 auto;padding:60px 24px}
+.steps-sec h2{text-align:center;font-size:28px;font-weight:900;color:var(--gr-800);margin-bottom:10px}
+.steps-sec .sub{text-align:center;font-size:15px;color:var(--text-lt);margin-bottom:48px}
+/* Step cards */
+.step-card{display:flex;gap:28px;margin-bottom:40px;align-items:flex-start;padding:28px;background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,.05);position:relative;overflow:hidden}
+.step-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px}
+.step-card:nth-child(1)::before{background:var(--sf-500)}
+.step-card:nth-child(2)::before{background:#E07000}
+.step-card:nth-child(3)::before{background:var(--gr-500)}
+.step-card:nth-child(4)::before{background:var(--gr-700)}
+.step-card:nth-child(5)::before{background:var(--gr-800)}
+.step-card:nth-child(6)::before{background:#062206}
+@media(max-width:600px){.step-card{flex-direction:column;gap:16px}}
+.step-num-badge{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;font-weight:900;color:#fff}
+.s1{background:var(--sf-500)}.s2{background:#E07000}.s3{background:var(--gr-500)}.s4{background:var(--gr-700)}.s5{background:var(--gr-800)}.s6{background:#062206}
+.step-body h3{font-size:18px;font-weight:800;color:var(--gr-800);margin-bottom:6px}
+.step-body .step-label{font-size:11px;font-weight:700;color:var(--sf-600);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.step-body p{font-size:14px;color:var(--text-lt);line-height:1.75}
+.step-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.step-tag{background:var(--bg);border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--text-lt);padding:3px 10px;font-weight:600}
+/* FAQ */
+.faq-sec{background:var(--bg);padding:60px 24px}
+.faq-inner{max-width:760px;margin:0 auto}
+.faq-inner h2{text-align:center;font-size:26px;font-weight:900;color:var(--gr-800);margin-bottom:32px}
+.faq-item{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.faq-q{padding:16px 20px;font-size:14px;font-weight:700;color:var(--gr-800);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.faq-q:hover{background:var(--gr-50)}
+.faq-arrow{font-size:18px;transition:.3s;color:var(--text-lt)}
+.faq-a{display:none;padding:0 20px 16px;font-size:13px;color:var(--text-lt);line-height:1.75}
+.faq-item.open .faq-arrow{transform:rotate(90deg)}
+.faq-item.open .faq-a{display:block}
+/* CTA Section */
+.cta-sec{background:var(--gr-800);padding:60px 24px;text-align:center}
+.cta-sec h2{font-size:26px;font-weight:900;color:#fff;margin-bottom:10px}
+.cta-sec p{font-size:14px;color:rgba(255,255,255,.75);margin-bottom:24px}
+.btn-cta-white{background:#fff;color:var(--gr-800);font-size:15px;font-weight:800;padding:14px 32px;border-radius:10px;display:inline-block;transition:.2s;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.btn-cta-white:hover{background:var(--sf-100);transform:translateY(-2px)}
+/* Footer */
+footer{background:var(--gr-800);color:rgba(255,255,255,.6);text-align:center;padding:20px;font-size:12px;border-top:1px solid rgba(255,255,255,.1)}
+footer a{color:rgba(255,255,255,.65);margin:0 6px}
+footer a:hover{color:#fff}
+</style>
+</head>
+<body>
+<div class="tribar"></div>
+<nav class="nav">
+  <a class="nav-brand" href="index.html"><img src="assets/logo.png" alt="SatLegal"/></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="legal-topics.html">Legal Topics</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="how-it-works.html" class="active">How It Works</a>
+    <a href="about.html">About</a>
+  </div>
+  <div class="nav-actions" id="navActions"><!-- populated by nav.js --></div>
+</nav>
+
+<div class="hero">
+  <h1>How SatLegal Works</h1>
+  <p>From describing your problem to getting a full legal report — in 6 simple steps. No legal jargon, no prior knowledge required.</p>
+  <a class="hero-cta" href="index.html">⚡ Try It Free Now →</a>
+</div>
+
+<div class="trust-strip">
+  <div class="trust-item">⚡ <strong>Under 5 minutes</strong> to complete</div>
+  <div class="trust-item">⚖️ <strong>78 Indian laws</strong> analysed</div>
+  <div class="trust-item">🔒 <strong>100% private</strong> — your data is encrypted</div>
+  <div class="trust-item">🆓 <strong>Free analysis</strong> — pay only for the report</div>
+</div>
+
+<div class="steps-sec">
+  <h2>6 Steps to Legal Clarity</h2>
+  <p class="sub">No sign-up required to start. Just describe your situation in plain language.</p>
+
+  <div class="step-card">
+    <div class="step-num-badge s1">1</div>
+    <div class="step-body">
+      <div class="step-label">Step 1 — Describe</div>
+      <h3>📝 Tell Us Your Legal Situation</h3>
+      <p>Write your problem in plain Hindi, Hinglish, or English — just like you'd explain it to a friend. You don't need to know any legal terminology. Examples: "My landlord isn't returning my security deposit", "I was fired without notice", "The builder hasn't given me possession of my flat."</p>
+      <div class="step-tags"><span class="step-tag">Hindi supported</span><span class="step-tag">Hinglish supported</span><span class="step-tag">No legal jargon needed</span><span class="step-tag">Min 50 characters</span></div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-num-badge s2">2</div>
+    <div class="step-body">
+      <div class="step-label">Step 2 — Contextual Questions</div>
+      <h3>❓ Answer a Few Smart Questions</h3>
+      <p>Based on what you wrote, SatLegal asks 3–6 targeted follow-up questions to understand your situation better. For example: Are you Hindu or Muslim? Is this a residential or commercial property? Have you already sent a legal notice? These answers significantly improve the accuracy of the law mapping.</p>
+      <div class="step-tags"><span class="step-tag">3–6 questions only</span><span class="step-tag">Multiple choice</span><span class="step-tag">Context-specific</span></div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-num-badge s3">3</div>
+    <div class="step-body">
+      <div class="step-label">Step 3 — Law Mapping</div>
+      <h3>⚖️ See Which Indian Laws Apply</h3>
+      <p>Our AI engine analyses your situation against 78 Indian laws and ranks them by relevance. Each law shows you the applicable act, key sections, urgency level, and limitation period. The top 3 most relevant laws are pre-selected. You can add or remove laws from the analysis.</p>
+      <div class="step-tags"><span class="step-tag">78 laws analysed</span><span class="step-tag">Ranked by relevance</span><span class="step-tag">Limitation periods shown</span></div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-num-badge s4">4</div>
+    <div class="step-body">
+      <div class="step-label">Step 4 — Case Strength</div>
+      <h3>📊 Assess Your Case Readiness</h3>
+      <p>Answer assessment questions specific to your selected laws — such as whether you have a written contract, whether you have witnesses, or whether you've already made a complaint. SatLegal calculates your case strength score (as a percentage) and tells you how strong your legal position is before you spend money on a lawyer.</p>
+      <div class="step-tags"><span class="step-tag">Case strength score</span><span class="step-tag">Law-specific questions</span><span class="step-tag">Evidence evaluation</span></div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-num-badge s5">5</div>
+    <div class="step-body">
+      <div class="step-label">Step 5 — Document Checklist</div>
+      <h3>📎 Know Which Documents You Need</h3>
+      <p>SatLegal generates a prioritised document checklist for your specific case. Critical documents (without which your case cannot proceed) are flagged separately from supporting documents. This saves you valuable time before your first lawyer meeting.</p>
+      <div class="step-tags"><span class="step-tag">Critical vs supporting docs</span><span class="step-tag">Case-specific list</span><span class="step-tag">Easy to print</span></div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-num-badge s6">6</div>
+    <div class="step-body">
+      <div class="step-label">Step 6 — Report & Action Plan</div>
+      <h3>📄 Get Your Full Legal Report</h3>
+      <p>After a one-time payment of ₹499, you get your complete legal report: case strength score, applicable laws with sections, document checklist, 5-step action plan, and a matched lawyer recommendation. The report can be downloaded as a PDF and shared with your lawyer. For ₹2,500 you also get a 30-minute video consultation with a verified Indian lawyer.</p>
+      <div class="step-tags"><span class="step-tag">₹499 report</span><span class="step-tag">₹2,500 + consultation</span><span class="step-tag">PDF download</span><span class="step-tag">Lawyer matched</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="faq-sec">
+  <div class="faq-inner">
+    <h2>Common Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Is this a substitute for a lawyer? <span class="faq-arrow">›</span></div>
+      <div class="faq-a">No. SatLegal is an educational and informational tool. It helps you understand which laws apply to your situation and how strong your case may be, so you're better prepared before meeting a lawyer. It does not constitute legal advice and does not create a lawyer-client relationship.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Is my information private and secure? <span class="faq-arrow">›</span></div>
+      <div class="faq-a">Yes. Your data is encrypted in transit and at rest. We never share your case details with third parties. Your analysis is private to you.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can I write in Hindi or Hinglish? <span class="faq-arrow">›</span></div>
+      <div class="faq-a">Yes. Our engine understands Hindi, Hinglish (Hindi written in Roman script), and English. You can write in any combination, e.g. "mere landlord ne deposit return nahi kiya 6 mahine se."</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">How accurate is the law mapping? <span class="faq-arrow">›</span></div>
+      <div class="faq-a">Our law engine covers 78 major Indian laws with thousands of keyword patterns. It achieves over 99% accuracy on our regression test suite of 1,000 scenarios. However, edge cases and highly specific situations may benefit from additional lawyer review.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">What if I'm not satisfied with the report? <span class="faq-arrow">›</span></div>
+      <div class="faq-a">If the report doesn't match your situation or if we couldn't identify applicable laws, contact us at <a href="mailto:support@satlegal.in" style="color:var(--sf-600)">support@satlegal.in</a> for a review. Refunds are handled case by case within 48 hours.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">How is the ₹2,500 consultation conducted? <span class="faq-arrow">›</span></div>
+      <div class="faq-a">After payment, you'll be asked to book a time slot. A verified Indian lawyer matched to your case type will call you at your chosen time for a 30-minute session. They will also draft a legal notice if needed as part of the consultation.</div>
+    </div>
+  </div>
+</div>
+
+<div class="cta-sec">
+  <h2>Ready to Understand Your Legal Rights?</h2>
+  <p>Free analysis · No sign-up required · Results in under 5 minutes</p>
+  <a class="btn-cta-white" href="index.html">⚡ Start Free Analysis Now →</a>
+</div>
+
+<footer>
+  <a href="index.html">Home</a><a href="about.html">About</a><a href="pricing.html">Pricing</a>
+  <a href="faq.html">FAQ</a><a href="contact.html">Contact</a>
+  <a href="privacy-policy.html">Privacy</a><a href="terms-conditions.html">Terms</a>
+  <br/><br/>© 2025 SatLegal Technologies Pvt. Ltd. · Built for India 🇮🇳
+</footer>
+<script src="js/nav.js"></script>
+</body>
+</html>

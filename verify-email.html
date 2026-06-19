@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Verify Your Email – SatLegal</title>
+<style>
+:root{--sf-500:#FF9933;--sf-600:#E07000;--gr-500:#138808;--gr-700:#145214;--gr-800:#0D3D0D;--gr-50:#F0FBF0;--gr-100:#D4F5D2;--text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;--bg:#F8F9FA;--font:'Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+a{text-decoration:none;color:inherit}
+.tribar{height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
+.nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:center}
+.nav-brand img{height:36px}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px}
+.card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:44px 36px;max-width:460px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.08)}
+.icon{font-size:56px;margin-bottom:18px}
+h1{font-size:22px;font-weight:900;color:var(--gr-800);margin-bottom:10px}
+.sub{font-size:14px;color:var(--text-lt);line-height:1.8;margin-bottom:28px}
+.email-display{background:var(--gr-50);border:1px solid var(--gr-100);border-radius:8px;padding:10px 16px;font-size:14px;font-weight:700;color:var(--gr-800);margin-bottom:24px}
+/* OTP input */
+.otp-row{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.otp-box{width:46px;height:52px;border:2px solid var(--border);border-radius:10px;font-size:22px;font-weight:800;text-align:center;outline:none;transition:.2s;font-family:var(--font);color:var(--gr-800)}
+.otp-box:focus{border-color:var(--sf-500);box-shadow:0 0 0 3px rgba(255,153,51,.15)}
+.otp-box.filled{border-color:var(--gr-500);background:var(--gr-50)}
+.otp-box.error{border-color:#EF4444;background:#FEF2F2}
+/* Buttons */
+.btn-verify{width:100%;background:var(--sf-500);color:#fff;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:var(--font);transition:.2s;margin-bottom:14px}
+.btn-verify:hover{background:var(--sf-600)}
+.btn-verify:disabled{background:#ccc;cursor:not-allowed}
+.resend-row{font-size:13px;color:var(--text-lt)}
+.resend-row button{background:none;border:none;color:var(--gr-700);font-weight:700;cursor:pointer;font-family:var(--font);text-decoration:underline;font-size:13px}
+.resend-row button:disabled{color:var(--text-lt);text-decoration:none;cursor:default}
+/* Status */
+.status{padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:16px;display:none}
+.status.success{background:var(--gr-50);border:1px solid var(--gr-100);color:var(--gr-700)}
+.status.error{background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C}
+/* Success state */
+.success-state{display:none}
+.success-state .icon{color:var(--gr-500)}
+footer{text-align:center;padding:20px;font-size:12px;color:var(--text-lt)}
+</style>
+</head>
+<body>
+<div class="tribar"></div>
+<nav class="nav">
+  <a class="nav-brand" href="index.html"><img src="assets/logo.png" alt="SatLegal"/></a>
+</nav>
+
+<main>
+  <div class="card">
+    <!-- Verify state -->
+    <div id="verifyState">
+      <div class="icon">📧</div>
+      <h1>Verify Your Email</h1>
+      <p class="sub">We've sent a 6-digit OTP to your email address. Enter it below to verify your account.</p>
+      <div class="email-display" id="emailDisplay">your@email.com</div>
+
+      <div class="status" id="statusMsg"></div>
+
+      <div class="otp-row" id="otpRow">
+        <input class="otp-box" id="o1" maxlength="1" inputmode="numeric" oninput="otpInput(this,1)"/>
+        <input class="otp-box" id="o2" maxlength="1" inputmode="numeric" oninput="otpInput(this,2)"/>
+        <input class="otp-box" id="o3" maxlength="1" inputmode="numeric" oninput="otpInput(this,3)"/>
+        <input class="otp-box" id="o4" maxlength="1" inputmode="numeric" oninput="otpInput(this,4)"/>
+        <input class="otp-box" id="o5" maxlength="1" inputmode="numeric" oninput="otpInput(this,5)"/>
+        <input class="otp-box" id="o6" maxlength="1" inputmode="numeric" oninput="otpInput(this,6)"/>
+      </div>
+
+      <button class="btn-verify" id="btnVerify" onclick="verifyOTP()" disabled>Verify Email →</button>
+
+      <div class="resend-row">
+        Didn't get the email?
+        <button id="btnResend" onclick="resendOTP()" disabled>Resend in <span id="timer">60</span>s</button>
+      </div>
+    </div>
+
+    <!-- Success state -->
+    <div class="success-state" id="successState">
+      <div class="icon">✅</div>
+      <h1>Email Verified!</h1>
+      <p class="sub">Your email has been verified successfully. You can now access all SatLegal features.</p>
+      <a class="btn-verify" href="index.html" style="display:block;text-decoration:none;color:#fff">Go to Dashboard →</a>
+    </div>
+  </div>
+</main>
+
+<footer>SatLegal Technologies Pvt. Ltd. · <a href="privacy-policy.html" style="color:var(--text-lt)">Privacy</a> · <a href="terms-conditions.html" style="color:var(--text-lt)">Terms</a></footer>
+
+<script>
+let user={};
+try{user=JSON.parse(localStorage.getItem('sl_user')||'{}')}catch(e){}
+
+const params=new URLSearchParams(location.search);
+const emailFromParam=params.get('email');
+const email=emailFromParam||user.email||'your@email.com';
+document.getElementById('emailDisplay').textContent=email;
+
+// Check if already verified
+if(user.emailVerified){
+  document.getElementById('verifyState').style.display='none';
+  document.getElementById('successState').style.display='block';
+}
+
+// OTP logic
+function otpInput(el,idx){
+  el.value=el.value.replace(/\D/g,'');
+  el.classList.toggle('filled',el.value.length>0);
+  el.classList.remove('error');
+  if(el.value&&idx<6){document.getElementById('o'+(idx+1)).focus();}
+  if(el.value===''&&idx>1){document.getElementById('o'+(idx-1)).focus();}
+  const otp=getOTP();
+  document.getElementById('btnVerify').disabled=otp.length<6;
+}
+
+// Handle backspace
+document.querySelectorAll('.otp-box').forEach((box,i)=>{
+  box.addEventListener('keydown',e=>{
+    if(e.key==='Backspace'&&!box.value&&i>0){
+      document.getElementById('o'+i).focus();
+    }
+    // Allow paste on first box
+    if(e.key==='v'&&(e.ctrlKey||e.metaKey)&&i===0){
+      setTimeout(()=>{
+        const val=box.value.replace(/\D/g,'').slice(0,6);
+        [...val].forEach((c,j)=>{
+          const b=document.getElementById('o'+(j+1));
+          if(b){b.value=c;b.classList.add('filled');}
+        });
+        const last=document.getElementById('o'+Math.min(val.length,6));
+        if(last)last.focus();
+        document.getElementById('btnVerify').disabled=val.length<6;
+      },50);
+    }
+  });
+});
+
+function getOTP(){return [1,2,3,4,5,6].map(i=>document.getElementById('o'+i).value).join('');}
+
+function setError(msg){
+  const s=document.getElementById('statusMsg');
+  s.textContent='❌ '+msg;s.className='status error';s.style.display='block';
+  document.querySelectorAll('.otp-box').forEach(b=>b.classList.add('error'));
+}
+function setSuccess(msg){
+  const s=document.getElementById('statusMsg');
+  s.textContent='✅ '+msg;s.className='status success';s.style.display='block';
+}
+
+async function verifyOTP(){
+  const otp=getOTP();
+  if(otp.length<6)return;
+  const btn=document.getElementById('btnVerify');
+  btn.disabled=true;btn.textContent='Verifying…';
+
+  try{
+    const _API=location.hostname==='localhost'?'http://localhost:5000/api':'/api';
+    const token=localStorage.getItem('sl_auth_token');
+    const resp=await fetch(_API+'/auth/verify-email',{
+      method:'POST',
+      headers:{'Content-Type':'application/json',...(token?{'Authorization':'Bearer '+token}:{})},
+      body:JSON.stringify({email,otp})
+    });
+    const data=await resp.json();
+    if(resp.ok&&data.success){
+      // Update local user
+      if(user){user.emailVerified=true;localStorage.setItem('sl_user',JSON.stringify(user));}
+      document.getElementById('verifyState').style.display='none';
+      document.getElementById('successState').style.display='block';
+      // Redirect after 2s
+      const redirect=params.get('redirect')||'dashboard/user-dashboard.html';
+      setTimeout(()=>window.location.href=redirect,2000);
+    } else {
+      setError(data.message||'Invalid OTP. Please try again.');
+      btn.disabled=false;btn.textContent='Verify Email →';
+    }
+  }catch(e){
+    setError('Network error. Please try again.');
+    btn.disabled=false;btn.textContent='Verify Email →';
+  }
+}
+
+// Countdown timer
+let countdown=60;
+const timerEl=document.getElementById('timer');
+const resendBtn=document.getElementById('btnResend');
+const t=setInterval(()=>{
+  countdown--;
+  timerEl.textContent=countdown;
+  if(countdown<=0){
+    clearInterval(t);
+    resendBtn.disabled=false;
+    resendBtn.innerHTML='Resend OTP';
+  }
+},1000);
+
+async function resendOTP(){
+  resendBtn.disabled=true;
+  setSuccess('OTP resent to '+email);
+  try{
+    const _API=location.hostname==='localhost'?'http://localhost:5000/api':'/api';
+    await fetch(_API+'/auth/resend-verification',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email})
+    });
+  }catch(e){}
+  // Restart countdown
+  countdown=60;timerEl.textContent=60;
+  resendBtn.innerHTML='Resend in <span id="timer">60</span>s';
+  const t2=setInterval(()=>{
+    countdown--;
+    const te=resendBtn.querySelector('span');
+    if(te)te.textContent=countdown;
+    if(countdown<=0){clearInterval(t2);resendBtn.disabled=false;resendBtn.innerHTML='Resend OTP';}
+  },1000);
+}
+</script>
+</body>
+</html>

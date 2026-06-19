@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Book Your Consultation – SatLegal</title>
+<style>
+:root{--sf-500:#FF9933;--sf-600:#E07000;--sf-100:#FFF4E6;--sf-200:#FFE4C2;--gr-500:#138808;--gr-600:#1A6B1A;--gr-700:#145214;--gr-800:#0D3D0D;--gr-50:#F0FBF0;--gr-100:#D4F5D2;--text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;--bg:#F8F9FA;--font:'Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:var(--bg);min-height:100vh}
+a{text-decoration:none;color:inherit}
+.tribar{height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
+.nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:900}
+.nav-brand img{height:36px}
+.nav-back{font-size:13px;color:var(--gr-700);font-weight:600;display:flex;align-items:center;gap:5px}
+.nav-back:hover{color:var(--sf-600)}
+/* Progress bar */
+.progress-bar{background:#fff;border-bottom:1px solid var(--border);padding:14px 24px}
+.progress-inner{max-width:700px;margin:0 auto;display:flex;align-items:center;gap:0}
+.prog-step{display:flex;align-items:center;gap:8px;flex:1}
+.prog-step:last-child{flex:0}
+.prog-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;transition:.3s}
+.prog-dot.done{background:var(--gr-500);color:#fff}
+.prog-dot.active{background:var(--sf-500);color:#fff}
+.prog-dot.pending{background:var(--border);color:var(--text-lt)}
+.prog-label{font-size:12px;font-weight:600;color:var(--text-lt);white-space:nowrap}
+.prog-label.active{color:var(--gr-800)}
+.prog-line{flex:1;height:2px;background:var(--border);margin:0 8px}
+.prog-line.done{background:var(--gr-500)}
+/* Main */
+.main{max-width:720px;margin:0 auto;padding:32px 20px 60px}
+/* Section card */
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.card h2{font-size:17px;font-weight:800;color:var(--gr-800);margin-bottom:4px}
+.card .sub{font-size:13px;color:var(--text-lt);margin-bottom:20px}
+/* Lawyer selection */
+.lawyer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;margin-bottom:4px}
+.lawyer-option{border:2px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:.2s;position:relative}
+.lawyer-option:hover{border-color:var(--sf-400);background:var(--sf-100)}
+.lawyer-option.selected{border-color:var(--sf-500);background:var(--sf-100)}
+.lawyer-option input[type=radio]{position:absolute;top:12px;right:12px;width:18px;height:18px;accent-color:var(--sf-500)}
+.lw-icon{font-size:28px;margin-bottom:8px}
+.lw-name{font-size:14px;font-weight:800;color:var(--gr-800);margin-bottom:2px}
+.lw-spec{font-size:11px;color:var(--gr-600);margin-bottom:4px}
+.lw-meta{display:flex;gap:10px;font-size:11px;color:var(--text-lt);flex-wrap:wrap}
+.lw-badge{background:var(--gr-50);color:var(--gr-700);padding:2px 7px;border-radius:10px;font-weight:600;font-size:10px}
+.lw-verified{background:var(--gr-100);color:var(--gr-800)}
+/* Date picker */
+.date-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.date-pill{padding:9px 14px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;text-align:center;min-width:70px}
+.date-pill:hover{border-color:var(--sf-400);background:var(--sf-100)}
+.date-pill.selected{border-color:var(--sf-500);background:var(--sf-500);color:#fff}
+.date-pill .day{font-size:11px;font-weight:500;display:block;opacity:.8}
+/* Time slots */
+.slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.slot{padding:9px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;text-align:center;transition:.2s}
+.slot:hover:not(.booked){border-color:var(--sf-400);background:var(--sf-100)}
+.slot.selected{border-color:var(--sf-500);background:var(--sf-500);color:#fff}
+.slot.booked{background:var(--bg);color:var(--text-lt);cursor:not-allowed;text-decoration:line-through;opacity:.5}
+/* Contact details */
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;font-weight:700;color:var(--gr-800);margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font);outline:none;transition:.2s}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--sf-500)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.form-row{grid-template-columns:1fr}}
+/* Summary */
+.summary-table{width:100%;border-collapse:collapse}
+.summary-table td{padding:9px 0;border-bottom:1px dashed var(--border);font-size:13px}
+.summary-table td:first-child{color:var(--text-lt);width:45%}
+.summary-table td:last-child{font-weight:700;color:var(--gr-800)}
+.summary-table tr:last-child td{border:none;font-size:15px;padding-top:14px}
+/* CTA */
+.btn-confirm{width:100%;background:var(--gr-800);color:#fff;border:none;padding:15px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:var(--font);transition:.2s;margin-top:8px}
+.btn-confirm:hover{background:var(--gr-700)}
+.btn-confirm:disabled{background:var(--border);cursor:not-allowed}
+</style>
+</head>
+<body>
+<div class="tribar"></div>
+<nav class="nav">
+  <a class="nav-brand" href="../index.html"><img src="../assets/logo.png" alt="SatLegal"/></a>
+  <a class="nav-back" href="../report.html">← Back to Report</a>
+</nav>
+
+<!-- Progress -->
+<div class="progress-bar">
+  <div class="progress-inner">
+    <div class="prog-step">
+      <div class="prog-dot done">✓</div>
+      <span class="prog-label">Analysis Done</span>
+    </div>
+    <div class="prog-line done"></div>
+    <div class="prog-step">
+      <div class="prog-dot done">✓</div>
+      <span class="prog-label">Payment Done</span>
+    </div>
+    <div class="prog-line done"></div>
+    <div class="prog-step">
+      <div class="prog-dot active">3</div>
+      <span class="prog-label active">Book Slot</span>
+    </div>
+    <div class="prog-line"></div>
+    <div class="prog-step">
+      <div class="prog-dot pending">4</div>
+      <span class="prog-label">Confirmed</span>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <!-- Step 1: Select Lawyer -->
+  <div class="card">
+    <h2>🧑‍⚖️ Choose Your Lawyer</h2>
+    <p class="sub">These lawyers are matched to your case type and are available for a consultation.</p>
+    <div class="lawyer-grid" id="lawyerGrid"><!-- populated by JS --></div>
+  </div>
+
+  <!-- Step 2: Select Date -->
+  <div class="card">
+    <h2>📅 Select a Date</h2>
+    <p class="sub">Choose from the next 7 available days.</p>
+    <div class="date-grid" id="dateGrid"><!-- populated by JS --></div>
+  </div>
+
+  <!-- Step 3: Select Time Slot -->
+  <div class="card">
+    <h2>⏰ Select a Time Slot</h2>
+    <p class="sub">30-minute sessions. All times are in IST.</p>
+    <div class="slot-grid" id="slotGrid"><!-- populated by JS --></div>
+  </div>
+
+  <!-- Step 4: Your Details -->
+  <div class="card">
+    <h2>👤 Your Contact Details</h2>
+    <p class="sub">We'll send your booking confirmation to this email/phone.</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="bkName" placeholder="Your full name"/>
+      </div>
+      <div class="form-group">
+        <label>Mobile Number</label>
+        <input type="tel" id="bkPhone" placeholder="10-digit mobile"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" id="bkEmail" placeholder="for booking confirmation"/>
+    </div>
+    <div class="form-group">
+      <label>Brief description for the lawyer (optional)</label>
+      <textarea id="bkNote" rows="3" placeholder="e.g., property dispute with landlord, need advice on sending legal notice…"></textarea>
+    </div>
+  </div>
+
+  <!-- Booking Summary -->
+  <div class="card" id="summaryCard">
+    <h2>📋 Booking Summary</h2>
+    <table class="summary-table">
+      <tr><td>Lawyer</td><td id="sumLawyer">—</td></tr>
+      <tr><td>Specialisation</td><td id="sumSpec">—</td></tr>
+      <tr><td>Date</td><td id="sumDate">—</td></tr>
+      <tr><td>Time</td><td id="sumTime">—</td></tr>
+      <tr><td>Duration</td><td>30 minutes</td></tr>
+      <tr><td>Mode</td><td>Phone / Video Call</td></tr>
+      <tr><td>Amount Paid</td><td style="color:var(--gr-500)">₹2,500 ✓</td></tr>
+    </table>
+    <button class="btn-confirm" id="confirmBtn" onclick="confirmBooking()">✅ Confirm Booking →</button>
+  </div>
+</div>
+
+<script>
+// Read from localStorage
+let user={},report={},payment={};
+try{user=JSON.parse(localStorage.getItem('sl_user')||'{}')}catch(e){}
+try{report=JSON.parse(localStorage.getItem('sl_pending_report')||'{}')}catch(e){}
+try{payment=JSON.parse(localStorage.getItem('sl_payment')||'{}')}catch(e){}
+
+// Pre-fill contact details
+document.getElementById('bkName').value=user.name||'';
+document.getElementById('bkEmail').value=(user.email&&!user.email.includes('@satlegal.in'))?user.email:'';
+document.getElementById('bkPhone').value=user.phone||'';
+
+// Lawyer data (from localStorage or demo)
+let lawyers=[];
+try{lawyers=JSON.parse(localStorage.getItem('sl_law_firms')||'[]')}catch(e){}
+if(!lawyers.length){
+  lawyers=[
+    {id:'l1',name:'Adv. Priya Sharma',specialty:'Family Law · Divorce · Succession',location:'Mumbai',icon:'👩‍⚖️',exp:'12 years',lang:'Hindi, English, Marathi',rating:'4.9',reviews:142},
+    {id:'l2',name:'Adv. Rajesh Kapoor',specialty:'Civil Law · Property · RERA',location:'Delhi',icon:'👨‍⚖️',exp:'8 years',lang:'Hindi, English, Punjabi',rating:'4.8',reviews:87},
+    {id:'l3',name:'Adv. Meena Krishnamurthy',specialty:'Criminal Law · BNS · Consumer',location:'Bengaluru',icon:'👩‍⚖️',exp:'15 years',lang:'Kannada, English, Tamil',rating:'4.9',reviews:203},
+    {id:'l4',name:'Adv. Suresh Patel',specialty:'Employment · Labour · Minimum Wages',location:'Ahmedabad',icon:'👨‍⚖️',exp:'10 years',lang:'Gujarati, Hindi, English',rating:'4.7',reviews:66},
+  ];
+}
+
+let selectedLawyer=null,selectedDate=null,selectedSlot=null;
+
+// Render lawyers
+const caseType=(report.laws||[])[0]?.caseType||'';
+document.getElementById('lawyerGrid').innerHTML=lawyers.map((l,i)=>`
+  <div class="lawyer-option" id="lwo${i}" onclick="selectLawyer(${i})">
+    <input type="radio" name="lawyer" value="${i}"/>
+    <div class="lw-icon">${l.icon||'⚖️'}</div>
+    <div class="lw-name">${l.name}</div>
+    <div class="lw-spec">${l.specialty||''}</div>
+    <div class="lw-meta">
+      <span>📍 ${l.location||''}</span>
+      <span>⏱ ${l.exp||''}</span>
+      <span>⭐ ${l.rating||'4.8'} (${l.reviews||0})</span>
+    </div>
+    <div style="margin-top:8px"><span class="lw-badge lw-verified">✅ Bar Council Verified</span></div>
+  </div>
+`).join('');
+
+// Auto-select first lawyer
+selectLawyer(0);
+
+function selectLawyer(i){
+  selectedLawyer=lawyers[i];
+  document.querySelectorAll('.lawyer-option').forEach((el,j)=>{
+    el.classList.toggle('selected',j===i);
+    el.querySelector('input').checked=(j===i);
+  });
+  updateSummary();
+}
+
+// Generate next 7 days
+const dateGrid=document.getElementById('dateGrid');
+const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const today=new Date();
+for(let d=1;d<=7;d++){
+  const dt=new Date(today); dt.setDate(today.getDate()+d);
+  const skip=dt.getDay()===0; // skip Sundays
+  if(skip)continue;
+  const pill=document.createElement('div');
+  pill.className='date-pill';
+  pill.innerHTML=`<span class="day">${days[dt.getDay()]}</span>${dt.getDate()} ${months[dt.getMonth()]}`;
+  pill.dataset.date=dt.toISOString().split('T')[0];
+  pill.dataset.label=`${days[dt.getDay()]}, ${dt.getDate()} ${months[dt.getMonth()]} ${dt.getFullYear()}`;
+  pill.onclick=function(){
+    document.querySelectorAll('.date-pill').forEach(p=>p.classList.remove('selected'));
+    this.classList.add('selected');
+    selectedDate=this.dataset.date;
+    selectedDateLabel=this.dataset.label;
+    renderSlots();
+    updateSummary();
+  };
+  dateGrid.appendChild(pill);
+}
+let selectedDateLabel='';
+
+// Time slots
+const allSlots=['9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','12:00 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM','5:00 PM','5:30 PM'];
+// Simulated booked slots per date (in real app, fetch from API)
+const bookedSlots={'0':['10:00 AM','2:30 PM'],'1':['9:30 AM','11:00 AM'],'2':['3:00 PM'],'3':['10:30 AM','4:00 PM'],'4':['9:00 AM','12:00 PM']};
+
+function renderSlots(){
+  if(!selectedDate)return;
+  const dayKey=String(new Date(selectedDate).getDay());
+  const booked=bookedSlots[dayKey]||[];
+  document.getElementById('slotGrid').innerHTML=allSlots.map(s=>`
+    <div class="slot ${booked.includes(s)?'booked':''}" onclick="${booked.includes(s)?'':'selectSlot(this,\''+s+'\')'}">${s}</div>
+  `).join('');
+}
+
+function selectSlot(el,slot){
+  document.querySelectorAll('.slot').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedSlot=slot;
+  updateSummary();
+}
+
+function updateSummary(){
+  document.getElementById('sumLawyer').textContent=selectedLawyer?selectedLawyer.name:'—';
+  document.getElementById('sumSpec').textContent=selectedLawyer?selectedLawyer.specialty:'—';
+  document.getElementById('sumDate').textContent=selectedDateLabel||'—';
+  document.getElementById('sumTime').textContent=selectedSlot||'—';
+  document.getElementById('confirmBtn').disabled=!(selectedLawyer&&selectedDate&&selectedSlot);
+}
+updateSummary();
+
+async function confirmBooking(){
+  const name=document.getElementById('bkName').value.trim();
+  const phone=document.getElementById('bkPhone').value.trim();
+  const email=document.getElementById('bkEmail').value.trim();
+
+  if(!name||!phone){alert('Please enter your name and mobile number.');return;}
+  if(!selectedDate||!selectedSlot){alert('Please select a date and time slot.');return;}
+
+  const btn=document.getElementById('confirmBtn');
+  btn.disabled=true;btn.textContent='Booking…';
+
+  // Save booking to localStorage
+  const booking={
+    lawyer:selectedLawyer,
+    date:selectedDate,
+    dateLabel:selectedDateLabel,
+    slot:selectedSlot,
+    name,phone,email,
+    note:document.getElementById('bkNote').value,
+    paymentId:payment.paymentId||'',
+    bookedAt:new Date().toISOString()
+  };
+  localStorage.setItem('sl_booking',JSON.stringify(booking));
+
+  // POST to backend (non-blocking)
+  try{
+    const token=localStorage.getItem('sl_auth_token');
+    const _API=location.hostname==='localhost'?'http://localhost:5000/api':'/api';
+    await fetch(_API+'/inquiry/book-consultation',{
+      method:'POST',
+      headers:{'Content-Type':'application/json',...(token?{'Authorization':'Bearer '+token}:{})},
+      body:JSON.stringify({...booking,inquiryId:localStorage.getItem('sl_last_inquiry_id')})
+    });
+  }catch(e){}
+
+  // Redirect to confirmation
+  window.location.href='confirm.html';
+}
+</script>
+</body>
+</html>

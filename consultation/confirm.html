@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Consultation Confirmed – SatLegal</title>
+<style>
+:root{--sf-500:#FF9933;--sf-600:#E07000;--sf-100:#FFF4E6;--gr-500:#138808;--gr-600:#1A6B1A;--gr-700:#145214;--gr-800:#0D3D0D;--gr-50:#F0FBF0;--gr-100:#D4F5D2;--text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;--bg:#F8F9FA;--font:'Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+a{text-decoration:none;color:inherit}
+.tribar{height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
+.nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand img{height:36px}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px}
+.confirm-card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:40px 32px;max-width:520px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.09)}
+.confirm-icon{font-size:64px;margin-bottom:16px}
+.confirm-card h1{font-size:24px;font-weight:900;color:var(--gr-800);margin-bottom:8px}
+.confirm-card .sub{font-size:14px;color:var(--text-lt);margin-bottom:28px;line-height:1.7}
+/* Booking details */
+.booking-detail{background:var(--gr-50);border:1px solid var(--gr-100);border-radius:12px;padding:20px;margin-bottom:24px;text-align:left}
+.booking-detail h3{font-size:13px;font-weight:800;color:var(--gr-800);margin-bottom:14px;text-transform:uppercase;letter-spacing:.4px}
+.bd-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.bd-row:last-child{margin:0}
+.bd-icon{font-size:18px;width:24px;text-align:center;flex-shrink:0}
+.bd-content{font-size:13px}
+.bd-label{color:var(--text-lt);font-size:11px;margin-bottom:1px}
+.bd-val{font-weight:700;color:var(--gr-800)}
+/* What happens next */
+.next-steps{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px;text-align:left}
+.next-steps h3{font-size:13px;font-weight:800;color:var(--gr-800);margin-bottom:14px;text-transform:uppercase;letter-spacing:.4px}
+.next-step{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start}
+.next-step:last-child{margin:0}
+.ns-num{width:24px;height:24px;background:var(--sf-500);color:#fff;border-radius:50%;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.ns-text{font-size:13px;color:var(--text-lt);line-height:1.6}
+.ns-text strong{color:var(--gr-800)}
+/* Actions */
+.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--gr-800);color:#fff;border:none;padding:12px 22px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s;text-decoration:none;display:inline-block}
+.btn-primary:hover{background:var(--gr-700)}
+.btn-outline{background:transparent;color:var(--gr-700);border:2px solid var(--gr-500);padding:12px 22px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s;display:inline-block}
+.btn-outline:hover{background:var(--gr-50)}
+.btn-sf{background:var(--sf-500);color:#fff;border:none;padding:12px 22px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s;display:inline-block}
+.btn-sf:hover{background:var(--sf-600)}
+/* Booking ID badge */
+.booking-id{font-size:12px;color:var(--text-lt);margin-top:16px}
+.booking-id strong{color:var(--gr-700);font-family:monospace;background:var(--bg);padding:2px 8px;border-radius:4px;border:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="tribar"></div>
+<nav class="nav">
+  <a class="nav-brand" href="../index.html"><img src="../assets/logo.png" alt="SatLegal"/></a>
+  <a href="../dashboard/user-dashboard.html" style="font-size:13px;color:var(--gr-700);font-weight:600">📋 My Dashboard</a>
+</nav>
+
+<main>
+  <div class="confirm-card">
+    <div class="confirm-icon">🎉</div>
+    <h1>Consultation Booked!</h1>
+    <p class="sub">Your 30-minute legal consultation has been confirmed. You'll receive a reminder before the session.</p>
+
+    <div class="booking-detail">
+      <h3>📅 Your Booking</h3>
+      <div class="bd-row">
+        <div class="bd-icon">👩‍⚖️</div>
+        <div class="bd-content"><div class="bd-label">Lawyer</div><div class="bd-val" id="bdLawyer">—</div></div>
+      </div>
+      <div class="bd-row">
+        <div class="bd-icon">⚖️</div>
+        <div class="bd-content"><div class="bd-label">Specialisation</div><div class="bd-val" id="bdSpec">—</div></div>
+      </div>
+      <div class="bd-row">
+        <div class="bd-icon">📅</div>
+        <div class="bd-content"><div class="bd-label">Date</div><div class="bd-val" id="bdDate">—</div></div>
+      </div>
+      <div class="bd-row">
+        <div class="bd-icon">⏰</div>
+        <div class="bd-content"><div class="bd-label">Time (IST)</div><div class="bd-val" id="bdTime">—</div></div>
+      </div>
+      <div class="bd-row">
+        <div class="bd-icon">📞</div>
+        <div class="bd-content"><div class="bd-label">Mode</div><div class="bd-val">Phone / Video Call</div></div>
+      </div>
+    </div>
+
+    <div class="next-steps">
+      <h3>What Happens Next</h3>
+      <div class="next-step">
+        <div class="ns-num">1</div>
+        <div class="ns-text"><strong>Confirmation SMS & Email</strong> sent to your registered mobile and email within 15 minutes.</div>
+      </div>
+      <div class="next-step">
+        <div class="ns-num">2</div>
+        <div class="ns-text"><strong>Lawyer will call you</strong> at your booked time slot. Keep your phone available.</div>
+      </div>
+      <div class="next-step">
+        <div class="ns-num">3</div>
+        <div class="ns-text"><strong>30-minute consultation</strong> covering your specific case, strategy, and next steps.</div>
+      </div>
+      <div class="next-step">
+        <div class="ns-num">4</div>
+        <div class="ns-text"><strong>Legal notice drafted</strong> (if applicable) and shared within 24 hours after the call.</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-primary" onclick="downloadICS()">📅 Add to Calendar</button>
+      <a class="btn-outline" href="../report.html">📄 View Report</a>
+      <a class="btn-sf" href="../dashboard/user-dashboard.html">📋 My Dashboard</a>
+    </div>
+
+    <div class="booking-id">Booking ID: <strong id="bookingIdDisplay">—</strong></div>
+  </div>
+</main>
+
+<script>
+let booking={};
+try{booking=JSON.parse(localStorage.getItem('sl_booking')||'{}')}catch(e){}
+
+document.getElementById('bdLawyer').textContent=booking.lawyer?.name||'—';
+document.getElementById('bdSpec').textContent=booking.lawyer?.specialty||'—';
+document.getElementById('bdDate').textContent=booking.dateLabel||booking.date||'—';
+document.getElementById('bdTime').textContent=booking.slot||'—';
+document.getElementById('bookingIdDisplay').textContent='BK'+Date.now().toString(36).toUpperCase();
+
+function downloadICS(){
+  const date=booking.date||new Date().toISOString().split('T')[0];
+  const slotHour=booking.slot||'10:00 AM';
+  // Parse time
+  const [time,ampm]=slotHour.split(' ');
+  let [h,m]=time.split(':').map(Number);
+  if(ampm==='PM'&&h!==12)h+=12;
+  if(ampm==='AM'&&h===12)h=0;
+  const dtStr=date.replace(/-/g,'')+`T${String(h).padStart(2,'0')}${String(m).padStart(2,'0')}00`;
+  const end=new Date(date+'T'+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':00');
+  end.setMinutes(end.getMinutes()+30);
+  const endStr=end.toISOString().replace(/[-:]/g,'').replace('.000','');
+
+  const ics=`BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:${dtStr}\nDTEND:${endStr}\nSUMMARY:SatLegal Legal Consultation — ${booking.lawyer?.name||'Lawyer'}\nDESCRIPTION:Your 30-minute legal consultation booked via SatLegal. The lawyer will call you at your registered mobile number.\nEND:VEVENT\nEND:VCALENDAR`;
+
+  const blob=new Blob([ics],{type:'text/calendar'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='SatLegal_Consultation.ics';a.click();
+}
+</script>
+</body>
+</html>

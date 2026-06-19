@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Lawyer Profile – SatLegal</title>
+<style>
+:root{--sf-500:#FF9933;--sf-600:#E07000;--sf-700:#B35100;--sf-100:#FFF4E6;--sf-200:#FFE4C2;--gr-500:#138808;--gr-600:#1A6B1A;--gr-700:#145214;--gr-800:#0D3D0D;--gr-50:#F0FBF0;--gr-100:#D4F5D2;--text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;--bg:#F8F9FA;--font:'Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:var(--bg);line-height:1.6}
+a{text-decoration:none;color:inherit}
+.tribar{height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
+.nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:900;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.nav-brand img{height:38px}
+.nav-links{display:flex;gap:4px}
+.nav-links a{font-size:14px;color:var(--gr-800);font-weight:500;padding:7px 13px;border-radius:6px;transition:.2s}
+.nav-links a:hover{background:var(--gr-50);color:var(--gr-700)}
+.nav-actions{display:flex;gap:8px;align-items:center}
+/* Breadcrumb */
+.breadcrumb{background:#fff;border-bottom:1px solid var(--border);padding:10px 24px;font-size:13px;color:var(--text-lt)}
+.breadcrumb a{color:var(--gr-600)}
+.breadcrumb a:hover{text-decoration:underline}
+.breadcrumb span{margin:0 6px;color:var(--border)}
+/* Main layout */
+.main{max-width:960px;margin:0 auto;padding:28px 24px 60px;display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start}
+@media(max-width:700px){.main{grid-template-columns:1fr}.sticky-cta{position:static!important}.nav-links{display:none}}
+/* Profile card */
+.profile-hero{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px}
+.profile-banner{height:80px;background:linear-gradient(135deg,var(--gr-800),var(--gr-600),var(--sf-500))}
+.profile-body{padding:0 24px 24px;position:relative}
+.avatar-wrap{width:80px;height:80px;border-radius:18px;background:var(--gr-50);border:4px solid #fff;display:flex;align-items:center;justify-content:center;font-size:40px;margin-top:-40px;margin-bottom:12px;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.profile-name{font-size:22px;font-weight:900;color:var(--gr-800);margin-bottom:4px}
+.profile-spec{font-size:14px;color:var(--gr-600);margin-bottom:8px;font-weight:600}
+.profile-meta{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--text-lt);margin-bottom:14px}
+.profile-meta span{display:flex;align-items:center;gap:5px}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px}
+.badge-verified{background:var(--gr-100);color:var(--gr-800);border:1px solid var(--gr-100)}
+.badge-online{background:#E8F5E9;color:#2E7D32;border:1px solid #C8E6C9}
+.badge-lang{background:var(--sf-100);color:var(--sf-700);border:1px solid var(--sf-200)}
+.profile-rating{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.stars-big{color:var(--sf-500);font-size:20px;letter-spacing:2px}
+.rating-num{font-size:24px;font-weight:900;color:var(--gr-800)}
+.rating-count{font-size:13px;color:var(--text-lt)}
+.profile-bio{font-size:14px;color:#444;line-height:1.8;border-top:1px solid var(--border);padding-top:16px}
+/* Section card */
+.section-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:18px}
+.section-card h3{font-size:14px;font-weight:800;color:var(--gr-800);margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--sf-200)}
+/* Practice areas */
+.area-tags{display:flex;flex-wrap:wrap;gap:7px}
+.area-tag{background:var(--gr-50);border:1px solid var(--gr-100);color:var(--gr-800);font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px}
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat-box{text-align:center;padding:14px;background:var(--bg);border-radius:10px}
+.stat-num{font-size:22px;font-weight:900;color:var(--gr-800)}
+.stat-label{font-size:11px;color:var(--text-lt);margin-top:3px}
+/* Reviews */
+.review-card{background:var(--bg);border-radius:10px;padding:14px;margin-bottom:10px}
+.review-card:last-child{margin:0}
+.review-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.reviewer{font-size:13px;font-weight:700;color:var(--gr-800)}
+.review-stars{color:var(--sf-500);font-size:13px}
+.review-date{font-size:11px;color:var(--text-lt);margin-bottom:5px}
+.review-text{font-size:13px;color:#555;line-height:1.7}
+/* Sidebar CTA */
+.sticky-cta{position:sticky;top:80px}
+.cta-card{background:#fff;border:2px solid var(--gr-500);border-radius:16px;padding:24px;margin-bottom:16px}
+.cta-card h3{font-size:16px;font-weight:900;color:var(--gr-800);margin-bottom:6px}
+.cta-fee{font-size:28px;font-weight:900;color:var(--gr-800);margin-bottom:4px}
+.cta-fee span{font-size:13px;font-weight:500;color:var(--text-lt)}
+.cta-note{font-size:12px;color:var(--text-lt);margin-bottom:16px;line-height:1.6}
+.btn-book-big{display:block;width:100%;background:var(--sf-500);color:#fff;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:var(--font);transition:.2s;text-align:center;margin-bottom:10px}
+.btn-book-big:hover{background:var(--sf-600)}
+.btn-browse{display:block;width:100%;background:transparent;color:var(--gr-700);border:2px solid var(--gr-500);padding:12px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s;text-align:center}
+.btn-browse:hover{background:var(--gr-50)}
+/* Availability */
+.avail-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.avail-row{font-size:12px;padding:8px 10px;border-radius:6px;display:flex;justify-content:space-between;background:var(--bg)}
+.avail-row.open{background:var(--gr-50);border:1px solid var(--gr-100)}
+.avail-day{font-weight:600;color:var(--gr-800)}
+.avail-time{color:var(--text-lt)}
+/* Bar council */
+.bc-box{background:var(--sf-100);border:1px solid var(--sf-200);border-radius:10px;padding:14px;font-size:12px;line-height:1.8;color:var(--sf-700)}
+.bc-box strong{color:var(--sf-700);display:block;font-size:13px;margin-bottom:5px}
+</style>
+</head>
+<body>
+<div class="tribar"></div>
+<nav class="nav">
+  <a class="nav-brand" href="../index.html"><img src="../assets/logo.png" alt="SatLegal"/></a>
+  <div class="nav-links">
+    <a href="../index.html">Home</a>
+    <a href="../lawyers.html">Find a Lawyer</a>
+    <a href="../pricing.html">Pricing</a>
+    <a href="../about.html">About</a>
+  </div>
+  <div class="nav-actions" id="navActions"><!-- populated by nav.js --></div>
+</nav>
+
+<div class="breadcrumb">
+  <a href="../index.html">Home</a><span>›</span>
+  <a href="../lawyers.html">Find a Lawyer</a><span>›</span>
+  <span id="bcName">Lawyer Profile</span>
+</div>
+
+<div class="main">
+  <!-- Left column -->
+  <div>
+    <!-- Profile hero -->
+    <div class="profile-hero">
+      <div class="profile-banner"></div>
+      <div class="profile-body">
+        <div class="avatar-wrap" id="profAvatar">👩‍⚖️</div>
+        <div class="profile-name" id="profName">—</div>
+        <div class="profile-spec" id="profSpec">—</div>
+        <div class="profile-meta">
+          <span>📍 <span id="profCity">—</span></span>
+          <span>⏱ <span id="profExp">—</span> experience</span>
+          <span>🗣 <span id="profLang">—</span></span>
+        </div>
+        <div class="badges" id="profBadges"></div>
+        <div class="profile-rating">
+          <div class="stars-big">★★★★★</div>
+          <div class="rating-num" id="profRating">—</div>
+          <div class="rating-count">(<span id="profReviews">—</span> verified reviews)</div>
+        </div>
+        <div class="profile-bio" id="profBio">—</div>
+      </div>
+    </div>
+
+    <!-- Practice areas -->
+    <div class="section-card">
+      <h3>⚖️ Areas of Practice</h3>
+      <div class="area-tags" id="practiceAreas"></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="section-card">
+      <h3>📊 Track Record</h3>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-num" id="statCases">—</div><div class="stat-label">Cases Handled</div></div>
+        <div class="stat-box"><div class="stat-num" id="statSuccess">—</div><div class="stat-label">Success Rate</div></div>
+        <div class="stat-box"><div class="stat-num" id="statExp">—</div><div class="stat-label">Years Active</div></div>
+      </div>
+    </div>
+
+    <!-- Bar Council -->
+    <div class="section-card">
+      <h3>🏛️ Bar Council Verification</h3>
+      <div class="bc-box" id="bcBox">—</div>
+    </div>
+
+    <!-- Availability -->
+    <div class="section-card">
+      <h3>📅 Availability</h3>
+      <div class="avail-grid">
+        <div class="avail-row open"><span class="avail-day">Monday</span><span class="avail-time">10am–6pm</span></div>
+        <div class="avail-row open"><span class="avail-day">Tuesday</span><span class="avail-time">10am–6pm</span></div>
+        <div class="avail-row open"><span class="avail-day">Wednesday</span><span class="avail-time">10am–6pm</span></div>
+        <div class="avail-row open"><span class="avail-day">Thursday</span><span class="avail-time">10am–6pm</span></div>
+        <div class="avail-row open"><span class="avail-day">Friday</span><span class="avail-time">10am–4pm</span></div>
+        <div class="avail-row open"><span class="avail-day">Saturday</span><span class="avail-time">10am–1pm</span></div>
+        <div class="avail-row"><span class="avail-day">Sunday</span><span class="avail-time">Not available</span></div>
+      </div>
+    </div>
+
+    <!-- Reviews -->
+    <div class="section-card">
+      <h3>💬 Client Reviews</h3>
+      <div id="reviewsList"></div>
+    </div>
+  </div>
+
+  <!-- Right column (sticky CTA) -->
+  <div class="sticky-cta">
+    <div class="cta-card">
+      <h3>Book a Consultation</h3>
+      <div class="cta-fee">₹2,500 <span>/ 30 minutes</span></div>
+      <div class="cta-note">Includes AI legal report review, personalised case strategy, and legal notice drafting (if applicable). Includes GST.</div>
+      <button class="btn-book-big" onclick="bookThisLawyer()">📅 Book Consultation</button>
+      <a class="btn-browse" href="../lawyers.html">← Browse All Lawyers</a>
+    </div>
+
+    <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px;font-size:12px;color:var(--text-lt);line-height:1.8">
+      <strong style="color:var(--gr-800);display:block;margin-bottom:8px">✅ Why book on SatLegal?</strong>
+      <div>🔒 Bar Council verified lawyers only</div>
+      <div>📄 Your SatLegal report shared with the lawyer before the call</div>
+      <div>💬 30-min focused consultation on your case</div>
+      <div>⚡ Booking confirmed instantly</div>
+      <div>🔄 Reschedule up to 2 hours before slot</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Same lawyer data as lawyers.html — in production fetch from /api/lawyer/:id
+const LAWYERS={
+  l1:{id:'l1',name:'Adv. Priya Sharma',icon:'👩‍⚖️',specialty:'Family Law',spec_detail:'Divorce · Succession · Guardianship · Hindu Marriage Act',city:'Mumbai',exp:'12 years',languages:'Hindi, English, Marathi',rating:4.9,reviews:142,online:true,fee:2500,
+    bio:'Adv. Priya Sharma is a Mumbai-based family law specialist with 12 years of High Court experience. She is known for achieving amicable settlements in matrimonial disputes, reducing stress and legal costs for her clients. She has represented over 400 clients across divorce, succession, guardianship, and domestic violence matters. She is empanelled with the Maharashtra State Legal Services Authority.',
+    areas:['Divorce & Separation','Succession & Inheritance','Child Guardianship','Hindu Marriage Act','Domestic Violence (PWDVA)','Muslim Personal Law','Maintenance & Alimony','Mutual Consent Divorce'],
+    cases:'400+',success:'88%',expYrs:12,
+    bar:'Bar Council of Maharashtra & Goa · Enrolment No. MH/3421/2013 · Verified April 2025',
+    reviews:[
+      {name:'Rahul M.',stars:5,date:'March 2025',text:'Priya Ma\'am handled my divorce case with great professionalism. The settlement was fair and reached faster than I expected. Highly recommend.'},
+      {name:'Sunita P.',stars:5,date:'February 2025',text:'Excellent guidance on succession and property matters. She explained every document clearly and made the process stress-free.'},
+      {name:'Anonymous',stars:4,date:'January 2025',text:'Very knowledgeable and empathetic. Response times could be a bit faster but the consultation was very thorough.'},
+    ]},
+  l2:{id:'l2',name:'Adv. Rajesh Kapoor',icon:'👨‍⚖️',specialty:'Property & RERA',spec_detail:'Property Disputes · RERA · Land Acquisition · Transfer of Property',city:'Delhi',exp:'8 years',languages:'Hindi, English, Punjabi',rating:4.8,reviews:87,online:true,fee:2500,
+    bio:'Adv. Rajesh Kapoor is a Delhi-based property and RERA specialist who has successfully recovered crores for homebuyers cheated by builders. He is RERA-certified and has deep expertise in builder disputes, property fraud, transfer of property, and land acquisition cases. He practises regularly at the Delhi High Court and RERA tribunals.',
+    areas:['RERA Complaints','Builder Disputes','Property Fraud','Transfer of Property Act','Land Acquisition','Possession Delays','Title Verification','Landlord-Tenant Disputes'],
+    cases:'300+',success:'85%',expYrs:8,
+    bar:'Bar Council of Delhi · Enrolment No. DL/2847/2017 · Verified March 2025',
+    reviews:[
+      {name:'Vikash T.',stars:5,date:'April 2025',text:'Got full refund + interest from builder thanks to Rajesh sir\'s RERA complaint. Outstanding result.'},
+      {name:'Priti K.',stars:5,date:'March 2025',text:'Very thorough property verification before I bought my flat. Caught a title defect that could have been a disaster. Worth every rupee.'},
+      {name:'Harpreet S.',stars:4,date:'February 2025',text:'Good knowledge of RERA, helped me get possession date enforced by builder. Process took time but the outcome was great.'},
+    ]},
+  l3:{id:'l3',name:'Adv. Meena Krishnamurthy',icon:'👩‍⚖️',specialty:'Criminal Law',spec_detail:'BNS · POCSO · Bail Applications · FIR · Anticipatory Bail',city:'Bengaluru',exp:'15 years',languages:'Kannada, English, Tamil',rating:4.9,reviews:203,online:true,fee:2500,
+    bio:'Adv. Meena Krishnamurthy is one of Bengaluru\'s most respected criminal advocates with 15 years at Karnataka High Court. She handles bail applications, FIR quashing, criminal trials, POCSO matters, and appeals. She is empanelled with Karnataka Legal Services Authority and has argued before the Supreme Court of India.',
+    areas:['Bail & Anticipatory Bail','FIR Quashing','Criminal Trials','POCSO Cases','BNS / IPC Matters','Cybercrime','White-collar Crime','Supreme Court Appeals'],
+    cases:'900+',success:'91%',expYrs:15,
+    bar:'Bar Council of Karnataka · Enrolment No. KAR/1122/2010 · Verified May 2025',
+    reviews:[
+      {name:'Family of Client',stars:5,date:'May 2025',text:'Got anticipatory bail within 48 hours when we were completely lost. Meena Ma\'am was a lifesaver. Incredible lawyer.'},
+      {name:'Rahul D.',stars:5,date:'April 2025',text:'FIR quashed after detailed petition. Meena Ma\'am knows the courts and judges very well. Best criminal lawyer in Bangalore.'},
+      {name:'Anonymous',stars:5,date:'March 2025',text:'Very professional, always available for updates, and extremely knowledgeable about criminal law. 10/10.'},
+    ]},
+  l4:{id:'l4',name:'Adv. Suresh Patel',icon:'👨‍⚖️',specialty:'Employment Law',spec_detail:'Wrongful Termination · Labour Disputes · Gratuity · PF · Minimum Wages',city:'Ahmedabad',exp:'10 years',languages:'Gujarati, Hindi, English',rating:4.7,reviews:66,online:false,fee:2500,
+    bio:'Adv. Suresh Patel is Ahmedabad\'s leading employment lawyer with 10 years representing employees in labour courts and industrial tribunals. He has helped over 300 employees recover unpaid gratuity, PF, and compensation for wrongful termination. He also advises SMEs on employment compliance.',
+    areas:['Wrongful Termination','Labour Court Matters','Gratuity Recovery','PF Disputes','Minimum Wages Act','Industrial Disputes Act','POSH Complaints','Employment Contracts'],
+    cases:'300+',success:'82%',expYrs:10,
+    bar:'Bar Council of Gujarat · Enrolment No. GJ/4567/2015 · Verified April 2025',
+    reviews:[
+      {name:'Jayesh R.',stars:5,date:'March 2025',text:'Recovered 3 years of pending gratuity. Suresh sir handled everything efficiently and got a quick resolution.'},
+      {name:'Manisha S.',stars:4,date:'February 2025',text:'Helped me with wrongful termination case. Very knowledgeable and patient in explaining the process.'},
+      {name:'Dinesh P.',stars:5,date:'January 2025',text:'Got my PF settlement issue resolved that had been pending for 2 years. Great lawyer.'},
+    ]},
+  l5:{id:'l5',name:'Adv. Kavya Nair',icon:'👩‍⚖️',specialty:'Consumer Rights',spec_detail:'Consumer Protection Act · Product Liability · E-commerce Disputes · Insurance',city:'Chennai',exp:'7 years',languages:'Tamil, English, Malayalam',rating:4.8,reviews:94,online:true,fee:2500,
+    bio:'Adv. Kavya Nair specialises in consumer protection with a 90% success rate in consumer forum cases. She handles disputes against e-commerce companies, insurance firms, real estate builders, banks, and product manufacturers. She is empanelled with the Tamil Nadu Consumer Dispute Redressal Commission.',
+    areas:['Consumer Protection Act','E-commerce Disputes','Insurance Claim Rejection','Banking & Loan Disputes','Real Estate Buyers','Defective Products','Medical Negligence','Airline/Hotel Disputes'],
+    cases:'250+',success:'90%',expYrs:7,
+    bar:'Bar Council of Tamil Nadu · Enrolment No. TN/2198/2018 · Verified March 2025',
+    reviews:[
+      {name:'Arun K.',stars:5,date:'April 2025',text:'Won compensation from Amazon for a defective product. Kavya Ma\'am handled the entire consumer forum process. Highly recommend.'},
+      {name:'Deepa M.',stars:5,date:'March 2025',text:'Insurance claim was wrongly rejected. She helped file a consumer complaint and I got the full amount plus compensation.'},
+      {name:'Srinivas R.',stars:4,date:'February 2025',text:'Very good at consumer law. The process took 4 months but the outcome was excellent.'},
+    ]},
+  l6:{id:'l6',name:'Adv. Arjun Mehta',icon:'👨‍⚖️',specialty:'Cyber Law',spec_detail:'IT Act · Cyber Fraud · Data Protection · Online Defamation · DPDP Act',city:'Hyderabad',exp:'6 years',languages:'Telugu, Hindi, English',rating:4.7,reviews:51,online:true,fee:2500,
+    bio:'Adv. Arjun Mehta is Hyderabad\'s leading cyber law specialist with expertise in online fraud recovery, IT Act violations, cyberbullying, digital data protection, and the new DPDP Act 2023. He has helped hundreds of victims of online scams, deepfakes, and social media defamation. He coordinates with cybercrime cells across Telangana.',
+    areas:['Cyber Fraud & Scams','IT Act Violations','Online Defamation','Data Protection (DPDP)','Social Media Harassment','Deepfake & Identity Theft','Cryptocurrency Fraud','Cybercrime FIR Filing'],
+    cases:'200+',success:'78%',expYrs:6,
+    bar:'Bar Council of Telangana · Enrolment No. TS/1876/2019 · Verified April 2025',
+    reviews:[
+      {name:'Priya A.',stars:5,date:'April 2025',text:'Helped recover ₹4 lakhs lost in online fraud. Arjun sir worked with the cybercrime cell and got results in 6 weeks.'},
+      {name:'Rohit K.',stars:4,date:'March 2025',text:'Excellent knowledge of IT Act and digital laws. Handled my social media defamation case professionally.'},
+      {name:'Anita M.',stars:5,date:'February 2025',text:'Got fake profiles removed and filed an FIR successfully. Very knowledgeable about digital law.'},
+    ]},
+};
+
+// Default data
+const DEFAULT_LAWYER={id:'l1',name:'Adv. Priya Sharma',icon:'👩‍⚖️',specialty:'Family Law',spec_detail:'Divorce · Succession · Guardianship · Hindu Marriage Act',city:'Mumbai',exp:'12 years',languages:'Hindi, English, Marathi',rating:4.9,reviews:142,online:true,fee:2500,bio:'Specialises in matrimonial disputes with extensive High Court experience.',areas:['Family Law'],cases:'400+',success:'88%',expYrs:12,bar:'Bar Council of Maharashtra',reviews:[]};
+
+const params=new URLSearchParams(location.search);
+const id=params.get('id')||'l1';
+const lawyer=LAWYERS[id]||DEFAULT_LAWYER;
+
+// Also check localStorage (if coming from book flow)
+let selLawyer=null;
+try{selLawyer=JSON.parse(localStorage.getItem('sl_selected_lawyer')||'null')}catch(e){}
+const L=LAWYERS[id]||selLawyer||DEFAULT_LAWYER;
+
+// Populate
+document.title=`${L.name} – SatLegal`;
+document.getElementById('bcName').textContent=L.name;
+document.getElementById('profAvatar').textContent=L.icon;
+document.getElementById('profName').textContent=L.name;
+document.getElementById('profSpec').textContent=`${L.specialty} · ${L.city}`;
+document.getElementById('profCity').textContent=L.city;
+document.getElementById('profExp').textContent=L.exp;
+document.getElementById('profLang').textContent=L.languages;
+document.getElementById('profRating').textContent=L.rating;
+document.getElementById('profReviews').textContent=L.reviews;
+document.getElementById('profBio').textContent=L.bio||'—';
+document.getElementById('statCases').textContent=L.cases||'—';
+document.getElementById('statSuccess').textContent=L.success||'—';
+document.getElementById('statExp').textContent=(L.expYrs||'—')+'y';
+document.getElementById('bcBox').innerHTML=`<strong>✅ Verified</strong>${L.bar||'Bar Council – Verified'}`;
+
+// Badges
+const bd=document.getElementById('profBadges');
+bd.innerHTML=`<span class="badge badge-verified">✅ Bar Verified</span>`+(L.online?'<span class="badge badge-online">🟢 Online Now</span>':'')+L.languages.split(', ').map(l=>`<span class="badge badge-lang">${l}</span>`).join('');
+
+// Practice areas
+document.getElementById('practiceAreas').innerHTML=(L.areas||[L.specialty]).map(a=>`<span class="area-tag">${a}</span>`).join('');
+
+// Reviews
+const rv=document.getElementById('reviewsList');
+if(L.reviews&&L.reviews.length){
+  rv.innerHTML=L.reviews.map(r=>`
+    <div class="review-card">
+      <div class="review-head">
+        <div class="reviewer">${r.name}</div>
+        <div class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
+      </div>
+      <div class="review-date">${r.date}</div>
+      <div class="review-text">${r.text}</div>
+    </div>
+  `).join('');
+}else{
+  rv.innerHTML='<p style="font-size:13px;color:var(--text-lt)">No reviews yet for this lawyer.</p>';
+}
+
+function bookThisLawyer(){
+  localStorage.setItem('sl_selected_lawyer',JSON.stringify({id:L.id,name:L.name,specialty:L.specialty,icon:L.icon}));
+  const payment=JSON.parse(localStorage.getItem('sl_payment')||'{}');
+  if(payment.plan==='consult'){
+    window.location.href='../consultation/book.html?lawyer='+L.id;
+  }else{
+    window.location.href='../payment.html?plan=consult&amt=2500';
+  }
+}
+</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

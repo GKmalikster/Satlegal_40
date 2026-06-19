@@ -626,6 +626,13 @@ tbody tr:last-child td { border-bottom: none; }
     .tab-btn.active { color: var(--saffron-dk); border-bottom-color: var(--saffron); }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
+    /* Toggle switch */
+    .tog-wrap{position:relative;display:inline-block;width:40px;height:22px;cursor:pointer}
+    .tog-wrap input{opacity:0;width:0;height:0;position:absolute}
+    .tog-slider{position:absolute;inset:0;background:#ccc;border-radius:22px;transition:.2s}
+    .tog-slider::before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
+    .tog-wrap input:checked+.tog-slider{background:var(--gr-500)}
+    .tog-wrap input:checked+.tog-slider::before{transform:translateX(18px)}
     .admin-badge { background: #e74c3c; color: #fff; font-size: 11px; padding: 2px 7px; border-radius: 10px; font-weight: 700; margin-left: 5px; }
     /* Chart bars */
     .bar-chart { display: flex; flex-direction: column; gap: 8px; }
@@ -697,6 +704,9 @@ tbody tr:last-child td { border-bottom: none; }
     <div class="sidebar-section">Content</div>
     <a href="/dashboard/admin-cms.html" class="sidebar-link" style="background:rgba(255,153,51,0.12);color:var(--sf-300);border-left:3px solid var(--sf-500)">✏️ Content Manager <span style="font-size:9px;background:var(--sf-600);color:#fff;padding:1px 5px;border-radius:6px;margin-left:4px">CMS</span></a>
     <a href="/dashboard/admin-analytics.html" class="sidebar-link">📈 Analytics Report</a>
+    <div class="sidebar-section">Configuration</div>
+    <a href="#" class="sidebar-link" onclick="switchTab('integrations', this)">🔌 Integrations</a>
+    <a href="#" class="sidebar-link" onclick="switchTab('customization', this)">🎨 Customization</a>
     <div style="padding:16px;margin-top:auto">
       <button onclick="Auth.logout()" class="btn btn-danger btn-sm" style="width:100%">Logout</button>
     </div>
@@ -1065,6 +1075,256 @@ tbody tr:last-child td { border-bottom: none; }
       </div>
     </div>
 
+    <!-- ── INTEGRATIONS TAB ── -->
+    <div id="tab-integrations" class="tab-content">
+      <h2 style="font-size:20px;font-weight:700;margin-bottom:6px">🔌 Integrations</h2>
+      <p style="color:var(--text-light);font-size:14px;margin-bottom:24px">Manage third-party service connections. Toggle integrations on/off and configure API keys.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+        <!-- Payment: Razorpay -->
+        <div class="card">
+          <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
+            <span class="card-title">💳 Razorpay (Payments)</span>
+            <label class="tog-wrap"><input type="checkbox" id="tog-razorpay" checked onchange="saveIntegration('razorpay','enabled',this.checked)"><span class="tog-slider"></span></label>
+          </div>
+          <div style="padding:16px">
+            <div class="form-group">
+              <label style="font-size:12px">Key ID</label>
+              <input type="text" id="int-rz-key" class="form-control" style="font-size:13px" placeholder="rzp_live_xxxxxxxxxxxx" oninput="saveIntegration('razorpay','keyId',this.value)"/>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px">Key Secret <span style="color:var(--text-light)">(stored server-side only)</span></label>
+              <input type="password" id="int-rz-secret" class="form-control" style="font-size:13px" placeholder="••••••••••••••••" oninput="saveIntegration('razorpay','secret',this.value)"/>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px">Mode</label>
+              <select id="int-rz-mode" class="form-control" style="font-size:13px" onchange="saveIntegration('razorpay','mode',this.value)">
+                <option value="test">Test Mode</option>
+                <option value="live">Live Mode</option>
+              </select>
+            </div>
+            <div style="font-size:11px;color:var(--text-light);background:var(--bg-light);padding:8px;border-radius:6px">ℹ️ Key ID is used client-side. Secret must be set in your backend <code>.env</code> as <code>RAZORPAY_SECRET</code>.</div>
+          </div>
+        </div>
+
+        <!-- WhatsApp / Communication -->
+        <div class="card">
+          <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
+            <span class="card-title">💬 WhatsApp / SMS</span>
+            <span style="font-size:10px;background:#FFF3CD;color:#856404;padding:3px 8px;border-radius:10px;font-weight:700">COMING SOON</span>
+          </div>
+          <div style="padding:16px">
+            <p style="font-size:13px;color:var(--text-light);margin-bottom:12px">WhatsApp notifications and SMS OTP via Twilio / Meta Business API. Not yet activated.</p>
+            <div class="form-group">
+              <label style="font-size:12px">Provider</label>
+              <select class="form-control" style="font-size:13px" disabled>
+                <option>Twilio (WhatsApp + SMS)</option>
+                <option>Meta Business API (WhatsApp)</option>
+                <option>MSG91 (SMS)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px">API Key / SID</label>
+              <input type="text" class="form-control" style="font-size:13px" placeholder="Disabled — coming soon" disabled/>
+            </div>
+            <button class="btn btn-outline btn-sm" disabled style="width:100%;opacity:.5">🔌 Connect (Coming Soon)</button>
+          </div>
+        </div>
+
+        <!-- Email: SMTP -->
+        <div class="card">
+          <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
+            <span class="card-title">📧 Email (SMTP)</span>
+            <label class="tog-wrap"><input type="checkbox" id="tog-smtp" onchange="saveIntegration('smtp','enabled',this.checked)"><span class="tog-slider"></span></label>
+          </div>
+          <div style="padding:16px">
+            <div class="form-group">
+              <label style="font-size:12px">SMTP Host</label>
+              <input type="text" id="int-smtp-host" class="form-control" style="font-size:13px" placeholder="smtp.gmail.com" oninput="saveIntegration('smtp','host',this.value)"/>
+            </div>
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px">
+              <div class="form-group">
+                <label style="font-size:12px">From Email</label>
+                <input type="email" id="int-smtp-from" class="form-control" style="font-size:13px" placeholder="noreply@satlegal.in" oninput="saveIntegration('smtp','from',this.value)"/>
+              </div>
+              <div class="form-group">
+                <label style="font-size:12px">Port</label>
+                <input type="number" id="int-smtp-port" class="form-control" style="font-size:13px" placeholder="587" oninput="saveIntegration('smtp','port',this.value)"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px">Password / App Password</label>
+              <input type="password" id="int-smtp-pass" class="form-control" style="font-size:13px" placeholder="••••••••" oninput="saveIntegration('smtp','password',this.value)"/>
+            </div>
+            <button onclick="testSmtp()" class="btn btn-outline btn-sm" style="width:100%">📤 Send Test Email</button>
+          </div>
+        </div>
+
+        <!-- MongoDB Atlas -->
+        <div class="card">
+          <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
+            <span class="card-title">🗄️ MongoDB Atlas</span>
+            <span id="mongo-status" style="font-size:11px;background:var(--success-lt);color:var(--success-dk);padding:3px 10px;border-radius:10px;font-weight:700">● Connected</span>
+          </div>
+          <div style="padding:16px">
+            <p style="font-size:13px;color:var(--text-light);margin-bottom:12px">Database connection is managed via backend environment variable <code>MONGO_URI</code>. Status is read-only here.</p>
+            <div class="form-group">
+              <label style="font-size:12px">Connection String (masked)</label>
+              <input type="text" class="form-control" style="font-size:13px;font-family:monospace" value="mongodb+srv://••••••@cluster0.xxxxx.mongodb.net/satlegal" readonly/>
+            </div>
+            <button onclick="pingMongo()" class="btn btn-outline btn-sm" style="width:100%">🔁 Ping Database</button>
+          </div>
+        </div>
+
+        <!-- Razorpay Webhook -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">🔗 Webhook Endpoints</span></div>
+          <div style="padding:16px">
+            <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">Configure these URLs in your Razorpay dashboard under Webhooks.</p>
+            <div class="form-group">
+              <label style="font-size:12px">Payment Webhook</label>
+              <div style="display:flex;gap:6px">
+                <input type="text" class="form-control" style="font-size:12px;font-family:monospace" id="webhookUrl" readonly/>
+                <button onclick="copyWebhook()" class="btn btn-outline btn-sm">Copy</button>
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--text-light);margin-top:8px">Events: <code>payment.captured</code>, <code>payment.failed</code>, <code>refund.created</code></div>
+          </div>
+        </div>
+
+        <!-- Google Analytics -->
+        <div class="card">
+          <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
+            <span class="card-title">📊 Google Analytics</span>
+            <label class="tog-wrap"><input type="checkbox" id="tog-ga" onchange="saveIntegration('ga','enabled',this.checked)"><span class="tog-slider"></span></label>
+          </div>
+          <div style="padding:16px">
+            <div class="form-group">
+              <label style="font-size:12px">Measurement ID</label>
+              <input type="text" id="int-ga-id" class="form-control" style="font-size:13px;font-family:monospace" placeholder="G-XXXXXXXXXX" oninput="saveIntegration('ga','measurementId',this.value)"/>
+            </div>
+            <div style="font-size:11px;color:var(--text-light);background:var(--bg-light);padding:8px;border-radius:6px">Add your GA4 Measurement ID. The gtag snippet will be injected automatically on all pages.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── CUSTOMIZATION TAB ── -->
+    <div id="tab-customization" class="tab-content">
+      <h2 style="font-size:20px;font-weight:700;margin-bottom:6px">🎨 Customization</h2>
+      <p style="color:var(--text-light);font-size:14px;margin-bottom:24px">Control branding, pricing, feature flags, and platform behaviour.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+        <!-- Pricing Controls -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">💰 Pricing & Plans</span></div>
+          <div style="padding:16px">
+            <div class="form-group">
+              <label style="font-size:12px">Report Plan Price (₹)</label>
+              <input type="number" id="cust-price-report" class="form-control" style="font-size:13px" placeholder="499" oninput="saveCustomization('pricing','reportPrice',this.value)"/>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px">Consultation Plan Price (₹)</label>
+              <input type="number" id="cust-price-consult" class="form-control" style="font-size:13px" placeholder="2500" oninput="saveCustomization('pricing','consultPrice',this.value)"/>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px">Active Discount Code</label>
+              <input type="text" id="cust-discount-code" class="form-control" style="font-size:13px" placeholder="e.g. INDIA50" oninput="saveCustomization('pricing','discountCode',this.value)"/>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px">Discount Amount (₹)</label>
+              <input type="number" id="cust-discount-amt" class="form-control" style="font-size:13px" placeholder="50" oninput="saveCustomization('pricing','discountAmount',this.value)"/>
+            </div>
+            <button onclick="savePricing()" class="btn btn-primary btn-sm" style="width:100%">💾 Save Pricing</button>
+          </div>
+        </div>
+
+        <!-- Feature Flags -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">🚩 Feature Flags</span></div>
+          <div style="padding:16px">
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div><div style="font-size:13px;font-weight:600">Lawyer Module</div><div style="font-size:11px;color:var(--text-light)">Show Find a Lawyer pages & booking</div></div>
+                <label class="tog-wrap"><input type="checkbox" id="flag-lawyers" onchange="saveFlag('lawyerModule',this.checked)"><span class="tog-slider"></span></label>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div><div style="font-size:13px;font-weight:600">Payment Gateway</div><div style="font-size:11px;color:var(--text-light)">Enable Razorpay checkout</div></div>
+                <label class="tog-wrap"><input type="checkbox" id="flag-payment" checked onchange="saveFlag('paymentGateway',this.checked)"><span class="tog-slider"></span></label>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div><div style="font-size:13px;font-weight:600">Free Report Mode</div><div style="font-size:11px;color:var(--text-light)">Skip payment, give report free</div></div>
+                <label class="tog-wrap"><input type="checkbox" id="flag-free" onchange="saveFlag('freeReportMode',this.checked)"><span class="tog-slider"></span></label>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div><div style="font-size:13px;font-weight:600">Demo Banner</div><div style="font-size:11px;color:var(--text-light)">Show top announcement banner</div></div>
+                <label class="tog-wrap"><input type="checkbox" id="flag-banner" onchange="saveFlag('showBanner',this.checked)"><span class="tog-slider"></span></label>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div><div style="font-size:13px;font-weight:600">Maintenance Mode</div><div style="font-size:11px;color:var(--text-light)">Block all non-admin access</div></div>
+                <label class="tog-wrap"><input type="checkbox" id="flag-maintenance" onchange="saveFlag('maintenanceMode',this.checked)"><span class="tog-slider"></span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Branding -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">🏷️ Branding</span></div>
+          <div style="padding:16px">
+            <div class="form-group">
+              <label style="font-size:12px">Platform Name</label>
+              <input type="text" id="cust-brand-name" class="form-control" style="font-size:13px" placeholder="SatLegal" oninput="saveCustomization('brand','name',this.value)"/>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px">Tagline</label>
+              <input type="text" id="cust-brand-tagline" class="form-control" style="font-size:13px" placeholder="Legalities Simplified" oninput="saveCustomization('brand','tagline',this.value)"/>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px">Support Email</label>
+              <input type="email" id="cust-support-email" class="form-control" style="font-size:13px" placeholder="support@satlegal.in" oninput="saveCustomization('brand','supportEmail',this.value)"/>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px">Announcement Banner Text</label>
+              <input type="text" id="cust-banner-text" class="form-control" style="font-size:13px" placeholder="🎉 SatLegal now covers 37 Indian laws!" oninput="saveCustomization('brand','bannerText',this.value)"/>
+            </div>
+            <button onclick="saveBranding()" class="btn btn-primary btn-sm" style="width:100%">💾 Save Branding</button>
+          </div>
+        </div>
+
+        <!-- Access & Security -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">🔐 Access & Security</span></div>
+          <div style="padding:16px">
+            <div class="form-group">
+              <label style="font-size:12px">Admin Secret Path</label>
+              <div style="display:flex;gap:6px">
+                <input type="text" id="cust-admin-path" class="form-control" style="font-size:13px;font-family:monospace" placeholder="/auth/admin-login.html" readonly/>
+                <button onclick="copyAdminPath()" class="btn btn-outline btn-sm">Copy</button>
+              </div>
+              <div style="font-size:11px;color:var(--text-light);margin-top:4px">Share this URL only with admins. Not linked from any public page.</div>
+            </div>
+            <div class="form-group" style="margin-top:14px">
+              <label style="font-size:12px">JWT Token Expiry</label>
+              <select id="cust-jwt-expiry" class="form-control" style="font-size:13px" onchange="saveCustomization('security','jwtExpiry',this.value)">
+                <option value="1d">1 Day</option>
+                <option value="7d" selected>7 Days</option>
+                <option value="30d">30 Days</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px">
+              <div><div style="font-size:13px;font-weight:600">Require Email Verification</div><div style="font-size:11px;color:var(--text-light)">Block unverified users from dashboard</div></div>
+              <label class="tog-wrap"><input type="checkbox" id="flag-email-verify" checked onchange="saveFlag('requireEmailVerify',this.checked)"><span class="tog-slider"></span></label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -1424,12 +1684,135 @@ function switchTab(tab, el) {
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
   if (el) el.classList.add('active');
-  if (tab === 'overview')   loadOverview();
-  if (tab === 'analytics')  loadAnalytics();
-  if (tab === 'lawyers')    loadLawyers('pending');
-  if (tab === 'users')      loadUsers();
-  if (tab === 'inquiries')  loadInquiries();
+  if (tab === 'overview')       loadOverview();
+  if (tab === 'analytics')      loadAnalytics();
+  if (tab === 'lawyers')        loadLawyers('pending');
+  if (tab === 'users')          loadUsers();
+  if (tab === 'inquiries')      loadInquiries();
+  if (tab === 'integrations')   loadIntegrations();
+  if (tab === 'customization')  loadCustomization();
 }
+
+// ── Integrations ────────────────────────────────────────────────────────────
+const INT_KEY = 'sl_admin_integrations';
+const CUST_KEY = 'sl_admin_customization';
+
+function getIntegrations() {
+  try { return JSON.parse(localStorage.getItem(INT_KEY) || '{}'); } catch(e) { return {}; }
+}
+function getCustomization() {
+  try { return JSON.parse(localStorage.getItem(CUST_KEY) || '{}'); } catch(e) { return {}; }
+}
+
+function saveIntegration(service, key, value) {
+  const cfg = getIntegrations();
+  if (!cfg[service]) cfg[service] = {};
+  cfg[service][key] = value;
+  localStorage.setItem(INT_KEY, JSON.stringify(cfg));
+  showToast('Integration saved', 'success');
+}
+
+function saveFlag(flagName, value) {
+  const cfg = getCustomization();
+  if (!cfg.flags) cfg.flags = {};
+  cfg.flags[flagName] = value;
+  localStorage.setItem(CUST_KEY, JSON.stringify(cfg));
+  // Sync to sl_flow_config so homepage respects flags immediately
+  try {
+    const fc = JSON.parse(localStorage.getItem('sl_flow_config') || '{}');
+    if (flagName === 'freeReportMode') fc.freeReport = value;
+    if (flagName === 'paymentGateway') fc.paymentsEnabled = value;
+    if (flagName === 'showBanner') fc.banners = { ...(fc.banners||{}), showDemo: value };
+    localStorage.setItem('sl_flow_config', JSON.stringify(fc));
+  } catch(e) {}
+  showToast(`Flag "${flagName}" ${value ? 'enabled' : 'disabled'}`, 'success');
+}
+
+function saveCustomization(section, key, value) {
+  const cfg = getCustomization();
+  if (!cfg[section]) cfg[section] = {};
+  cfg[section][key] = value;
+  localStorage.setItem(CUST_KEY, JSON.stringify(cfg));
+}
+
+function savePricing() {
+  const reportPrice = document.getElementById('cust-price-report').value;
+  const consultPrice = document.getElementById('cust-price-consult').value;
+  const discountCode = document.getElementById('cust-discount-code').value;
+  const discountAmount = document.getElementById('cust-discount-amt').value;
+  const cfg = getCustomization();
+  cfg.pricing = { reportPrice, consultPrice, discountCode, discountAmount };
+  localStorage.setItem(CUST_KEY, JSON.stringify(cfg));
+  // Sync to sl_payment_plans
+  try {
+    const plans = JSON.parse(localStorage.getItem('sl_payment_plans') || 'null') || [];
+    const rIdx = plans.findIndex(p => p.id === 'report');
+    const cIdx = plans.findIndex(p => p.id === 'consult');
+    if (rIdx >= 0 && reportPrice) plans[rIdx].price = parseInt(reportPrice);
+    if (cIdx >= 0 && consultPrice) plans[cIdx].price = parseInt(consultPrice);
+    if (plans.length) localStorage.setItem('sl_payment_plans', JSON.stringify(plans));
+  } catch(e) {}
+  showToast('Pricing saved ✓', 'success');
+}
+
+function saveBranding() {
+  const bannerText = document.getElementById('cust-banner-text').value;
+  const cfg = getCustomization();
+  saveCustomization('brand', 'saved', true);
+  // Sync banner text to sl_flow_config
+  try {
+    const fc = JSON.parse(localStorage.getItem('sl_flow_config') || '{}');
+    fc.banners = { ...(fc.banners||{}), demoText: bannerText };
+    localStorage.setItem('sl_flow_config', JSON.stringify(fc));
+  } catch(e) {}
+  showToast('Branding saved ✓', 'success');
+}
+
+function loadIntegrations() {
+  const cfg = getIntegrations();
+  const rz = cfg.razorpay || {};
+  const sm = cfg.smtp || {};
+  const ga = cfg.ga || {};
+  if (document.getElementById('tog-razorpay')) document.getElementById('tog-razorpay').checked = rz.enabled !== false;
+  if (document.getElementById('int-rz-key'))   document.getElementById('int-rz-key').value = rz.keyId || '';
+  if (document.getElementById('int-rz-mode'))  document.getElementById('int-rz-mode').value = rz.mode || 'test';
+  if (document.getElementById('tog-smtp'))     document.getElementById('tog-smtp').checked = !!sm.enabled;
+  if (document.getElementById('int-smtp-host'))document.getElementById('int-smtp-host').value = sm.host || '';
+  if (document.getElementById('int-smtp-from'))document.getElementById('int-smtp-from').value = sm.from || '';
+  if (document.getElementById('int-smtp-port'))document.getElementById('int-smtp-port').value = sm.port || '587';
+  if (document.getElementById('tog-ga'))       document.getElementById('tog-ga').checked = !!ga.enabled;
+  if (document.getElementById('int-ga-id'))    document.getElementById('int-ga-id').value = ga.measurementId || '';
+  // Webhook URL
+  const wh = document.getElementById('webhookUrl');
+  if (wh) wh.value = (location.origin || 'https://satlegal.in') + '/api/payment/webhook';
+}
+
+function loadCustomization() {
+  const cfg = getCustomization();
+  const pr = cfg.pricing || {};
+  const fl = cfg.flags || {};
+  const br = cfg.brand || {};
+  if (document.getElementById('cust-price-report'))  document.getElementById('cust-price-report').value = pr.reportPrice || '499';
+  if (document.getElementById('cust-price-consult')) document.getElementById('cust-price-consult').value = pr.consultPrice || '2500';
+  if (document.getElementById('cust-discount-code')) document.getElementById('cust-discount-code').value = pr.discountCode || '';
+  if (document.getElementById('cust-discount-amt'))  document.getElementById('cust-discount-amt').value = pr.discountAmount || '';
+  if (document.getElementById('cust-brand-name'))    document.getElementById('cust-brand-name').value = br.name || 'SatLegal';
+  if (document.getElementById('cust-brand-tagline')) document.getElementById('cust-brand-tagline').value = br.tagline || 'Legalities Simplified';
+  if (document.getElementById('cust-support-email')) document.getElementById('cust-support-email').value = br.supportEmail || 'support@satlegal.in';
+  if (document.getElementById('cust-banner-text'))   document.getElementById('cust-banner-text').value = br.bannerText || '';
+  if (document.getElementById('flag-lawyers'))     document.getElementById('flag-lawyers').checked = !!fl.lawyerModule;
+  if (document.getElementById('flag-payment'))     document.getElementById('flag-payment').checked = fl.paymentGateway !== false;
+  if (document.getElementById('flag-free'))        document.getElementById('flag-free').checked = !!fl.freeReportMode;
+  if (document.getElementById('flag-banner'))      document.getElementById('flag-banner').checked = !!fl.showBanner;
+  if (document.getElementById('flag-maintenance')) document.getElementById('flag-maintenance').checked = !!fl.maintenanceMode;
+  if (document.getElementById('flag-email-verify'))document.getElementById('flag-email-verify').checked = fl.requireEmailVerify !== false;
+  if (document.getElementById('cust-admin-path'))  document.getElementById('cust-admin-path').value = location.origin + '/auth/admin-login.html';
+}
+
+function testSmtp() { showToast('SMTP test requires backend connection', 'info'); }
+function pingMongo() { showToast('Pinging database…', 'info'); fetch('/api/health').then(r=>r.json()).then(d=>showToast('DB: ' + (d.db||'ok'), 'success')).catch(()=>showToast('Could not reach backend', 'error')); }
+function copyWebhook() { const el=document.getElementById('webhookUrl'); if(el){navigator.clipboard.writeText(el.value);showToast('Webhook URL copied','success');} }
+function copyAdminPath() { const el=document.getElementById('cust-admin-path'); if(el){navigator.clipboard.writeText(el.value);showToast('Admin URL copied','success');} }
 
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 

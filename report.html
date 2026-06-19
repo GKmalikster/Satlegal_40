@@ -23,6 +23,23 @@ a{text-decoration:none;color:inherit}
 .nav-brand img{height:38px}
 .btn-dl{background:var(--sf-500);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s}
 .btn-dl:hover{background:var(--sf-600)}
+/* Post-report action bar */
+.post-report-bar{background:linear-gradient(135deg,var(--gr-800),var(--gr-600));padding:24px 20px;margin-bottom:18px;border-radius:12px;color:#fff;text-align:center}
+.post-report-bar h3{font-size:16px;font-weight:800;margin-bottom:6px}
+.post-report-bar p{font-size:12px;color:rgba(255,255,255,.75);margin-bottom:16px}
+.post-report-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-pr-analyze{background:#fff;color:var(--gr-800);border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-pr-analyze:hover{background:var(--gr-50)}
+.btn-pr-book{background:var(--sf-500);color:#fff;border:2px solid var(--sf-300);padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-pr-book:hover{background:var(--sf-600)}
+.btn-pr-dashboard{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5);padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s;text-decoration:none;display:inline-block}
+.btn-pr-dashboard:hover{background:rgba(255,255,255,.1)}
+/* Print tweaks */
+@media print{
+  .nav,.post-report-bar,.btn-dl,.lawyer-card .btn-book-consult{display:none!important}
+  body{background:#fff}.rpt-body{padding:0}
+  .rpt-section{break-inside:avoid;border:1px solid #ddd}
+}
 
 .rpt-hero{background:linear-gradient(135deg,var(--gr-800),var(--gr-600));padding:28px 20px;text-align:center;color:#fff}
 .rpt-hero h1{font-size:22px;font-weight:900;margin-bottom:4px}
@@ -96,7 +113,10 @@ a{text-decoration:none;color:inherit}
 <div class="tribar"></div>
 <nav class="nav">
   <a class="nav-brand" href="index.html"><img src="assets/logo.png" alt="SatLegal"/></a>
-  <button class="btn-dl" onclick="window.print()">⬇ Download Report</button>
+  <div style="display:flex;gap:8px;align-items:center">
+    <a href="dashboard/user-dashboard.html" style="font-size:13px;color:var(--gr-700);font-weight:600">📋 My Dashboard</a>
+    <button class="btn-dl" onclick="downloadPDF()">⬇ Download PDF</button>
+  </div>
 </nav>
 
 <div class="rpt-hero">
@@ -108,6 +128,17 @@ a{text-decoration:none;color:inherit}
 <div class="rpt-body">
   <div class="disclaimer-box">
     <strong>⚠️ Professional Disclaimer:</strong> This report is for informational and educational purposes only. It does not constitute legal advice or create a lawyer-client relationship. Applicable laws, strengths, and strategies indicated herein are based on the facts described by you. Before taking any legal action, please consult a qualified legal professional. SatLegal shall not be liable for any actions taken based on this report.
+  </div>
+
+  <!-- Post-report actions -->
+  <div class="post-report-bar">
+    <h3>✅ Your Legal Report is Ready</h3>
+    <p>What would you like to do next?</p>
+    <div class="post-report-actions">
+      <button class="btn-pr-analyze" onclick="window.location.href='index.html'">🔍 Analyze Another Case</button>
+      <button class="btn-pr-book" onclick="bookConsult()">🧑‍⚖️ Book ₹2,500 Consultation</button>
+      <a class="btn-pr-dashboard" href="dashboard/user-dashboard.html">📋 Go to My Dashboard</a>
+    </div>
   </div>
 
   <!-- Case Readiness Score -->
@@ -138,6 +169,15 @@ a{text-decoration:none;color:inherit}
   <div class="rpt-section">
     <div class="rpt-sec-title">🗺️ Legal Action Plan</div>
     <div id="actionContainer"></div>
+  </div>
+
+  <!-- Second CTA bar before lawyer section -->
+  <div style="background:var(--gr-50);border:1px solid var(--gr-100);border-radius:12px;padding:20px;margin-bottom:18px;text-align:center">
+    <p style="font-size:14px;font-weight:700;color:var(--gr-800);margin-bottom:12px">📎 Save a copy of this report</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button onclick="downloadPDF()" style="background:var(--sf-500);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)">⬇ Download PDF</button>
+      <button onclick="shareReport()" style="background:transparent;color:var(--gr-700);border:2px solid var(--gr-500);padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)">🔗 Share Report</button>
+    </div>
   </div>
 
   <!-- Lawyer Recommendation -->
@@ -259,7 +299,30 @@ document.getElementById('lcLoc').textContent='📍 '+(firm.location||'');
 
 function bookConsult(){
   const uid=payment.uid||user.uid||'USER';
-  window.location.href='payment.html?plan=consult&amt=2500&uid='+uid;
+  window.location.href='consultation/book.html?uid='+uid;
+}
+
+function downloadPDF(){
+  const title=document.title;
+  document.title='SatLegal_Report_'+new Date().toISOString().split('T')[0];
+  window.print();
+  setTimeout(()=>{document.title=title;},1000);
+}
+
+function shareReport(){
+  if(navigator.share){
+    navigator.share({title:'My Legal Report – SatLegal',text:'View my AI-generated legal analysis.',url:window.location.href});
+  } else if(navigator.clipboard){
+    navigator.clipboard.writeText(window.location.href).then(()=>showToast('Link copied!'));
+  } else {
+    prompt('Copy this link:',window.location.href);
+  }
+}
+
+function showToast(msg){
+  let t=document.getElementById('rptToast');
+  if(!t){t=document.createElement('div');t.id='rptToast';t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0D3D0D;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999';document.body.appendChild(t);}
+  t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',3000);
 }
 </script>
 </body>

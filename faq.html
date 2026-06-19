@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Frequently Asked Questions – SatLegal</title>
+<meta name="description" content="Answers to all common questions about SatLegal — how it works, privacy, accuracy, refunds, lawyer consultations, and more."/>
+<style>
+:root{--sf-500:#FF9933;--sf-600:#E07000;--sf-700:#B35100;--sf-100:#FFF4E6;--gr-500:#138808;--gr-600:#1A6B1A;--gr-700:#145214;--gr-800:#0D3D0D;--gr-50:#F0FBF0;--gr-100:#D4F5D2;--text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;--bg:#F8F9FA;--font:'Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:#fff;line-height:1.6}
+a{text-decoration:none;color:inherit}
+.tribar{height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
+.nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:900;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.nav-brand img{height:38px}
+.nav-links{display:flex;gap:4px}
+.nav-links a{font-size:14px;color:var(--gr-800);font-weight:500;padding:7px 13px;border-radius:6px;transition:.2s}
+.nav-links a:hover,.nav-links a.active{background:var(--gr-50);color:var(--gr-700)}
+.nav-actions{display:flex;gap:8px;align-items:center}
+/* Hero */
+.hero{background:linear-gradient(135deg,#E07000 0%,#FF9933 18%,#FFB347 30%,#FFD699 40%,#fff 50%,#A8E8A4 60%,#5CC852 72%,#138808 85%,#0D6B05 100%);padding:56px 24px 48px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(255,255,255,.14) 0%,transparent 70%);pointer-events:none}
+.hero h1{font-size:clamp(26px,4vw,44px);font-weight:900;color:#fff;margin-bottom:12px;text-shadow:0 2px 10px rgba(0,0,0,.25);position:relative;z-index:1}
+.hero p{font-size:15px;color:rgba(255,255,255,.9);margin:0 auto;text-shadow:0 1px 4px rgba(0,0,0,.18);position:relative;z-index:1;max-width:520px}
+/* Search */
+.faq-search-wrap{max-width:560px;margin:0 auto;padding:24px 24px 0}
+.faq-search{width:100%;padding:13px 18px;border:2px solid var(--border);border-radius:30px;font-size:14px;font-family:var(--font);outline:none;transition:.2s;box-shadow:0 2px 12px rgba(0,0,0,.07)}
+.faq-search:focus{border-color:var(--sf-500);box-shadow:0 2px 18px rgba(255,153,51,.2)}
+/* Main layout */
+.faq-main{max-width:880px;margin:0 auto;padding:32px 24px 60px;display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:start}
+@media(max-width:700px){.faq-main{grid-template-columns:1fr}}
+/* Category nav */
+.cat-nav{position:sticky;top:80px}
+.cat-nav a{display:block;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-lt);margin-bottom:2px;transition:.15s}
+.cat-nav a:hover,.cat-nav a.active{background:var(--gr-50);color:var(--gr-700)}
+.cat-nav-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-lt);margin-bottom:8px;padding:0 12px}
+@media(max-width:700px){.cat-nav{display:none}}
+/* FAQ content */
+.faq-section{margin-bottom:40px}
+.faq-section h2{font-size:18px;font-weight:800;color:var(--gr-800);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--sf-200);display:flex;align-items:center;gap:8px}
+.faq-item{border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden;transition:.2s}
+.faq-item:hover{border-color:var(--sf-300)}
+.faq-q{padding:15px 18px;font-size:14px;font-weight:700;color:var(--gr-800);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;user-select:none}
+.faq-q:hover{background:var(--gr-50)}
+.faq-arrow{font-size:18px;transition:.3s;color:var(--text-lt);flex-shrink:0}
+.faq-a{display:none;padding:0 18px 15px;font-size:13px;color:var(--text-lt);line-height:1.8}
+.faq-a a{color:var(--sf-600)}
+.faq-a a:hover{text-decoration:underline}
+.faq-item.open .faq-arrow{transform:rotate(90deg)}
+.faq-item.open .faq-a{display:block}
+.faq-item.open .faq-q{color:var(--gr-700)}
+.no-results{text-align:center;padding:40px;color:var(--text-lt);display:none}
+/* CTA */
+.cta-box{background:var(--gr-800);border-radius:14px;padding:28px;text-align:center;margin-top:20px}
+.cta-box h3{font-size:17px;font-weight:800;color:#fff;margin-bottom:8px}
+.cta-box p{font-size:13px;color:rgba(255,255,255,.7);margin-bottom:18px}
+.btn-cta{display:inline-block;background:var(--sf-500);color:#fff;padding:12px 24px;border-radius:8px;font-size:13px;font-weight:700;transition:.2s;margin:4px}
+.btn-cta:hover{background:var(--sf-600)}
+.btn-cta-outline{display:inline-block;background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5);padding:12px 24px;border-radius:8px;font-size:13px;font-weight:700;transition:.2s;margin:4px}
+.btn-cta-outline:hover{background:rgba(255,255,255,.1)}
+footer{background:var(--gr-800);color:rgba(255,255,255,.6);text-align:center;padding:20px;font-size:12px;border-top:1px solid rgba(255,255,255,.1)}
+footer a{color:rgba(255,255,255,.65);margin:0 6px}
+footer a:hover{color:#fff}
+</style>
+</head>
+<body>
+<div class="tribar"></div>
+<nav class="nav">
+  <a class="nav-brand" href="index.html"><img src="assets/logo.png" alt="SatLegal"/></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="how-it-works.html">How It Works</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="faq.html" class="active">FAQ</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <div class="nav-actions" id="navActions"><!-- populated by nav.js --></div>
+</nav>
+
+<div class="hero">
+  <h1>❓ Frequently Asked Questions</h1>
+  <p>Everything you need to know about SatLegal — from how the analysis works to refunds and privacy.</p>
+</div>
+
+<div class="faq-search-wrap">
+  <input class="faq-search" type="text" id="faqSearch" placeholder="🔍 Search for a question…" oninput="filterFAQ()"/>
+</div>
+
+<div class="faq-main">
+  <!-- Category sidebar -->
+  <div class="cat-nav">
+    <div class="cat-nav-title">Categories</div>
+    <a href="#general" onclick="scrollTo(this)">⚡ General</a>
+    <a href="#analysis" onclick="scrollTo(this)">⚖️ Analysis</a>
+    <a href="#privacy" onclick="scrollTo(this)">🔒 Privacy</a>
+    <a href="#payment" onclick="scrollTo(this)">💳 Payment</a>
+    <a href="#consultation" onclick="scrollTo(this)">🧑‍⚖️ Consultation</a>
+    <a href="#lawyers" onclick="scrollTo(this)">👨‍💼 Lawyers</a>
+    <a href="#accuracy" onclick="scrollTo(this)">🎯 Accuracy</a>
+  </div>
+
+  <!-- FAQ content -->
+  <div id="faqContent">
+    <div class="no-results" id="noResults">No questions found matching your search.</div>
+
+    <div class="faq-section" id="general">
+      <h2>⚡ General</h2>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">What is SatLegal? <span class="faq-arrow">›</span></div><div class="faq-a">SatLegal is an AI-powered Indian legal analysis platform. You describe your legal situation in plain language, and our system maps it to applicable Indian laws, assesses your case strength, and produces a full legal report — in under 5 minutes.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">Is SatLegal a law firm or legal service? <span class="faq-arrow">›</span></div><div class="faq-a">No. SatLegal is a legal technology tool that provides informational analysis only. We are not a law firm and do not provide legal advice. The reports are for educational and preparation purposes only. For actual legal representation, please consult a licensed lawyer.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">Is SatLegal available in Hindi? <span class="faq-arrow">›</span></div><div class="faq-a">Yes — you can type your legal situation in Hindi, Hinglish (Hindi in Roman script), or English. Our engine understands all three. E.g., "mere landlord ne security deposit wapas nahi ki" will be correctly analysed.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">Do I need to create an account to use SatLegal? <span class="faq-arrow">›</span></div><div class="faq-a">No account is needed to run the free analysis. You only need to create an account (email or phone + password) when you want to save your report, access your dashboard, or book a lawyer consultation.</div></div>
+    </div>
+
+    <div class="faq-section" id="analysis">
+      <h2>⚖️ Analysis &amp; Reports</h2>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">How does the law mapping work? <span class="faq-arrow">›</span></div><div class="faq-a">Our engine matches keywords and phrases in your description against 78 major Indian laws using a three-tier scoring system (exact, strong, and contextual matches). It also uses your answers to contextual questions (like religion, property type, employment type) to further refine the results.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">Which laws does SatLegal cover? <span class="faq-arrow">›</span></div><div class="faq-a">We cover 78 major Indian laws across categories including family law (Hindu Marriage Act, Muslim Personal Law, Special Marriage Act), property (RERA, Transfer of Property Act), criminal (BNS, POCSO, SC/ST Act), consumer (Consumer Protection Act), employment (Minimum Wages Act, Industrial Disputes Act), cyber (IT Act, DPDP Act), civil (CPC, Limitation Act), and more. See our <a href="laws-reference.html">Laws Library</a> for the full list.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">What does the case strength score mean? <span class="faq-arrow">›</span></div><div class="faq-a">The case strength score (shown as a percentage) estimates how well-positioned your case is based on: the number of applicable laws, the quality of your answers to assessment questions, and the evidence/documents you have. A score of 70%+ indicates strong grounds. It is not a guarantee of any outcome.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">Can I save and access my report later? <span class="faq-arrow">›</span></div><div class="faq-a">Yes — if you are logged in when you complete the analysis and make payment, the report is automatically saved to your dashboard under My Cases. You can also download it as a PDF at any time from the report page.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">Can I share the report with my lawyer? <span class="faq-arrow">›</span></div><div class="faq-a">Yes. You can download the report as a PDF using the "Download PDF" button, or use the "Share Report" button to get a link. Most lawyers appreciate receiving a structured summary before a consultation.</div></div>
+    </div>
+
+    <div class="faq-section" id="privacy">
+      <h2>🔒 Privacy &amp; Security</h2>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">Is my legal situation kept private? <span class="faq-arrow">›</span></div><div class="faq-a">Yes. Your case description and analysis are private to you. We do not share your data with third parties, advertisers, or any government agencies. Data is encrypted in transit (TLS) and at rest. Please read our <a href="privacy-policy.html">Privacy Policy</a> for full details.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">Do you sell my data? <span class="faq-arrow">›</span></div><div class="faq-a">No. We never sell or rent your personal data. We use anonymised aggregate usage data to improve our law engine.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">How is my payment information handled? <span class="faq-arrow">›</span></div><div class="faq-a">All payments are processed by Razorpay, which is PCI DSS compliant. SatLegal never stores your card or bank details — those are handled entirely by Razorpay's secure servers.</div></div>
+    </div>
+
+    <div class="faq-section" id="payment">
+      <h2>💳 Pricing &amp; Payment</h2>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">Is the analysis free? <span class="faq-arrow">›</span></div><div class="faq-a">Yes. Running the 6-step analysis (describe, questions, laws, strength, documents) is completely free. You only pay ₹499 to unlock and download the full legal report, or ₹2,500 for the report plus a 30-minute lawyer consultation.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">What payment methods are accepted? <span class="faq-arrow">›</span></div><div class="faq-a">We accept all major Indian payment methods via Razorpay: UPI (GPay, PhonePe, Paytm), Visa/Mastercard/RuPay debit and credit cards, and Net Banking from all major Indian banks.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">Can I get a refund? <span class="faq-arrow">›</span></div><div class="faq-a">If the report does not match your described situation or if our system failed to identify relevant laws, contact us within 48 hours at <a href="mailto:support@satlegal.in">support@satlegal.in</a> for a review. Refunds are processed within 5–7 working days via the original payment method.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">Will I receive a GST invoice? <span class="faq-arrow">›</span></div><div class="faq-a">Yes. A GST invoice is available from the Transactions tab in your dashboard. If you need a specific format for business expense purposes, contact <a href="mailto:support@satlegal.in">support@satlegal.in</a>.</div></div>
+    </div>
+
+    <div class="faq-section" id="consultation">
+      <h2>🧑‍⚖️ Lawyer Consultation</h2>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">What is included in the ₹2,500 consultation? <span class="faq-arrow">›</span></div><div class="faq-a">The ₹2,500 plan includes: the full digital legal report (same as ₹499 plan) + a 30-minute one-on-one call with a verified Indian lawyer matched to your case type + a drafted legal notice if required + follow-up Q&amp;A within 48 hours.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">How is the consultation conducted? <span class="faq-arrow">›</span></div><div class="faq-a">After payment, you'll book a time slot via our consultation calendar. The lawyer will call you at your chosen time. Sessions are conducted via phone or video call. You'll receive a confirmation with the joining details after booking.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">How are lawyers matched to my case? <span class="faq-arrow">›</span></div><div class="faq-a">We match you with a lawyer based on your case type (e.g., property, family, criminal), your city, and the lawyer's availability and specialisation. All lawyers on SatLegal are Bar Council registered and have been vetted by our team.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">Can I choose a specific lawyer? <span class="faq-arrow">›</span></div><div class="faq-a">Yes — you can browse available lawyers on our <a href="lawyers.html">Find a Lawyer</a> page and select one directly. If you'd prefer our matching algorithm to pick for you, that's also an option.</div></div>
+    </div>
+
+    <div class="faq-section" id="lawyers">
+      <h2>👨‍💼 For Lawyers</h2>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">How can I register as a lawyer on SatLegal? <span class="faq-arrow">›</span></div><div class="faq-a">Visit our <a href="auth/lawyer-register.html">Lawyer Registration</a> page. You'll need your Bar Council number, a valid ID, and your practice areas. Approval typically takes 2 working days after verification.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">How much does SatLegal charge lawyers? <span class="faq-arrow">›</span></div><div class="faq-a">Lawyers keep the majority of the ₹2,500 consultation fee. SatLegal's platform fee is deducted per consultation. Contact <a href="mailto:partners@satlegal.in">partners@satlegal.in</a> for the current fee structure.</div></div>
+    </div>
+
+    <div class="faq-section" id="accuracy">
+      <h2>🎯 Accuracy &amp; Limitations</h2>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">How accurate is SatLegal? <span class="faq-arrow">›</span></div><div class="faq-a">Our law engine achieves over 99% accuracy on our regression test suite of 1,000 standardised scenarios across all 78 laws. However, real-world legal situations can be complex. We recommend using the report as a starting point, not as a final determination.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">What are the limitations of SatLegal? <span class="faq-arrow">›</span></div><div class="faq-a">SatLegal cannot: (1) assess facts you haven't shared, (2) predict court outcomes, (3) account for state-level variation in law application, (4) replace a lawyer for court filings, or (5) provide advice specific to your jurisdiction within India in every case. Always verify with a qualified legal professional before taking legal action.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggle(this)">Is SatLegal updated with the latest laws? <span class="faq-arrow">›</span></div><div class="faq-a">Yes. Our laws database is updated regularly to reflect new legislation and amendments. For example, the Bharatiya Nyaya Sanhita (BNS), Bharatiya Nagarik Suraksha Sanhita (BNSS), and Digital Personal Data Protection (DPDP) Act 2023 are already included.</div></div>
+    </div>
+
+    <div class="cta-box">
+      <h3>Still have a question?</h3>
+      <p>Our team typically responds within 24 hours.</p>
+      <a class="btn-cta" href="contact.html">📞 Contact Us</a>
+      <a class="btn-cta-outline" href="index.html">⚡ Start Free Analysis</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="index.html">Home</a><a href="how-it-works.html">How It Works</a><a href="pricing.html">Pricing</a>
+  <a href="lawyers.html">Find a Lawyer</a><a href="contact.html">Contact</a>
+  <a href="privacy-policy.html">Privacy</a><a href="terms-conditions.html">Terms</a>
+  <br/><br/>© 2025 SatLegal Technologies Pvt. Ltd. · Built for India 🇮🇳
+</footer>
+
+<script>
+function toggle(el){el.parentElement.classList.toggle('open')}
+
+function filterFAQ(){
+  const q=document.getElementById('faqSearch').value.toLowerCase();
+  const items=document.querySelectorAll('.faq-item');
+  let found=0;
+  items.forEach(item=>{
+    const text=item.textContent.toLowerCase();
+    const match=!q||text.includes(q);
+    item.style.display=match?'':'none';
+    if(match)found++;
+  });
+  document.querySelectorAll('.faq-section').forEach(sec=>{
+    const visible=[...sec.querySelectorAll('.faq-item')].some(i=>i.style.display!=='none');
+    sec.style.display=visible?'':'none';
+  });
+  document.getElementById('noResults').style.display=found?'none':'block';
+}
+
+function scrollTo(el){
+  el.preventDefault&&el.preventDefault();
+  const id=el.getAttribute('href').replace('#','');
+  const target=document.getElementById(id);
+  if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+<script src="js/nav.js"></script>
+</body>
+</html>

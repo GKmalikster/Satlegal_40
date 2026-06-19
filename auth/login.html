@@ -672,8 +672,9 @@ tbody tr:last-child td { border-bottom: none; }
     <p style="text-align:center;font-size:14px;color:var(--text-light);margin-top:16px">
       Don't have an account? <a href="/auth/signup.html">Sign up free</a>
     </p>
-    <p style="text-align:center;font-size:12px;color:var(--text-light);margin-top:8px">
-      Are you an admin? <a href="/auth/admin-login.html" style="color:var(--text-light)">Admin Login →</a>
+    <!-- Admin link hidden from public; accessible via direct URL or keyboard shortcut -->
+    <p id="adminHint" style="display:none;text-align:center;font-size:12px;color:var(--text-light);margin-top:8px">
+      <a href="/auth/admin-login.html" style="color:var(--text-light)">⚙️ Admin Console →</a>
     </p>
   </div>
 </div>
@@ -725,6 +726,28 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     btn.disabled = false; btn.textContent = 'Login';
   }
 });
+
+// ── Admin access: two ways to reveal the hidden admin link ──────────────────
+// 1. Direct URL: /auth/admin-login.html (always works)
+// 2. URL param: /auth/login.html?admin=1  → shows the admin link
+// 3. Konami-style shortcut on this page: type "admin" anywhere
+(function(){
+  // ?admin=1 in URL
+  if(new URLSearchParams(location.search).get('admin')==='1'){
+    const h=document.getElementById('adminHint');
+    if(h)h.style.display='block';
+  }
+  // Keyboard shortcut: type the word "admin" (case-insensitive)
+  let buf='';
+  document.addEventListener('keydown',function(e){
+    buf=(buf+e.key).slice(-5).toLowerCase();
+    if(buf==='admin'){
+      const h=document.getElementById('adminHint');
+      if(h)h.style.display='block';
+      buf='';
+    }
+  });
+})();
 </script>
 </body>
 </html>

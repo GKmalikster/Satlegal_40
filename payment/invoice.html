@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>GST Invoice – SatLegal</title>
+<style>
+:root{--sf-500:#FF9933;--sf-600:#E07000;--gr-500:#138808;--gr-700:#145214;--gr-800:#0D3D0D;--gr-50:#F0FBF0;--text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;--bg:#F8F9FA;--font:'Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text)}
+a{text-decoration:none;color:inherit}
+.screen-only{display:block}
+/* Screen nav */
+.top-bar{background:#fff;border-bottom:1px solid var(--border);padding:12px 24px;display:flex;justify-content:space-between;align-items:center}
+.top-bar a{font-size:13px;color:var(--gr-700);font-weight:600}
+.btn-print{background:var(--sf-500);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s;margin-left:8px}
+.btn-print:hover{background:var(--sf-600)}
+/* Invoice wrapper */
+.invoice-wrap{max-width:760px;margin:28px auto;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+/* Header */
+.inv-header{background:var(--gr-800);padding:28px 32px;color:#fff;display:flex;justify-content:space-between;align-items:flex-start}
+.inv-brand{font-size:28px;font-weight:900;letter-spacing:-.5px}
+.inv-brand span{color:var(--sf-500)}
+.inv-brand .tagline{font-size:11px;color:rgba(255,255,255,.6);font-weight:400;margin-top:2px}
+.inv-title-col{text-align:right}
+.inv-title{font-size:22px;font-weight:900;color:var(--sf-500);margin-bottom:4px}
+.inv-num{font-size:12px;color:rgba(255,255,255,.7)}
+/* Tricolor bar */
+.tribar{height:4px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
+/* Body */
+.inv-body{padding:28px 32px}
+/* Seller/Buyer grid */
+.party-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+.party-box h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-lt);margin-bottom:8px;border-bottom:2px solid var(--sf-500);padding-bottom:5px}
+.party-box p{font-size:13px;line-height:1.8;color:var(--text)}
+.party-box strong{color:var(--gr-800);font-weight:700}
+/* Items table */
+.inv-table{width:100%;border-collapse:collapse;margin-bottom:20px}
+.inv-table th{background:var(--gr-800);color:#fff;padding:10px 12px;text-align:left;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.inv-table td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:13px}
+.inv-table tr:last-child td{border:none}
+.inv-table tr:nth-child(even){background:var(--bg)}
+.right{text-align:right}
+/* Totals */
+.totals{display:flex;justify-content:flex-end;margin-bottom:24px}
+.totals-box{min-width:280px}
+.tot-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--border);font-size:13px}
+.tot-row:last-child{border:none;font-weight:800;font-size:15px;color:var(--gr-800);padding-top:10px}
+.tot-label{color:var(--text-lt)}
+/* Notes */
+.inv-notes{background:var(--gr-50);border:1px solid #D4F5D2;border-radius:8px;padding:14px 16px;font-size:12px;color:var(--gr-700);line-height:1.7;margin-bottom:20px}
+.inv-notes strong{color:var(--gr-800)}
+/* Footer */
+.inv-footer{text-align:center;font-size:11px;color:var(--text-lt);padding:16px;border-top:1px solid var(--border)}
+/* Print */
+@media print{
+  .screen-only,.top-bar{display:none!important}
+  .invoice-wrap{box-shadow:none;border:none;margin:0}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar screen-only">
+  <a href="../dashboard/user-dashboard.html">← My Dashboard</a>
+  <div>
+    <a href="../report.html" style="margin-right:16px">📄 View Report</a>
+    <button class="btn-print" onclick="window.print()">🖨 Print / Download PDF</button>
+  </div>
+</div>
+
+<div class="invoice-wrap">
+  <!-- Header -->
+  <div class="inv-header">
+    <div class="inv-brand">
+      <div>Sat<span>Legal</span></div>
+      <div class="tagline">Legalities Simplified</div>
+    </div>
+    <div class="inv-title-col">
+      <div class="inv-title">TAX INVOICE</div>
+      <div class="inv-num">Invoice No: <span id="invNum">—</span></div>
+      <div class="inv-num" style="margin-top:4px">Date: <span id="invDate">—</span></div>
+    </div>
+  </div>
+  <div class="tribar"></div>
+
+  <div class="inv-body">
+    <!-- Party info -->
+    <div class="party-grid">
+      <div class="party-box">
+        <h4>From (Seller)</h4>
+        <p><strong>SatLegal Technologies Pvt. Ltd.</strong><br/>
+        Registered Office: India 🇮🇳<br/>
+        Email: legal@satlegal.in<br/>
+        Website: www.satlegal.in<br/>
+        <strong>GSTIN:</strong> PENDING REGISTRATION<br/>
+        <strong>SAC Code:</strong> 998313 (Legal Research Services)</p>
+      </div>
+      <div class="party-box">
+        <h4>Bill To (Customer)</h4>
+        <p><strong id="custName">—</strong><br/>
+        <span id="custEmail">—</span><br/>
+        <span id="custPhone">—</span><br/>
+        <strong>User ID:</strong> <span id="custId">—</span></p>
+      </div>
+    </div>
+
+    <!-- Items -->
+    <table class="inv-table">
+      <thead>
+        <tr><th>#</th><th>Description</th><th>SAC</th><th class="right">Qty</th><th class="right">Rate (₹)</th><th class="right">Amount (₹)</th></tr>
+      </thead>
+      <tbody id="invItems"><!-- populated by JS --></tbody>
+    </table>
+
+    <!-- Totals -->
+    <div class="totals">
+      <div class="totals-box">
+        <div class="tot-row"><span class="tot-label">Sub-total (excl. GST)</span><span id="totSub">—</span></div>
+        <div class="tot-row"><span class="tot-label">CGST @ 9%</span><span id="totCGST">—</span></div>
+        <div class="tot-row"><span class="tot-label">SGST @ 9%</span><span id="totSGST">—</span></div>
+        <div class="tot-row"><span>Total Amount</span><span id="totTotal">—</span></div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="inv-notes">
+      <strong>Payment Details:</strong> Payment ID: <span id="notePayId">—</span> · Platform: Razorpay · Status: Paid ✓<br/>
+      <strong>Note:</strong> This is an AI-powered legal information service. It does not constitute legal advice. Services rendered are informational in nature.<br/>
+      <strong>Reverse Charge:</strong> Not Applicable
+    </div>
+  </div>
+
+  <div class="inv-footer">
+    This is a computer-generated invoice and does not require a signature.<br/>
+    SatLegal Technologies Pvt. Ltd. · support@satlegal.in · www.satlegal.in
+  </div>
+</div>
+
+<script>
+let payment={},user={};
+try{payment=JSON.parse(localStorage.getItem('sl_payment')||'{}')}catch(e){}
+try{user=JSON.parse(localStorage.getItem('sl_user')||'{}')}catch(e){}
+
+const params=new URLSearchParams(location.search);
+const payId=params.get('id')||payment.paymentId||'DEMO';
+const plan=payment.plan||'report';
+const totalAmt=payment.amt||499;
+
+// GST breakdown (18% inclusive in price)
+const gstRate=0.18;
+const sub=Math.round(totalAmt/1.18*100)/100;
+const cgst=Math.round(totalAmt*0.09/1.18*100)/100;
+const sgst=cgst;
+
+// Invoice number
+const invNum='SL'+new Date().getFullYear()+'-'+payId.replace('DEMO_','').slice(-6);
+document.getElementById('invNum').textContent=invNum;
+document.getElementById('invDate').textContent=payment.paidAt?new Date(payment.paidAt).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}):new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+
+// Customer
+document.getElementById('custName').textContent=user.name||'—';
+document.getElementById('custEmail').textContent=(user.email&&!user.email.includes('@satlegal.in'))?user.email:'—';
+document.getElementById('custPhone').textContent=user.phone||'—';
+document.getElementById('custId').textContent=user.id||user._id||'—';
+
+// Items
+const desc=plan==='consult'
+  ?'Expert Legal Consultation (30-min) + Digital Legal Report + Legal Notice Drafting'
+  :'AI-Powered Digital Legal Report — Law Mapping, Case Strength Assessment, Document Checklist & Action Plan';
+document.getElementById('invItems').innerHTML=`
+  <tr>
+    <td>1</td>
+    <td>${desc}</td>
+    <td>998313</td>
+    <td class="right">1</td>
+    <td class="right">₹${sub.toFixed(2)}</td>
+    <td class="right">₹${sub.toFixed(2)}</td>
+  </tr>
+`;
+
+// Totals
+document.getElementById('totSub').textContent='₹'+sub.toFixed(2);
+document.getElementById('totCGST').textContent='₹'+cgst.toFixed(2);
+document.getElementById('totSGST').textContent='₹'+sgst.toFixed(2);
+document.getElementById('totTotal').textContent='₹'+totalAmt.toFixed(2);
+document.getElementById('notePayId').textContent=payId;
+</script>
+</body>
+</html>

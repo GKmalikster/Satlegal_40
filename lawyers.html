@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Find a Verified Lawyer – SatLegal</title>
+<meta name="description" content="Browse SatLegal's verified Indian lawyers by city, specialisation, language, and fee. Book a 30-minute consultation online."/>
+<style>
+:root{--sf-500:#FF9933;--sf-600:#E07000;--sf-700:#B35100;--sf-100:#FFF4E6;--sf-200:#FFE4C2;--gr-500:#138808;--gr-600:#1A6B1A;--gr-700:#145214;--gr-800:#0D3D0D;--gr-50:#F0FBF0;--gr-100:#D4F5D2;--text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;--bg:#F8F9FA;--font:'Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:#fff;line-height:1.6}
+a{text-decoration:none;color:inherit}
+.tribar{height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
+.nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:900;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.nav-brand img{height:38px}
+.nav-links{display:flex;gap:4px}
+.nav-links a{font-size:14px;color:var(--gr-800);font-weight:500;padding:7px 13px;border-radius:6px;transition:.2s}
+.nav-links a:hover,.nav-links a.active{background:var(--gr-50);color:var(--gr-700)}
+.nav-actions{display:flex;gap:8px;align-items:center}
+/* Hero */
+.hero{background:linear-gradient(135deg,#E07000 0%,#FF9933 18%,#FFB347 30%,#FFD699 40%,#fff 50%,#A8E8A4 60%,#5CC852 72%,#138808 85%,#0D6B05 100%);padding:52px 24px 44px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(255,255,255,.14) 0%,transparent 70%);pointer-events:none}
+.hero h1{font-size:clamp(24px,4vw,42px);font-weight:900;color:#fff;margin-bottom:12px;text-shadow:0 2px 10px rgba(0,0,0,.25);position:relative;z-index:1}
+.hero p{font-size:15px;color:rgba(255,255,255,.9);max-width:560px;margin:0 auto;text-shadow:0 1px 4px rgba(0,0,0,.18);position:relative;z-index:1}
+/* Filters bar */
+.filters{background:#fff;border-bottom:1px solid var(--border);padding:16px 24px;position:sticky;top:64px;z-index:800}
+.filters-inner{max-width:1100px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.filter-select{padding:9px 14px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);outline:none;transition:.2s;background:#fff;cursor:pointer}
+.filter-select:focus{border-color:var(--sf-500)}
+.filter-search{flex:1;min-width:200px;padding:9px 14px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);outline:none;transition:.2s}
+.filter-search:focus{border-color:var(--sf-500)}
+.filter-count{font-size:13px;color:var(--text-lt);margin-left:auto;white-space:nowrap}
+/* Main layout */
+.main{max-width:1100px;margin:0 auto;padding:28px 24px 60px}
+/* Lawyer grid */
+.lawyer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+/* Lawyer card */
+.lawyer-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:.2s;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.lawyer-card:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(19,136,8,.12);border-color:var(--sf-300)}
+.lc-head{padding:20px;display:flex;gap:16px;align-items:flex-start;border-bottom:1px solid var(--border)}
+.lc-avatar{width:56px;height:56px;border-radius:14px;background:var(--gr-50);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;border:2px solid var(--gr-100)}
+.lc-info{flex:1}
+.lc-name{font-size:15px;font-weight:800;color:var(--gr-800);margin-bottom:2px}
+.lc-spec{font-size:12px;color:var(--gr-600);margin-bottom:4px}
+.lc-rating{font-size:12px;color:var(--text-lt);display:flex;align-items:center;gap:4px}
+.stars{color:var(--sf-500)}
+.lc-badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+.badge-verified{background:var(--gr-100);color:var(--gr-800)}
+.badge-lang{background:var(--sf-100);color:var(--sf-700)}
+.badge-online{background:#E8F5E9;color:#2E7D32}
+/* Card body */
+.lc-body{padding:16px 20px}
+.meta-row{display:flex;gap:16px;font-size:12px;color:var(--text-lt);margin-bottom:10px;flex-wrap:wrap}
+.meta-row span{display:flex;align-items:center;gap:4px}
+.lc-fee{font-size:18px;font-weight:900;color:var(--gr-800);margin-bottom:12px}
+.lc-fee span{font-size:12px;font-weight:500;color:var(--text-lt)}
+/* Actions */
+.lc-actions{display:flex;gap:8px}
+.btn-book-now{flex:1;background:var(--sf-500);color:#fff;border:none;padding:10px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-book-now:hover{background:var(--sf-600)}
+.btn-view-profile{flex:1;background:transparent;color:var(--gr-700);border:2px solid var(--gr-500);padding:10px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-view-profile:hover{background:var(--gr-50)}
+/* Empty */
+.no-results{text-align:center;padding:60px 20px;color:var(--text-lt)}
+.no-results-icon{font-size:52px;margin-bottom:14px}
+/* CTA at bottom */
+.bottom-cta{background:var(--gr-50);border:1px solid var(--gr-100);border-radius:14px;padding:28px;text-align:center;margin-top:32px}
+.bottom-cta h3{font-size:17px;font-weight:800;color:var(--gr-800);margin-bottom:6px}
+.bottom-cta p{font-size:13px;color:var(--text-lt);margin-bottom:16px}
+.btn-register{background:var(--gr-800);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s;text-decoration:none;display:inline-block}
+.btn-register:hover{background:var(--gr-700)}
+footer{background:var(--gr-800);color:rgba(255,255,255,.6);text-align:center;padding:20px;font-size:12px}
+footer a{color:rgba(255,255,255,.65);margin:0 6px}
+footer a:hover{color:#fff}
+</style>
+</head>
+<body>
+<div class="tribar"></div>
+<nav class="nav">
+  <a class="nav-brand" href="index.html"><img src="assets/logo.png" alt="SatLegal"/></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="lawyers.html" class="active">Find a Lawyer</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="about.html">About</a>
+  </div>
+  <div class="nav-actions" id="navActions"><!-- populated by nav.js --></div>
+</nav>
+
+<div class="hero">
+  <h1>⚖️ Find a Verified Lawyer</h1>
+  <p>Browse Bar Council–verified lawyers matched by your case type, city, and language. Book a 30-minute consultation online.</p>
+</div>
+
+<!-- Filters -->
+<div class="filters">
+  <div class="filters-inner">
+    <input class="filter-search" type="text" id="srchName" placeholder="🔍 Search by name or specialisation…" oninput="applyFilters()"/>
+    <select class="filter-select" id="fCity" onchange="applyFilters()">
+      <option value="">All Cities</option>
+      <option>Mumbai</option><option>Delhi</option><option>Bengaluru</option>
+      <option>Chennai</option><option>Hyderabad</option><option>Pune</option>
+      <option>Ahmedabad</option><option>Kolkata</option><option>Jaipur</option><option>Lucknow</option>
+    </select>
+    <select class="filter-select" id="fSpec" onchange="applyFilters()">
+      <option value="">All Specialisations</option>
+      <option>Family Law</option><option>Criminal Law</option><option>Property &amp; RERA</option>
+      <option>Consumer Rights</option><option>Employment Law</option><option>Cyber Law</option>
+      <option>Civil Law</option><option>Corporate Law</option><option>Taxation</option>
+    </select>
+    <select class="filter-select" id="fLang" onchange="applyFilters()">
+      <option value="">All Languages</option>
+      <option>Hindi</option><option>English</option><option>Tamil</option><option>Kannada</option>
+      <option>Telugu</option><option>Marathi</option><option>Bengali</option><option>Gujarati</option>
+    </select>
+    <span class="filter-count" id="resultCount"></span>
+  </div>
+</div>
+
+<div class="main">
+  <div class="lawyer-grid" id="lawyerGrid"></div>
+  <div class="no-results" id="noResults" style="display:none">
+    <div class="no-results-icon">🔍</div>
+    <h3>No lawyers found matching your filters</h3>
+    <p style="margin-top:8px">Try adjusting your city or specialisation filters.</p>
+  </div>
+
+  <div class="bottom-cta">
+    <h3>Are you a lawyer?</h3>
+    <p>Join SatLegal's verified lawyer network and get matched with clients who need your expertise.</p>
+    <a class="btn-register" href="auth/lawyer-register.html">Join as a Lawyer →</a>
+  </div>
+</div>
+
+<footer>
+  <a href="index.html">Home</a><a href="how-it-works.html">How It Works</a><a href="pricing.html">Pricing</a>
+  <a href="contact.html">Contact</a><a href="privacy-policy.html">Privacy</a><a href="terms-conditions.html">Terms</a>
+  <br/><br/>© 2025 SatLegal Technologies Pvt. Ltd. · Built for India 🇮🇳
+</footer>
+
+<script>
+// Demo lawyer data — in production, fetch from /api/lawyer/list
+const LAWYERS=[
+  {id:'l1',name:'Adv. Priya Sharma',icon:'👩‍⚖️',specialty:'Family Law',spec_detail:'Divorce · Succession · Guardianship · Hindu Marriage Act',city:'Mumbai',exp:'12 years',languages:'Hindi, English, Marathi',rating:4.9,reviews:142,online:true,fee:2500,desc:'Specialises in matrimonial disputes with extensive High Court experience. Known for amicable settlements.'},
+  {id:'l2',name:'Adv. Rajesh Kapoor',icon:'👨‍⚖️',specialty:'Property & RERA',spec_detail:'Property Disputes · RERA · Land Acquisition · Transfer of Property',city:'Delhi',exp:'8 years',languages:'Hindi, English, Punjabi',rating:4.8,reviews:87,online:true,fee:2500,desc:'RERA-certified specialist with deep expertise in builder disputes and property fraud cases.'},
+  {id:'l3',name:'Adv. Meena Krishnamurthy',icon:'👩‍⚖️',specialty:'Criminal Law',spec_detail:'BNS · POCSO · Bail Applications · FIR · Anticipatory Bail',city:'Bengaluru',exp:'15 years',languages:'Kannada, English, Tamil',rating:4.9,reviews:203,online:true,fee:2500,desc:'Senior criminal advocate with 15 years at Karnataka High Court. Handles bail, trials, and appeals.'},
+  {id:'l4',name:'Adv. Suresh Patel',icon:'👨‍⚖️',specialty:'Employment Law',spec_detail:'Wrongful Termination · Labour Disputes · Gratuity · PF · Minimum Wages',city:'Ahmedabad',exp:'10 years',languages:'Gujarati, Hindi, English',rating:4.7,reviews:66,online:false,fee:2500,desc:'Expert in labour disputes and employment law. Represented 300+ employees in labour courts.'},
+  {id:'l5',name:'Adv. Kavya Nair',icon:'👩‍⚖️',specialty:'Consumer Rights',spec_detail:'Consumer Protection Act · Product Liability · E-commerce Disputes · Insurance',city:'Chennai',exp:'7 years',languages:'Tamil, English, Malayalam',rating:4.8,reviews:94,online:true,fee:2500,desc:'Active in consumer forums with a 90% success rate in consumer court cases.'},
+  {id:'l6',name:'Adv. Arjun Mehta',icon:'👨‍⚖️',specialty:'Cyber Law',spec_detail:'IT Act · Cyber Fraud · Data Protection · Online Defamation · DPDP Act',city:'Hyderabad',exp:'6 years',languages:'Telugu, Hindi, English',rating:4.7,reviews:51,online:true,fee:2500,desc:'Specialises in cyber crime cases, online fraud recovery, and digital personal data protection.'},
+  {id:'l7',name:'Adv. Sunita Devi',icon:'👩‍⚖️',specialty:'Family Law',spec_detail:'Domestic Violence · Maintenance · Divorce · SC/ST Protection',city:'Jaipur',exp:'9 years',languages:'Hindi, English, Rajasthani',rating:4.6,reviews:78,online:false,fee:2500,desc:'Women and SC/ST rights specialist. Works with Rajasthan High Court Legal Services Authority.'},
+  {id:'l8',name:'Adv. Bikash Sarkar',icon:'👨‍⚖️',specialty:'Civil Law',spec_detail:'Contracts · Money Recovery · Injunction · Specific Performance · CPC',city:'Kolkata',exp:'11 years',languages:'Bengali, Hindi, English',rating:4.8,reviews:119,online:true,fee:2500,desc:'Handles civil suits including money recovery, contract enforcement, and injunctive relief at Calcutta High Court.'},
+  {id:'l9',name:'Adv. Ramesh Iyer',icon:'👨‍⚖️',specialty:'Corporate Law',spec_detail:'Company Law · Partnership Disputes · Insolvency · NCLT',city:'Mumbai',exp:'14 years',languages:'Tamil, English, Marathi',rating:4.9,reviews:167,online:true,fee:2500,desc:'Corporate lawyer with expertise in NCLT proceedings, insolvency, and business disputes.'},
+  {id:'l10',name:'Adv. Pooja Aggarwal',icon:'👩‍⚖️',specialty:'Taxation',spec_detail:'GST · Income Tax · Tax Notices · Appeals · Tribunal',city:'Delhi',exp:'8 years',languages:'Hindi, English, Punjabi',rating:4.7,reviews:54,online:true,fee:2500,desc:'Tax disputes specialist handling income tax and GST notices, appeals, and tribunal representation.'},
+];
+
+let filtered=[...LAWYERS];
+
+function renderLawyers(list){
+  const grid=document.getElementById('lawyerGrid');
+  document.getElementById('noResults').style.display=list.length?'none':'block';
+  document.getElementById('resultCount').textContent=`${list.length} lawyer${list.length!==1?'s':''} found`;
+  grid.innerHTML=list.map(l=>`
+    <div class="lawyer-card">
+      <div class="lc-head">
+        <div class="lc-avatar">${l.icon}</div>
+        <div class="lc-info">
+          <div class="lc-name">${l.name}</div>
+          <div class="lc-spec">${l.specialty} · ${l.city}</div>
+          <div class="lc-rating"><span class="stars">★★★★★</span> ${l.rating} (${l.reviews} reviews)</div>
+          <div class="lc-badges">
+            <span class="badge badge-verified">✅ Bar Verified</span>
+            ${l.online?'<span class="badge badge-online">🟢 Online</span>':''}
+            ${l.languages.split(', ').slice(0,2).map(lang=>`<span class="badge badge-lang">${lang}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="lc-body">
+        <div class="meta-row">
+          <span>⏱ ${l.exp}</span>
+          <span>🗣 ${l.languages}</span>
+        </div>
+        <p style="font-size:12px;color:var(--text-lt);margin-bottom:10px;line-height:1.6">${l.spec_detail}</p>
+        <div class="lc-fee">₹${l.fee.toLocaleString('en-IN')} <span>/ 30-min session</span></div>
+        <div class="lc-actions">
+          <button class="btn-book-now" onclick="bookLawyer('${l.id}')">Book Consultation</button>
+          <button class="btn-view-profile" onclick="viewProfile('${l.id}')">View Profile</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function applyFilters(){
+  const name=document.getElementById('srchName').value.toLowerCase();
+  const city=document.getElementById('fCity').value;
+  const spec=document.getElementById('fSpec').value.toLowerCase();
+  const lang=document.getElementById('fLang').value.toLowerCase();
+
+  filtered=LAWYERS.filter(l=>{
+    if(name&&!l.name.toLowerCase().includes(name)&&!l.specialty.toLowerCase().includes(name)&&!l.spec_detail.toLowerCase().includes(name))return false;
+    if(city&&l.city!==city)return false;
+    if(spec&&!l.specialty.toLowerCase().includes(spec.replace(' & rea',''))&&!l.spec_detail.toLowerCase().includes(spec))return false;
+    if(lang&&!l.languages.toLowerCase().includes(lang))return false;
+    return true;
+  });
+  renderLawyers(filtered);
+}
+
+function bookLawyer(id){
+  const lawyer=LAWYERS.find(l=>l.id===id);
+  if(lawyer){
+    localStorage.setItem('sl_selected_lawyer',JSON.stringify(lawyer));
+    // Check if consultation is already paid
+    const payment=JSON.parse(localStorage.getItem('sl_payment')||'{}');
+    if(payment.plan==='consult'){
+      window.location.href='consultation/book.html?lawyer='+id;
+    } else {
+      window.location.href='payment.html?plan=consult&amt=2500';
+    }
+  }
+}
+
+function viewProfile(id){
+  window.location.href='lawyer/profile.html?id='+id;
+}
+
+// Initial render
+renderLawyers(LAWYERS);
+</script>
+<script src="js/nav.js"></script>
+</body>
+</html>

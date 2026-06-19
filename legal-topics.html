@@ -165,7 +165,24 @@
     .sl-mob-menu .sl-mob-signup{background:#FF9933;color:#fff!important;text-align:center;font-weight:700;border-radius:8px;margin-top:6px}
     .sl-mob-menu.open{display:flex;flex-direction:column}
     @media(max-width:768px){.sl-hamburger{display:flex}.sl-links,.sl-actions{display:none}}
-  </style>
+  
+    /* ── Nav Account Dropdown (nav.js) ── */
+    .nav-acct-wrap{position:relative}
+    .btn-nav-acct{color:#145214;border:2px solid #138808;padding:7px 14px;border-radius:8px;font-weight:700;font-size:13px;background:transparent;cursor:pointer;font-family:inherit;transition:.2s}
+    .btn-nav-acct:hover{background:#F0FBF0}
+    .nav-acct-menu{display:none;position:absolute;right:0;top:calc(100% + 8px);background:#fff;border:1px solid #E5E7EB;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.12);min-width:200px;z-index:999;overflow:hidden}
+    .nav-acct-menu.open{display:block}
+    .nav-acct-menu a{display:block;padding:10px 16px;font-size:13px;color:#0D3D0D;text-decoration:none;transition:.15s}
+    .nav-acct-menu a:hover{background:#F0FBF0}
+    .nav-acct-divider{height:1px;background:#E5E7EB;margin:4px 0}
+    .sl-btn-login,.btn-nav-login{color:#145214;border:2px solid #138808;padding:7px 16px;border-radius:8px;font-weight:700;font-size:13px;background:transparent;text-decoration:none;transition:.2s;display:inline-block}
+    .sl-btn-login:hover,.btn-nav-login:hover{background:#F0FBF0}
+    .sl-btn-signup,.btn-nav-signup{background:#FF9933;color:#fff;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:.2s;display:inline-block;border:none;cursor:pointer}
+    .sl-btn-signup:hover,.btn-nav-signup:hover{background:#E07000}
+    .sl-btn-admin,.btn-nav-admin{color:#6B7280;font-size:12px;font-weight:600;padding:6px 10px;border-radius:6px;text-decoration:none;transition:.15s;opacity:.7}
+    .sl-btn-admin:hover,.btn-nav-admin:hover{opacity:1;background:#F3F4F6;color:#374151}
+
+</style>
 </head>
 <body>
 
@@ -179,13 +196,10 @@
       <a href="legal-topics.html" class="sl-active">Legal Topics</a>
       <a href="laws-reference.html">Laws Library</a>
       <a href="pricing.html">Pricing</a>
+      
       <a href="about.html">About Us</a>
     </div>
-    <div class="sl-actions">
-      <a href="auth/admin-login.html" class="sl-btn-admin" title="Admin Console">⚙️ Admin</a>
-      <a href="index.html" class="sl-btn-login">Login</a>
-      <a href="index.html" class="sl-btn-signup">⚡ Sign Up Free</a>
-    </div>
+    <div class="sl-actions nav-actions" id="navActions"><!-- populated by nav.js --></div>
     <button class="sl-hamburger" onclick="document.getElementById('mobMenu').classList.toggle('open')" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -197,8 +211,7 @@
   <a href="laws-reference.html">📚 Laws Library</a>
   <a href="pricing.html">💰 Pricing</a>
   <a href="about.html">ℹ️ About Us</a>
-  <a href="auth/admin-login.html">⚙️ Admin</a>
-  <a href="index.html" class="sl-mob-signup">⚡ Sign Up Free — Analyze My Case</a>
+  <a href="auth/signup.html" class="sl-mob-signup">⚡ Sign Up Free — Analyze My Case</a>
 </div>
 
 <!-- Hero -->
@@ -279,7 +292,7 @@
 <!-- Footer -->
 <footer style="margin-top:40px">
   <p style="margin-bottom:8px;color:#aaa;font-size:15px;font-weight:700">SatLegal</p>
-  <p style="margin-bottom:8px"><a href="about.html">About</a> · <a href="legal-topics.html">Legal Topics</a> · <a href="privacy-policy.html">Privacy Policy</a> · <a href="terms-conditions.html">Terms &amp; Conditions</a> · <a href="about.html#contact">Contact</a></p>
+  <p style="margin-bottom:8px"><a href="index.html">Home</a> · <a href="about.html">About</a> · <a href="pricing.html">Pricing</a> ·  · <a href="how-it-works.html">How It Works</a> · <a href="faq.html">FAQ</a> · <a href="contact.html">Contact</a> · <a href="report-sample.html">Sample Report</a> · <a href="privacy-policy.html">Privacy</a> · <a href="terms-conditions.html">Terms</a></p>
   <p>⚠️ The content provided on this website is for informational purposes only and should not be relied upon as a substitute for legal advice. Recipients are advised to consult with qualified legal counsel before implementing any recommendations herein. SatLegal shall not be liable for actions taken based on this information.</p>
   <p style="margin-top:8px;font-size:12px">© 2025 SatLegal. All rights reserved.</p>
 </footer>
@@ -592,5 +605,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 </script>
+<script src="js/nav.js"></script>
 </body>
 </html>

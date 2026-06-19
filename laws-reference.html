@@ -26,12 +26,20 @@
     .nav-links a{color:#0D3D0D;text-decoration:none;font-size:14px;font-weight:500;padding:7px 13px;border-radius:6px;transition:.2s}
     .nav-links a:hover,.nav-links a.active{color:#145214;background:#F0FBF0}
     .nav-actions{display:flex;align-items:center;gap:8px}
-    .btn-nav-login{color:#145214;border:2px solid #138808;padding:7px 16px;border-radius:8px;font-weight:700;font-size:13px;background:transparent;text-decoration:none;transition:.2s}
-    .btn-nav-login:hover{background:#F0FBF0}
-    .btn-nav-signup{background:#FF9933;color:#fff;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:.2s}
-    .btn-nav-signup:hover{background:#E07000}
-    .btn-nav-admin{color:#6B7280;border:1px solid #D1D5DB;padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;background:transparent;transition:.2s;text-decoration:none}
-    .btn-nav-admin:hover{background:#F3F4F6;color:#374151}
+    .btn-nav-login,.sl-btn-login{color:#145214;border:2px solid #138808;padding:7px 16px;border-radius:8px;font-weight:700;font-size:13px;background:transparent;text-decoration:none;transition:.2s}
+    .btn-nav-login:hover,.sl-btn-login:hover{background:#F0FBF0}
+    .btn-nav-signup,.sl-btn-signup{background:#FF9933;color:#fff;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:.2s;border:none;cursor:pointer;font-family:inherit}
+    .btn-nav-signup:hover,.sl-btn-signup:hover{background:#E07000}
+    .btn-nav-admin,.sl-btn-admin{color:#6B7280;border:1px solid #D1D5DB;padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;background:transparent;transition:.2s;text-decoration:none}
+    .btn-nav-admin:hover,.sl-btn-admin:hover{background:#F3F4F6;color:#374151}
+    .nav-acct-wrap{position:relative}
+    .btn-nav-acct{color:#145214;border:2px solid #138808;padding:7px 14px;border-radius:8px;font-weight:700;font-size:13px;background:transparent;cursor:pointer;font-family:inherit;transition:.2s}
+    .btn-nav-acct:hover{background:#F0FBF0}
+    .nav-acct-menu{display:none;position:absolute;right:0;top:calc(100%+8px);background:#fff;border:1px solid #E5E7EB;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.12);min-width:200px;z-index:999;overflow:hidden}
+    .nav-acct-menu.open{display:block}
+    .nav-acct-menu a{display:block;padding:10px 16px;font-size:13px;color:#0D3D0D;text-decoration:none;transition:.15s}
+    .nav-acct-menu a:hover{background:#F0FBF0}
+    .nav-acct-divider{height:1px;background:#E5E7EB;margin:4px 0}
     @media(max-width:768px){.nav-links,.nav-actions{display:none}}
 
     /* HERO — Tricolor */
@@ -145,13 +153,10 @@
     <a href="legal-topics.html">Legal Topics</a>
     <a href="laws-reference.html" class="active">Laws Library</a>
     <a href="pricing.html">Pricing</a>
+    
     <a href="about.html">About Us</a>
   </div>
-  <div class="nav-actions">
-    <a href="auth/admin-login.html" class="btn-nav-admin" title="Admin Console">⚙️ Admin</a>
-    <a href="index.html" class="btn-nav-login">Login</a>
-    <a href="index.html" class="btn-nav-signup">⚡ Sign Up Free</a>
-  </div>
+  <div class="nav-actions" id="navActions"><!-- populated by nav.js --></div>
 </nav>
 
 <!-- HERO -->
@@ -689,5 +694,6 @@ function prefillWizard(section) {
 // Init
 buildLibrary();
 </script>
+<script src="js/nav.js"></script>
 </body>
 </html>

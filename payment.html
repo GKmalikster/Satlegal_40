@@ -299,16 +299,46 @@ function initiatePayment(){
 }
 
 function onPaymentSuccess(response){
-  // Store payment info
-  try{
-    localStorage.setItem('sl_payment',JSON.stringify({
-      paymentId:response.razorpay_payment_id,
-      orderId:response.razorpay_order_id,
-      plan,amt,uid,
-      paidAt:new Date().toISOString()
-    }));
-  }catch(e){}
+  const paymentData={
+    paymentId:response.razorpay_payment_id,
+    orderId:response.razorpay_order_id,
+    plan,amt,uid,
+    paidAt:new Date().toISOString()
+  };
+  try{ localStorage.setItem('sl_payment',JSON.stringify(paymentData)); }catch(e){}
+
+  // Save inquiry to backend (if user is logged in)
+  saveInquiryToBackend(paymentData);
   showSuccessScreen();
+}
+
+async function saveInquiryToBackend(paymentData){
+  try{
+    const token=localStorage.getItem('sl_auth_token');
+    if(!token) return; // not logged in — skip
+    const report=pendingReport||{};
+    const description=report.query||report.issue||'Case analysis via wizard';
+    const _API=location.hostname==='localhost'?'http://localhost:5000/api':'/api';
+    const resp=await fetch(_API+'/inquiry/create',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({
+        description,
+        applicableLaws:report.laws||[],
+        paymentId:paymentData.paymentId,
+        plan:paymentData.plan,
+        amount:paymentData.amt,
+        caseStrength:report.caseStrength||null,
+        documents:report.docs||[]
+      })
+    });
+    if(resp.ok){
+      const data=await resp.json();
+      if(data.inquiry){
+        localStorage.setItem('sl_last_inquiry_id',data.inquiry.inquiryId||data.inquiry._id);
+      }
+    }
+  }catch(e){ /* non-critical — report still shows */ }
 }
 
 function showSuccessScreen(){
@@ -316,8 +346,9 @@ function showSuccessScreen(){
   document.getElementById('successScreen').style.display='block';
 
   if(plan==='consult'){
-    document.getElementById('successMsg').textContent='Your Expert Consultation has been booked. A verified lawyer will contact you within 2 hours to schedule your 30-minute session.';
-    document.getElementById('btnViewReport').textContent='📄 View Report + Consultation Details';
+    document.getElementById('successMsg').textContent='Payment successful! Let\'s now book your consultation slot.';
+    document.getElementById('btnViewReport').textContent='📅 Book Consultation Slot →';
+    document.getElementById('btnViewReport').onclick=function(){ window.location.href='consultation/book.html'; };
   }
   loadLawyerRecommendation();
 }

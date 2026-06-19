@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Contact Us – SatLegal</title>
+<meta name="description" content="Get in touch with SatLegal for support, lawyer registration, partnerships, or general enquiries. We typically respond within 24 hours."/>
+<style>
+:root{--sf-500:#FF9933;--sf-600:#E07000;--sf-700:#B35100;--sf-100:#FFF4E6;--gr-500:#138808;--gr-600:#1A6B1A;--gr-700:#145214;--gr-800:#0D3D0D;--gr-50:#F0FBF0;--gr-100:#D4F5D2;--text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;--bg:#F8F9FA;--font:'Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:#fff;line-height:1.6}
+a{text-decoration:none;color:inherit}
+.tribar{height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
+.nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:900;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.nav-brand img{height:38px}
+.nav-links{display:flex;gap:4px}
+.nav-links a{font-size:14px;color:var(--gr-800);font-weight:500;padding:7px 13px;border-radius:6px;transition:.2s}
+.nav-links a:hover,.nav-links a.active{background:var(--gr-50);color:var(--gr-700)}
+.nav-actions{display:flex;gap:8px;align-items:center}
+/* Hero */
+.hero{background:linear-gradient(135deg,#E07000 0%,#FF9933 18%,#FFB347 30%,#FFD699 40%,#fff 50%,#A8E8A4 60%,#5CC852 72%,#138808 85%,#0D6B05 100%);padding:56px 24px 48px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(255,255,255,.14) 0%,transparent 70%);pointer-events:none}
+.hero h1{font-size:clamp(26px,4vw,44px);font-weight:900;color:#fff;margin-bottom:12px;text-shadow:0 2px 10px rgba(0,0,0,.25);position:relative;z-index:1}
+.hero p{font-size:15px;color:rgba(255,255,255,.9);max-width:560px;margin:0 auto;text-shadow:0 1px 4px rgba(0,0,0,.18);position:relative;z-index:1}
+/* Main layout */
+.main{max-width:1080px;margin:0 auto;padding:48px 24px;display:grid;grid-template-columns:1fr 360px;gap:40px;align-items:start}
+@media(max-width:768px){.main{grid-template-columns:1fr;padding:28px 16px}}
+/* Contact form */
+.form-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.form-card h2{font-size:20px;font-weight:800;color:var(--gr-800);margin-bottom:6px}
+.form-card .sub{font-size:13px;color:var(--text-lt);margin-bottom:24px}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:13px;font-weight:700;color:var(--gr-800);margin-bottom:6px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font);transition:.2s;outline:none}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--sf-500);box-shadow:0 0 0 3px rgba(255,153,51,.12)}
+.form-group textarea{min-height:130px;resize:vertical}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:480px){.form-row{grid-template-columns:1fr}}
+.btn-submit{width:100%;background:var(--sf-500);color:#fff;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s;margin-top:4px}
+.btn-submit:hover{background:var(--sf-600)}
+.form-note{font-size:11px;color:var(--text-lt);margin-top:10px;text-align:center}
+.success-msg{display:none;background:var(--gr-50);border:1px solid var(--gr-100);border-radius:10px;padding:20px;text-align:center;margin-top:16px}
+.success-msg .icon{font-size:36px;margin-bottom:8px}
+.success-msg h3{font-size:15px;font-weight:700;color:var(--gr-800);margin-bottom:4px}
+.success-msg p{font-size:13px;color:var(--text-lt)}
+/* Sidebar info cards */
+.info-col{}
+.info-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:16px}
+.info-card h3{font-size:14px;font-weight:800;color:var(--gr-800);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.info-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+.info-row:last-child{margin:0}
+.info-icon{font-size:20px;flex-shrink:0;width:28px;text-align:center;margin-top:2px}
+.info-label{font-size:11px;font-weight:700;color:var(--text-lt);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.info-val{font-size:13px;color:var(--gr-800);font-weight:600}
+.info-val a{color:var(--sf-600)}
+.info-val a:hover{text-decoration:underline}
+/* Response time card */
+.response-card{background:var(--gr-50);border:1px solid var(--gr-100);border-radius:12px;padding:20px;margin-bottom:16px}
+.response-card h3{font-size:13px;font-weight:800;color:var(--gr-800);margin-bottom:12px}
+.resp-row{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px dashed var(--gr-100)}
+.resp-row:last-child{border:none}
+.resp-label{color:var(--text-lt)}
+.resp-val{font-weight:700;color:var(--gr-700)}
+/* Footer */
+footer{background:var(--gr-800);color:rgba(255,255,255,.65);text-align:center;padding:20px;font-size:12px}
+footer a{color:rgba(255,255,255,.65);margin:0 6px}
+footer a:hover{color:#fff}
+</style>
+</head>
+<body>
+<div class="tribar"></div>
+<nav class="nav">
+  <a class="nav-brand" href="index.html"><img src="assets/logo.png" alt="SatLegal"/></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="legal-topics.html">Legal Topics</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="about.html">About</a>
+    <a href="contact.html" class="active">Contact</a>
+  </div>
+  <div class="nav-actions" id="navActions"><!-- populated by nav.js --></div>
+</nav>
+
+<div class="hero">
+  <h1>📞 Contact SatLegal</h1>
+  <p>Have a question? Need help with your case? Or want to partner with us? We're here for you.</p>
+</div>
+
+<div class="main">
+  <!-- Contact Form -->
+  <div class="form-card">
+    <h2>Send Us a Message</h2>
+    <p class="sub">We typically respond within 24 hours on working days.</p>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="ctName">Full Name *</label>
+        <input type="text" id="ctName" placeholder="Your full name" required/>
+      </div>
+      <div class="form-group">
+        <label for="ctEmail">Email Address *</label>
+        <input type="email" id="ctEmail" placeholder="you@example.com" required/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="ctPhone">Mobile Number</label>
+        <input type="tel" id="ctPhone" placeholder="10-digit mobile number"/>
+      </div>
+      <div class="form-group">
+        <label for="ctSubject">Subject *</label>
+        <select id="ctSubject">
+          <option value="">Select a topic…</option>
+          <option value="general">General Enquiry</option>
+          <option value="support">Technical Support</option>
+          <option value="lawyer">Lawyer Registration</option>
+          <option value="refund">Refund / Payment Issue</option>
+          <option value="partnership">Business Partnership</option>
+          <option value="media">Media / Press</option>
+          <option value="legal">Legal Notice</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="ctMsg">Message *</label>
+      <textarea id="ctMsg" placeholder="Describe your query or issue in detail. The more information you provide, the better we can help you."></textarea>
+    </div>
+
+    <button class="btn-submit" onclick="submitContact()">✉ Send Message</button>
+    <p class="form-note">By submitting this form you agree to our <a href="privacy-policy.html" style="color:var(--sf-600)">Privacy Policy</a>.</p>
+
+    <div class="success-msg" id="successMsg">
+      <div class="icon">✅</div>
+      <h3>Message Sent!</h3>
+      <p>Thank you for reaching out. We'll get back to you at your email address within 24 hours.</p>
+    </div>
+  </div>
+
+  <!-- Info sidebar -->
+  <div class="info-col">
+    <div class="info-card">
+      <h3>📬 Contact Details</h3>
+      <div class="info-row">
+        <div class="info-icon">📧</div>
+        <div>
+          <div class="info-label">Email</div>
+          <div class="info-val"><a href="mailto:support@satlegal.in">support@satlegal.in</a></div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">📋</div>
+        <div>
+          <div class="info-label">Legal Notices</div>
+          <div class="info-val"><a href="mailto:legal@satlegal.in">legal@satlegal.in</a></div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">🤝</div>
+        <div>
+          <div class="info-label">Partnerships</div>
+          <div class="info-val"><a href="mailto:partners@satlegal.in">partners@satlegal.in</a></div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">📍</div>
+        <div>
+          <div class="info-label">Registered Office</div>
+          <div class="info-val">SatLegal Technologies Pvt. Ltd.<br/>India 🇮🇳</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="response-card">
+      <h3>⏱ Response Times</h3>
+      <div class="resp-row"><span class="resp-label">General queries</span><span class="resp-val">24 hours</span></div>
+      <div class="resp-row"><span class="resp-label">Payment issues</span><span class="resp-val">4–6 hours</span></div>
+      <div class="resp-row"><span class="resp-label">Technical support</span><span class="resp-val">12 hours</span></div>
+      <div class="resp-row"><span class="resp-label">Lawyer registration</span><span class="resp-val">2 working days</span></div>
+      <div class="resp-row"><span class="resp-label">Legal notices</span><span class="resp-val">72 hours</span></div>
+    </div>
+
+    <div class="info-card">
+      <h3>⚡ Quick Links</h3>
+      <div class="info-row">
+        <div class="info-icon">❓</div>
+        <div><div class="info-val"><a href="faq.html">Frequently Asked Questions</a></div></div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">⚖️</div>
+        <div><div class="info-val"><a href="auth/lawyer-register.html">Register as a Lawyer</a></div></div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">📄</div>
+        <div><div class="info-val"><a href="report-sample.html">View Sample Report</a></div></div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">🔒</div>
+        <div><div class="info-val"><a href="privacy-policy.html">Privacy Policy</a></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="index.html">Home</a><a href="about.html">About</a><a href="faq.html">FAQ</a>
+  <a href="privacy-policy.html">Privacy</a><a href="terms-conditions.html">Terms</a>
+  <br/><br/>© 2025 SatLegal Technologies Pvt. Ltd. · Built for India 🇮🇳
+</footer>
+
+<script>
+function submitContact(){
+  const name=document.getElementById('ctName').value.trim();
+  const email=document.getElementById('ctEmail').value.trim();
+  const subject=document.getElementById('ctSubject').value;
+  const msg=document.getElementById('ctMsg').value.trim();
+
+  if(!name){alert('Please enter your name.');return;}
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert('Please enter a valid email address.');return;}
+  if(!msg||msg.length<20){alert('Please enter a message (at least 20 characters).');return;}
+
+  // Submit to backend (inquiry endpoint) or email
+  const _API=location.hostname==='localhost'?'http://localhost:5000/api':'/api';
+  fetch(_API+'/inquiry/contact',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name,email,phone:document.getElementById('ctPhone').value,subject,message:msg})
+  }).catch(()=>{}); // non-blocking — show success regardless
+
+  document.querySelector('.btn-submit').style.display='none';
+  document.getElementById('successMsg').style.display='block';
+}
+</script>
+<script src="js/nav.js"></script>
+</body>
+</html>

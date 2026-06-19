@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Page Not Found – SatLegal</title>
+<style>
+:root{--sf-500:#FF9933;--sf-600:#E07000;--gr-500:#138808;--gr-700:#145214;--gr-800:#0D3D0D;--gr-50:#F0FBF0;--text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;--bg:#F8F9FA;--font:'Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+a{text-decoration:none;color:inherit}
+.tribar{height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
+.nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:900}
+.nav-brand img{height:38px}
+.nav-links{display:flex;gap:20px}
+.nav-links a{font-size:14px;color:var(--gr-700);font-weight:600;transition:.2s}
+.nav-links a:hover{color:var(--sf-600)}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:60px 20px;text-align:center}
+.err-box{max-width:560px}
+.err-num{font-size:120px;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--sf-500),var(--gr-500));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.err-title{font-size:28px;font-weight:800;color:var(--gr-800);margin-bottom:12px}
+.err-sub{font-size:15px;color:var(--text-lt);line-height:1.7;margin-bottom:32px}
+.err-search{display:flex;gap:10px;max-width:420px;margin:0 auto 28px}
+.err-search input{flex:1;padding:12px 16px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font);outline:none;transition:.2s}
+.err-search input:focus{border-color:var(--sf-500)}
+.err-search button{background:var(--sf-500);color:#fff;border:none;padding:12px 20px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s}
+.err-search button:hover{background:var(--sf-600)}
+.err-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.err-link{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:700;transition:.2s}
+.err-link.primary{background:var(--gr-800);color:#fff}
+.err-link.primary:hover{background:var(--gr-700)}
+.err-link.outline{border:2px solid var(--gr-500);color:var(--gr-700)}
+.err-link.outline:hover{background:var(--gr-50)}
+footer{background:var(--gr-800);color:rgba(255,255,255,.6);text-align:center;padding:16px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="tribar"></div>
+<nav class="nav">
+  <a class="nav-brand" href="index.html"><img src="assets/logo.png" alt="SatLegal"/></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="legal-topics.html">Legal Topics</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<main>
+  <div class="err-box">
+    <div class="err-num">404</div>
+    <h1 class="err-title">Page Not Found</h1>
+    <p class="err-sub">The page you're looking for doesn't exist or may have been moved. Try searching for what you need, or go back home.</p>
+
+    <div class="err-search">
+      <input type="text" id="errSearch" placeholder="Search legal topics…" onkeydown="if(event.key==='Enter')doSearch()"/>
+      <button onclick="doSearch()">Search</button>
+    </div>
+
+    <div class="err-links">
+      <a class="err-link primary" href="index.html">🏠 Go Home</a>
+      <a class="err-link outline" href="legal-topics.html">📋 Legal Topics</a>
+      <a class="err-link outline" href="laws-reference.html">⚖️ Law Library</a>
+      <a class="err-link outline" href="contact.html">📞 Contact Us</a>
+    </div>
+  </div>
+</main>
+
+<footer>© 2025 SatLegal · Built for India 🇮🇳</footer>
+
+<script>
+function doSearch(){
+  const q=document.getElementById('errSearch').value.trim();
+  if(q) window.location.href='laws-reference.html?q='+encodeURIComponent(q);
+}
+</script>
+</body>
+</html>

@@ -39,10 +39,19 @@ a{text-decoration:none;color:inherit}button{cursor:pointer;font-family:var(--fon
 .nav-actions{display:flex;align-items:center;gap:8px}
 .btn-nav-admin{color:var(--text-lt);font-size:12px;font-weight:600;padding:6px 10px;border-radius:6px;text-decoration:none;transition:.15s;opacity:.7}
 .btn-nav-admin:hover{opacity:1;background:var(--bg);color:var(--gr-700)}
-.btn-nav-login{color:var(--gr-700);border:2px solid var(--gr-500);padding:7px 16px;border-radius:8px;font-weight:700;font-size:13px;background:transparent;transition:.2s;cursor:pointer;font-family:var(--font)}
-.btn-nav-login:hover{background:var(--gr-50)}
-.btn-nav-signup{background:var(--sf-500);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;transition:.2s;cursor:pointer;font-family:var(--font)}
-.btn-nav-signup:hover{background:var(--sf-600);transform:translateY(-1px)}
+.btn-nav-login,.sl-btn-login{color:var(--gr-700);border:2px solid var(--gr-500);padding:7px 16px;border-radius:8px;font-weight:700;font-size:13px;background:transparent;transition:.2s;cursor:pointer;font-family:var(--font);text-decoration:none}
+.btn-nav-login:hover,.sl-btn-login:hover{background:var(--gr-50)}
+.btn-nav-signup,.sl-btn-signup{background:var(--sf-500);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;transition:.2s;cursor:pointer;font-family:var(--font);text-decoration:none}
+.btn-nav-signup:hover,.sl-btn-signup:hover{background:var(--sf-600);transform:translateY(-1px)}
+/* My Account dropdown */
+.nav-acct-wrap{position:relative}
+.btn-nav-acct{color:var(--gr-700);border:2px solid var(--gr-500);padding:7px 14px;border-radius:8px;font-weight:700;font-size:13px;background:transparent;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-nav-acct:hover{background:var(--gr-50)}
+.nav-acct-menu{display:none;position:absolute;right:0;top:calc(100%+8px);background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.12);min-width:200px;z-index:999;overflow:hidden}
+.nav-acct-menu.open{display:block}
+.nav-acct-menu a{display:block;padding:10px 16px;font-size:13px;color:var(--gr-800);text-decoration:none;transition:.15s}
+.nav-acct-menu a:hover{background:var(--gr-50)}
+.nav-acct-divider{height:1px;background:var(--border);margin:4px 0}
 .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:6px;cursor:pointer}
 .hamburger span{width:24px;height:2px;background:var(--gr-800);border-radius:2px;display:block;transition:.3s}
 .mob-menu{display:none;background:#fff;flex-direction:column;padding:10px 16px 14px;border-top:1px solid var(--border)}
@@ -652,13 +661,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
       <a href="legal-topics.html">Legal Topics</a>
       <a href="laws-reference.html">Laws Library</a>
       <a href="pricing.html">Pricing</a>
+      
       <a href="about.html">About Us</a>
     </div>
-    <div class="nav-actions">
-      <a href="auth/admin-login.html" class="btn-nav-admin" title="Admin Console">⚙️ Admin</a>
-      <button class="btn-nav-login" onclick="scrollToWizard()">Login</button>
-      <button class="btn-nav-signup" onclick="scrollToWizard()">⚡ Sign Up Free</button>
-    </div>
+    <div class="nav-actions" id="navActions"><!-- populated by nav.js --></div>
     <button class="hamburger" onclick="toggleMob()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -668,8 +674,11 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
     <a href="legal-topics.html">📋 Legal Topics</a>
     <a href="laws-reference.html">📚 Laws Library</a>
     <a href="pricing.html">💰 Pricing</a>
+    <a href="how-it-works.html">💡 How It Works</a>
+    
     <a href="about.html">ℹ️ About Us</a>
-    <a href="#" onclick="scrollToWizard();toggleMob();return false" class="mob-btn-signup">⚡ Sign Up Free — Analyze My Case</a>
+    <a href="contact.html">📞 Contact Us</a>
+    <a href="auth/signup.html" class="mob-btn-signup sl-mob-signup">⚡ Sign Up Free — Analyze My Case</a>
   </div>
 </nav>
 
@@ -729,6 +738,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
         <button class="btn-analyze-main" onclick="heroAnalyze()" style="margin-top:14px">
           🔍 Analyze My Case →
         </button>
+        <div style="margin-top:10px;text-align:center"><a href="report-sample.html" style="font-size:12px;color:rgba(255,255,255,.8);text-decoration:underline">👀 See what a report looks like</a></div>
       </div>
     </div>
 
@@ -972,9 +982,12 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
   <div class="foot-logo"><div style="display:inline-block;background:#fff;border-radius:12px;padding:6px 18px;margin-bottom:6px"><img src="assets/logo.png" alt="SatLegal" style="height:44px;width:auto;display:block"></div></div>
   <div class="foot-links">
     <a href="index.html">Home</a><a href="about.html">About Us</a>
+    <a href="how-it-works.html">How It Works</a><a href="pricing.html">Pricing</a>
+    <a href="faq.html">FAQ</a>
     <a href="laws-reference.html">Laws Library</a><a href="legal-topics.html">Legal Topics</a>
+    <a href="contact.html">Contact Us</a>
+    <a href="report-sample.html">Sample Report</a>
     <a href="privacy-policy.html">Privacy Policy</a><a href="terms-conditions.html">Terms &amp; Conditions</a>
-    <a href="auth/admin-login.html">Admin</a>
   </div>
   <p>⚠️ The content provided on this website is for informational purposes only and should not be relied upon as a substitute for legal advice. Recipients are advised to consult with qualified legal counsel before implementing any recommendations herein. SatLegal shall not be liable for actions taken based on this information.</p>
   <p style="margin-top:6px">© 2025 SatLegal · Built for India 🇮🇳 · All rights reserved</p>
@@ -1033,6 +1046,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
      SCRIPTS
 ═══════════════════════════════════════════════════════ -->
 <script src="js/laws-client.js"></script>
+<script src="js/nav.js"></script>
 <script>
 /* ═══════════════════════════════════════════
    WIZARD STATE
@@ -1179,6 +1193,18 @@ function scrollToWizard(){
   const ta=document.getElementById('heroTa')||document.getElementById('issueTa');
   if(ta)setTimeout(()=>ta.focus(),400);
 }
+function resumeWizard(){
+  const rb=document.getElementById('resumeBanner');if(rb)rb.remove();
+  scrollToWizard();
+  // Re-populate the textarea with saved input
+  const ta=document.getElementById('issueTa');
+  if(ta&&W.input){ta.value=W.input;updCC();}
+  showStep(W.step||2);
+}
+function dismissResume(){
+  localStorage.removeItem('sl_wizard_session');
+  const rb=document.getElementById('resumeBanner');if(rb)rb.remove();
+}
 function openWizard(){resetW();scrollToWizard();showStep(1)}
 function closeWizard(){resetW();showStep(1)}
 
@@ -1206,8 +1232,33 @@ function drawProg(){
 }
 
 /* ── Show step ── */
+function saveWizardSession(){
+  try{
+    const snap={step:W.step,input:W.input,answers:W.answers,areas:W.areas,
+      laws:W.laws.slice(0,10),selected:W.selected.slice(0,5),
+      assessmentAnswers:W.assessmentAnswers,name:W.name,email:W.email,phone:W.phone,
+      savedAt:Date.now()};
+    localStorage.setItem('sl_wizard_session',JSON.stringify(snap));
+  }catch(e){}
+}
+function restoreWizardSession(){
+  try{
+    const raw=localStorage.getItem('sl_wizard_session');
+    if(!raw)return false;
+    const snap=JSON.parse(raw);
+    // Only restore sessions saved within the last 24 hours
+    if(!snap.savedAt||Date.now()-snap.savedAt>86400000){localStorage.removeItem('sl_wizard_session');return false;}
+    if(!snap.input||snap.step<2)return false;
+    Object.assign(W,{input:snap.input,answers:snap.answers||{},areas:snap.areas||[],
+      laws:snap.laws||[],selected:snap.selected||[],
+      assessmentAnswers:snap.assessmentAnswers||{},
+      name:snap.name||'',email:snap.email||'',phone:snap.phone||''});
+    return snap.step||1;
+  }catch(e){return false;}
+}
 function showStep(n){
   W.step=n;
+  saveWizardSession();
   const wc=document.getElementById('wizCard');
   if(wc)wc.style.display='';
   document.querySelectorAll('.wiz-pane').forEach(p=>p.classList.remove('active'));
@@ -2008,6 +2059,8 @@ function verifyOtp(){
 
 /* ══ REPORT ══ */
 function genReport(uid,user){
+  // Clear wizard session — report generated successfully
+  try{localStorage.removeItem('sl_wizard_session');}catch(e){}
   const files=Object.values(W.files).reduce((s,v)=>s+v,0);
   const win=calcWin(W.selected,W.answers,files);
   const now=new Date().toLocaleString('en-IN',{dateStyle:'long',timeStyle:'short'});
@@ -2639,6 +2692,19 @@ document.addEventListener('DOMContentLoaded',function(){
       b.style.cssText='background:var(--sf-500);color:#fff;text-align:center;padding:7px;font-size:13px;font-weight:700';
       b.textContent=c.banners.demoText;
       document.body.insertBefore(b,document.body.firstChild);
+    }
+  }catch(e){}
+
+  // Restore wizard session if user left mid-way
+  try{
+    const restoredStep=restoreWizardSession();
+    if(restoredStep&&restoredStep>=2&&W.input){
+      // Show a resume banner
+      const rb=document.createElement('div');
+      rb.id='resumeBanner';
+      rb.style.cssText='background:var(--gr-800);color:#fff;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:12px';
+      rb.innerHTML=`<span>🔄 You have an unfinished case analysis. <strong>Resume where you left off?</strong></span><button onclick="resumeWizard()" style="background:var(--sf-500);color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Resume</button><button onclick="dismissResume()" style="background:transparent;border:1px solid rgba(255,255,255,.4);color:rgba(255,255,255,.8);padding:6px 10px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit">Start Fresh</button>`;
+      document.body.insertBefore(rb, document.body.firstChild);
     }
   }catch(e){}
 
