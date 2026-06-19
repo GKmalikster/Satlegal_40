@@ -1362,6 +1362,23 @@ function showRegForm(){
 function wizNext(){if(W.step===1)return s1();if(W.step===2)return s2();if(W.step===3)return s3();if(W.step===4)return s4();if(W.step===5)return s5()}
 function wizBack(){if(W.step>1)showStep(W.step-1)}
 
+/* ══ AI CLASSIFIER — calls /api/analyse, falls back to local keyword engine ══ */
+async function classifyLaws(description){
+  try{
+    const r=await Promise.race([
+      fetch('/api/analyse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({description})}),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),9000))
+    ]);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    if(d.success&&Array.isArray(d.laws)&&d.laws.length)return d.laws;
+    throw new Error('empty response');
+  }catch(e){
+    console.warn('[classifyLaws] API failed, using local engine:',e.message);
+    return (window.analyzeMultipleLaws||analyzeMultipleLaws)(description,{});
+  }
+}
+
 /* ══ STEP 1 ══ */
 function s1(){
   const txt=document.getElementById('issueTa').value.trim();
@@ -1631,29 +1648,39 @@ function selOpt(qId,oi,val){
 }
 
 /* ══ STEP 2 ══ */
-function s2(){
-  // If probing questions answered, add their context to the re-analysis
-  const probingAnswers={...W.answers};
-  W.laws=(window.analyzeMultipleLaws||analyzeMultipleLaws)(W.input,probingAnswers);
-  if(!Array.isArray(W.laws))W.laws=[];
+async function s2(){
+  // Show analysing state while Claude API runs
+  const btn=document.querySelector('.wiz-next-btn');
+  if(btn){btn.disabled=true;btn.textContent='Analysing…';}
 
-  // If areas still empty, infer from probing answers
-  if(!W.areas.length&&W.answers.incident_type){
-    const inc=W.answers.incident_type||'';
-    if(inc.includes('financial')||inc.includes('fraud'))W.areas=['cyber','criminal'];
-    else if(inc.includes('harassed')||inc.includes('threatened'))W.areas=['criminal','family'];
-    else if(inc.includes('property'))W.areas=['property'];
-    else if(inc.includes('contract'))W.areas=['civil','employment'];
-    else if(inc.includes('family')||inc.includes('matrimonial'))W.areas=['family'];
-    else if(inc.includes('government'))W.areas=['civil','land_acquisition'];
-  }
+  try{
+    // Build enriched description: original input + answers to probing questions
+    const answerContext=Object.values(W.answers).filter(Boolean).join('. ');
+    const enriched=W.input+(answerContext?' — '+answerContext:'');
 
-  if(!W.laws.length){
-    toast('We need more detail to identify applicable laws. Please add more context to your description.','err');
-    showStep(1);return;
+    W.laws=await classifyLaws(enriched);
+    if(!Array.isArray(W.laws))W.laws=[];
+
+    // If areas still empty, infer from probing answers
+    if(!W.areas.length&&W.answers.incident_type){
+      const inc=W.answers.incident_type||'';
+      if(inc.includes('financial')||inc.includes('fraud'))W.areas=['cyber','criminal'];
+      else if(inc.includes('harassed')||inc.includes('threatened'))W.areas=['criminal','family'];
+      else if(inc.includes('property'))W.areas=['property'];
+      else if(inc.includes('contract'))W.areas=['civil','employment'];
+      else if(inc.includes('family')||inc.includes('matrimonial'))W.areas=['family'];
+      else if(inc.includes('government'))W.areas=['civil','land_acquisition'];
+    }
+
+    if(!W.laws.length){
+      toast('We need more detail to identify applicable laws. Please add more context to your description.','err');
+      showStep(1);return;
+    }
+    renderLaws();
+    showStep(3);
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Next →';}
   }
-  renderLaws();
-  showStep(3);
 }
 
 /* ── Render law cards ── */
@@ -2230,7 +2257,12 @@ function toggleChat(){
 function chatSend(){const v=document.getElementById('chatIn').value.trim();if(!v)return;chatAsk(v);document.getElementById('chatIn').value=''}
 function chatAsk(q){
   addUserMsg(q);
-  setTimeout(()=>addBotMsg(chatAnswer(q)),600);
+  addBotMsg('<em style="color:#999">Analysing…</em>');
+  chatAnswer(q).then(ans=>{
+    const msgs=document.getElementById('chatMsgs');
+    const last=msgs.querySelector('.chat-msg.bot:last-child');
+    if(last)last.innerHTML=ans.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br/>');
+  });
 }
 function addUserMsg(t){const m=document.getElementById('chatMsgs');const d=document.createElement('div');d.className='chat-msg user';d.textContent=t;m.appendChild(d);m.scrollTop=m.scrollHeight}
 function addBotMsg(t){
@@ -2239,8 +2271,8 @@ function addBotMsg(t){
   d.innerHTML=t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br/>');
   m.appendChild(d);m.scrollTop=m.scrollHeight;
 }
-function chatAnswer(q){
-  const laws=(window.analyzeMultipleLaws||analyzeMultipleLaws)(q,{});
+async function chatAnswer(q){
+  const laws=await classifyLaws(q);
   if(!laws||!laws.length||(laws[0].confidence||laws[0].score||0)<15){
     return 'I need more context to help you accurately. Could you describe your situation in more detail? For example: who is involved, what happened, and what outcome you are seeking?';
   }
