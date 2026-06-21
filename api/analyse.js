@@ -3,8 +3,12 @@
 // Replaces browser-side keyword classification with Claude Haiku AI
 // Falls back gracefully if ANTHROPIC_API_KEY is not set
 
-const Anthropic = require('@anthropic-ai/sdk');
-const DB        = require('../laws-database.js');
+// Wrap SDK require so a missing/broken package degrades to keyword fallback
+let Anthropic = null;
+try { Anthropic = require('@anthropic-ai/sdk'); }
+catch(e) { console.warn('[analyse] @anthropic-ai/sdk unavailable:', e.message); }
+
+const DB = require('../laws-database.js');
 
 // ── Build the valid caseType list once at cold-start ────────────────────────
 const LAW_TYPES_TEXT = DB.map(l => l.caseType).join('\n');
@@ -100,8 +104,8 @@ module.exports = async function handler(req, res) {
   if (hit) return res.json({ success: true, laws: hit, source: 'cache' });
 
   // ── Claude classify ────────────────────────────────────────────────────────
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.warn('[analyse] ANTHROPIC_API_KEY not set — using keyword fallback');
+  if (!process.env.ANTHROPIC_API_KEY || !Anthropic) {
+    console.warn('[analyse] Claude unavailable — using keyword fallback');
     const laws = keywordFallback(description);
     return res.json({ success: true, laws, source: 'keywords' });
   }
