@@ -970,6 +970,364 @@ const TESTS = [
   { q: 'talaq de diya teen baar whatsapp pe',                          expect: 'Muslim',               note: '[Hindi] triple talaq WA' },
   { q: 'rti daala tha answer nahi aaya 60 din ho gaye',               expect: ['PIL','RTI'],          note: '[Hindi] RTI 60 days no reply' },
   { q: 'bacche ko school ne rte mein seat nahi di',                    expect: 'Education',            note: '[Hindi] RTE seat denied' },
+
+  // ══════════════════════════════════════════════════════════════════
+  // EXPANSION ROUND 2 — additional tests per thin category + new Hinglish
+  // ══════════════════════════════════════════════════════════════════
+
+  // ── DIVORCE (extra) ─────────────────────────────────────────────
+  { q: 'wife filed false 498a to pressurise divorce settlement',        expect: 'Divorce',              note: '[Divorce2] false 498a pressure' },
+  { q: 'husband in jail need to file divorce while he is imprisoned',   expect: 'Divorce',              note: '[Divorce2] spouse in jail' },
+  { q: 'nikah was done minor want to dissolve marriage',                expect: ['Divorce','Muslim'],    note: '[Divorce2] minor nikah' },
+  { q: 'my spouse is living abroad and refusing divorce proceedings',   expect: 'Divorce',              note: '[Divorce2] spouse abroad' },
+  { q: 'mutual divorce second motion not filed by wife what to do',     expect: ['Divorce','MCD'],      note: '[Divorce2] MCD second motion' },
+  { q: 'husband says he will not give divorce but life is impossible',  expect: 'Divorce',              note: '[Divorce2] contested refusal' },
+
+  // ── DOMESTIC VIOLENCE (extra) ───────────────────────────────────
+  { q: 'in-laws are making life hell emotional abuse and taunts daily', expect: 'Domestic Violence',    note: '[DV2] in-law emotional abuse' },
+  { q: 'husband locks me inside house and takes my phone away',         expect: 'Domestic Violence',    note: '[DV2] confinement control' },
+  { q: 'husband hit me in front of children need protection',           expect: 'Domestic Violence',    note: '[DV2] violence with children' },
+  { q: 'i left matrimonial home due to violence need rights to property',expect: 'Domestic Violence',   note: '[DV2] left home rights' },
+  { q: 'sasural walon ne ghar se nikaala pati ne maara',                expect: 'Domestic Violence',    note: '[DV2] Hinglish eviction' },
+
+  // ── MAINTENANCE (extra) ─────────────────────────────────────────
+  { q: 'husband refuses to give any money after separation',            expect: 'Maintenance',          note: '[Maint2] post-separation' },
+  { q: 'interim maintenance not paid by husband for 6 months',         expect: 'Maintenance',          note: '[Maint2] interim not paid' },
+  { q: 'daughter in law not being maintained by son what can she do',   expect: 'Maintenance',          note: '[Maint2] daughter in law' },
+  { q: 'live-in partner refusing to maintain me after separation',      expect: 'Maintenance',          note: '[Maint2] live-in partner' },
+  { q: 'father of my child not paying child support after divorce',     expect: 'Maintenance',          note: '[Maint2] child support' },
+  { q: 'pati ne guzara nahi diya teen saal se alag hain',              expect: 'Maintenance',          note: '[Maint2] Hinglish nafaqa' },
+
+  // ── CUSTODY (extra) ─────────────────────────────────────────────
+  { q: 'husband took children to his house will not return them',       expect: 'Custody',              note: '[Custody2] child withheld' },
+  { q: 'child custody battle father wants sole custody after divorce',  expect: 'Custody',              note: '[Custody2] sole custody battle' },
+  { q: 'child abducted to foreign country by mother without consent',   expect: ['Custody','NRI'],      note: '[Custody2] international abduction' },
+  { q: 'want to modify existing custody order children now prefer me',  expect: 'Custody',              note: '[Custody2] modify order' },
+  { q: 'bachon ko pita apne paas rakh ke nahi de raha mujhe',          expect: 'Custody',              note: '[Custody2] Hinglish father withheld' },
+
+  // ── SALARY / EMPLOYMENT (extra) ─────────────────────────────────
+  { q: 'company deducted salary without issuing show cause notice',     expect: 'Salary',               note: '[Salary2] deduction no SCN' },
+  { q: 'employer forced me to resign sign blank paper threatening',     expect: ['Salary','Termination'],note: '[Salary2] forced resign blank paper' },
+  { q: 'stipend not paid internship company refusing to pay',           expect: 'Salary',               note: '[Salary2] internship stipend' },
+  { q: 'management trainee salary kept on hold for 8 months',          expect: 'Salary',               note: '[Salary2] trainee salary hold' },
+  { q: 'notice pay wrongly deducted from full and final settlement',    expect: 'Salary',               note: '[Salary2] notice pay deducted' },
+
+  // ── WRONGFUL TERMINATION (extra) ────────────────────────────────
+  { q: 'terminated without inquiry or show cause notice after 10 years',expect: 'Termination',          note: '[WrongTerm2] no inquiry' },
+  { q: 'forced to resign due to hostile work environment',              expect: 'Termination',          note: '[WrongTerm2] constructive dismissal' },
+  { q: 'terminated during probation without written reason',            expect: 'Termination',          note: '[WrongTerm2] probation termination' },
+  { q: 'management transferred me to remote location to force resignation',expect: 'Termination',       note: '[WrongTerm2] transfer to force resign' },
+  { q: 'contract not renewed after 5 years of continuous service',      expect: 'Termination',          note: '[WrongTerm2] contract renewal denied' },
+  { q: 'naukri se nikaal diya bina kisi notice ke 8 saal baad',        expect: 'Termination',          note: '[WrongTerm2] Hinglish fired no notice' },
+
+  // ── CYBER CRIME (extra) ─────────────────────────────────────────
+  { q: 'received call from fake police officer demanding money',        expect: 'Cyber',                note: '[Cyber2] fake police call' },
+  { q: 'cryptocurrency exchange hacked lost all my investments',        expect: 'Cyber',                note: '[Cyber2] crypto exchange hack' },
+  { q: 'deepfake video of me circulated on social media',               expect: ['Cyber','CyberHarass'], note: '[Cyber2] deepfake video' },
+  { q: 'whatsapp group admin not removing defamatory content about me', expect: ['Cyber','Defamation'],  note: '[Cyber2] WA group defamation' },
+  { q: 'aadhaar otp shared with fake bank executive all money gone',    expect: 'Cyber',                note: '[Cyber2] aadhaar otp bank fraud' },
+  { q: 'online gaming app deducted money without consent from account', expect: 'Cyber',                note: '[Cyber2] gaming app deduction' },
+
+  // ── CONSUMER (extra) ────────────────────────────────────────────
+  { q: 'car purchased 6 months ago engine failed manufacturer refusing warranty',expect: 'Consumer',    note: '[Consumer2] car engine warranty' },
+  { q: 'builder sold flat with different specifications than brochure',  expect: ['Consumer','RERA'],    note: '[Consumer2] flat spec mismatch' },
+  { q: 'solar panel installed not working as promised full refund sought',expect: 'Consumer',           note: '[Consumer2] solar panel fraud' },
+  { q: 'hair transplant clinic gave wrong treatment caused permanent damage',expect: 'Consumer',        note: '[Consumer2] hair transplant damage' },
+  { q: 'gym membership cancelled they are not giving refund',           expect: 'Consumer',             note: '[Consumer2] gym refund' },
+  { q: 'product on meesho arrived broken seller not responding',        expect: 'Consumer',             note: '[Consumer2] meesho broken product' },
+
+  // ── RENT / TENANT (extra) ───────────────────────────────────────
+  { q: 'landlord disconnected electricity to force me to vacate',       expect: 'Rent',                 note: '[Rent2] electricity disconnected' },
+  { q: 'landlord entered my flat without notice and removed my things', expect: 'Rent',                 note: '[Rent2] illegal entry removal' },
+  { q: 'commercial tenant locked out by landlord mid-tenancy',          expect: 'Rent',                 note: '[Rent2] commercial lockout' },
+  { q: 'rent agreement expired but i continue paying and landlord accepted',expect: 'Rent',             note: '[Rent2] holdover tenant' },
+  { q: 'society maintenance arrears dispute with landlord',             expect: ['Rent','Society'],      note: '[Rent2] maintenance arrears' },
+  { q: 'makan malik kiraya badha raha hai rent nahi de sakta',          expect: 'Rent',                 note: '[Rent2] Hinglish rent hike' },
+
+  // ── RERA / BUILDER (extra) ──────────────────────────────────────
+  { q: 'rera complaint builder not delivering flat on time interest',   expect: 'RERA',                 note: '[RERA2] formal complaint' },
+  { q: 'builder registered project under rera but not updating status', expect: 'RERA',                 note: '[RERA2] no status update' },
+  { q: 'rera registration number fake builder collected crores',        expect: 'RERA',                 note: '[RERA2] fake registration' },
+  { q: 'flat possssion given but occ certificate not given by builder', expect: 'RERA',                 note: '[RERA2] OC not given' },
+  { q: 'builder increasing cost beyond agreement amount demanding extra money',expect: 'RERA',          note: '[RERA2] cost escalation' },
+
+  // ── PROPERTY / PARTITION (extra) ────────────────────────────────
+  { q: 'brother got more property than me in partition unfair distribution',expect: ['Partition','Hindu Succession'],note: '[Partition2] unequal distribution' },
+  { q: 'sister claiming share in ancestral property after fathers death',expect: ['Partition','Hindu Succession'],  note: '[Partition2] sister ancestral' },
+  { q: 'co-owner wants to sell but other co-owner refuses what to do',  expect: 'Partition',            note: '[Partition2] sale dispute co-owner' },
+  { q: 'partition deed was signed under coercion want to set aside',    expect: 'Partition',            note: '[Partition2] coerced partition deed' },
+  { q: 'bhai ne poori zameen apne naam kar li baap ke marne ke baad',   expect: ['Partition','Hindu Succession'],  note: '[Partition2] Hinglish brother took all' },
+
+  // ── DOWRY (extra) ───────────────────────────────────────────────
+  { q: 'in-laws demand car as dowry threatening to throw me out',       expect: 'Dowry',                note: '[Dowry2] car dowry threat' },
+  { q: 'husband returned me to parents house for dowry beating me',     expect: 'Dowry',                note: '[Dowry2] returned for dowry' },
+  { q: 'mother-in-law calls me names and beats me for not bringing more dowry',expect: 'Dowry',         note: '[Dowry2] MIL harassment' },
+  { q: 'stridhan jewellery taken by in-laws not returning',             expect: ['Dowry','Domestic'],   note: '[Dowry2] stridhan taken' },
+  { q: 'dahej maang ke pita ji ko dhamki de rahe hain',                 expect: 'Dowry',                note: '[Dowry2] Hinglish dhamki' },
+
+  // ── NRI (extra) ─────────────────────────────────────────────────
+  { q: 'i am in usa my tenant in india is not paying rent',             expect: ['NRI','Rent'],         note: '[NRI2] NRI tenant non-payment' },
+  { q: 'nri oci card rejected want to appeal the rejection',            expect: 'NRI',                  note: '[NRI2] OCI rejected' },
+  { q: 'uk based nri father died without will property in india',       expect: ['NRI','Hindu Succession'],note: '[NRI2] UK NRI father died' },
+  { q: 'nre account blocked by bank without any notice or reason',      expect: 'NRI',                  note: '[NRI2] NRE blocked' },
+  { q: 'i live in canada bhai ne meri zameen bech di bina bataye',      expect: 'NRI',                  note: '[NRI2] Hinglish Canada NRI' },
+
+  // ── SENIOR CITIZEN (extra) ──────────────────────────────────────
+  { q: 'old parents living alone children abroad not sending money',    expect: 'Senior Citizen',       note: '[Senior2] children abroad no money' },
+  { q: 'senior citizen maintenance tribunal application procedure',     expect: 'Senior Citizen',       note: '[Senior2] tribunal procedure' },
+  { q: 'gift deed given to son he now refuses to maintain me',          expect: 'Senior Citizen',       note: '[Senior2] gift deed revocation' },
+  { q: 'budhhe maa baap ko bete ne nikaala ghar se kya karna hai',      expect: 'Senior Citizen',       note: '[Senior2] Hinglish parents evicted' },
+  { q: 'parents maintenance act complaint against son daughter',        expect: 'Senior Citizen',       note: '[Senior2] formal complaint' },
+
+  // ── FOOD SAFETY (extra) ─────────────────────────────────────────
+  { q: 'restaurant served me stale food got sick want to complain',     expect: 'Food Safety',          note: '[Food2] stale food sick' },
+  { q: 'packaged snacks contained foreign object plastic found inside', expect: 'Food Safety',          note: '[Food2] plastic in snacks' },
+  { q: 'oil company selling adulterated cooking oil want action',       expect: 'Food Safety',          note: '[Food2] adulterated oil' },
+  { q: 'fssai license expired still operating restaurant',              expect: 'Food Safety',          note: '[Food2] expired FSSAI license' },
+  { q: 'false organic claim on food product report to authorities',     expect: 'Food Safety',          note: '[Food2] false organic claim' },
+  { q: 'doodh mein paani mila ke bech raha hai dairy wala',            expect: 'Food Safety',          note: '[Food2] Hinglish milk adulteration' },
+
+  // ── EDUCATION (extra) ───────────────────────────────────────────
+  { q: 'private college shut down mid-session refund of fees',          expect: 'Education',            note: '[Edu2] college shut mid-session' },
+  { q: 'university issued fake degree certificate complaint to ugc',    expect: 'Education',            note: '[Edu2] fake degree complaint' },
+  { q: 'school teacher discriminating against sc student marks',        expect: ['Education','SC/ST','Atrocities'], note: '[Edu2] SC discrimination marks' },
+  { q: 'edtech company took fees closed app no refund',                 expect: ['Education','Consumer'], note: '[Edu2] edtech refund' },
+  { q: 'engineering college not affiliated but gave admission on false claim',expect: 'Education',      note: '[Edu2] unaffiliated college' },
+  { q: 'mere bache ko school ne galat teacher se padha raha hai aur fees bhi maang raha hai',expect: 'Education',note: '[Edu2] Hinglish school fees' },
+
+  // ── ENVIRONMENT / NGT (extra) ───────────────────────────────────
+  { q: 'river near our village completely polluted by industrial effluent',expect: 'Environment',       note: '[NGT2] river industrial' },
+  { q: 'illegal quarrying destroying hillside near our village',        expect: 'Environment',          note: '[NGT2] illegal quarry' },
+  { q: 'hospital is burning biomedical waste openly in residential area',expect: 'Environment',         note: '[NGT2] biomedical waste' },
+  { q: 'noise pollution from factory running machinery 24 hours',       expect: 'Environment',          note: '[NGT2] noise factory 24h' },
+  { q: 'real estate project destroying protected wetland area',         expect: 'Environment',          note: '[NGT2] wetland destruction' },
+  { q: 'nala se ganda paani aa raha hai bimari ho rahi hai village mein',expect: 'Environment',        note: '[NGT2] Hinglish nala pollution' },
+
+  // ── MEDICAL NEGLIGENCE (extra) ──────────────────────────────────
+  { q: 'nursing home refused caesarean baby died what remedy',          expect: 'Medical Negligence',   note: '[MedNeg2] caesarean refused' },
+  { q: 'private hospital charged icu bills for room not icu',           expect: 'Medical Negligence',   note: '[MedNeg2] fake ICU billing' },
+  { q: 'doctor refused to give case papers after treatment',            expect: 'Medical Negligence',   note: '[MedNeg2] records refused' },
+  { q: 'chemotherapy given to wrong patient completely different name', expect: 'Medical Negligence',   note: '[MedNeg2] wrong patient chemo' },
+  { q: 'expired medicines given at government hospital to patient',     expect: 'Medical Negligence',   note: '[MedNeg2] expired medicines' },
+
+  // ── POLICE EXCESS (extra) ───────────────────────────────────────
+  { q: 'police raided my house without search warrant',                 expect: 'Police',               note: '[Police2] illegal search' },
+  { q: 'police officer extorting money regularly threatening arrest',   expect: 'Police',               note: '[Police2] extortion threat' },
+  { q: 'woman arrested without female constable present violation',     expect: 'Police',               note: '[Police2] woman arrest no female' },
+  { q: 'police held person for 7 days without producing before magistrate',expect: 'Police',            note: '[Police2] not produced magistrate' },
+  { q: 'thane mein complaint di police ne case nahi likha aur dhamki di',expect: 'Police',             note: '[Police2] Hinglish complaint refused' },
+
+  // ── CHEQUE BOUNCE (extra) ───────────────────────────────────────
+  { q: 'post-dated cheque given as security bounced what can i do',     expect: 'Cheque',               note: '[Cheque2] security cheque bounce' },
+  { q: 'cheque returned dishonoured by bank account closed',            expect: 'Cheque',               note: '[Cheque2] account closed' },
+  { q: 'demand notice for cheque bounce not responded within 15 days',  expect: 'Cheque',               note: '[Cheque2] demand notice no reply' },
+  { q: 'business partner issued bounced cheque for our deal',           expect: ['Cheque','Fraud'],      note: '[Cheque2] business partner' },
+  { q: 'cheque bounce case pending in court for 3 years no progress',   expect: 'Cheque',               note: '[Cheque2] pending case' },
+
+  // ── BAIL / BNSS (extra) ─────────────────────────────────────────
+  { q: 'arrested under bns 316 cheating case need regular bail',        expect: ['Bail','BNSS'],        note: '[Bail3] BNS 316 bail' },
+  { q: 'anticipatory bail rejected by sessions court going to high court',expect: ['Bail','BNSS'],      note: '[Bail3] AB rejected sessions' },
+  { q: 'first information report quashing on grounds of false facts',   expect: ['Bail','BNSS'],        note: '[Bail3] FIR quashing false facts' },
+  { q: 'default bail entitlement charge sheet not filed in time',       expect: ['Bail','BNSS'],        note: '[Bail3] default bail' },
+  { q: 'chargesheet filed under sections 302 306 need bail what to do', expect: ['Bail','BNSS'],        note: '[Bail3] serious offence bail' },
+
+  // ── PIL / RTI / WRIT (extra) ────────────────────────────────────
+  { q: 'rti application filed third appeal cic not decided',            expect: ['PIL','RTI'],          note: '[PIL2] CIC third appeal' },
+  { q: 'government scheme money not received pil in high court',        expect: 'PIL',                  note: '[PIL2] govt scheme PIL' },
+  { q: 'want to file writ petition for violation of fundamental rights', expect: 'PIL',                 note: '[PIL2] fundamental rights writ' },
+  { q: 'information under rti denied public authority refused',         expect: ['PIL','RTI'],          note: '[PIL2] RTI denied' },
+  { q: 'government not implementing court order public interest',       expect: 'PIL',                  note: '[PIL2] court order not implemented' },
+  { q: 'sarkari yojana ka paisa nahi aaya kaise petition karen',        expect: 'PIL',                  note: '[PIL2] Hinglish govt scheme' },
+
+  // ── PROPERTY TRANSFER (extra) ───────────────────────────────────
+  { q: 'sale agreement registered but seller not giving possession',    expect: 'Transfer of Property', note: '[PropTrans2] no possession' },
+  { q: 'property purchased in mothers name she died husband claiming',  expect: ['Transfer of Property','Hindu Succession','Succession'],note: '[PropTrans2] deceased mother property' },
+  { q: 'seller backed out after token money paid agreement signed',     expect: ['Transfer of Property','Money Recovery'], note: '[PropTrans2] seller backed out' },
+  { q: 'property sold with encumbrance not disclosed by seller',        expect: 'Transfer of Property', note: '[PropTrans2] hidden encumbrance' },
+  { q: 'mutation of property not done in my name after purchase',       expect: 'Transfer of Property', note: '[PropTrans2] mutation not done' },
+
+  // ── MONEY RECOVERY (extra) ──────────────────────────────────────
+  { q: 'customer not paying invoice for services rendered 6 months ago',expect: ['Money Recovery','MSME'], note: '[MoneyRec2] invoice not paid' },
+  { q: 'business partner withdrew all capital and disappeared',         expect: ['Money Recovery','MSME'], note: '[MoneyRec2] partner withdrew capital' },
+  { q: 'took personal loan from colleague not returning for 2 years',   expect: 'Money Recovery',       note: '[MoneyRec2] colleague loan' },
+  { q: 'sold car to buyer took partial payment disappeared',            expect: ['Money Recovery','Fraud'], note: '[MoneyRec2] car buyer disappeared' },
+  { q: 'yaar ko paise diye the 2 saal ho gaye wapas nahi kiye',        expect: 'Money Recovery',       note: '[MoneyRec2] Hinglish friend loan' },
+
+  // ── INTELLECTUAL PROPERTY (extra) ───────────────────────────────
+  { q: 'my novel is being sold on amazon kindle without my permission', expect: ['Intellectual Property','Copyright'], note: '[IP2] novel piracy' },
+  { q: 'app developed by me stolen and relaunched by ex-partner',       expect: ['Intellectual Property','Cyber'],    note: '[IP2] app code stolen' },
+  { q: 'youtube channel copyright strike for my own original music',    expect: 'Intellectual Property',             note: '[IP2] youtube copyright strike' },
+  { q: 'patent for my invention denied on wrong grounds',               expect: 'Intellectual Property',             note: '[IP2] patent denied' },
+  { q: 'logo registered by competitor in bad faith trademark squatting',expect: 'Intellectual Property',             note: '[IP2] trademark squatting' },
+
+  // ── ARBITRATION (extra) ─────────────────────────────────────────
+  { q: 'arbitration clause in contract but other party refusing to go', expect: 'Arbitration',          note: '[Arb2] party refusing arbitration' },
+  { q: 'arbitration award received want to enforce it in court',        expect: 'Arbitration',          note: '[Arb2] enforce award' },
+  { q: 'arbitrator is biased want to challenge appointment',            expect: 'Arbitration',          note: '[Arb2] biased arbitrator' },
+  { q: 'international arbitration foreign company indian dispute',      expect: 'Arbitration',          note: '[Arb2] international arbitration' },
+
+  // ── CORPORATE (extra) ───────────────────────────────────────────
+  { q: 'minority shareholders squeezed out below fair value',          expect: 'Corporate',             note: '[Corp2] minority squeeze out' },
+  { q: 'director removed from board without proper resolution',         expect: 'Corporate',             note: '[Corp2] director removed' },
+  { q: 'company oppression and mismanagement petition to nclt',        expect: 'Corporate',             note: '[Corp2] NCLT oppression' },
+  { q: 'startup founder vesting agreement dispute co-founder left',    expect: 'Corporate',             note: '[Corp2] founder vesting dispute' },
+  { q: 'private limited company annual return not filed penalty',       expect: 'Corporate',             note: '[Corp2] annual return default' },
+
+  // ── IBC / INSOLVENCY (extra) ────────────────────────────────────
+  { q: 'creditor wants to file insolvency against defaulting company',  expect: 'IBC',                  note: '[IBC2] creditor IBC filing' },
+  { q: 'corporate insolvency resolution process cirp initiated',        expect: 'IBC',                  note: '[IBC2] CIRP initiated' },
+  { q: 'personal insolvency IBC Sec 94 individual debtor',             expect: 'IBC',                  note: '[IBC2] personal insolvency' },
+  { q: 'ibc moratorium stay on all proceedings after filing',          expect: 'IBC',                  note: '[IBC2] moratorium' },
+
+  // ── PMLA / BENAMI (extra) ───────────────────────────────────────
+  { q: 'ed notice for pmla money laundering what to do',               expect: 'PMLA',                  note: '[PMLA2] ED notice' },
+  { q: 'bank account frozen by enforcement directorate attachment',     expect: 'PMLA',                  note: '[PMLA2] account frozen ED' },
+  { q: 'benami property registered in wife name actually mine',        expect: 'PMLA',                  note: '[PMLA2] benami in wife name' },
+  { q: 'fema violation notice received for foreign remittance',         expect: ['PMLA','NRI'],          note: '[PMLA2] FEMA violation' },
+
+  // ── SC/ST ATROCITIES (extra) ────────────────────────────────────
+  { q: 'landlord refused to rent house knowing i am sc',               expect: 'SC/ST',                 note: '[SCST2] rental refusal SC' },
+  { q: 'dominant caste persons destroyed my crop due to caste enmity', expect: 'SC/ST',                 note: '[SCST2] crop destroyed caste' },
+  { q: 'upper caste employer refused to promote because of my caste',  expect: 'SC/ST',                 note: '[SCST2] promotion refused caste' },
+  { q: 'police refused to file fir under sc st act complaint',         expect: 'SC/ST',                 note: '[SCST2] police refused SC/ST FIR' },
+  { q: 'jati ke naam se dhamki di aur gaon se nikaala',                expect: 'SC/ST',                 note: '[SCST2] Hinglish caste threat' },
+
+  // ── POCSO (extra) ───────────────────────────────────────────────
+  { q: 'neighbour touched my daughter inappropriately she is 12 years', expect: 'POCSO',                note: '[POCSO2] neighbour inappropriate' },
+  { q: 'school teacher sexually abused student class 7',               expect: 'POCSO',                 note: '[POCSO2] school teacher abuse' },
+  { q: 'online grooming of minor by social media contact',             expect: 'POCSO',                 note: '[POCSO2] online grooming' },
+  { q: 'child pornography found on device arrest made pocso',          expect: 'POCSO',                 note: '[POCSO2] child porn device' },
+  { q: 'minor beti ko padosi ne galat niyat se haath lagaya',          expect: 'POCSO',                 note: '[POCSO2] Hinglish inappropriate touch' },
+
+  // ── CYBER HARASSMENT (extra) ────────────────────────────────────
+  { q: 'ex-boyfriend posting morphed images of me on social media',    expect: ['Cyber','CyberHarass'],  note: '[CyberHarass2] morphed images ex' },
+  { q: 'fake instagram account created to defame me',                  expect: ['Cyber','CyberHarass'],  note: '[CyberHarass2] fake instagram' },
+  { q: 'cyberbullying harassment on twitter threatening messages',      expect: ['Harassment','Cyber'],   note: '[CyberHarass2] twitter threats' },
+  { q: 'sextortion demand money or will send intimate video',          expect: ['Cyber','Harassment'],   note: '[CyberHarass2] sextortion' },
+  { q: 'facebook pe meri photo meri marzi ke bina dali hai',           expect: ['Cyber','Harassment'],   note: '[CyberHarass2] Hinglish FB photo' },
+
+  // ── MATERNITY (extra) ───────────────────────────────────────────
+  { q: 'maternity leave denied by private company',                    expect: 'Maternity',              note: '[Mat2] leave denied' },
+  { q: 'employer not giving full 26 weeks maternity leave',            expect: 'Maternity',              note: '[Mat2] 26 weeks denied' },
+  { q: 'maternity benefit act complaint labour commissioner',          expect: 'Maternity',              note: '[Mat2] formal complaint' },
+  { q: 'forced to resign because my employer knew i was pregnant',     expect: ['Maternity','Termination'],note: '[Mat2] forced resign pregnant' },
+
+  // ── MTP (extra) ─────────────────────────────────────────────────
+  { q: 'hospital refused abortion at 16 weeks what is the law',       expect: 'MTP',                    note: '[MTP2] 16 weeks refusal' },
+  { q: 'doctor refused to perform mtp on unmarried woman',             expect: 'MTP',                    note: '[MTP2] unmarried refused' },
+  { q: 'mtp needed due to fetal abnormality detected at 22 weeks',    expect: 'MTP',                    note: '[MTP2] fetal abnormality' },
+  { q: 'forced abortion performed by in-laws against womans will',     expect: ['MTP','Domestic Violence'],note: '[MTP2] forced abortion' },
+
+  // ── MUSLIM PERSONAL LAW (extra) ─────────────────────────────────
+  { q: 'husband pronounced talaq orally in presence of witnesses',     expect: 'Muslim',                 note: '[MPL2] oral talaq' },
+  { q: 'nikah ceremony done no nikahnama signed proper registration',  expect: 'Muslim',                 note: '[MPL2] no nikahnama' },
+  { q: 'husband has taken second wife without first wifes consent',    expect: 'Muslim',                 note: '[MPL2] second wife no consent' },
+  { q: 'mehr not paid at time of divorce claiming recovery',           expect: 'Muslim',                 note: '[MPL2] mehr recovery' },
+  { q: 'pati ne doosri shadi kar li mujhe bataye bina',               expect: 'Muslim',                 note: '[MPL2] Hinglish second wife' },
+
+  // ── HOUSING SOCIETY (extra) ─────────────────────────────────────
+  { q: 'society AGM not held for last 3 years management committee',   expect: 'Society',                note: '[Society2] AGM not held' },
+  { q: 'flat transfer charges being demanded more than registered rate',expect: ['Society','Transfer of Property'], note: '[Society2] transfer charges excess' },
+  { q: 'society refusing to give NOC for home loan',                   expect: 'Society',                note: '[Society2] NOC refused loan' },
+  { q: 'parking space allotted to someone else by society illegally',  expect: 'Society',                note: '[Society2] parking allotment' },
+  { q: 'society ne bina wajah mera water connection band kar diya',    expect: 'Society',                note: '[Society2] Hinglish water disconnected' },
+
+  // ── INSURANCE (extra) ───────────────────────────────────────────
+  { q: 'life insurance policy claim rejected saying material non-disclosure',expect: 'Insurance',        note: '[Insur2] non-disclosure rejection' },
+  { q: 'vehicle insurance cashless facility refused at empanelled hospital',expect: ['Insurance','Consumer'], note: '[Insur2] cashless refused' },
+  { q: 'health insurance portability blocked by new insurer',          expect: 'Insurance',              note: '[Insur2] portability blocked' },
+  { q: 'insurance agent missold me policy want to cancel and refund',  expect: 'Insurance',              note: '[Insur2] missold policy' },
+
+  // ── TAX (extra) ─────────────────────────────────────────────────
+  { q: 'income tax demand notice received want to appeal',             expect: 'Tax',                    note: '[Tax2] IT demand notice appeal' },
+  { q: 'gst refund not processed for 8 months filing complaint',       expect: 'Tax',                    note: '[Tax2] GST refund pending' },
+  { q: 'tds wrongly deducted at higher rate seeking refund',           expect: 'Tax',                    note: '[Tax2] TDS excess deduction' },
+  { q: 'income tax raid notice section 132 what rights do i have',     expect: 'Tax',                    note: '[Tax2] IT raid notice' },
+
+  // ── LAND ACQUISITION (extra) ────────────────────────────────────
+  { q: 'government taking my land for highway inadequate compensation', expect: 'Land Acquisition',      note: '[LandAcq2] highway compensation' },
+  { q: 'my agricultural land acquired for industrial zone want higher rate',expect: 'Land Acquisition',  note: '[LandAcq2] industrial zone' },
+  { q: 'arbitration award for land acquisition below market rate',     expect: 'Land Acquisition',       note: '[LandAcq2] below market rate award' },
+  { q: 'zameen sarkaar ne le li kaam ka muaavza nahi mila',            expect: 'Land Acquisition',       note: '[LandAcq2] Hinglish land taken' },
+
+  // ── ELECTRICITY (extra) ─────────────────────────────────────────
+  { q: 'electricity board demanding excessive bill for meter reading error',expect: 'Electricity',       note: '[Elec2] excessive bill meter error' },
+  { q: 'power outage for weeks utility company not responding',        expect: 'Electricity',            note: '[Elec2] prolonged outage' },
+  { q: 'smart meter installed without consent electricity company',    expect: 'Electricity',            note: '[Elec2] smart meter no consent' },
+  { q: 'bijli ka meter galat reading de raha hai bill zyada aa raha hai',expect: 'Electricity',         note: '[Elec2] Hinglish meter error' },
+
+  // ── AGRICULTURE (extra) ─────────────────────────────────────────
+  { q: 'pesticide company sold fake pesticide crop destroyed',          expect: 'Agriculture',            note: '[Agri2] fake pesticide' },
+  { q: 'agricultural land converted to commercial use illegally',       expect: 'Agriculture',            note: '[Agri2] land conversion illegal' },
+  { q: 'seed company sold hybrid seeds that failed no compensation',    expect: 'Agriculture',            note: '[Agri2] failed seeds' },
+  { q: 'zameen par kabza ho gaya koi aur khet jot raha hai',           expect: ['Agriculture','Boundary'],note: '[Agri2] Hinglish crop land taken' },
+
+  // ── SARFAESI / BANKING (extra) ──────────────────────────────────
+  { q: 'bank attached property under sarfaesi without notice',          expect: 'SARFAESI',               note: '[SARF2] attachment no notice' },
+  { q: 'npa declared wrongly want to challenge at drt',                 expect: 'SARFAESI',               note: '[SARF2] NPA wrongly declared' },
+  { q: 'bank refusing to release mortgage after full repayment',        expect: 'SARFAESI',               note: '[SARF2] mortgage not released' },
+  { q: 'one time settlement rejected by bank unfairly',                 expect: 'SARFAESI',               note: '[SARF2] OTS rejected' },
+
+  // ── MSME (extra) ────────────────────────────────────────────────
+  { q: 'msme registration udyam certificate not issued',               expect: 'MSME',                   note: '[MSME2] udyam certificate' },
+  { q: 'buyer refusing to pay msme supplier 120 days overdue',         expect: 'MSME',                   note: '[MSME2] 120 days overdue' },
+  { q: 'msme facilitation council not deciding dispute within time',   expect: 'MSME',                   note: '[MSME2] facilitation council' },
+
+  // ── CAT / GOVERNMENT SERVICE (extra) ────────────────────────────
+  { q: 'central government employee dismissed without departmental inquiry',expect: 'Government Service', note: '[CAT2] dismissed no inquiry' },
+  { q: 'service records wrong causing promotion delays in government job',expect: 'Government Service',   note: '[CAT2] wrong service records' },
+  { q: 'cat petition for regularisation of temporary government employee',expect: 'Government Service',   note: '[CAT2] regularisation' },
+  { q: 'seniority list wrongly prepared bypassing me for promotion',   expect: 'Government Service',      note: '[CAT2] seniority list' },
+
+  // ── BOUNDARY DISPUTE (extra) ────────────────────────────────────
+  { q: 'neighbour built permanent structure encroaching my land',       expect: 'Boundary',               note: '[Boundary2] permanent structure' },
+  { q: 'survey number mismatch land records conflict with actual possession',expect: 'Boundary',          note: '[Boundary2] survey mismatch' },
+  { q: 'neighbour removed boundary markers and shifted fence',          expect: 'Boundary',               note: '[Boundary2] markers removed' },
+  { q: 'neighbour ka compound wall meri zameen mein ghus aaya hai',    expect: 'Boundary',               note: '[Boundary2] Hinglish wall encroach' },
+
+  // ── MENTAL HEALTHCARE (extra) ───────────────────────────────────
+  { q: 'psychiatrist revealing my diagnosis to my employer without permission',expect: 'Mental Healthcare',note: '[MH2] doctor breach confidentiality' },
+  { q: 'rpwd certificate not given by hospital for mental illness',    expect: 'Mental Healthcare',       note: '[MH2] RPWD certificate' },
+  { q: 'disability pension denied for psychiatric condition',           expect: 'Mental Healthcare',       note: '[MH2] disability pension denied' },
+  { q: 'mujhe depression hai company ne nikaala bina kisi wajah ke',   expect: 'Mental Healthcare',       note: '[MH2] Hinglish depression fired' },
+
+  // ── DIGITAL PRIVACY DPDP (extra) ───────────────────────────────
+  { q: 'company selling my contact number without consent spam calls', expect: 'Digital Privacy',         note: '[DPDP2] contact number sold' },
+  { q: 'whatsapp groups being used to share my personal photos',       expect: ['Digital Privacy','Cyber'],note: '[DPDP2] personal photos WA groups' },
+  { q: 'employer tracking my location via phone app without disclosure',expect: 'Digital Privacy',        note: '[DPDP2] location tracking' },
+  { q: 'data breach hospital leaked my medical history to third party',expect: 'Digital Privacy',         note: '[DPDP2] medical history leaked' },
+
+  // ── DATA THEFT (extra) ──────────────────────────────────────────
+  { q: 'former employee stole client database and gave to competitor', expect: 'Data Theft',              note: '[DataTheft2] employee stole database' },
+  { q: 'ex-employee using company trade secrets at new employer',      expect: 'Data Theft',              note: '[DataTheft2] trade secrets' },
+  { q: 'it act complaint for theft of confidential business data',     expect: 'Data Theft',              note: '[DataTheft2] confidential business data' },
+
+  // ── DEFAMATION (extra) ──────────────────────────────────────────
+  { q: 'competitor writing fake negative reviews about my business',   expect: 'Defamation',              note: '[Defam2] fake reviews competitor' },
+  { q: 'news channel aired false news about me without verification',  expect: 'Defamation',              note: '[Defam2] news channel false' },
+  { q: 'whatsapp message spread lie that i am a cheater in business',  expect: 'Defamation',              note: '[Defam2] WA lie cheater' },
+  { q: 'meri reputation kharab ki dost ne jhootha bolke',              expect: 'Defamation',              note: '[Defam2] Hinglish reputation' },
+
+  // ── JUDICIAL SEPARATION (extra) ─────────────────────────────────
+  { q: 'want to live separately from husband without divorce legally', expect: 'Judicial Separation',     note: '[JS2] legally separate no divorce' },
+  { q: 'decree of judicial separation already granted wife now wants divorce',expect: ['Judicial Separation','Divorce'],note: '[JS2] separation to divorce' },
+  { q: 'pati se alag rehna chahti hoon divorce nahi chahiye',         expect: 'Judicial Separation',     note: '[JS2] Hinglish no divorce' },
+
+  // ── SUCCESSION (extra) ──────────────────────────────────────────
+  { q: 'probate of will required before transferring property',        expect: ['Succession','Will Dispute'],note: '[Succ2] probate required' },
+  { q: 'father died leaving will but sibling contesting it',           expect: ['Succession','Will Dispute'],note: '[Succ2] will contested by sibling' },
+  { q: 'succession certificate required for bank account of deceased', expect: 'Succession',              note: '[Succ2] bank succession certificate' },
+  { q: 'intestate succession who gets property when no will',          expect: ['Succession','Hindu Succession'],note: '[Succ2] intestate succession' },
+
+  // ── ADDITIONAL ABSENCE TESTS ────────────────────────────────────
+  { q: 'N: i want a divorce',                                           expect: 'POCSO',                  note: '[ABS2] divorce≠POCSO' },
+  { q: 'N: salary not paid',                                            expect: 'RERA',                   note: '[ABS2] salary≠RERA' },
+  { q: 'N: police beat me',                                             expect: 'Consumer',               note: '[ABS2] police≠Consumer' },
+  { q: 'N: cheque bounced',                                             expect: 'Domestic',               note: '[ABS2] cheque≠DV' },
+  { q: 'N: gst notice received',                                        expect: 'Domestic',               note: '[ABS2] tax≠DV' },
+  { q: 'N: flat not delivered by builder',                              expect: 'Salary',                 note: '[ABS2] RERA≠salary' },
+  { q: 'N: data breach on my company server',                           expect: 'Cheque',                 note: '[ABS2] data≠cheque' },
+  { q: 'N: my son is abusing me and took my property',                  expect: 'Arbitration',            note: '[ABS2] senior≠arbitration' },
 ];
 
 // ── Runner ────────────────────────────────────────────────────────────────────
