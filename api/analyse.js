@@ -64,9 +64,11 @@ function keywordFallback(description) {
   const input = description.toLowerCase();
   const scored = DB.map(l => {
     let score = 0;
-    (l.keywords?.exact  || []).forEach(k => { if (input.includes(k.toLowerCase())) score += 50; });
-    (l.keywords?.strong || []).forEach(k => { if (input.includes(k.toLowerCase())) score += 22; });
-    (l.keywords?.weak   || []).forEach(k => { if (input.includes(k.toLowerCase())) score +=  8; });
+    (l.keywords?.exact    || []).forEach(k => { if (input.includes(k.toLowerCase())) score += 50; });
+    (l.keywords?.strong   || []).forEach(k => { if (input.includes(k.toLowerCase())) score += 22; });
+    (l.keywords?.hinglish || []).forEach(k => { if (input.includes(k.toLowerCase())) score += 22; });
+    (l.keywords?.casual   || []).forEach(k => { if (input.includes(k.toLowerCase())) score += 22; });
+    (l.keywords?.weak     || []).forEach(k => { if (input.includes(k.toLowerCase())) score +=  8; });
     return { law: l, score };
   }).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
 
