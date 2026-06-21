@@ -1328,6 +1328,202 @@ const TESTS = [
   { q: 'N: flat not delivered by builder',                              expect: 'Salary',                 note: '[ABS2] RERA≠salary' },
   { q: 'N: data breach on my company server',                           expect: 'Cheque',                 note: '[ABS2] data≠cheque' },
   { q: 'N: my son is abusing me and took my property',                  expect: 'Arbitration',            note: '[ABS2] senior≠arbitration' },
+
+  // ── EXPANSION ROUND 3 — tests 869-1000 ───────────────────────────────────
+
+  // Hinglish Family
+  { q: 'pati ne ghar se nikaala aur talaq dene se mana kar raha hai',           expect: 'Divorce',               note: '[Hinglish] divorce refusal' },
+  { q: 'mujhe divorce chahiye lekin husband nahi maan raha',                    expect: 'Divorce',               note: '[Hinglish] divorce contested' },
+  { q: 'sasural wale roz maarte hain police nahi sun rahi',                     expect: 'Domestic Violence',     note: '[Hinglish] DV beatings' },
+  { q: 'pati sharab peekar maarta hai ghar se nikaalne ki dhamki',              expect: 'Domestic Violence',     note: '[Hinglish] DV alcohol' },
+  { q: 'maa ne bacche liye aur ghar se chali gayi kuch pata nahi',              expect: 'Custody',               note: '[Hinglish] custody abduction' },
+  { q: 'talaq ke baad paisa nahi de raha nafqa nahi mila',                      expect: 'Maintenance',           note: '[Hinglish] maintenance nafqa' },
+  { q: 'shaadi mein dowry maanga phir gaadi demand ki police jayein',           expect: 'Dowry',                 note: '[Hinglish] dowry demand' },
+
+  // Hinglish Employment
+  { q: 'company ne covid ke baad job se nikala bina notice ke',                 expect: 'Termination',           note: '[Hinglish] wrongful term covid' },
+  { q: '6 mahine se salary nahi mili factory band ho gayi',                     expect: 'Salary',                note: '[Hinglish] salary 6 months' },
+  { q: 'boss ne mujhse alag se milne ko bola aur galat harkat ki',              expect: 'POSH',                  note: '[Hinglish] POSH boss' },
+  { q: 'maternity leave deny kar diya company ne bola resign karo',             expect: 'Maternity',             note: '[Hinglish] maternity denied' },
+
+  // Hinglish Property
+  { q: 'makan malik bina wajah kiraya ghar se nikaal raha hai',                 expect: 'Rent',                  note: '[Hinglish] eviction kiraya' },
+  { q: 'builder 3 saal se flat nahi diya ab interest bhi nahi deta',            expect: 'RERA',                  note: '[Hinglish] RERA delay 3 saal' },
+  { q: 'bhai ne puri sampatti apne naam kara li baap ke marne ke baad',         expect: ['Partition','Succession'], note: '[Hinglish] partition brother' },
+  { q: 'padosi ne meri zameen mein deewaar bana di survey chahiye',             expect: 'Boundary',              note: '[Hinglish] boundary wall' },
+  { q: 'housing society ne parking ki jagah dene se mana kar diya',             expect: ['Society','Housing'],   note: '[Hinglish] society parking' },
+
+  // Hinglish Criminal / Consumer
+  { q: 'online thug ne 2 lakh le liya paisa wapas nahi kiya',                  expect: ['Fraud','Cyber'],       note: '[Hinglish] online fraud 2L' },
+  { q: 'padosi ne gali di aur mujhe thappa maar diya',                          expect: ['Assault','BNS'],       note: '[Hinglish] assault slap' },
+  { q: 'mera bhai jail mein hai bail nahi ho rahi kya karun',                   expect: 'Bail',                  note: '[Hinglish] bail brother jail' },
+  { q: 'police wale paise maang rahe hain warna case karne ki dhamki',          expect: 'Police',                note: '[Hinglish] police bribe dhamki' },
+  { q: 'sarkari afsar ne bribe maanga nahi diya toh kaam nahi kiya',            expect: ['Corruption','Anti-Corrupt'], note: '[Hinglish] bribe afsar' },
+  { q: 'amazon se product mangaya kharab nikla return nahi le rahe',            expect: 'Consumer',              note: '[Hinglish] consumer amazon' },
+  { q: 'doctor ne operation mein galti ki ab dard ho raha hai',                 expect: 'Medical Negligence',    note: '[Hinglish] med neg operation' },
+  { q: 'health insurance claim reject kar diya company boli policy lapse',      expect: ['Insurance','Consumer'],note: '[Hinglish] insurance lapse' },
+  { q: 'restaurant ka khana khaake sab beemar padgaye food poisoning',          expect: ['Food Safety','Consumer'], note: '[Hinglish] food poisoning' },
+  { q: 'bijli ka bill bahut zyada aa raha hai meter sahi nahi hai',             expect: 'Electricity',           note: '[Hinglish] bijli bill meter' },
+
+  // Hinglish Cyber / IP
+  { q: 'instagram pe fake account banake mujhe blackmail kar raha hai',         expect: ['Harassment','Cyber'],  note: '[Hinglish] blackmail instagram' },
+  { q: 'ex-employee ne company ka database copy karke competitor ko diya',      expect: ['Data Theft','Cyber'],  note: '[Hinglish] data theft ex-emp' },
+  { q: 'bank ne mera number kisi aur ko diya ab calls aa rahi hain',            expect: ['Digital Privacy','DPDP'], note: '[Hinglish] DPDP number sold' },
+  { q: 'mera youtube channel dusre ne copyright strike se band kara diya',      expect: 'Intellectual Property', note: '[Hinglish] IP youtube copyright' },
+
+  // Hinglish Civil / Commercial
+  { q: 'contractor ne advance liya kaam adha chhod ke chala gaya',              expect: ['Money Recovery','Fraud'], note: '[Hinglish] money rec contractor' },
+  { q: 'cheque bounce hua 2 lakh ka court mein jaun',                           expect: 'Cheque',                note: '[Hinglish] cheque bounce 2L' },
+  { q: 'bade company ne mera payment 6 mahine se rok rakha hai',                expect: ['MSME','Money Recovery'],note: '[Hinglish] MSME payment due' },
+  { q: 'company divaliya ho gayi mujhe paise wapas nahi milenge',               expect: ['IBC','Insolvency'],     note: '[Hinglish] IBC divaliya' },
+  { q: 'income tax waalon ne notice bheja kya jabab dun',                       expect: ['Tax','Income Tax'],     note: '[Hinglish] income tax notice' },
+
+  // Edge / Multi-law
+  { q: 'divorce ke saath property bhi divide karni hai bachche bhi hain',       expect: 'Divorce',               note: '[Edge] divorce+property+custody' },
+  { q: 'builder ne flat diya nahi aur NRI hoon abroad se case karun',           expect: 'RERA',                  note: '[Edge] RERA+NRI' },
+  { q: 'employer firing me and not paying gratuity after 10 years',             expect: 'Termination',           note: '[Edge] term+gratuity 10y' },
+  { q: 'husband took second wife and stopped maintenance to first wife',         expect: ['Maintenance','Muslim'], note: '[Edge] Muslim maintenance' },
+  { q: 'police arrested me for cheating FIR but it is a civil dispute',         expect: 'Bail',                  note: '[Edge] bail civil-criminal' },
+  { q: 'property registration done but possession not given builder fraud',      expect: ['RERA','Fraud'],         note: '[Edge] RERA+fraud possession' },
+
+  // Constitutional
+  { q: 'slum demolition by municipality without any notice or rehab plan',      expect: ['PIL','Municipal'],     note: '[PIL] slum demolition' },
+  { q: 'factory emitting smoke causing disease to entire village PIL',          expect: ['NGT','PIL'],           note: '[PIL/NGT] factory smoke' },
+  { q: 'promotion blocked for 5 years discrimination in government job',        expect: ['Government Service','CAT'], note: '[CAT] govt promotion bias' },
+
+  // NRI
+  { q: 'NRI wife abandoned husband in india and left for USA',                  expect: 'NRI',                   note: '[NRI] abandoned wife USA' },
+  { q: 'property in India encroached while I was abroad for 8 years',           expect: ['NRI','Boundary'],       note: '[NRI] encroachment abroad' },
+
+  // Senior Citizen
+  { q: 'son not paying monthly maintenance to 80 year old parents',             expect: 'Senior Citizen',        note: '[Senior] son not paying' },
+  { q: 'daughter-in-law harassing mother-in-law for property transfer',         expect: 'Senior Citizen',        note: '[Senior] DIL harassment' },
+
+  // SC/ST
+  { q: 'SC professor given bad transfer order due to caste bias',               expect: ['SC/ST','Atrocities'],  note: '[SCST] professor transfer bias' },
+  { q: 'upper caste person threatened to burn SC family crops',                 expect: ['SC/ST','Atrocities'],  note: '[SCST] crop threat' },
+
+  // POCSO
+  { q: 'teacher physically touched 12 year old girl inappropriately',           expect: 'POCSO',                 note: '[POCSO] teacher child touch' },
+  { q: 'relative sent obscene messages to 15 year old on whatsapp',             expect: 'POCSO',                 note: '[POCSO] obscene WA minor' },
+
+  // MTP
+  { q: '20 week pregnancy with severe fetal defect hospital refusing mtp',      expect: 'MTP',                   note: '[MTP] fetal defect 20w' },
+  { q: 'unmarried woman 10 weeks pregnant hospital demanding husband consent',  expect: 'MTP',                   note: '[MTP] unmarried consent' },
+
+  // Agriculture
+  { q: 'irrigation water diverted by upper caste farmer from canal',            expect: 'Agriculture',           note: '[Agri] canal water diverted' },
+  { q: 'kisan credit card loan but crop damaged by hailstorm',                  expect: 'Agriculture',           note: '[Agri] hailstorm crop kisan' },
+
+  // Mental Healthcare
+  { q: 'company fired employee after learning about bipolar disorder',           expect: ['Mental Healthcare','Disability','Termination','Wrongful'], note: '[MH] fired bipolar' },
+  { q: 'family forcibly admitted adult patient to private mental hospital',      expect: 'Mental Healthcare',     note: '[MH] forcible admission adult' },
+
+  // Defamation
+  { q: 'competitor sending emails to our clients saying we are fraudsters',     expect: ['Defamation','Fraud','BNS'], note: '[Defam] competitor email fraud' },
+  { q: 'ex-partner posting false allegations on linkedin defaming me',          expect: 'Defamation',            note: '[Defam] linkedin false' },
+
+  // Arbitration
+  { q: 'vendor agreement has arbitration clause other party refusing arbitration', expect: 'Arbitration',        note: '[Arb] refusing arbitration' },
+  { q: 'arbitration award passed against me want to challenge it in court',     expect: 'Arbitration',           note: '[Arb] challenge award' },
+
+  // Corporate
+  { q: 'minority shareholder being oppressed by majority in private company',   expect: ['Company Law','Corporate'], note: '[Corp] minority oppression' },
+  { q: 'director wants to resign but company not accepting resignation',         expect: ['Company Law','Corporate'], note: '[Corp] director resign' },
+
+  // Land Acquisition
+  { q: 'railway project taking my 2 acres compensation offered very low',       expect: 'Land Acquisition',      note: '[LandAcq] railway low comp' },
+  { q: 'government issued section 4 notification for my shop commercial area',  expect: 'Land Acquisition',      note: '[LandAcq] sec4 commercial' },
+
+  // SARFAESI
+  { q: 'bank issued 60 day SARFAESI notice for my home loan default',           expect: 'SARFAESI',              note: '[SARF] 60-day notice' },
+  { q: 'bank put property for auction under SARFAESI want to stop it',          expect: 'SARFAESI',              note: '[SARF] auction stop' },
+
+  // PMLA
+  { q: 'ED has attached my bank accounts under PMLA proceedings',               expect: 'PMLA',                  note: '[PMLA] ED attachment' },
+  { q: 'money laundering notice received from enforcement directorate',         expect: 'PMLA',                  note: '[PMLA] ED notice' },
+
+  // Judicial Separation
+  { q: 'want to live separately without divorce is there a legal option',       expect: 'Judicial Separation',   note: '[JS] legal separation' },
+  { q: 'court judicial separation decree how to convert to divorce',            expect: ['Judicial Separation','Divorce'], note: '[JS] JS to divorce' },
+
+  // RTI
+  { q: 'rti application not responded to in 30 days what to do',               expect: 'PIL',                   note: '[PIL/RTI] RTI no response' },
+  { q: 'public information officer giving incomplete information on rti',       expect: 'PIL',                   note: '[PIL/RTI] PIO incomplete' },
+
+  // Food Safety
+  { q: 'fssai license expired restaurant still operating report them',          expect: ['Food Safety','Consumer'], note: '[Food] FSSAI expired' },
+  { q: 'got food poisoning from wedding caterer want compensation',             expect: ['Food Safety','Consumer'], note: '[Food] caterer poisoning' },
+
+  // Motor Accident
+  { q: 'hit and run accident by vehicle police not registering FIR',            expect: ['Motor Accident','MACT'],note: '[MACT] hit and run FIR' },
+  { q: 'third party insurance claim pending for 2 years no settlement',         expect: ['Motor Accident','Insurance'], note: '[MACT] insurance 2yr pending' },
+
+  // SMA
+  { q: 'hindu girl wants to marry muslim boy what law applies',                 expect: ['Special Marriage','SMA'], note: '[SMA] inter-religion' },
+  { q: 'inter caste marriage family opposing want court marriage',              expect: ['Special Marriage','Court Marriage'], note: '[SMA] inter-caste' },
+
+  // NGT / Environment
+  { q: 'illegal construction on river bank near our village',                   expect: 'NGT',                   note: '[NGT] river bank construction' },
+  { q: 'coal mine dust affecting our farmland crops dying',                     expect: 'NGT',                   note: '[NGT] coal mine dust' },
+
+  // Municipal
+  { q: 'municipal corporation demolished my shop without notice',               expect: ['Municipal','PIL'],      note: '[Municipal] demolition' },
+  { q: 'local body not clearing garbage for months health hazard',              expect: 'Municipal',             note: '[Municipal] garbage' },
+
+  // Succession
+  { q: 'grandfather died intestate property disputed between sons and daughters', expect: ['Succession','Inheritance'], note: '[Succ] intestate sons daughters' },
+  { q: 'step mother claiming share in deceased father property',                expect: ['Succession','Inheritance'], note: '[Succ] stepmother claim' },
+
+  // IBC
+  { q: 'creditor filed insolvency petition against my company before NCLT',     expect: ['IBC','Insolvency'],     note: '[IBC] NCLT petition' },
+  { q: 'corporate insolvency resolution process initiated against my firm',     expect: ['IBC','Insolvency'],     note: '[IBC] CIRP initiated' },
+
+  // Shops & Establishments
+  { q: 'shop closed by inspector because shop act license not renewed',         expect: ['Shops','Employment'],   note: '[S&E] shop license expired' },
+  { q: 'employee claims overtime wages under shops and establishment act',      expect: ['Shops','Salary'],       note: '[S&E] overtime wages' },
+
+  // Gratuity / ESIC
+  { q: 'employee not given ESI card by employer deducting PF but not paying',  expect: ['Salary','Gratuity'],    note: '[MGNA] ESI card not given' },
+  { q: 'gratuity not paid after 7 years of service company says no money',     expect: ['Salary','Gratuity'],    note: '[MGNA] gratuity 7 years' },
+
+  // More Hinglish edge
+  { q: 'mera makaan gira diya builder ne bina bataye compensation chahiye',     expect: ['RERA','Consumer'],      note: '[Hindi] builder demolished house' },
+  { q: 'online class fees di thi refund nahi kiya edtech wale',                expect: 'Consumer',               note: '[Hindi] edtech refund' },
+  { q: 'gadi chalate waqt accident hua dusra driver drunk tha',                expect: 'Motor Accident',         note: '[Hindi] drunk driver accident' },
+  { q: 'boss ne gender ke karan promotion nahi diya',                          expect: ['Termination','POSH'],   note: '[Hindi] gender promotion' },
+  { q: 'property wali behen ko baap ki maut pe kuch nahi diya',                expect: ['Succession','Inheritance'], note: '[Hindi] sister inheritance' },
+  { q: 'flat book kiya 5 saal ho gaye possession nahi mila',                   expect: 'RERA',                   note: '[Hindi] RERA 5 saal possession' },
+  { q: 'bhanji ko school mein admission se mana kar diya disability ke karan', expect: ['Education','Disability'],note: '[Hindi] disability admission' },
+  { q: 'kisan ko muaavza nahi mila fasal kharab ho gayi',                      expect: 'Agriculture',            note: '[Hindi] kisan fasal muaavza' },
+  { q: 'ex ne mere photos social media pe daal diye without permission',        expect: ['Harassment','Cyber'],   note: '[Hindi] photos social media' },
+  { q: 'police wale bail nahi de rahe 7 din se custody mein hain',             expect: 'Bail',                   note: '[Hindi] bail 7 din custody' },
+  { q: 'company ne meri promotion rok di SC hoon isliye',                      expect: ['SC/ST','Atrocities'],   note: '[Hindi] SC promotion blocked' },
+  { q: 'mujhe notice aaya GST ka kya karun CA se milun',                       expect: 'Tax',                    note: '[Hindi] GST notice' },
+  { q: 'paani ka connection nahi diya municipal ne bina wajah',                expect: 'Municipal',              note: '[Hindi] water connection' },
+  { q: 'wife ne jhooth bolke restraining order liya FIR bhi ki',               expect: ['Bail','Domestic Violence'], note: '[Hindi] false FIR restraining' },
+  { q: 'ration card nahi bana sarkari afsar paise maang raha',                 expect: ['Corruption','Anti-Corrupt'], note: '[Hindi] ration card bribe' },
+  { q: 'naukri se nikaala gaya jabki maternity leave pe thi',                  expect: 'Maternity',              note: '[Hindi] fired maternity' },
+
+  // Absence tests round 3
+  { q: 'N: i want to check my credit score after loan rejection',               expect: 'Divorce',               note: '[ABS3] credit score≠divorce' },
+  { q: 'N: how to register a company in india new startup',                     expect: 'Criminal',              note: '[ABS3] startup≠criminal' },
+  { q: 'N: income tax return filing deadline extended',                         expect: 'Domestic Violence',     note: '[ABS3] ITR≠DV' },
+  { q: 'N: traffic challan issued but I was not driving',                       expect: 'RERA',                  note: '[ABS3] challan≠RERA' },
+  { q: 'N: employer deducted TDS but not deposited with income tax',            expect: 'RERA',                  note: '[ABS3] TDS≠RERA' },
+  { q: 'N: shop damaged by flood insurance refusing claim',                     expect: 'Divorce',               note: '[ABS3] flood insurance≠divorce' },
+
+  // Advanced cross-law
+  { q: 'wife got DV order and 498A FIR filed need bail and quash both',         expect: ['Domestic Violence','Bail'], note: '[Edge] DV+498A+bail' },
+  { q: 'builder cheated NRI client in goa property registration issue',         expect: ['RERA','NRI'],           note: '[Edge] RERA NRI' },
+  { q: 'company formed without my knowledge using my aadhaar and signature',    expect: ['Fraud','Digital Privacy'], note: '[Edge] fraud aadhaar company' },
+  { q: 'retired govt employee pension stopped arbitrarily by department',       expect: ['Government Service','CAT'], note: '[Edge] pension CAT' },
+  { q: 'accident by drunk driving death of breadwinner family wants claim',     expect: 'Motor Accident',         note: '[Edge] MACT death drunk' },
+  { q: 'sexual harassment complaint filed but HR doing internal cover-up',      expect: 'POSH',                   note: '[Edge] POSH HR cover-up' },
+  { q: 'cheque bounce case and also fraud complaint which to file first',        expect: ['Cheque','Fraud'],       note: '[Edge] cheque+fraud' },
+  { q: 'online purchase fraud credit card charge reversal bank refusing',        expect: ['Fraud','Cyber'],        note: '[Edge] fraud card reversal' },
+  { q: 'land acquired but tribal rights exist under forest rights act',          expect: ['Land Acquisition','PIL'], note: '[Edge] land acq tribal' },
+  { q: 'deceased father had business debt children liable under succession',     expect: ['Succession','IBC'],     note: '[Edge] succession business debt' },
 ];
 
 // ── Runner ────────────────────────────────────────────────────────────────────
