@@ -106,16 +106,39 @@ Return ONLY category names, one per line. No numbering, no punctuation, no expla
 }
 
 // ── Keyword fallback (runs in browser too, available here server-side) ────────
+//
+// MATCHING STRATEGY — word boundaries:
+//   All keywords are matched with \b word-boundary regex, not substring includes().
+//   This prevents "cat" matching inside "vacated", "money" inside "testimony", etc.
+//   Multi-word phrases (e.g. "token money") are matched as full phrases with boundaries
+//   on the first and last word only, so word order is preserved.
+//
+//   kwRegex(k) compiles once per keyword and is cached for performance.
+//
+const _kwCache = new Map();
+function kwRegex(k) {
+  if (_kwCache.has(k)) return _kwCache.get(k);
+  // Escape special regex chars, then wrap in word boundaries
+  const escaped = k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(`\\b${escaped}\\b`, 'i');
+  _kwCache.set(k, re);
+  return re;
+}
+
+function kwMatch(input, k) {
+  return kwRegex(k).test(input);
+}
+
 function keywordFallback(description) {
   if (!DB || !DB.length) return [];
-  const input = description.toLowerCase();
+  const input = description; // keep original case; regex is case-insensitive
   const scored = DB.map(l => {
     let score = 0;
-    (l.keywords?.exact    || []).forEach(k => { if (input.includes(k.toLowerCase())) score += 50; });
-    (l.keywords?.strong   || []).forEach(k => { if (input.includes(k.toLowerCase())) score += 22; });
-    (l.keywords?.hinglish || []).forEach(k => { if (input.includes(k.toLowerCase())) score += 22; });
-    (l.keywords?.casual   || []).forEach(k => { if (input.includes(k.toLowerCase())) score += 22; });
-    (l.keywords?.weak     || []).forEach(k => { if (input.includes(k.toLowerCase())) score +=  8; });
+    (l.keywords?.exact    || []).forEach(k => { if (kwMatch(input, k)) score += 50; });
+    (l.keywords?.strong   || []).forEach(k => { if (kwMatch(input, k)) score += 22; });
+    (l.keywords?.hinglish || []).forEach(k => { if (kwMatch(input, k)) score += 22; });
+    (l.keywords?.casual   || []).forEach(k => { if (kwMatch(input, k)) score += 22; });
+    (l.keywords?.weak     || []).forEach(k => { if (kwMatch(input, k)) score +=  8; });
     return { law: l, score };
   }).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
 
@@ -131,6 +154,94 @@ function keywordFallback(description) {
     ...x.law,
     confidence: Math.min(97, Math.round((x.score / maxScore) * 90))
   }));
+}
+
+// ── Domain exclusion post-processor ──────────────────────────────────────────
+//
+// Rationale: Indian legal problems almost always live in one primary domain.
+// When Claude returns results spanning incompatible domains (e.g. Family + Criminal),
+// the secondary result is almost always a hallucination caused by incidental keyword
+// overlap in the query. This filter strips it systematically.
+//
+// HOW IT WORKS:
+//   1. Classify each returned law into a domain (family, criminal, consumer, etc.)
+//   2. Identify the primary domain (the first/highest-confidence result)
+//   3. Strip any result whose domain is in the primary domain's exclusion list
+//   4. Exception: some domain pairs are genuinely co-occurring (e.g. DV + Criminal)
+//
+// WHEN TO BYPASS: Pass bypass=true for keyword fallback results — the keyword
+// engine is more precise (word boundaries) and its domain mixing is intentional.
+
+const DOMAIN_MAP = [
+  // pattern on caseType → domain tag
+  { re: /^Family/,                      domain: 'family'      },
+  { re: /^Property/,                    domain: 'property'    },
+  { re: /^Employment/,                  domain: 'employment'  },
+  { re: /^Consumer/,                    domain: 'consumer'    },
+  { re: /^Criminal|^Civil – Cheque/,    domain: 'criminal'    },
+  { re: /^Constitutional|^PIL/,         domain: 'public'      },
+  { re: /^Tax/,                         domain: 'tax'         },
+  { re: /^Environment/,                 domain: 'environment' },
+  { re: /^Cyber/,                       domain: 'cyber'       },
+  { re: /^Civil/,                       domain: 'civil'       },
+  { re: /^Education/,                   domain: 'education'   },
+  { re: /^Corporate/,                   domain: 'corporate'   },
+  { re: /^Motor/,                       domain: 'consumer'    }, // motor claims are consumer-adjacent
+  { re: /^IP|^Intellectual/,            domain: 'civil'       },
+  { re: /^NRI/,                         domain: 'nri'         },
+];
+
+// Which domain pairs are INCOMPATIBLE — secondary is stripped if primary owns it
+// Read as: if primary domain is KEY, strip any result whose domain is in VALUE array.
+// Omitting a pair means co-occurrence is allowed (e.g. criminal + property for fraud).
+const DOMAIN_EXCLUSIONS = {
+  family:      ['criminal', 'consumer', 'employment', 'tax', 'cyber', 'corporate'],
+  consumer:    ['family', 'employment', 'criminal', 'tax', 'public'],
+  employment:  ['family', 'consumer', 'criminal', 'tax', 'cyber'],
+  tax:         ['family', 'consumer', 'criminal', 'employment', 'cyber'],
+  education:   ['family', 'consumer', 'criminal', 'employment', 'tax', 'cyber'],
+  environment: ['family', 'consumer', 'employment', 'tax', 'cyber'],
+};
+
+// Known ALLOWED exceptions: pairs that genuinely co-occur.
+// If result[0].domain + result[n].domain is in this set, don't strip.
+const ALLOWED_PAIRS = new Set([
+  'family|criminal',    // DV + criminal proceedings
+  'criminal|family',
+  'property|criminal',  // property fraud
+  'criminal|property',
+  'property|civil',     // possession + civil recovery
+  'civil|property',
+  'employment|public',  // service law + writ
+  'public|employment',
+  'criminal|public',    // bail + PIL/habeas
+  'public|criminal',
+  'cyber|criminal',     // cyber crime + BNS
+  'criminal|cyber',
+]);
+
+function getDomain(law) {
+  for (const { re, domain } of DOMAIN_MAP) {
+    if (re.test(law.caseType)) return domain;
+  }
+  return 'other';
+}
+
+function applyDomainExclusion(laws) {
+  if (!laws || laws.length <= 1) return laws;
+  const primaryDomain = getDomain(laws[0]);
+  const excluded = DOMAIN_EXCLUSIONS[primaryDomain] || [];
+  if (!excluded.length) return laws;
+
+  return laws.filter((law, i) => {
+    if (i === 0) return true; // always keep primary
+    const d = getDomain(law);
+    if (!excluded.includes(d)) return true; // domain is compatible — keep
+    const pair = `${primaryDomain}|${d}`;
+    if (ALLOWED_PAIRS.has(pair)) return true; // known valid co-occurrence — keep
+    console.log(`[domain-filter] stripped "${law.caseType}" (${d}) — incompatible with primary "${laws[0].caseType}" (${primaryDomain})`);
+    return false;
+  });
 }
 
 // ── Structured query logger ────────────────────────────────────────────────
@@ -228,9 +339,12 @@ module.exports = async function handler(req, res) {
       return { ...law, confidence: CONFIDENCE[i] ?? 55 };
     }).filter(Boolean);
 
-    // If Claude returned nothing recognisable, fall back
-    const finalLaws = laws.length ? laws : keywordFallback(description);
-    const source    = laws.length
+    // Apply domain exclusion to strip cross-domain hallucinations from Claude output
+    const filtered  = applyDomainExclusion(laws);
+
+    // If Claude returned nothing recognisable (or all filtered), fall back
+    const finalLaws = filtered.length ? filtered : keywordFallback(description);
+    const source    = filtered.length
       ? (structure ? 'claude-2prompt' : 'claude-1prompt')
       : 'keywords-fallback';
 
