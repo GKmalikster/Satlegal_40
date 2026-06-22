@@ -1361,7 +1361,37 @@ function showRegForm(){
 }
 
 function wizNext(){if(W.step===1)return s1();if(W.step===2)return s2();if(W.step===3)return s3();if(W.step===4)return s4();if(W.step===5)return s5()}
-function wizBack(){if(W.step>1)showStep(W.step-1)}
+function wizBack(){
+  // Log abandonment of law-selection step — user saw the suggested laws and went back
+  if(W.step===3&&W.laws&&W.laws.length){
+    fbLog('step_abandoned',{
+      shown:(W.laws||[]).slice(0,5).map(l=>l.caseType),
+      source:W.classifySource||null
+    });
+  }
+  if(W.step>1)showStep(W.step-1);
+}
+
+/* ── Passive feedback logger ─────────────────────────────────────────────────
+ * Fires silent POST to /api/feedback with user behaviour events.
+ * Never blocks UI. Never shows errors to user. No PII collected.
+ */
+function fbLog(event,extra){
+  try{
+    const body=Object.assign({
+      event,
+      query:(W.query||'').slice(0,200),
+      sessionId:W.sessionId||null,
+    },extra||{});
+    fetch('/api/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).catch(()=>{});
+  }catch(e){}
+}
+// Generate a stable anonymous session ID for this browser session
+if(!window.W)window.W={};
+W.sessionId=W.sessionId||(()=>{
+  try{return sessionStorage.getItem('sl_sid')||(()=>{const id='s'+Date.now().toString(36);sessionStorage.setItem('sl_sid',id);return id;})()}
+  catch(e){return 'anon'}
+})();
 
 /* ══ AI CLASSIFIER — calls /api/analyse, falls back to local keyword engine ══ */
 async function classifyLaws(description){
@@ -1372,10 +1402,16 @@ async function classifyLaws(description){
     ]);
     if(!r.ok)throw new Error('HTTP '+r.status);
     const d=await r.json();
-    if(d.success&&Array.isArray(d.laws)&&d.laws.length)return d.laws;
+    if(d.success&&Array.isArray(d.laws)&&d.laws.length){
+      W.classifySource=d.source||'claude'; // persist so feedback events can include it
+      W.query=description;
+      return d.laws;
+    }
     throw new Error('empty response');
   }catch(e){
     console.warn('[classifyLaws] API failed, using local engine:',e.message);
+    W.classifySource='local-fallback';
+    W.query=description;
     return (window.analyzeMultipleLaws||analyzeMultipleLaws)(description,{});
   }
 }
@@ -1716,13 +1752,25 @@ function togLaw(i){
   const l=W.laws[i];if(!l)return;
   const card=document.getElementById(`lc${i}`),chk=card.querySelector('.lc-check');
   const ex=W.selected.findIndex(x=>x.caseType===l.caseType);
-  if(ex>=0){W.selected.splice(ex,1);card.classList.remove('sel');chk.textContent=''}
-  else{W.selected.push(l);card.classList.add('sel');chk.textContent='✓'}
+  if(ex>=0){
+    W.selected.splice(ex,1);card.classList.remove('sel');chk.textContent='';
+    // User actively removed this law — strong signal it was wrong
+    fbLog('law_unchecked',{law:l.caseType,shown:(W.laws||[]).slice(0,5).map(x=>x.caseType),source:W.classifySource||null});
+  }else{
+    W.selected.push(l);card.classList.add('sel');chk.textContent='✓';
+    fbLog('law_rechecked',{law:l.caseType,source:W.classifySource||null});
+  }
 }
 
 /* ══ STEP 3 → Assessment ══ */
 function s3(){
   if(!W.selected.length){toast('Select at least one applicable law to continue.','err');return}
+  // Log which laws the user kept — difference between shown and kept reveals rejections
+  fbLog('step_completed',{
+    shown:(W.laws||[]).slice(0,5).map(l=>l.caseType),
+    kept:(W.selected||[]).map(l=>l.caseType),
+    source:W.classifySource||null
+  });
   renderAssessment();
   showStep(4);
 }
