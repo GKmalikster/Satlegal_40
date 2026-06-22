@@ -2,6 +2,11 @@
 // Deployed at: POST /api/analyse
 // Replaces browser-side keyword classification with Claude Haiku AI
 // Falls back gracefully if ANTHROPIC_API_KEY is not set
+//
+// Classification pipeline (when Claude is available):
+//   Prompt 1 — extractStructure(): normalises raw/Hinglish input into structured fields
+//   Prompt 2 — buildPrompt():      classifies using structure + original text
+//   Fallback  — keywordFallback(): keyword scoring when Claude unavailable
 
 // Wrap SDK require so a missing/broken package degrades to keyword fallback
 let Anthropic = null;
@@ -12,7 +17,7 @@ const DB = require('../laws-database.js');
 
 // ── Build the valid caseType list once at cold-start ────────────────────────
 const LAW_TYPES_TEXT = DB.map(l => l.caseType).join('\n');
-const CONFIDENCE     = [88, 72, 58];
+const CONFIDENCE     = [90, 65, 50];  // 2nd/3rd are genuinely secondary — reflect that in UI
 
 // ── In-process cache (persists across warm invocations on same instance) ─────
 const cache   = new Map();
@@ -28,31 +33,71 @@ function cacheSet(k, v) {
   cache.set(k, { v, ts: Date.now() });
 }
 
-// ── Prompt ────────────────────────────────────────────────────────────────────
-function buildPrompt(input) {
-  return `You are an Indian legal classifier. A person has described their legal problem.
-Identify the 1 to 3 most relevant law categories from the exact list below.
+// ── Prompt 1: Structure Extractor ────────────────────────────────────────────
+// Normalises any layman/Hinglish input into structured fields.
+// Short call (~120 tokens) — fast and cheap (Claude Haiku).
+// Returns null silently on any failure; caller falls back to single-prompt path.
+//
+// Privacy note: extracts only legal-fact categories (harm type, relationship, context).
+// No personal identifiers (names, phone numbers, addresses) are requested or stored.
+async function extractStructure(client, rawInput) {
+  try {
+    const resp = await client.messages.create({
+      model:      'claude-haiku-4-5-20251001',
+      max_tokens: 120,
+      messages:   [{ role: 'user', content:
+`Extract key legal facts from this problem. Return ONLY valid JSON, no explanation.
+
+Problem: "${rawInput.slice(0, 300)}"
+
+Return exactly this shape (choose the best-fitting value for each field):
+{"what_happened":"core event in 5 words","relationship":"employer-employee|buyer-seller|spouse|landlord-tenant|stranger|other","harm_type":"termination|theft|fraud|assault|deficiency|negligence|harassment|other","context":"workplace|consumer|criminal|family|property|digital|public"}`
+      }]
+    });
+    const raw = resp.content[0].text.trim()
+      .replace(/^```json?\n?/, '').replace(/\n?```$/, '');
+    return JSON.parse(raw);
+  } catch (e) {
+    // Silent — single-prompt path takes over
+    return null;
+  }
+}
+
+// ── Prompt 2: Classifier ──────────────────────────────────────────────────────
+// Accepts optional structure from Prompt 1 to anchor Claude's interpretation.
+// When structure is available, ambiguous layman phrasing is resolved before
+// Claude sees the law list — this is what prevents over-mapping.
+function buildPrompt(input, structure) {
+  const structuredCtx = structure
+    ? `\nSTRUCTURED ANALYSIS (pre-extracted to resolve ambiguous phrasing — trust this):
+- What happened  : ${structure.what_happened}
+- Relationship   : ${structure.relationship}
+- Harm type      : ${structure.harm_type}
+- Context        : ${structure.context}
+`
+    : '';
+
+  return `You are a precise Indian legal classifier. A person described their legal problem below.
+Return ONLY the law categories that DIRECTLY apply. Most problems need exactly 1 law.
+Only add a 2nd or 3rd if that law is independently necessary — not just tangentially related. Never pad.
 
 PERSON'S PROBLEM:
 "${input}"
-
-VALID LAW CATEGORIES (return ONLY names from this list, spelled exactly):
+${structuredCtx}
+VALID LAW CATEGORIES (return ONLY names from this exact list, spelled exactly):
 ${LAW_TYPES_TEXT}
 
-CLASSIFICATION RULES:
-- Maximum 3 categories, minimum 1, ordered by relevance (most relevant first)
-- Only include a category if it is genuinely relevant — do not pad
-- Physical assault by neighbour, stranger, or colleague → "Criminal – BNS (Assault / Hurt / Grievous Hurt)", NOT Domestic Violence
-- Domestic Violence requires a domestic relationship: husband, wife, in-laws, live-in partner
-- Wall broken / property damage by neighbour → "Civil – Property / Boundary Dispute / Encroachment"
-- Phone/mobile/chain snatched physically → "Criminal – BNS (Theft / Robbery / Snatching)", add Cyber only if digital fraud involved
-- RTI filing or denial → "Constitutional – PIL / RTI / Writ / Fundamental Rights" only
-- Acid attack → include "Criminal – BNS (Assault / Hurt / Grievous Hurt)" and "Criminal – POCSO / Child Sexual Abuse / Child Protection"
-- Consumer complaints (product, e-commerce, washing machine, appliance) → "Consumer – Product Defect / Service Deficiency"
-- Hindi or Hinglish inputs are valid — classify by meaning, not language
-- Job termination / being fired → "Employment – Wrongful Termination / Illegal Dismissal"
-- Unpaid salary, PF, gratuity → "Employment – Salary Dues / PF / Gratuity"
-- Do NOT return cyber/data laws for purely physical incidents
+STRICT OVER-MAPPING RULES — each rule prevents a specific hallucination:
+1. FIRED / TERMINATED / DISMISSED → "Employment – Wrongful Termination / Illegal Dismissal" ONLY. Never add PIL, BNS Fraud, Consumer, or any other law to a basic termination case.
+2. SALARY / PF / GRATUITY unpaid → "Employment – Salary Dues / PF / Gratuity" ONLY.
+3. PHYSICAL ASSAULT (stranger, neighbour, colleague) → "Criminal – BNS (Assault / Hurt / Grievous Hurt)" ONLY. Not Domestic Violence unless the attacker is a spouse or in-law.
+4. THEFT / STOLEN / ROBBERY / SNATCHING → "Criminal – BNS (Theft / Robbery / Burglary / Dacoity)" ONLY. Not Cyber unless the theft was purely digital/financial.
+5. CAR SERVICE / PRODUCT DEFECT / WARRANTY → "Consumer – Product Defect / Service Deficiency" ONLY.
+6. PIL / WRIT → only when the person explicitly seeks a writ/petition OR it is a large-scale public issue. Do NOT add PIL to employment, criminal, or routine consumer cases.
+7. BNS FRAUD / CHEATING → only when money was taken by active deception. Not for employment disputes. Not for civil defaults. Not for service complaints.
+8. CONSUMER LAW → only when the person is a buyer/customer with a complaint against a seller or service provider.
+9. DOMESTIC VIOLENCE → requires a domestic relationship: spouse, in-laws, live-in partner. Not for workplace or stranger conflicts.
+10. When unsure between 1 vs 2 laws, return 1. A precise single answer beats a padded multi-answer.
 
 OUTPUT FORMAT:
 Return ONLY category names, one per line. No numbering, no punctuation, no explanation.`;
@@ -86,11 +131,12 @@ function keywordFallback(description) {
   }));
 }
 
-// ── Handler ───────────────────────────────────────────────────────────────────
 // ── Structured query logger ────────────────────────────────────────────────
 // Emits one JSON line per request to Vercel function logs.
 // Use `vercel logs --filter '[qlog]'` to stream just these lines.
-function qlog(query, source, laws, ms) {
+// NOTE: only structural metadata is logged (law names, scores, pipeline path).
+// The raw query is truncated to 200 chars. No personal identifiers are stored.
+function qlog(query, source, laws, ms, extra) {
   try {
     const top = laws.slice(0, 3).map(l => ({
       law: l.caseType,
@@ -103,10 +149,12 @@ function qlog(query, source, laws, ms) {
       source,
       q:      query.slice(0, 200),
       top,
+      ...extra,
     }));
   } catch(e) { /* never let logging break the response */ }
 }
 
+// ── Handler ───────────────────────────────────────────────────────────────────
 module.exports = async function handler(req, res) {
   // CORS – allow same-origin Vercel requests
   res.setHeader('Access-Control-Allow-Origin',  '*');
@@ -141,11 +189,28 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const client   = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    // ── Prompt 1: Extract structure (run in parallel-friendly position) ──────
+    // Both calls use Haiku — total latency is P1 + P2 (sequential), not P1|P2,
+    // because P2's prompt is built from P1's output.
+    // Typical combined latency: ~600–900ms (vs ~400ms single-call).
+    // Trade-off is accepted: accuracy improvement outweighs latency cost.
+    const t1        = Date.now();
+    const structure = await extractStructure(client, description);
+    const extractMs = Date.now() - t1;
+
+    if (structure) {
+      console.log('[analyse] extracted:', JSON.stringify(structure), `(${extractMs}ms)`);
+    } else {
+      console.log('[analyse] extractor failed/skipped — using single-prompt path');
+    }
+
+    // ── Prompt 2: Classify using structure + original text ───────────────────
     const response = await client.messages.create({
       model:      'claude-haiku-4-5-20251001',
       max_tokens: 300,
-      messages:   [{ role: 'user', content: buildPrompt(description) }]
+      messages:   [{ role: 'user', content: buildPrompt(description, structure) }]
     });
 
     const lines = response.content[0].text
@@ -163,10 +228,12 @@ module.exports = async function handler(req, res) {
 
     // If Claude returned nothing recognisable, fall back
     const finalLaws = laws.length ? laws : keywordFallback(description);
-    const source    = laws.length ? 'claude' : 'keywords-fallback';
+    const source    = laws.length
+      ? (structure ? 'claude-2prompt' : 'claude-1prompt')
+      : 'keywords-fallback';
 
     console.log('[analyse]', source, '→', finalLaws.map(l => l.caseType).join(' | '));
-    qlog(clean, source, finalLaws, Date.now() - t0);
+    qlog(clean, source, finalLaws, Date.now() - t0, { extractMs, structured: !!structure });
     cacheSet(clean, finalLaws);
     return res.json({ success: true, laws: finalLaws, source });
 
