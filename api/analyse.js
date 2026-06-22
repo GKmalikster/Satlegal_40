@@ -74,8 +74,11 @@ function keywordFallback(description) {
 
   const threshold = 20;
   const above     = scored.filter(x => x.score >= threshold);
-  const results   = (above.length ? above : scored.slice(0, 3)).slice(0, 3);
-  const maxScore  = results[0]?.score || 1;
+  // CRITICAL: never return low-confidence noise. If nothing clears the threshold,
+  // return empty array — caller must handle NONE gracefully (show "tell us more" UI).
+  if (!above.length) return [];
+  const results  = above.slice(0, 3);
+  const maxScore = results[0]?.score || 1;
 
   return results.map(x => ({
     ...x.law,

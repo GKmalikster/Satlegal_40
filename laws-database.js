@@ -477,9 +477,9 @@ const LAWS_DATABASE = [
     lawCategory: 'Cyber & IT',
     actName: 'IT Act 2000 Sec 43, 66, 72 + BNS 2023',
     keywords: {
-      exact: ['company data stolen','employee stole data','database hacked','server hacked','ransomware attack','malware attack','confidential data leaked','trade secrets stolen','intellectual property stolen online','unauthorized access to systems','ddos attack on website'],
-      strong: ['hacking','hacked','data breach','data theft','ransomware','malware','corporate espionage','unauthorized access','computer crime','data leaked','trade secret','confidential info stolen','password hacked','network intrusion','cyber attack business'],
-      weak: ['stolen','hacked','breach','data','server','system','access','leaked','compromised','attack','intrusion']
+      exact: ['company data stolen','employee stole data','database hacked','server hacked','ransomware attack','malware attack','confidential data leaked','trade secrets stolen','intellectual property stolen online','unauthorized access to systems','ddos attack on website','it act complaint for theft of confidential business data','theft of confidential business data','confidential business data stolen','it act complaint data theft','data theft complaint it act','app developed by me stolen and relaunched','code stolen and relaunched','software stolen by partner','stolen and relaunched by','my app was copied and relaunched'],
+      strong: ['hacking','hacked','data breach','data theft','ransomware','malware','corporate espionage','unauthorized access','computer crime','data leaked','trade secret','confidential info stolen','password hacked','network intrusion','cyber attack business','it act complaint','it act violation','section 43 it act','section 66 it act','intellectual property stolen digital','code theft','software theft','app stolen','app copied','source code stolen','source code copied','confidential data theft','business data stolen'],
+      weak: ['hacked','breach','data','server','system','access','leaked','compromised','attack','intrusion']
     },
     sections: ['IT Act Sec 43 (Computer damage)','Sec 43A (Data protection)','Sec 66 (Hacking)','Sec 66B (Stolen computer resource)','Sec 72 (Breach of confidentiality)','BNS Sec 316 (Cheating)'],
     documents: [
@@ -556,6 +556,93 @@ const LAWS_DATABASE = [
     limitation: 'File FIR immediately; limitation 3 years for civil claim',
     urgency: 'high',
     multiLawCompatible: ['Family – Domestic Violence','Criminal – BNS (Fraud / Cheating)']
+  },
+
+  // ── BNS THEFT / ROBBERY / BURGLARY / DACOITY ─────────────────────────────
+  {
+    caseType: 'Criminal – BNS (Theft / Robbery / Burglary / Dacoity)',
+    lawCategory: 'Criminal',
+    actName: 'Bharatiya Nyaya Sanhita 2023 Sec 303–331 – Theft, Robbery, Dacoity, Burglary, Snatching',
+    keywords: {
+      exact: [
+        'my car got stolen','car got stolen','vehicle got stolen','bike got stolen','scooter got stolen',
+        'my car was stolen','my bike was stolen','my vehicle was stolen','two wheeler stolen',
+        'someone stole my car','someone stole my bike','someone stole my phone','someone stole my laptop',
+        'phone got stolen','mobile phone stolen','phone snatched','mobile snatched',
+        'gold chain snatched','chain snatched by biker','purse snatched','bag snatched',
+        'house was burgled','house was broken into','someone broke into my house','house break in',
+        'thieves broke into my shop','robbery at knifepoint','robbed at gunpoint',
+        'robbed on road','mugged near','my cash was stolen','jewellery stolen from house',
+        'mera phone chori ho gaya','mera mobile chori hua','meri bike chori ho gayi',
+        'meri gaadi chori ho gayi','ghar mein chori ho gayi','chor ghar mein ghus gaya',
+        'bike chor le gaya','car chor le gaya','phone chor le gaya','chain snatch ho gayi',
+        'loot ho gayi','loota gaya','loot liya','dakaiti ho gayi','dacoity',
+        'shoplifting at my store','goods stolen from my shop','office theft',
+        'laptop stolen from office','bag stolen from office','warehouse theft',
+        'cash stolen from office','theft at workplace','employee stole from company',
+        'car stolen from parking','stolen from mall','stolen from theater','stolen from market',
+        'stolen while i was away','house robbed while on vacation','domestic help stole',
+        'servant stole jewelry','maid stole cash','driver stole from car',
+      ],
+      strong: [
+        'stolen','theft','robbery','burglary','dacoity','snatching','snatch','mugging','mugged',
+        'pickpocket','looting','loot','robbed','burglar','break in','broke into',
+        'chori','chor','dakaiti','loot','chain snatch','mobile snatch',
+        'fir theft','police complaint theft','complaint theft','theft fir',
+        'stolen vehicle','vehicle theft','car theft','bike theft','auto theft',
+        'stolen phone','phone theft','mobile theft','stolen laptop','stolen jewellery',
+        'stolen gold','stolen cash','stolen property','missing valuables',
+        'stolen goods','goods missing','missing belongings','stolen belongings',
+        'robbery complaint','robbery fir','snatching complaint','snatching fir',
+        'anti theft','insurance claim theft','insurance stolen vehicle',
+        'stolen with documents','rc book stolen','documents stolen with car',
+        'car stolen report','ncr report','ncrb report','theft report police',
+        'bns 303','bns 304','bns 305','bns 306','bns 309','bns 310','bns 311',
+        'house break in complaint','burglary complaint','burglar alarm','intruder entered',
+        'stole from me','stole my','they stole','stolen from me','stolen from my',
+      ],
+      weak: [
+        'stolen','stole','theft','thief','rob','robbed','missing','lost','disappeared',
+        'chori','chor','dakaiti','valuables','fir','police','complaint','vehicle',
+        'car','bike','phone','mobile','laptop','jewelry','gold','cash','purse','bag',
+      ],
+      hinglish: [
+        'mera phone chori hua','meri bike chori hui','meri gaadi chori hui',
+        'ghar mein chori','dukan mein chori','office mein chori',
+        'chain snatch ho gayi','mobile snatch ho gaya','purse snatch ho gaya',
+        'chor ghus gaya ghar mein','chori ki fir kaise karein','police mein chori ki shikayat',
+        'ghar se sona chori gaya','bijli ka meter chori','scooter chori gaya parking se',
+      ],
+    },
+    sections: [
+      'BNS Sec 303 (Theft – up to 3 yrs / 7 yrs repeated)',
+      'BNS Sec 304 (Theft in dwelling house – 7 yrs)',
+      'BNS Sec 309 (Robbery – 10 yrs)',
+      'BNS Sec 310 (Dacoity – 10 yrs / life)',
+      'BNS Sec 305 (Theft of vehicle – 7 yrs)',
+      'BNS Sec 331(6) (Snatching – 3 yrs)',
+      'Motor Vehicles Act (for vehicle theft insurance claim)',
+      'Consumer Protection Act (for insurance claim denial after theft)',
+    ],
+    documents: [
+      { name: 'FIR Copy (filed at local police station)', critical: true },
+      { name: 'Vehicle Registration Certificate / RC Book (for vehicle theft)', critical: false },
+      { name: 'Insurance Policy (for insurance claim)', critical: false },
+      { name: 'List of stolen items with approximate value', critical: true },
+      { name: 'CCTV footage (if available from location)', critical: false },
+      { name: 'Witness details (if any)', critical: false },
+    ],
+    probingQuestions: [
+      { q: 'What was stolen and approximately what is its value?', tip: 'Higher value thefts (>₹1L) attract heavier BNS sections and stronger investigation priority.' },
+      { q: 'When and where did the theft/robbery occur?', tip: 'Exact location and time is critical for FIR and police investigation.' },
+      { q: 'Was violence or threat of violence used (robbery/snatching)?', tip: 'Simple theft vs robbery changes the BNS section and sentencing significantly.' },
+      { q: 'Have you already filed an FIR? If not, at which police station?', tip: 'FIR must be filed at the police station having jurisdiction over the area where theft occurred.' },
+      { q: 'Do you have insurance on the stolen vehicle/property?', tip: 'Insurance claim requires FIR copy within 24-48 hrs of theft for most policies.' },
+    ],
+    contextualQuestions: ['criminal'],
+    limitation: 'File FIR immediately — delay weakens investigation. Insurance claim: within 24-48 hrs.',
+    urgency: 'high',
+    multiLawCompatible: ['Motor Accident Claims / Personal Injury','Consumer – Insurance Claim Dispute'],
   },
 
   {
@@ -947,7 +1034,7 @@ const LAWS_DATABASE = [
     lawCategory: 'Criminal',
     actName: 'Protection of Human Rights Act, 1993 + Constitution Art 21 / NHRC / SHRC / Police Misconduct',
     keywords: {
-      exact: ['police beating me','police brutality','police torture','illegal arrest by police','police not registering fir','police refusing to file fir','police harassment','police excess','police misconduct','unlawful detention by police','police threatening','police demanding bribe','illegal detention by police','wrongful arrest','false arrest','police killed my relative fake encounter','i went to police station to report crime but they refused to register fir','police refuse to file fir for road accident','i was arrested without fir and kept for 3 days illegally','police are refusing to file my fir','police planted drugs on me to frame me','police is harassing members of our sc st community','police filed false case against me because of my political affiliation','police seized my vehicle after case was dismissed not returning it','police raided my house without search warrant','police searched my house without warrant','raided house without warrant','police entered without search warrant'],
+      exact: ['police beating me','police brutality','police torture','illegal arrest by police','police not registering fir','police refusing to file fir','police harassment','police excess','police misconduct','unlawful detention by police','police threatening','police demanding bribe','illegal detention by police','wrongful arrest','false arrest','police killed my relative fake encounter','i went to police station to report crime but they refused to register fir','police refuse to file fir for road accident','i was arrested without fir and kept for 3 days illegally','police are refusing to file my fir','police planted drugs on me to frame me','police is harassing members of our sc st community','police filed false case against me because of my political affiliation','police seized my vehicle after case was dismissed not returning it','police raided my house without search warrant','police searched my house without warrant','raided house without warrant','police entered without search warrant','police held person for 7 days without producing before magistrate','held for 7 days without producing before magistrate','not produced before magistrate within 24 hours','detained without producing before magistrate','police kept person without magistrate production'],
       strong: ['police excess','police brutality','police torture','human rights violation','nhrc complaint','shrc complaint','illegal arrest','wrongful arrest','unlawful detention','custodial violence','police misconduct','false case by police','police threatening','police bribe','encounter','fake encounter','third degree','custodial death','police custody','magistrate habeas corpus','refuse to register','refusing to file fir','fir refused','police refusing','framed by police','drugs planted','ndps planted','police false case','vehicle not returned','police excess complaint','police station refused','police beat in custody','beat me in custody','beaten in custody','police beat without charge','police beat without reason','detention without arrest memo','no arrest memo given','detention no memo','illegal detention no memo','whereabouts not told police','relative taken police whereabouts','no information after arrest','police took relative no information','police raided house without warrant','police searched house no warrant','illegal search without warrant','search warrant not shown','police entered without warrant','woman arrested without female constable','female arrested no woman constable','arrested without female officer','woman police not present during arrest','held 7 days without magistrate','produced before magistrate not done','not produced before magistrate'],
       weak: ['police','arrested','detained','fir','complaint','threat','station','constable','officer','refusal fir','false fir','framed','ndps','vehicle seized']
     },
@@ -1099,7 +1186,7 @@ const LAWS_DATABASE = [
     lawCategory: 'IP',
     actName: 'Trade Marks Act 1999 + Copyright Act 1957 + Patents Act 1970 + Designs Act 2000 – IP Rights / Trademark / Copyright / Patent',
     keywords: {
-      exact: ['trademark infringement','copyright infringement','patent infringement','someone copied my logo','copied my logo','copied my tagline','copied my tag line','using my logo','using my brand name','someone using my brand name','copied my design','stolen my content','pirated my software','trademark registered','copyright registered','patent filed','trademark application','design registered','intellectual property','ip theft','copied my brand','stole my brand','using my tagline','copied our logo','copied our brand','my novel is being sold on amazon kindle without my permission','my book is being sold online without my permission','someone selling my novel without permission','my ebook pirated and sold online','my content is being published without permission'],
+      exact: ['trademark infringement','copyright infringement','patent infringement','someone copied my logo','copied my logo','copied my tagline','copied my tag line','using my logo','using my brand name','someone using my brand name','copied my design','stolen my content','pirated my software','trademark registered','copyright registered','patent filed','trademark application','design registered','intellectual property','ip theft','copied my brand','stole my brand','using my tagline','copied our logo','copied our brand','my novel is being sold on amazon kindle without my permission','my book is being sold online without my permission','someone selling my novel without permission','my ebook pirated and sold online','my content is being published without permission','app developed by me stolen and relaunched by ex-partner','app stolen and relaunched','my app was copied and relaunched','my software was copied and sold','my code was stolen and relaunched','my application was copied','partner copied my app'],
       strong: ['trademark','copyright','patent','intellectual property','brand name','logo stolen','design stolen','content copied','piracy','plagiarism','infringement','trade secret','trade mark','registered trademark','copyright violation','passing off','counterfeit','fake products brand','brand protection','logo','tagline','tag line','copied my','copying my','brand copied','logo copied','brand infringement','unauthorized use of logo','my design copied','competitor copied'],
       weak: ['brand','name','design','content','music','book','software','invention','product','copied','stolen','fake','competition','competitor','imitation','duplicate']
     },
