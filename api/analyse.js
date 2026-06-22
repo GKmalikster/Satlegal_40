@@ -99,6 +99,7 @@ STRICT OVER-MAPPING RULES — each rule prevents a specific hallucination:
 9. DOMESTIC VIOLENCE → requires a domestic relationship: spouse, in-laws, live-in partner. Not for workplace or stranger conflicts.
 10. When unsure between 1 vs 2 laws, return 1. A precise single answer beats a padded multi-answer.
 11. DIVORCE / CHILD CUSTODY / MAINTENANCE / MARRIAGE → Family law ONLY. Never add BNS Fraud, PIL, Consumer, or any Criminal law to a family dispute unless there is an explicit separate criminal act (e.g. domestic violence, dowry demand). "Fighting for custody" is NOT fraud. "Seeking divorce" is NOT fraud.
+12. TOKEN MONEY / ADVANCE PAID FOR PROPERTY / SELLER NOT VACATING / POSSESSION NOT GIVEN → "Property – Transfer of Property / Sale Deed Dispute" ONLY. Not Rent, not Cyber, not Employment. A seller who takes advance and refuses to hand over property is a sale agreement dispute, not a rent case.
 
 OUTPUT FORMAT:
 Return ONLY category names, one per line. No numbering, no punctuation, no explanation.`;
