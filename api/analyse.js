@@ -84,6 +84,26 @@ function keywordFallback(description) {
 }
 
 // ── Handler ───────────────────────────────────────────────────────────────────
+// ── Structured query logger ────────────────────────────────────────────────
+// Emits one JSON line per request to Vercel function logs.
+// Use `vercel logs --filter '[qlog]'` to stream just these lines.
+function qlog(query, source, laws, ms) {
+  try {
+    const top = laws.slice(0, 3).map(l => ({
+      law: l.caseType,
+      score: l.score || l.confidence || null
+    }));
+    console.log(JSON.stringify({
+      type:   '[qlog]',
+      ts:     new Date().toISOString(),
+      ms,
+      source,
+      q:      query.slice(0, 200),
+      top,
+    }));
+  } catch(e) { /* never let logging break the response */ }
+}
+
 module.exports = async function handler(req, res) {
   // CORS – allow same-origin Vercel requests
   res.setHeader('Access-Control-Allow-Origin',  '*');
@@ -100,15 +120,20 @@ module.exports = async function handler(req, res) {
   }
 
   const clean = description.trim().toLowerCase().replace(/\s+/g, ' ');
+  const t0    = Date.now();
 
   // ── Cache hit ──────────────────────────────────────────────────────────────
   const hit = cacheGet(clean);
-  if (hit) return res.json({ success: true, laws: hit, source: 'cache' });
+  if (hit) {
+    qlog(clean, 'cache', hit, Date.now() - t0);
+    return res.json({ success: true, laws: hit, source: 'cache' });
+  }
 
   // ── Claude classify ────────────────────────────────────────────────────────
   if (!process.env.ANTHROPIC_API_KEY || !Anthropic) {
     console.warn('[analyse] Claude unavailable — using keyword fallback');
     const laws = keywordFallback(description);
+    qlog(clean, 'keywords', laws, Date.now() - t0);
     return res.json({ success: true, laws, source: 'keywords' });
   }
 
@@ -138,12 +163,14 @@ module.exports = async function handler(req, res) {
     const source    = laws.length ? 'claude' : 'keywords-fallback';
 
     console.log('[analyse]', source, '→', finalLaws.map(l => l.caseType).join(' | '));
+    qlog(clean, source, finalLaws, Date.now() - t0);
     cacheSet(clean, finalLaws);
     return res.json({ success: true, laws: finalLaws, source });
 
   } catch (err) {
     console.error('[analyse] Claude error:', err.message);
     const laws = keywordFallback(description);
+    qlog(clean, 'keywords-error-fallback', laws, Date.now() - t0);
     return res.json({ success: true, laws, source: 'keywords-error-fallback' });
   }
 };
