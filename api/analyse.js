@@ -98,6 +98,7 @@ STRICT OVER-MAPPING RULES — each rule prevents a specific hallucination:
 8. CONSUMER LAW → only when the person is a buyer/customer with a complaint against a seller or service provider.
 9. DOMESTIC VIOLENCE → requires a domestic relationship: spouse, in-laws, live-in partner. Not for workplace or stranger conflicts.
 10. When unsure between 1 vs 2 laws, return 1. A precise single answer beats a padded multi-answer.
+11. DIVORCE / CHILD CUSTODY / MAINTENANCE / MARRIAGE → Family law ONLY. Never add BNS Fraud, PIL, Consumer, or any Criminal law to a family dispute unless there is an explicit separate criminal act (e.g. domestic violence, dowry demand). "Fighting for custody" is NOT fraud. "Seeking divorce" is NOT fraud.
 
 OUTPUT FORMAT:
 Return ONLY category names, one per line. No numbering, no punctuation, no explanation.`;
