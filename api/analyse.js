@@ -15,6 +15,11 @@ catch(e) { console.warn('[analyse] @anthropic-ai/sdk unavailable:', e.message); 
 
 const DB = require('../laws-database.js');
 
+// Admin token verifier — enables debug mode in responses
+let verifyAdminToken = () => false;
+try { verifyAdminToken = require('./admin-login.js').verifyToken; }
+catch(e) { /* admin-login not available */ }
+
 // ── Build the valid caseType list once at cold-start ────────────────────────
 const LAW_TYPES_TEXT = DB.map(l => l.caseType).join('\n');
 const CONFIDENCE     = [90, 65, 50];  // 2nd/3rd are genuinely secondary — reflect that in UI
@@ -127,6 +132,29 @@ function kwRegex(k) {
 
 function kwMatch(input, k) {
   return kwRegex(k).test(input);
+}
+
+// ── Keyword debug scorer (admin mode only) ───────────────────────────────────
+// Returns full scoring breakdown for every law — used in the tester overlay.
+function keywordDebugScore(description) {
+  const input = description;
+  return DB.map(l => {
+    const hits  = { exact: [], strong: [], hinglish: [], casual: [], weak: [] };
+    let score   = 0;
+    const tiers = [
+      { tier: 'exact',    pts: 50 },
+      { tier: 'strong',   pts: 22 },
+      { tier: 'hinglish', pts: 22 },
+      { tier: 'casual',   pts: 22 },
+      { tier: 'weak',     pts:  8 },
+    ];
+    for (const { tier, pts } of tiers) {
+      for (const k of (l.keywords?.[tier] || [])) {
+        if (kwMatch(input, k)) { score += pts; hits[tier].push(k); }
+      }
+    }
+    return { caseType: l.caseType, score, hits };
+  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, 10);
 }
 
 function keywordFallback(description) {
@@ -278,10 +306,13 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST')   return res.status(405).json({ error: 'Method not allowed' });
 
-  const { description } = req.body || {};
+  const { description, adminToken } = req.body || {};
   if (!description || description.trim().length < 5) {
     return res.status(400).json({ success: false, error: 'Description too short' });
   }
+
+  // Admin debug mode — returns extra scoring info to the tester overlay
+  const isAdmin = verifyAdminToken(adminToken || req.headers['x-admin-token'] || '');
 
   const clean = description.trim().toLowerCase().replace(/\s+/g, ' ');
   const t0    = Date.now();
@@ -351,12 +382,25 @@ module.exports = async function handler(req, res) {
     console.log('[analyse]', source, '→', finalLaws.map(l => l.caseType).join(' | '));
     qlog(clean, source, finalLaws, Date.now() - t0, { extractMs, structured: !!structure });
     cacheSet(clean, finalLaws);
-    return res.json({ success: true, laws: finalLaws, source });
+
+    // Admin debug mode: include full scoring breakdown + pipeline trace
+    const debug = isAdmin ? {
+      structure,
+      keywordScores:     keywordDebugScore(description),
+      claudeRaw:         lines,
+      domainFiltered:    laws.filter(l => !filtered.find(f => f.caseType === l.caseType)).map(l => l.caseType),
+      primaryDomain:     laws.length ? getDomain(laws[0]) : null,
+      extractMs,
+    } : undefined;
+
+    return res.json({ success: true, laws: finalLaws, source, ...(debug ? { debug } : {}) });
 
   } catch (err) {
     console.error('[analyse] Claude error:', err.message);
     const laws = keywordFallback(description);
     qlog(clean, 'keywords-error-fallback', laws, Date.now() - t0);
-    return res.json({ success: true, laws, source: 'keywords-error-fallback' });
+
+    const debug = isAdmin ? { keywordScores: keywordDebugScore(description), error: err.message } : undefined;
+    return res.json({ success: true, laws, source: 'keywords-error-fallback', ...(debug ? { debug } : {}) });
   }
 };

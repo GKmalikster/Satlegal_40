@@ -788,6 +788,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
           <div style="font-weight:700;color:#c0392b;font-size:13.5px;margin:6px 0 10px;line-height:1.5">These Indian Laws, as suggested below are based upon the answers given by you and understood by the system, you may unselect the laws which seem not so relevant to your cause</div>
 
           <div id="lawCont"></div>
+
+          <!-- Tester debug panel (only visible when admin is logged in) -->
+          <div id="testerDebugPanel" style="display:none;margin-top:16px;background:#f8faff;border:1.5px solid #7c3aed33;border-radius:10px;padding:14px;font-family:monospace"></div>
         </div>
         <!-- Step 4 — Case Assessment (NEW) -->
         <div class="wiz-pane" id="p4" role="tabpanel" aria-labelledby="step4-tab">
@@ -1393,18 +1396,165 @@ W.sessionId=W.sessionId||(()=>{
   catch(e){return 'anon'}
 })();
 
+// ── Restore admin session on page load ────────────────────────────────────────
+(()=>{
+  const tok=localStorage.getItem('sl_admin_token');
+  const sess=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
+  if(tok&&sess.role==='tester'){
+    W.adminToken=tok;
+    W.isTester=true;
+    // Show tester banner after DOM ready
+    setTimeout(showTesterBanner,100);
+  }
+})();
+
+// ── Tester / Admin overlay ────────────────────────────────────────────────────
+function showTesterBanner(){
+  if(document.getElementById('testerBanner'))return;
+  const b=document.createElement('div');
+  b.id='testerBanner';
+  b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#7c3aed;color:#fff;font-size:12px;font-weight:700;padding:5px 14px;display:flex;align-items:center;gap:12px;';
+  b.innerHTML='🔬 TESTER MODE — <span style="font-weight:400;opacity:.85">Debug info appears on Step 3</span>'
+    +'<span style="flex:1"></span>'
+    +'<button onclick="openTesterPanel()" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700">Test a Query</button>'
+    +'<button onclick="adminLogout()" style="background:rgba(255,255,255,.15);border:none;color:#fff;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:11px">Logout</button>';
+  document.body.prepend(b);
+  document.body.style.marginTop='30px';
+}
+
+function adminLogout(){
+  localStorage.removeItem('sl_admin_token');
+  const sess=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
+  delete sess.role; delete sess.token;
+  localStorage.setItem('sl_user_session',JSON.stringify(sess));
+  W.adminToken=null;W.isTester=false;
+  document.getElementById('testerBanner')?.remove();
+  document.body.style.marginTop='';
+  toast('Tester mode off');
+}
+
+function renderTesterDebug(){
+  if(!W.isTester)return;
+  const panel=document.getElementById('testerDebugPanel');
+  if(!panel)return;
+  const d=W.lastDebug;
+  if(!d){panel.innerHTML='<p style="color:#94a3b8;font-size:11px;padding:8px">No debug data yet — run a query first.</p>';return;}
+
+  const structHTML=d.structure?`
+    <div style="margin-bottom:10px">
+      <b style="font-size:10px;text-transform:uppercase;color:#7c3aed">Extracted Structure (Prompt 1)</b><br>
+      <table style="font-size:11px;margin-top:4px;border-collapse:collapse;width:100%">
+        ${Object.entries(d.structure).map(([k,v])=>`<tr><td style="color:#64748b;padding:2px 8px 2px 0;white-space:nowrap">${k}</td><td style="color:#1e293b;font-weight:600">${v||'—'}</td></tr>`).join('')}
+      </table>
+    </div>`:'<p style="font-size:11px;color:#94a3b8;margin-bottom:8px">Structure extraction failed — single-prompt path used</p>';
+
+  const scoresHTML=(d.keywordScores||[]).slice(0,8).map(s=>{
+    const maxPts=d.keywordScores[0]?.score||1;
+    const pct=Math.min(100,Math.round(s.score/maxPts*100));
+    const color=pct>=70?'#10b981':pct>=35?'#f59e0b':'#94a3b8';
+    const allHits=[...(s.hits.exact||[]).map(k=>`<span style="background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:3px;font-size:9px;margin:1px">exact:${k}</span>`),
+                   ...(s.hits.strong||[]).map(k=>`<span style="background:#dbeafe;color:#1e40af;padding:1px 5px;border-radius:3px;font-size:9px;margin:1px">strong:${k}</span>`),
+                   ...(s.hits.weak||[]).map(k=>`<span style="background:#f1f5f9;color:#475569;padding:1px 5px;border-radius:3px;font-size:9px;margin:1px">weak:${k}</span>`)].join('');
+    return `<div style="margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+        <span style="font-size:10px;font-weight:600;flex:1;color:#1e293b">${s.caseType.replace(/^.*?–\s*/,'').slice(0,50)}</span>
+        <span style="font-size:11px;font-weight:700;color:${color}">${s.score}pts</span>
+      </div>
+      <div style="height:4px;background:#f1f5f9;border-radius:2px;margin-bottom:3px"><div style="height:4px;background:${color};width:${pct}%;border-radius:2px"></div></div>
+      <div style="flex-wrap:wrap;display:flex;gap:2px">${allHits}</div>
+    </div>`;
+  }).join('');
+
+  const filteredHTML=(d.domainFiltered||[]).length
+    ?`<div style="margin-top:8px"><b style="font-size:10px;text-transform:uppercase;color:#ef4444">Domain Filter Removed:</b><br>${d.domainFiltered.map(l=>`<span style="font-size:11px;color:#ef4444">✗ ${l}</span>`).join('<br>')}</div>`
+    :'<p style="font-size:11px;color:#10b981;margin-top:4px">✓ No laws filtered by domain exclusion</p>';
+
+  panel.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        ${structHTML}
+        <b style="font-size:10px;text-transform:uppercase;color:#7c3aed">Keyword Scores (top 8)</b>
+        <div style="margin-top:6px">${scoresHTML||'<p style="color:#94a3b8;font-size:11px">No keyword hits</p>'}</div>
+      </div>
+      <div>
+        <b style="font-size:10px;text-transform:uppercase;color:#7c3aed">Pipeline Info</b>
+        <table style="font-size:11px;margin-top:4px;border-collapse:collapse">
+          <tr><td style="color:#64748b;padding:2px 8px 2px 0">Source</td><td style="font-weight:600">${W.classifySource||'—'}</td></tr>
+          <tr><td style="color:#64748b;padding:2px 8px 2px 0">Primary domain</td><td style="font-weight:600">${d.primaryDomain||'—'}</td></tr>
+          <tr><td style="color:#64748b;padding:2px 8px 2px 0">Extract time</td><td style="font-weight:600">${d.extractMs||0}ms</td></tr>
+          <tr><td style="color:#64748b;padding:2px 8px 2px 0">Claude raw</td><td style="font-weight:600;word-break:break-all">${(d.claudeRaw||[]).join(' | ')||'—'}</td></tr>
+        </table>
+        ${filteredHTML}
+      </div>
+    </div>`;
+}
+
+function openTesterPanel(){
+  const ex=document.getElementById('testerQuickPanel');
+  if(ex){ex.remove();return;}
+  const panel=document.createElement('div');
+  panel.id='testerQuickPanel';
+  panel.style.cssText='position:fixed;bottom:20px;right:20px;width:420px;background:#1e293b;color:#e2e8f0;border-radius:10px;padding:16px;z-index:9998;box-shadow:0 8px 32px rgba(0,0,0,.4);font-size:12px';
+  panel.innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <span style="font-size:14px;font-weight:700">🔬 Quick Tester</span>
+      <span style="flex:1"></span>
+      <button onclick="document.getElementById('testerQuickPanel').remove()" style="background:none;border:none;color:#94a3b8;font-size:18px;cursor:pointer">×</button>
+    </div>
+    <textarea id="tqInput" placeholder="Type any query to test classification…" style="width:100%;height:70px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#e2e8f0;padding:8px;font-size:12px;resize:none"></textarea>
+    <button onclick="runTesterQuery()" style="margin-top:8px;width:100%;background:#7c3aed;border:none;color:#fff;padding:8px;border-radius:6px;cursor:pointer;font-weight:700">Classify →</button>
+    <div id="tqResult" style="margin-top:10px;min-height:40px"></div>`;
+  document.body.appendChild(panel);
+  document.getElementById('tqInput').focus();
+}
+
+async function runTesterQuery(){
+  const q=(document.getElementById('tqInput')||{}).value||'';
+  if(!q.trim()){return;}
+  const resEl=document.getElementById('tqResult');
+  resEl.innerHTML='<p style="color:#94a3b8">Classifying…</p>';
+  try{
+    const resp=await fetch('/api/analyse',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({description:q,adminToken:W.adminToken})
+    });
+    const data=await resp.json();
+    const laws=data.laws||[];
+    const d=data.debug||{};
+    resEl.innerHTML=`
+      <div style="font-weight:700;color:#10b981;margin-bottom:6px">Source: ${data.source||'?'}</div>
+      ${laws.map(l=>`<div style="padding:4px 0;border-bottom:1px solid #334155"><span style="color:#7dd3fc">${l.caseType}</span> <span style="color:#94a3b8">${l.confidence}%</span></div>`).join('')||'<div style="color:#ef4444">NONE returned</div>'}
+      ${d.domainFiltered?.length?`<div style="color:#ef4444;margin-top:4px;font-size:11px">Filtered: ${d.domainFiltered.join(', ')}</div>`:''}
+      ${d.structure?`<div style="color:#94a3b8;font-size:10px;margin-top:6px">Structure: ${JSON.stringify(d.structure)}</div>`:''}
+      <button onclick="addToBenchmark('${q.replace(/'/g,"\\'")}','${laws[0]?.caseType?.replace(/'/g,"\\'")||''}')" style="margin-top:8px;background:#334155;border:none;color:#e2e8f0;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:10px">+ Add to benchmark</button>`;
+  }catch(e){
+    resEl.innerHTML=`<p style="color:#ef4444">Error: ${e.message}</p>`;
+  }
+}
+
+function addToBenchmark(q,law){
+  const line=`  { q: '${q}', expect: '${law.replace(/^.*?–\s*/,'').split(' /')[0].trim()}', note: '[Tester] ${q.slice(0,30)}' },`;
+  navigator.clipboard?.writeText(line).then(()=>toast('Copied benchmark line to clipboard!'));
+}
+
+
 /* ══ AI CLASSIFIER — calls /api/analyse, falls back to local keyword engine ══ */
 async function classifyLaws(description){
   try{
+    const body={description};
+    // Admin mode: attach token so API returns debug info
+    if(W.adminToken) body.adminToken=W.adminToken;
+
     const r=await Promise.race([
-      fetch('/api/analyse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({description})}),
+      fetch('/api/analyse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}),
       new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),9000))
     ]);
     if(!r.ok)throw new Error('HTTP '+r.status);
     const d=await r.json();
     if(d.success&&Array.isArray(d.laws)&&d.laws.length){
-      W.classifySource=d.source||'claude'; // persist so feedback events can include it
+      W.classifySource=d.source||'claude';
       W.query=description;
+      W.lastDebug=d.debug||null;  // store debug info for tester overlay
       return d.laws;
     }
     throw new Error('empty response');
@@ -1412,6 +1562,7 @@ async function classifyLaws(description){
     console.warn('[classifyLaws] API failed, using local engine:',e.message);
     W.classifySource='local-fallback';
     W.query=description;
+    W.lastDebug=null;
     return (window.analyzeMultipleLaws||analyzeMultipleLaws)(description,{});
   }
 }
@@ -1747,6 +1898,11 @@ function renderLaws(){
     </div>`;
   });
   c.innerHTML=h;
+
+  // Show / refresh tester debug panel
+  const dp=document.getElementById('testerDebugPanel');
+  if(dp){dp.style.display=W.isTester?'block':'none';}
+  if(W.isTester) renderTesterDebug();
 }
 function togLaw(i){
   const l=W.laws[i];if(!l)return;
@@ -2597,6 +2753,37 @@ async function authLogin(){
   if(!password){toast('Enter your password','err');return;}
   const btn=document.getElementById('loginSubmitBtn');
   if(btn){btn.disabled=true;btn.textContent='Logging in…';}
+
+  // ── Admin / Tester login path ─────────────────────────────────────────────
+  // Detected by email — routed to a dedicated secure endpoint.
+  // Regular users never hit this path.
+  if(userId.trim().toLowerCase()==='admin@satlegal.in'){
+    try{
+      const resp=await fetch('/api/admin-login',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({email:userId.trim(),password})
+      });
+      const data=await resp.json();
+      if(!resp.ok||!data.success){toast(data.message||'Admin login failed.','err');if(btn){btn.disabled=false;btn.textContent='Login →';}return;}
+      // Store admin token and activate tester mode
+      localStorage.setItem('sl_admin_token', data.token);
+      localStorage.setItem('sl_user_session', JSON.stringify({
+        name:data.user.name, email:data.user.email, role:'tester', loggedIn:true, token:data.token
+      }));
+      W.adminToken = data.token;
+      W.isTester   = true;
+      toast('🔬 Tester mode activated — welcome!');
+      closeAuthModal();
+      showTesterBanner();
+      if(btn){btn.disabled=false;btn.textContent='Login →';}
+      return;
+    }catch(e){
+      toast('Admin login error: '+e.message,'err');
+      if(btn){btn.disabled=false;btn.textContent='Login →';}
+      return;
+    }
+  }
+
   try{
     const resp=await fetch(_API+'/auth/login',{
       method:'POST',headers:{'Content-Type':'application/json'},

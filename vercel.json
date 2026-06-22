@@ -11,6 +11,14 @@
       "dest": "/api/analyse.js"
     },
     {
+      "src": "/api/admin-login",
+      "dest": "/api/admin-login.js"
+    },
+    {
+      "src": "/api/feedback",
+      "dest": "/api/feedback.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }

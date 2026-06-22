@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SatLegal – Feedback Review Dashboard</title>
+<style>
+  :root {
+    --gr: #27ae60; --gr-lt: #eafaf1; --gr-dk: #1e8449;
+    --sf: #e67e22; --sf-lt: #fef5ec;
+    --red: #e74c3c; --red-lt: #fdf2f2;
+    --blue: #2980b9; --blue-lt: #eaf4fb;
+    --text: #2c3e50; --text-lt: #7f8c8d; --border: #dfe6e9;
+    --bg: #f4f6f7; --card: #fff;
+    --font: 'Segoe UI', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; }
+
+  header { background: var(--gr-dk); color: #fff; padding: 18px 28px; display: flex; align-items: center; gap: 14px; }
+  header h1 { font-size: 18px; font-weight: 700; }
+  header p  { font-size: 12px; opacity: .8; margin-top: 2px; }
+  .logo { font-size: 24px; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
+
+  /* Import panel */
+  .import-card { background: var(--card); border-radius: 10px; border: 2px dashed var(--border); padding: 24px; margin-bottom: 24px; }
+  .import-card h2 { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--text-lt); text-transform: uppercase; letter-spacing: .05em; }
+  .import-card textarea { width: 100%; height: 110px; font-size: 12px; font-family: monospace; border: 1px solid var(--border); border-radius: 6px; padding: 10px; resize: vertical; color: var(--text); }
+  .import-row { display: flex; gap: 10px; margin-top: 10px; align-items: center; }
+  .btn { padding: 9px 20px; border-radius: 7px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; transition: .15s; }
+  .btn-primary { background: var(--gr); color: #fff; }
+  .btn-primary:hover { background: var(--gr-dk); }
+  .btn-secondary { background: #fff; border: 1.5px solid var(--border); color: var(--text); }
+  .btn-secondary:hover { border-color: #999; }
+  .import-hint { font-size: 11px; color: var(--text-lt); margin-top: 6px; line-height: 1.6; }
+  .import-hint code { background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-size: 11px; }
+
+  /* Stats bar */
+  .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stat { background: var(--card); border-radius: 10px; padding: 16px 18px; border-left: 4px solid var(--border); }
+  .stat.red  { border-color: var(--red); }
+  .stat.sf   { border-color: var(--sf); }
+  .stat.blue { border-color: var(--blue); }
+  .stat.gr   { border-color: var(--gr); }
+  .stat-val  { font-size: 28px; font-weight: 800; line-height: 1; }
+  .stat-label{ font-size: 11px; color: var(--text-lt); margin-top: 4px; text-transform: uppercase; letter-spacing: .05em; }
+  .stat.red .stat-val  { color: var(--red); }
+  .stat.sf  .stat-val  { color: var(--sf); }
+  .stat.blue .stat-val { color: var(--blue); }
+  .stat.gr  .stat-val  { color: var(--gr); }
+
+  /* Grid layout */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 760px) { .grid-2 { grid-template-columns: 1fr; } .stats-bar { grid-template-columns: 1fr 1fr; } }
+  .card { background: var(--card); border-radius: 10px; padding: 20px; }
+  .card h3 { font-size: 13px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 700; }
+  .badge-red  { background: var(--red-lt);  color: var(--red); }
+  .badge-sf   { background: var(--sf-lt);   color: var(--sf); }
+  .badge-blue { background: var(--blue-lt); color: var(--blue); }
+  .badge-gr   { background: var(--gr-lt);   color: var(--gr); }
+
+  /* Bar chart */
+  .bar-row { margin-bottom: 10px; }
+  .bar-label { font-size: 11px; color: var(--text); margin-bottom: 3px; display: flex; justify-content: space-between; }
+  .bar-label span { color: var(--text-lt); font-size: 10px; }
+  .bar-track { height: 8px; background: #f0f2f3; border-radius: 4px; overflow: hidden; }
+  .bar-fill  { height: 100%; border-radius: 4px; transition: width .4s ease; }
+
+  /* Query table */
+  .query-list { max-height: 320px; overflow-y: auto; }
+  .q-row { border-bottom: 1px solid var(--border); padding: 10px 0; }
+  .q-row:last-child { border-bottom: none; }
+  .q-text { font-size: 12px; color: var(--text); margin-bottom: 4px; line-height: 1.4; }
+  .q-laws { display: flex; flex-wrap: wrap; gap: 4px; }
+  .q-law  { font-size: 10px; padding: 2px 7px; border-radius: 12px; font-weight: 600; }
+  .q-law.removed { background: var(--red-lt);  color: var(--red);  }
+  .q-law.kept    { background: var(--gr-lt);   color: var(--gr-dk); }
+  .q-law.shown   { background: #f0f2f3;        color: var(--text-lt); }
+
+  /* Empty state */
+  .empty { text-align: center; padding: 40px 20px; color: var(--text-lt); }
+  .empty-icon { font-size: 36px; margin-bottom: 10px; }
+
+  /* Priority list */
+  .priority-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .priority-item:last-child { border-bottom: none; }
+  .priority-num { font-size: 18px; font-weight: 800; color: var(--border); flex-shrink: 0; width: 24px; }
+  .priority-body { flex: 1; }
+  .priority-law  { font-size: 13px; font-weight: 700; color: var(--text); }
+  .priority-meta { font-size: 11px; color: var(--text-lt); margin-top: 2px; }
+  .priority-fix  { font-size: 11px; color: var(--blue); margin-top: 4px; }
+
+  /* Period */
+  .period-tag { font-size: 11px; color: var(--text-lt); margin-bottom: 16px; }
+
+  /* Full-width card */
+  .card-full { background: var(--card); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+  .card-full h3 { font-size: 13px; font-weight: 700; margin-bottom: 14px; }
+
+  /* Source breakdown */
+  .source-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 12px; }
+  .source-bar { flex: 1; height: 6px; background: #f0f2f3; border-radius: 3px; overflow: hidden; }
+  .source-fill { height: 100%; background: var(--gr); border-radius: 3px; }
+
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">⚖️</div>
+  <div>
+    <h1>SatLegal – Feedback Review Dashboard</h1>
+    <p>Paste your Vercel log export to analyse classification quality</p>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Import panel -->
+  <div class="import-card">
+    <h2>Import Feedback Logs</h2>
+    <textarea id="logInput" placeholder="Paste Vercel log export here…
+
+To export:  vercel logs --since 168h --filter '[flog]' > feedback.jsonl
+Then copy the file contents and paste here.
+
+Or paste individual log lines directly from the Vercel web dashboard."></textarea>
+    <div class="import-row">
+      <button class="btn btn-primary" onclick="parseLogs()">Analyse Logs</button>
+      <button class="btn btn-secondary" onclick="loadDemo()">Load Demo Data</button>
+      <span id="parseStatus" style="font-size:12px;color:var(--text-lt)"></span>
+    </div>
+    <div class="import-hint">
+      <strong>From Vercel web dashboard:</strong> Go to your project → <strong>Logs</strong> tab → filter by <code>[flog]</code> → select all → copy → paste here.<br>
+      <strong>From CLI:</strong> <code>vercel logs --since 168h --filter '[flog]' | pbcopy</code> (copies to clipboard on Mac)
+    </div>
+  </div>
+
+  <!-- Dashboard (hidden until data loaded) -->
+  <div id="dashboard" class="hidden">
+    <div class="period-tag" id="periodTag"></div>
+
+    <!-- Stats bar -->
+    <div class="stats-bar">
+      <div class="stat red">  <div class="stat-val" id="sUncheck">0</div><div class="stat-label">Laws Unchecked</div></div>
+      <div class="stat sf">   <div class="stat-val" id="sAbandon">0</div><div class="stat-label">Abandonments</div></div>
+      <div class="stat blue"> <div class="stat-val" id="sMiss">0</div>   <div class="stat-label">Complete Misses</div></div>
+      <div class="stat gr">   <div class="stat-val" id="sEvents">0</div> <div class="stat-label">Total Events</div></div>
+    </div>
+
+    <!-- Top unchecked + priority actions -->
+    <div class="grid-2">
+      <div class="card">
+        <h3>📉 Most Unchecked Laws <span class="badge badge-red">Fix These</span></h3>
+        <div id="uncheckChart"><div class="empty"><div class="empty-icon">✅</div>No unchecked laws yet</div></div>
+      </div>
+      <div class="card">
+        <h3>🎯 Priority Action List</h3>
+        <div id="priorityList"><div class="empty"><div class="empty-icon">🎉</div>Nothing to fix yet</div></div>
+      </div>
+    </div>
+
+    <!-- Queries with rejections -->
+    <div class="card-full">
+      <h3>🔍 Queries Where User Removed a Law <span class="badge badge-red" id="rejCount"></span></h3>
+      <div class="query-list" id="queryRejList"><div class="empty"><div class="empty-icon">✅</div>No rejections recorded</div></div>
+    </div>
+
+    <!-- Misses + Abandonments -->
+    <div class="grid-2">
+      <div class="card">
+        <h3>❌ Complete Misses <span class="badge badge-sf" id="missCount"></span></h3>
+        <div class="query-list" id="missList"><div class="empty"><div class="empty-icon">✅</div>No complete misses</div></div>
+      </div>
+      <div class="card">
+        <h3>↩️ Abandonments <span class="badge badge-blue" id="abandonCount"></span></h3>
+        <div class="query-list" id="abandonList"><div class="empty"><div class="empty-icon">✅</div>No abandonments</div></div>
+      </div>
+    </div>
+
+    <!-- Source breakdown -->
+    <div class="card-full">
+      <h3>🔀 Classification Source Breakdown</h3>
+      <div id="sourceBreakdown"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let parsed = [];
+
+function parseLogs() {
+  const raw = document.getElementById('logInput').value.trim();
+  if (!raw) { status('Paste log data first.'); return; }
+
+  parsed = [];
+  const lines = raw.split('\n');
+  let skipped = 0;
+
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    try {
+      const jsonStart = line.indexOf('{');
+      if (jsonStart < 0) { skipped++; continue; }
+      const obj = JSON.parse(line.slice(jsonStart));
+      if (obj.type !== '[flog]') { skipped++; continue; }
+      parsed.push(obj);
+    } catch(e) { skipped++; }
+  }
+
+  if (!parsed.length) { status(`No [flog] events found. (${skipped} lines skipped)`); return; }
+  status(`Loaded ${parsed.length} events from ${lines.length} lines.`);
+  renderDashboard();
+}
+
+function status(msg) { document.getElementById('parseStatus').textContent = msg; }
+
+function renderDashboard() {
+  document.getElementById('dashboard').classList.remove('hidden');
+
+  // Period
+  const ts = parsed.map(e => e.ts).filter(Boolean).sort();
+  if (ts.length) {
+    document.getElementById('periodTag').textContent =
+      `Period: ${ts[0].slice(0,10)} → ${ts[ts.length-1].slice(0,10)}  (${parsed.length} events)`;
+  }
+
+  // Aggregate
+  const uncheckedCount = {};
+  const shownCount     = {};
+  const queryRejections = {};
+  const allRejected = [];
+  const abandoned   = [];
+  const sourceCounts = {};
+
+  for (const e of parsed) {
+    const src = e.source || 'unknown';
+    sourceCounts[src] = (sourceCounts[src] || 0) + 1;
+
+    if (e.event === 'law_unchecked') {
+      const law = e.law || 'Unknown';
+      uncheckedCount[law] = (uncheckedCount[law] || 0) + 1;
+      const q = e.q || '(no query)';
+      if (!queryRejections[q]) queryRejections[q] = { shown: e.shown || [], unchecked: [] };
+      queryRejections[q].unchecked.push(law);
+    }
+
+    if (e.event === 'step_completed') {
+      (e.shown || []).forEach(law => { shownCount[law] = (shownCount[law] || 0) + 1; });
+      if (Array.isArray(e.kept) && e.kept.length === 0) {
+        allRejected.push({ q: e.q || '', shown: e.shown || [], source: src });
+      }
+    }
+
+    if (e.event === 'step_abandoned') {
+      abandoned.push({ q: e.q || '', shown: e.shown || [], source: src });
+    }
+  }
+
+  const lawStats = Object.keys({ ...uncheckedCount, ...shownCount }).map(law => ({
+    law,
+    shown:     shownCount[law]     || 0,
+    unchecked: uncheckedCount[law] || 0,
+    rate: shownCount[law] ? Math.round((uncheckedCount[law] || 0) / shownCount[law] * 100) : 0,
+  })).sort((a, b) => b.unchecked - a.unchecked);
+
+  const totalUncheck = Object.values(uncheckedCount).reduce((a,b)=>a+b,0);
+
+  // Stats bar
+  document.getElementById('sUncheck').textContent = totalUncheck;
+  document.getElementById('sAbandon').textContent = abandoned.length;
+  document.getElementById('sMiss').textContent    = allRejected.length;
+  document.getElementById('sEvents').textContent  = parsed.length;
+
+  // Uncheck bar chart
+  const top10 = lawStats.slice(0, 10);
+  const maxU  = top10[0]?.unchecked || 1;
+  const chartEl = document.getElementById('uncheckChart');
+  if (!top10.length) {
+    chartEl.innerHTML = '<div class="empty"><div class="empty-icon">✅</div>No unchecked laws yet</div>';
+  } else {
+    chartEl.innerHTML = top10.map(s => {
+      const color = s.rate >= 50 ? '#e74c3c' : s.rate >= 25 ? '#e67e22' : '#27ae60';
+      const pct   = Math.round(s.unchecked / maxU * 100);
+      return `<div class="bar-row">
+        <div class="bar-label">${esc(s.law.replace(/^.*?–\s*/,'').slice(0,50))} <span>${s.unchecked} removed (${s.rate}% rate)</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
+      </div>`;
+    }).join('');
+  }
+
+  // Priority actions
+  const highPri = lawStats.filter(s => s.rate >= 30 && s.shown >= 2).slice(0, 6);
+  const priEl = document.getElementById('priorityList');
+  if (!highPri.length) {
+    priEl.innerHTML = '<div class="empty"><div class="empty-icon">🎉</div>Nothing urgent to fix</div>';
+  } else {
+    priEl.innerHTML = highPri.map((s, i) => `
+      <div class="priority-item">
+        <div class="priority-num">${i+1}</div>
+        <div class="priority-body">
+          <div class="priority-law">${esc(s.law.replace(/^.*?–\s*/,'').slice(0,60))}</div>
+          <div class="priority-meta">Rejected ${s.rate}% of the time · shown ${s.shown}×</div>
+          <div class="priority-fix">→ Find the query in the table below and add an exact phrase or domain rule</div>
+        </div>
+      </div>`).join('');
+  }
+
+  // Query rejections table
+  const rejEntries = Object.entries(queryRejections)
+    .filter(([,v]) => v.unchecked.length > 0)
+    .sort((a,b) => b[1].unchecked.length - a[1].unchecked.length);
+  document.getElementById('rejCount').textContent = rejEntries.length;
+  const rejEl = document.getElementById('queryRejList');
+  if (!rejEntries.length) {
+    rejEl.innerHTML = '<div class="empty"><div class="empty-icon">✅</div>No rejections recorded</div>';
+  } else {
+    rejEl.innerHTML = rejEntries.slice(0, 25).map(([q, v]) => {
+      const shownTags = (v.shown || []).map(l => {
+        const removed = v.unchecked.includes(l);
+        return `<span class="q-law ${removed ? 'removed' : 'kept'}">${esc(l.replace(/^.*?–\s*/,'').slice(0,35))}${removed ? ' ✗' : ' ✓'}</span>`;
+      }).join('');
+      return `<div class="q-row">
+        <div class="q-text">"${esc(q.slice(0,120))}"</div>
+        <div class="q-laws">${shownTags || '<em style="font-size:11px;color:#999">no law data</em>'}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Misses
+  document.getElementById('missCount').textContent = allRejected.length;
+  const missEl = document.getElementById('missList');
+  if (!allRejected.length) {
+    missEl.innerHTML = '<div class="empty"><div class="empty-icon">✅</div>No complete misses</div>';
+  } else {
+    missEl.innerHTML = allRejected.slice(0,15).map(r => `
+      <div class="q-row">
+        <div class="q-text">"${esc((r.q||'').slice(0,110))}"</div>
+        <div class="q-laws">${(r.shown||[]).map(l=>`<span class="q-law removed">${esc(l.replace(/^.*?–\s*/,'').slice(0,35))} ✗</span>`).join('')}</div>
+      </div>`).join('');
+  }
+
+  // Abandonments
+  document.getElementById('abandonCount').textContent = abandoned.length;
+  const abEl = document.getElementById('abandonList');
+  if (!abandoned.length) {
+    abEl.innerHTML = '<div class="empty"><div class="empty-icon">✅</div>No abandonments</div>';
+  } else {
+    abEl.innerHTML = abandoned.slice(0,15).map(r => `
+      <div class="q-row">
+        <div class="q-text">"${esc((r.q||'').slice(0,110))}"</div>
+        <div class="q-laws">${(r.shown||[]).map(l=>`<span class="q-law shown">${esc(l.replace(/^.*?–\s*/,'').slice(0,35))}</span>`).join('')}</div>
+      </div>`).join('');
+  }
+
+  // Source breakdown
+  const totalSrc = Object.values(sourceCounts).reduce((a,b)=>a+b,0) || 1;
+  const srcLabels = {
+    'claude-2prompt':    '🟢 Claude (2-prompt pipeline)',
+    'claude-1prompt':    '🟡 Claude (1-prompt, extractor failed)',
+    'cache':             '⚡ Cache hit',
+    'keywords-fallback': '🔵 Keyword fallback (Claude unavailable)',
+    'local-fallback':    '🔴 Local keyword fallback (API down)',
+    'unknown':           '⬜ Unknown',
+  };
+  const srcOrder = ['claude-2prompt','claude-1prompt','cache','keywords-fallback','local-fallback','unknown'];
+  const srcHTML = srcOrder
+    .filter(s => sourceCounts[s])
+    .map(s => {
+      const n   = sourceCounts[s] || 0;
+      const pct = Math.round(n / totalSrc * 100);
+      return `<div class="source-row">
+        <span style="width:220px;font-size:12px">${srcLabels[s]||s}</span>
+        <div class="source-bar"><div class="source-fill" style="width:${pct}%"></div></div>
+        <span style="font-size:11px;color:#7f8c8d;width:70px;text-align:right">${n} (${pct}%)</span>
+      </div>`;
+    }).join('');
+  document.getElementById('sourceBreakdown').innerHTML = srcHTML || '<em style="color:#999;font-size:12px">No source data</em>';
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Demo data for first-time users to understand the dashboard
+function loadDemo() {
+  const now = new Date();
+  const day = (offset) => new Date(now - offset * 86400000).toISOString();
+
+  const demo = [
+    // Uncheck events
+    { type:'[flog]', event:'law_unchecked', ts:day(1), q:'my boss fired me without notice', law:'Criminal – BNS (Fraud / Cheating)', shown:['Employment – Wrongful Termination / Illegal Dismissal','Criminal – BNS (Fraud / Cheating)'], source:'claude-2prompt' },
+    { type:'[flog]', event:'law_unchecked', ts:day(2), q:'salary not paid for 3 months', law:'PIL – Writ / Fundamental Rights', shown:['Employment – Salary Dues / PF / Gratuity','PIL – Writ / Fundamental Rights'], source:'claude-2prompt' },
+    { type:'[flog]', event:'law_unchecked', ts:day(1), q:'car repair shop not fixing my car properly', law:'Employment – Wrongful Termination / Illegal Dismissal', shown:['Consumer – Product Defect / Service Deficiency','Employment – Wrongful Termination / Illegal Dismissal'], source:'claude-1prompt' },
+    { type:'[flog]', event:'law_unchecked', ts:day(3), q:'neighbour damaged my boundary wall', law:'Criminal – BNS (Fraud / Cheating)', shown:['Property – Transfer of Property / Sale Deed Dispute','Criminal – BNS (Fraud / Cheating)'], source:'claude-2prompt' },
+    { type:'[flog]', event:'law_unchecked', ts:day(0), q:'doctor gave wrong medicine side effects', law:'PIL – Writ / Fundamental Rights', shown:['Medical Negligence / Patient Rights','PIL – Writ / Fundamental Rights'], source:'claude-2prompt' },
+
+    // Step completed (shows which laws survived)
+    { type:'[flog]', event:'step_completed', ts:day(1), q:'my boss fired me without notice', shown:['Employment – Wrongful Termination / Illegal Dismissal','Criminal – BNS (Fraud / Cheating)'], kept:['Employment – Wrongful Termination / Illegal Dismissal'], source:'claude-2prompt' },
+    { type:'[flog]', event:'step_completed', ts:day(2), q:'salary not paid for 3 months', shown:['Employment – Salary Dues / PF / Gratuity','PIL – Writ / Fundamental Rights'], kept:['Employment – Salary Dues / PF / Gratuity'], source:'claude-2prompt' },
+    { type:'[flog]', event:'step_completed', ts:day(4), q:'tenant not paying rent', shown:['Property – Rent Dispute / Tenant Eviction'], kept:['Property – Rent Dispute / Tenant Eviction'], source:'cache' },
+
+    // Complete miss
+    { type:'[flog]', event:'step_completed', ts:day(2), q:'builder has not completed construction and taking extra money', shown:['Property – Transfer of Property / Sale Deed Dispute','Consumer – Product Defect / Service Deficiency'], kept:[], source:'claude-2prompt' },
+
+    // Abandonments
+    { type:'[flog]', event:'step_abandoned', ts:day(1), q:'company deducted salary without reason', shown:['Employment – Wrongful Termination / Illegal Dismissal','Tax – GST / Income Tax / Tax Dispute'], source:'claude-1prompt' },
+    { type:'[flog]', event:'step_abandoned', ts:day(3), q:'chit fund company not returning money', shown:['Consumer – Product Defect / Service Deficiency','Civil – Money Recovery / Debt Recovery'], source:'keywords-fallback' },
+  ];
+
+  document.getElementById('logInput').value = demo.map(e => '2024-01-15T10:00:00.000Z [info] ' + JSON.stringify(e)).join('\n');
+  parseLogs();
+}
+</script>
+</body>
+</html>
