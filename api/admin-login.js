@@ -17,8 +17,8 @@
 const crypto = require('crypto');
 
 // ── Credentials (override via Vercel env vars) ────────────────────────────────
-const ADMIN_EMAIL    = process.env.ADMIN_EMAIL    || 'admin@satlegal.in';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'SatLegal@2026!';
+const ADMIN_EMAIL    = process.env.ADMIN_EMAIL    || 'tester@satlegal.in';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'SL@QA#8847';
 const ADMIN_SECRET   = process.env.ADMIN_SECRET   || 'sl-admin-secret-x7k9q2m4p1';
 
 /**

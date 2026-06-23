@@ -2757,7 +2757,7 @@ async function authLogin(){
   // ── Admin / Tester login path ─────────────────────────────────────────────
   // Detected by email — routed to a dedicated secure endpoint.
   // Regular users never hit this path.
-  if(userId.trim().toLowerCase()==='admin@satlegal.in'){
+  if(userId.trim().toLowerCase()==='tester@satlegal.in'){
     try{
       const resp=await fetch('/api/admin-login',{
         method:'POST',headers:{'Content-Type':'application/json'},
