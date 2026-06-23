@@ -657,7 +657,7 @@ tbody tr:last-child td { border-bottom: none; }
     <form id="loginForm">
       <div class="form-group">
         <label>Email Address</label>
-        <input type="email" id="email" class="form-control" placeholder="you@example.com" required />
+        <input type="text" id="email" class="form-control" placeholder="you@example.com" autocomplete="email" required />
       </div>
       <div class="form-group">
         <label style="display:flex;justify-content:space-between">
@@ -697,6 +697,33 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
   btn.disabled = true; btn.textContent = 'Logging in...';
   alertBox.innerHTML = '';
+
+  // ── Tester / Admin path ──────────────────────────────────────────────────────
+  if (email.toLowerCase() === 'tester@satlegal.in') {
+    try {
+      const resp = await fetch('/api/admin-login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await resp.json();
+      if (!resp.ok || !data.success) {
+        alertBox.innerHTML = `<div class="alert alert-danger">❌ ${data.message || 'Tester login failed.'}</div>`;
+        btn.disabled = false; btn.textContent = 'Login';
+        return;
+      }
+      // Store token in same format as regular session
+      localStorage.setItem('sl_admin_token', data.token);
+      localStorage.setItem('sl_user_session', JSON.stringify({
+        name: data.user.name, email: data.user.email, role: 'tester', loggedIn: true, token: data.token
+      }));
+      Toast.success('🔬 Tester mode activated!');
+      setTimeout(() => { window.location.href = '/'; }, 800);
+    } catch (err) {
+      alertBox.innerHTML = `<div class="alert alert-danger">❌ ${err.message}</div>`;
+      btn.disabled = false; btn.textContent = 'Login';
+    }
+    return;
+  }
 
   try {
     const data = await API.login({ email, password });
