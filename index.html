@@ -1875,15 +1875,70 @@ async function s2(){
 function renderLaws(){
   const c=document.getElementById('lawCont');
   const top=W.laws.slice(0,6);
-  const maxS=top[0]?(top[0].confidence||top[0].score||1):1;
   W.selected=top.slice(0,Math.min(3,top.length));
+  // Reset tester ratings for new query
+  W.testerRatings={};
+  W.testerNotes={};
   let h='';
+
+  // ── Tester header panel ────────────────────────────────────────────────────
+  if(W.isTester){
+    const d=W.lastDebug||{};
+    const src=W.classifySource||'unknown';
+    const srcClr=src.includes('2prompt')?'#10b981':src.includes('keyword')?'#f59e0b':'#7c3aed';
+    const struct=d.structure;
+    const filtered=(d.domainFiltered||[]);
+    h+=`<div style="background:linear-gradient(135deg,#1e293b 0%,#312e81 100%);border-radius:14px;padding:20px;margin-bottom:18px;color:#e2e8f0;box-shadow:0 6px 24px rgba(124,58,237,.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+        <span style="font-size:20px">🔬</span>
+        <span style="font-size:15px;font-weight:800;color:#fff;letter-spacing:-.2px">TESTER MODE — Law Mapping Review</span>
+        <span style="margin-left:auto;background:${srcClr};color:#fff;font-size:10px;font-weight:800;padding:3px 12px;border-radius:20px;white-space:nowrap">${src}</span>
+      </div>
+      ${struct?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        ${[['What happened',struct.what_happened],['Relationship',struct.relationship],['Harm type',struct.harm_type],['Context',struct.context]].map(([k,v])=>`
+        <div style="background:rgba(255,255,255,.09);border-radius:8px;padding:9px 11px">
+          <div style="font-size:9px;color:#94a3b8;text-transform:uppercase;font-weight:700;letter-spacing:.5px;margin-bottom:3px">${k}</div>
+          <div style="font-size:12px;color:#fff;font-weight:600">${esc(v||'—')}</div>
+        </div>`).join('')}
+      </div>`:`<div style="background:rgba(255,255,255,.07);border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#fbbf24">⚠️ Structure extraction failed — single-prompt path used</div>`}
+      <div style="display:flex;gap:14px;font-size:11px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.12);padding-top:10px">
+        <span>Domain: <b style="color:#a5b4fc">${d.primaryDomain||'—'}</b></span>
+        <span>Extract: <b style="color:#a5b4fc">${d.extractMs||0}ms</b></span>
+        <span>${filtered.length?`<span style="color:#f87171">Filtered: ${filtered.join(', ')}</span>`:'<span style="color:#6ee7b7">No domain filters applied</span>'}</span>
+      </div>
+    </div>`;
+  }
+
+  // ── Law cards ──────────────────────────────────────────────────────────────
+  const RATING_CFG=[
+    {id:'accept',   label:'✅ Accept',    bg:'#d1fae5',fg:'#065f46',bc:'#10b981'},
+    {id:'incorrect',label:'❌ Incorrect', bg:'#fee2e2',fg:'#991b1b',bc:'#ef4444'},
+    {id:'irrelevant',label:'🚫 Irrelevant',bg:'#fef3c7',fg:'#92400e',bc:'#f59e0b'},
+    {id:'missing',  label:'📌 Missing',   bg:'#ede9fe',fg:'#5b21b6',bc:'#7c3aed'},
+    {id:'others',   label:'💬 Others',    bg:'#f1f5f9',fg:'#475569',bc:'#94a3b8'},
+  ];
+
   top.forEach((l,i)=>{
     const pct=Math.min(99,l.confidence||l.score||0);
     const sel=i<3;
     const uc=l.urgency==='high'?'urg-h':l.urgency==='medium'?'urg-m':'urg-l';
     const ul=l.urgency==='high'?'🔴 Urgent':l.urgency==='medium'?'🟡 Act Soon':'🟢 Routine';
     const bc=pct>=70?'var(--gr-500)':pct>=40?'var(--sf-500)':'var(--text-lt)';
+
+    const ratingRow=W.isTester?`
+      <div style="margin-top:12px;padding-top:10px;border-top:2px dashed #c7d2fe" onclick="event.stopPropagation()">
+        <div style="font-size:10px;font-weight:800;color:#7c3aed;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px">🔬 Tester Rating</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          ${RATING_CFG.map(r=>`<button id="rb-${i}-${r.id}" onclick="setTesterRating(${i},'${r.id}');event.stopPropagation()"
+            style="background:${r.bg};color:${r.fg};border:1.5px solid ${r.bc};font-size:10px;font-weight:700;padding:5px 10px;border-radius:6px;cursor:pointer;opacity:.38;transition:.15s">${r.label}</button>`).join('')}
+        </div>
+        <div id="rb-note-${i}" style="display:none;margin-top:8px">
+          <input type="text" placeholder="Add note (e.g. which law is correct instead)…"
+            style="width:100%;border:1.5px solid #c7d2fe;border-radius:6px;padding:6px 10px;font-size:11px;color:#1e293b;outline:none"
+            oninput="W.testerNotes[${i}]=this.value" onclick="event.stopPropagation()">
+        </div>
+      </div>` : '';
+
     h+=`<div class="law-card${sel?' sel':''}" id="lc${i}" onclick="togLaw(${i})">
       <div class="lc-check">${sel?'✓':''}</div>
       <div class="lc-body">
@@ -1894,15 +1949,71 @@ function renderLaws(){
         <div class="lc-act">${esc(l.actName||'')}</div>
         <div class="conf-row"><div class="conf-bar"><div class="conf-fill" style="width:${pct}%;background:${bc}"></div></div><div class="conf-pct">${pct}%</div></div>
         <div class="lc-tip">${esc(l.quickTip||'This law may apply based on the details you provided.')}</div>
+        ${ratingRow}
       </div>
     </div>`;
   });
+
+  // ── Tester submit panel ────────────────────────────────────────────────────
+  if(W.isTester){
+    h+=`<div style="margin-top:18px;background:#faf5ff;border:2px dashed #c4b5fd;border-radius:12px;padding:18px">
+      <div style="font-size:13px;font-weight:800;color:#7c3aed;margin-bottom:10px">📌 Laws That SHOULD Have Appeared (Missing from Results)</div>
+      <textarea id="testerMissing" rows="2" placeholder="e.g. Consumer Protection Act, Transfer of Property Act…"
+        style="width:100%;border:1.5px solid #c4b5fd;border-radius:7px;padding:8px 11px;font-size:12px;resize:none;color:#1e293b;outline:none;box-sizing:border-box"></textarea>
+      <div style="font-size:13px;font-weight:800;color:#7c3aed;margin:12px 0 7px">💬 Overall Query Notes</div>
+      <input type="text" id="testerQueryNote" placeholder="General observation about this query's classification…"
+        style="width:100%;border:1.5px solid #c4b5fd;border-radius:7px;padding:8px 11px;font-size:12px;color:#1e293b;outline:none;box-sizing:border-box">
+      <button onclick="submitTesterRatings()" style="margin-top:14px;width:100%;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border:none;border-radius:9px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;letter-spacing:-.2px;box-shadow:0 4px 14px rgba(124,58,237,.35)">📤 Submit Benchmark Data</button>
+      <p style="font-size:10px;color:#94a3b8;text-align:center;margin:8px 0 0">Ratings are saved to Vercel logs and surfaced in feedback-dashboard.html</p>
+    </div>`;
+  }
+
   c.innerHTML=h;
 
-  // Show / refresh tester debug panel
+  // Hide old debug panel (now integrated above)
   const dp=document.getElementById('testerDebugPanel');
-  if(dp){dp.style.display=W.isTester?'block':'none';}
-  if(W.isTester) renderTesterDebug();
+  if(dp) dp.style.display='none';
+}
+
+/* ── Tester rating helpers ── */
+function setTesterRating(idx, status){
+  W.testerRatings=W.testerRatings||{};
+  W.testerNotes=W.testerNotes||{};
+  W.testerRatings[idx]={status, note:W.testerNotes[idx]||''};
+  // Highlight selected button, dim others
+  ['accept','incorrect','irrelevant','missing','others'].forEach(r=>{
+    const btn=document.getElementById(`rb-${idx}-${r}`);
+    if(btn) btn.style.opacity = r===status?'1':'0.3';
+    if(btn&&r===status) btn.style.transform='scale(1.06)';
+    if(btn&&r!==status) btn.style.transform='';
+  });
+  // Show note input for incorrect / others
+  const noteEl=document.getElementById('rb-note-'+idx);
+  if(noteEl) noteEl.style.display=(status==='others'||status==='incorrect')?'block':'none';
+}
+
+async function submitTesterRatings(){
+  const laws=W.laws.slice(0,6);
+  const ratings=Object.entries(W.testerRatings||{}).map(([idx,r])=>{
+    const l=laws[parseInt(idx)];
+    return {caseType:l?.caseType||'?', status:r.status, note:W.testerNotes[idx]||''};
+  });
+  const missing=(document.getElementById('testerMissing')||{}).value||'';
+  const note=(document.getElementById('testerQueryNote')||{}).value||'';
+  if(!ratings.length&&!missing){toast('Rate at least one law before submitting.','err');return;}
+  await fbLog('tester_rating',{
+    ratings, missing, note,
+    query:(W.description||'').slice(0,200),
+    source:W.classifySource||null,
+    shown:laws.map(l=>l.caseType),
+    debug:W.lastDebug||null
+  });
+  toast('✅ Benchmark data saved!');
+  // Visual reset
+  W.testerRatings={};W.testerNotes={};
+  document.querySelectorAll('[id^="rb-"]').forEach(b=>{if(b.tagName==='BUTTON'){b.style.opacity='.38';b.style.transform='';}});
+  if(document.getElementById('testerMissing')) document.getElementById('testerMissing').value='';
+  if(document.getElementById('testerQueryNote')) document.getElementById('testerQueryNote').value='';
 }
 function togLaw(i){
   const l=W.laws[i];if(!l)return;
