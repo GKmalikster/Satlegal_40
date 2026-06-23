@@ -1424,13 +1424,9 @@ function showTesterBanner(){
 
 function adminLogout(){
   localStorage.removeItem('sl_admin_token');
-  const sess=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
-  delete sess.role; delete sess.token;
-  localStorage.setItem('sl_user_session',JSON.stringify(sess));
-  W.adminToken=null;W.isTester=false;
-  document.getElementById('testerBanner')?.remove();
-  document.body.style.marginTop='';
-  toast('Tester mode off');
+  localStorage.removeItem('sl_user_session');
+  sessionStorage.removeItem('sl_sid');
+  window.location.reload();
 }
 
 function renderTesterDebug(){
