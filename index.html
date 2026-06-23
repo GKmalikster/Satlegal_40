@@ -1417,6 +1417,7 @@ function showTesterBanner(){
   b.innerHTML='🔬 TESTER MODE — <span style="font-weight:400;opacity:.85">Debug info appears on Step 3</span>'
     +'<span style="flex:1"></span>'
     +'<button onclick="openTesterPanel()" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700">Test a Query</button>'
+    +'<button onclick="window.open(\'/admin/dashboard.html\',\'_blank\')" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700">⚙️ Admin Panel</button>'
     +'<button onclick="adminLogout()" style="background:rgba(255,255,255,.15);border:none;color:#fff;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:11px">Logout</button>';
   document.body.prepend(b);
   document.body.style.marginTop='30px';
@@ -1567,7 +1568,11 @@ async function classifyLaws(description){
 function s1(){
   const txt=document.getElementById('issueTa').value.trim();
   if(txt.length<15){toast('Please describe your issue in at least a sentence for accurate analysis.','err');return}
+  // ── Clear previous query state ─────────────────────────────────────────────
   W.input=txt;
+  W.answers={};
+  W.assessmentAnswers={};
+  W.laws=[];W.selected=[];W.areas=[];W.questions=[];W.files={};
   W.laws=(window.analyzeMultipleLaws||analyzeMultipleLaws)(txt,{});
   if(!Array.isArray(W.laws))W.laws=[];
 
@@ -1584,12 +1589,30 @@ function s1(){
     qs=getLawAreaQs(W.areas, txt);
   }
   if(!qs.length) qs=getProbingQs();
+
+  // ── Context clarification: prepend 3 questions if query is vague ───────────
+  const domainSignals=/employer|salary|fired|terminate|property|rent|tenant|landlord|police|fir|arrest|fraud|cheat|scam|upi|divorce|husband|wife|maintenance|custody|dowry|assault|threat|harass|money|loan|bank|builder|rera|consumer|defect|negligence|cyber|hack|job|court|notice|legal/i;
+  const isVague=txt.length<70||!domainSignals.test(txt);
+  if(isVague){
+    const ctxQs=[
+      {id:'ctx_nature',q:'What best describes the nature of your issue?',type:'opts',
+       options:['Employment / Salary / Job termination','Property / Land / Builder dispute','Criminal / FIR / Police matter','Family / Marriage / Divorce / Custody','Financial fraud / Cheating / Money recovery','Consumer / Product / Service complaint','Cyber crime / Online fraud','Government / Rights / Public matter','Other / Not sure']},
+      {id:'ctx_party',q:'Who is the other party in this matter?',type:'opts',
+       options:['Employer or company','Landlord or tenant','Bank or financial institution','Family member (spouse, parent, sibling)','Builder or real estate developer','Government authority / police','Stranger or unknown person','Online seller or service provider','Other']},
+      {id:'ctx_seek',q:'What outcome are you primarily seeking?',type:'opts',
+       options:['File an FIR / criminal complaint','Recover money or compensation','Get a court order / injunction','Negotiate a settlement','Understand my legal rights','File a consumer complaint','Respond to a notice I received','Other / Not sure yet']},
+    ];
+    qs=[...ctxQs,...qs];
+  }
+
   W.questions=qs;
 
   // Update step-2 subtitle with detected context
   const p2sub=document.getElementById('p2sub');
   if(p2sub){
-    if(W.areas.length){
+    if(isVague){
+      p2sub.textContent=`A few quick context questions first — then targeted law-specific questions will follow.`;
+    } else if(W.areas.length){
       const aNames=W.areas.slice(0,2).map(a=>a.replace(/_/g,' ')).join(' & ');
       p2sub.textContent=`Detected: ${aNames} matter — ${qs.length} targeted questions to sharpen your analysis.`;
     } else {
@@ -1997,15 +2020,27 @@ async function submitTesterRatings(){
   const missing=(document.getElementById('testerMissing')||{}).value||'';
   const note=(document.getElementById('testerQueryNote')||{}).value||'';
   if(!ratings.length&&!missing){toast('Rate at least one law before submitting.','err');return;}
-  await fbLog('tester_rating',{
-    ratings, missing, note,
-    query:(W.description||'').slice(0,200),
+
+  const entry={
+    ts:new Date().toISOString(),
+    query:(W.input||'').slice(0,200),
     source:W.classifySource||null,
     shown:laws.map(l=>l.caseType),
-    debug:W.lastDebug||null
-  });
-  toast('✅ Benchmark data saved!');
-  // Visual reset
+    ratings, missing, note,
+    structure:W.lastDebug?.structure||null
+  };
+
+  // ── Persist to localStorage for admin dashboard ───────────────────────────
+  try{
+    const stored=JSON.parse(localStorage.getItem('sl_corrections')||'[]');
+    stored.unshift(entry); // newest first
+    localStorage.setItem('sl_corrections',JSON.stringify(stored.slice(0,200))); // keep last 200
+  }catch(e){}
+
+  // ── Also log to Vercel ────────────────────────────────────────────────────
+  await fbLog('tester_rating', entry);
+
+  toast('✅ Benchmark data saved to dashboard!');
   W.testerRatings={};W.testerNotes={};
   document.querySelectorAll('[id^="rb-"]').forEach(b=>{if(b.tagName==='BUTTON'){b.style.opacity='.38';b.style.transform='';}});
   if(document.getElementById('testerMissing')) document.getElementById('testerMissing').value='';
@@ -2128,63 +2163,266 @@ function updateAssessStrength(){
 }
 
 function getAssessmentQs(law){
-  const act=law.actName||'';
   const ct=(law.caseType||'').toLowerCase();
-  const isEmployment=act.match(/employment|labour|id act|posh|epf/i)||ct.includes('employment')||ct.includes('wrongful termination')||ct.includes('minimum wages')||ct.includes('gratuity')||ct.includes('pf ');
-  const isProperty=act.match(/rera|transfer of property|registration|builder/i)||ct.includes('rera')||ct.includes('property')||ct.includes('rent dispute')||ct.includes('land acquisition');
-  const isCyber=act.match(/cyber|it act|upi|fraud/i)||ct.includes('cyber')||ct.includes('online fraud');
-  const isFamily=act.match(/family|matrimonial|dowry|dv act|divorce|hma/i)||ct.includes('family')||ct.includes('divorce')||ct.includes('domestic violence')||ct.includes('muslim divorce')||ct.includes('maintenance');
-  const isCriminal=act.match(/criminal|bns|bnss|fir|police|constitution.*police/i)||ct.includes('criminal')||ct.includes('police excess')||ct.includes('illegal detention')||ct.includes('bail')||ct.includes('cheque bounce');
-  const isConsumer=act.match(/consumer|medical negligence|product|defective/i)||ct.includes('consumer')||ct.includes('copra')||ct.includes('medical negligence');
-  if(isEmployment){
+
+  // ── Wrongful Termination / Employment ──────────────────────────────────────
+  if(ct.includes('wrongful termination')||ct.includes('unfair dismissal')){
     return [
-      {q:'Do you have a written appointment letter or employment contract?',opts:['Yes','No','Had it but lost it','Verbal agreement only']},
-      {q:'Was there any written warning before your termination?',opts:['Yes — formal show-cause','No written warning given','Verbal warning only','Not applicable']},
-      {q:'Was PF/ESIC enrolled and deducted from your salary?',opts:['Yes — enrolled and deducted','Deducted but may not be deposited','Not enrolled by employer','Not sure']},
-      {q:'Have you filed a complaint with the Labour Commissioner?',opts:['Yes — complaint filed','No — not yet','Filed online on Shram Portal','Police complaint filed instead']}
-    ];
-  } else if(isProperty){
-    return [
-      {q:'Do you have a registered sale or rent agreement?',opts:['Yes — fully registered','Notarized but not registered','No written agreement','Agreement under process']},
-      {q:'Are you currently in possession of the property?',opts:['Yes — in possession','No — denied possession','Partially in possession','Was removed from possession']},
-      {q:'Is the project registered under RERA?',opts:['Yes — RERA registered','No — not RERA registered','Not sure','Exempted from RERA']},
-      {q:'Have you sent any legal notice to the builder or seller?',opts:['Yes — via lawyer','Yes — personally sent','No — not yet','Builder ignored previous notice']}
-    ];
-  } else if(isCyber){
-    return [
-      {q:'Have you called the Cybercrime Helpline 1930?',opts:['Yes — within 24 hours','Yes — after 24 hours','No — not yet','Reported to bank only']},
-      {q:'Do you have screenshots and transaction IDs?',opts:['Yes — complete records','Partial records only','No evidence collected','Bank statement available']},
-      {q:'Have you blocked your card and UPI immediately?',opts:['Yes — blocked immediately','Yes — with some delay','No — not blocked yet','Bank is investigating']},
-      {q:'Have you filed a cybercrime complaint online (cybercrime.gov.in)?',opts:['Yes — complaint filed','No — not yet','Police FIR filed instead','Filed with bank only']}
-    ];
-  } else if(isFamily){
-    return [
-      {q:'Do you have your marriage certificate or registration?',opts:['Yes — registered marriage certificate','No certificate but marriage photos/proof exist','No formal registration done','Marriage disputed by other party']},
-      {q:'Is there evidence of domestic violence or harassment?',opts:['Yes — medical records or MLC report','Yes — photos or witness testimony','No physical evidence — testimony only','No violence — civil matrimonial dispute']},
-      {q:'Have you applied for interim maintenance in court?',opts:['Yes — applied under Sec 24 HMA / DV Act','No — not applied yet','Case filed but maintenance pending','Previously ordered maintenance not being paid']},
-      {q:'Do you currently have safe accommodation?',opts:['Yes — living in shared home','Yes — living with family or independently','No — forced to leave matrimonial home','Seeking residence order under DV Act']}
-    ];
-  } else if(isCriminal){
-    return [
-      {q:'Has an FIR been registered with the police?',opts:['Yes — FIR registered','Police refused to register FIR','Written complaint filed, not FIR','Not filed yet']},
-      {q:'Was there a medical examination (MLC) done?',opts:['Yes — MLC done at hospital','Medical treatment done but no MLC','No medical treatment needed','MLC pending']},
-      {q:'Are there witnesses to the incident?',opts:['Yes — multiple independent witnesses','Yes — one witness (known person)','CCTV or digital evidence available','No witnesses — testimony only']},
-      {q:'Have you preserved all evidence?',opts:['Yes — screenshots, calls, documents preserved','Partially preserved','Evidence deleted by the other party','Not sure what to preserve']}
-    ];
-  } else if(isConsumer){
-    return [
-      {q:'Do you have purchase proof (invoice, receipt, or order confirmation)?',opts:['Yes — original invoice/bill','Digital receipt or confirmation email','No formal receipt — cash payment','No proof available']},
-      {q:'Have you made a written complaint to the seller or company?',opts:['Yes — written complaint with acknowledgment','Yes — email only','No — not yet complained','Company refused to acknowledge']},
-      {q:'When did you notice the defect or negligence?',opts:['Within 30 days of purchase','1–6 months later','6–12 months later','More than a year later']},
-      {q:'Has the company responded to your complaint?',opts:['Yes — but response was inadequate','Yes — and offered partial compensation','No response at all','Acknowledged but not resolved']}
+      {q:'Do you have a written appointment letter or employment contract?',opts:['Yes — signed contract','Offer letter only','Verbal agreement only','No documentation']},
+      {q:'Were you given a formal show-cause notice before termination?',opts:['Yes — with time to respond','No notice at all','Verbal notice only','Notice given but no opportunity to respond']},
+      {q:'How many years of continuous service did you complete?',opts:['Less than 1 year','1–5 years','5–10 years','More than 10 years']},
+      {q:'Was your full & final settlement (F&F) paid?',opts:['Yes — fully paid','Partially paid','Not paid at all','Disputed amount pending']},
     ];
   }
-  // Generic assessment for other law types
+  if(ct.includes('minimum wages')||ct.includes('unpaid salary')||ct.includes('wage')){
+    return [
+      {q:'Do you have salary slips or bank transfer records?',opts:['Yes — complete salary slips','Bank records only','No records — cash payment','Partial records']},
+      {q:'How many months of salary are unpaid?',opts:['1 month','2–3 months','4–6 months','More than 6 months']},
+      {q:'Did you raise the issue with HR or management in writing?',opts:['Yes — written complaint','Verbal complaint only','No — feared retaliation','Yes — but ignored']},
+      {q:'Are you still employed or have you resigned / been terminated?',opts:['Still employed','Resigned due to non-payment','Terminated after raising issue','Resigned — seeking dues']},
+    ];
+  }
+  if(ct.includes('gratuity')||ct.includes('pf ')||ct.includes('epf')||ct.includes('provident fund')){
+    return [
+      {q:'Have you completed 5 years of continuous service with this employer?',opts:['Yes — more than 5 years','4–5 years (borderline)','Less than 4 years','Not sure']},
+      {q:'Did the employer deduct PF/ESIC from your salary?',opts:['Yes — deducted every month','Deducted but not deposited (Form 26AS shows nil)','Not deducted — employer claimed exemption','Not sure']},
+      {q:'Have you submitted a formal gratuity/PF claim?',opts:['Yes — claim submitted','No — not yet submitted','Claim submitted but denied','Applied but no response']},
+      {q:'Do you have Form 16, PF passbook or UAN details?',opts:['Yes — UAN and passbook available','Form 16 only','No records available','Records being withheld by employer']},
+    ];
+  }
+  if(ct.includes('posh')||ct.includes('sexual harassment')){
+    return [
+      {q:'Has the incident been reported to the Internal Complaints Committee (ICC)?',opts:['Yes — formal ICC complaint filed','No ICC exists at workplace','Not reported yet','Reported to HR informally']},
+      {q:'Do you have written evidence (emails, messages, witnesses)?',opts:['Yes — digital evidence preserved','Witness testimony available','No written evidence — verbal incident','Evidence partially available']},
+      {q:'How long ago did the incident(s) occur?',opts:['Within the last 3 months','3–12 months ago','1–3 years ago','More than 3 years ago']},
+      {q:'Has the employer taken any action after your complaint?',opts:['Employer is supportive and investigating','Employer is inactive despite complaint','Employer is retaliating against me','No response at all']},
+    ];
+  }
+
+  // ── Property & Real Estate ─────────────────────────────────────────────────
+  if(ct.includes('rera')||ct.includes('builder')||ct.includes('real estate')){
+    return [
+      {q:'Is your project registered under RERA?',opts:['Yes — RERA registered (have registration no.)','Not RERA registered','Not sure / under verification','Exempted from RERA']},
+      {q:'Has possession been delayed beyond the agreement date?',opts:['Yes — delayed by less than 1 year','Yes — delayed by 1–3 years','Yes — delayed more than 3 years','Project abandoned / stalled']},
+      {q:'Have you paid more than 10% of the property value?',opts:['Yes — fully paid','Paid 50–90%','Paid 10–50%','Less than 10% paid']},
+      {q:'Have you sent a legal notice to the builder?',opts:['Yes — via registered lawyer notice','Yes — personally','No — not yet','Builder has gone untraceable']},
+    ];
+  }
+  if(ct.includes('rent dispute')||ct.includes('tenant')||ct.includes('landlord')){
+    return [
+      {q:'Do you have a registered rent agreement?',opts:['Yes — registered with sub-registrar','Notarized but not registered','No written agreement — verbal only','Expired agreement']},
+      {q:'Who is currently in possession of the property?',opts:['Tenant is in possession (landlord dispute)','Landlord has locked me out','Both parties claim possession','Third party in illegal possession']},
+      {q:'Have rent arrears been paid or is rent being withheld?',opts:['All rent paid — dispute is about something else','Tenant has withheld 1–3 months rent','More than 3 months unpaid','Landlord refusing to accept rent']},
+      {q:'Has a legal notice been served?',opts:['Yes — eviction notice served','Yes — maintenance/repair notice','No notice yet','Both parties exchanged notices']},
+    ];
+  }
+  if(ct.includes('transfer of property')||ct.includes('property possession')||ct.includes('token money')){
+    return [
+      {q:'Is there a registered sale agreement or MOU?',opts:['Yes — registered sale agreement','Yes — notarized MOU only','Letter of intent only','No written agreement']},
+      {q:'What is the current status of property possession?',opts:['Seller refuses to give possession after full payment','Buyer has paid advance but possession denied','Ownership dispute between multiple claimants','Third party (tenant/occupant) blocking possession']},
+      {q:'Has the full sale consideration been paid?',opts:['Yes — fully paid','70–99% paid','30–70% paid','Advance (token) only paid']},
+      {q:'Is the property mutation / title transfer done?',opts:['Yes — mutation complete','Registry done but mutation pending','Sale deed not executed yet','Property in dispute — title unclear']},
+    ];
+  }
+  if(ct.includes('land acquisition')||ct.includes('compensation')){
+    return [
+      {q:'Has a Section 4 / Section 11 notification been issued?',opts:['Yes — notification received','Heard about it informally','No notification yet','Notification challenged in court']},
+      {q:'Have you received any compensation award?',opts:['Yes — award given but inadequate','No compensation offered','Compensation disputed','Award pending']},
+      {q:'Do you have clear title documents for the land?',opts:['Yes — registered patta and title','Ancestral land — partial documents','Land records disputed','No formal title — possession only']},
+      {q:'Have you filed an objection or reference under LARR Act?',opts:['Yes — filed objection within time','Filed reference to court','Time for objection has passed','Not yet filed — seeking advice']},
+    ];
+  }
+
+  // ── Criminal / Police ──────────────────────────────────────────────────────
+  if(ct.includes('bns (fraud')||ct.includes('cheating')||ct.includes('fraud')){
+    return [
+      {q:'Do you have proof that money was transferred based on false representation?',opts:['Yes — bank records + messages proving deception','Bank records only (no deception proof)','Witness testimony of false promises','Digital evidence only — no financial records']},
+      {q:'What was the approximate amount involved?',opts:['Less than ₹50,000','₹50,000 – ₹5 lakh','₹5 lakh – ₹50 lakh','More than ₹50 lakh']},
+      {q:'Has an FIR been registered?',opts:['Yes — FIR registered','Police refused — filed Section 156(3) petition','Written complaint only','Not filed yet']},
+      {q:'Do you know the identity of the accused?',opts:['Yes — full identity known','Partial identity (name only)','Only online identity known','Unknown — anonymous fraud']},
+    ];
+  }
+  if(ct.includes('bns (assault')||ct.includes('assault')||ct.includes('hurt')){
+    return [
+      {q:'Was an MLC (Medico-Legal Certificate) issued?',opts:['Yes — MLC obtained from hospital','Treated privately — no MLC','Injuries not documented medically','MLC pending']},
+      {q:'Has an FIR been registered for the assault?',opts:['Yes — FIR registered','Police filed NCR only','Police refused to register FIR','Not filed yet']},
+      {q:'Were there witnesses to the assault?',opts:['Yes — multiple independent witnesses','CCTV footage available','One witness (known person)','No witnesses — my word only']},
+      {q:'Is the accused known to you?',opts:['Yes — known person / acquaintance','Family member / domestic situation','Employer or colleague','Stranger — identity unknown']},
+    ];
+  }
+  if(ct.includes('bns (theft')||ct.includes('theft')||ct.includes('robbery')||ct.includes('dacoity')){
+    return [
+      {q:'Has an FIR been registered for the theft/robbery?',opts:['Yes — FIR filed immediately','FIR filed with delay','Police refusing to register FIR','Complaint filed but not as FIR']},
+      {q:'Do you have evidence of the stolen items (invoices, photos, insurance)?',opts:['Yes — invoices and photos available','Insurance records only','No documentation of items','Partial evidence available']},
+      {q:'Were there any witnesses or CCTV footage?',opts:['CCTV footage captured','Eyewitnesses available','No witnesses or footage','Partial CCTV — unclear footage']},
+      {q:'Was physical violence or threat used during the incident?',opts:['Yes — violence used (robbery)','Threat of violence (dacoity element)','No violence — simple theft','Not sure — happened without my knowledge']},
+    ];
+  }
+  if(ct.includes('bail')||ct.includes('anticipatory bail')||ct.includes('bnss')){
+    return [
+      {q:'Has the FIR been registered and is the accused in custody?',opts:['Yes — FIR registered, arrested','FIR registered, warrant issued but not arrested','Anticipatory bail needed (arrest feared)','Summoned by court — not arrested']},
+      {q:'What is the nature of the offence in the FIR?',opts:['Bailable offence','Non-bailable but compoundable','Non-bailable and serious (NDPS, POCSO, murder)','Not sure of offence category']},
+      {q:'Has the accused been produced before a Magistrate?',opts:['Yes — remand hearing done','Police custody — not yet produced','Judicial custody — bail hearing pending','Not produced yet']},
+      {q:'Is there any previous criminal record?',opts:['No prior cases or FIRs','Minor previous matter — compounded','Pending cases in other courts','Previous conviction on record']},
+    ];
+  }
+  if(ct.includes('police excess')||ct.includes('illegal detention')||ct.includes('habeas corpus')){
+    return [
+      {q:'Was the detention officially communicated to the family?',opts:['No — whereabouts unknown to family','Informal verbal communication only','Official intimation given','Habeas corpus already filed']},
+      {q:'How long has the person been detained without formal arrest?',opts:['Less than 24 hours','24–48 hours','More than 48 hours','Detained in unknown location']},
+      {q:'Has a lawyer been able to meet the detained person?',opts:['Yes — legal access provided','Lawyer denied access','No lawyer engaged yet','Managed brief contact only']},
+      {q:'Is there medical evidence of custodial abuse?',opts:['Yes — visible injuries, MLC done','Complaints of abuse but no MLC','Psychological abuse / threat alleged','No physical abuse — procedural detention']},
+    ];
+  }
+  if(ct.includes('cheque bounce')||ct.includes('negotiable instruments')){
+    return [
+      {q:'Have you sent a legal demand notice within 30 days of cheque dishonour?',opts:['Yes — notice sent within 30 days','Yes — but after 30 days (may be time-barred)','No — notice not sent yet','Notice sent but 15-day period has lapsed']},
+      {q:'Do you have the original dishonoured cheque and bank memo?',opts:['Yes — both original cheque and bank memo','Bank memo only','Neither — digital transaction','Cheque lost — only bank statement']},
+      {q:'What was the reason for dishonour stated on the bank memo?',opts:['Insufficient funds','Account closed / frozen','Signature mismatch','Payment stopped by drawer']},
+      {q:'What was the cheque amount and is it a business or personal debt?',opts:['Business transaction — invoice based','Personal loan repayment','Security / guarantee cheque','Gift or donation cheque']},
+    ];
+  }
+
+  // ── Family & Matrimonial ───────────────────────────────────────────────────
+  if(ct.includes('divorce')||ct.includes('matrimonial')){
+    return [
+      {q:'Is this a mutual consent divorce or a contested one?',opts:['Mutual consent — both parties agree','Contested — spouse is opposing','Not sure of the ground yet','Starting process — no decision yet']},
+      {q:'How long have you been separated (not living together)?',opts:['Less than 1 year','1–2 years (required for mutual consent)','More than 2 years','Living together despite dispute']},
+      {q:'Do you have your marriage certificate or registration?',opts:['Yes — registered marriage certificate','Religious ceremony proof only','No formal documentation','Marriage registration disputed']},
+      {q:'Are there children involved in the custody dispute?',opts:['Yes — custody is the main issue','Children involved — arrangement agreed','No children','Children are adults — not in dispute']},
+    ];
+  }
+  if(ct.includes('domestic violence')||ct.includes('dv act')){
+    return [
+      {q:'Has any Protection Order or Residence Order been filed under DV Act?',opts:['Yes — protection order obtained','Application filed — hearing pending','Not yet filed','Filed but opposed by respondent']},
+      {q:'Is there medical or photographic evidence of violence?',opts:['Yes — MLC and photos available','Photos only (no MLC)','Witness testimony only','No physical evidence — ongoing threat']},
+      {q:'Do you have a safe place to stay currently?',opts:['Yes — in shared matrimonial home','Staying with relatives','Shelter home / NGO support','Forced to stay with abuser']},
+      {q:'Has any police complaint (NCR or FIR) been filed?',opts:['Yes — FIR under Section 498A/DV Act','NCR filed only','No police complaint yet','Police complaint filed but no action']},
+    ];
+  }
+  if(ct.includes('maintenance')||ct.includes('alimony')){
+    return [
+      {q:'Has a maintenance application been filed in court?',opts:['Yes — application filed, hearing pending','Interim maintenance ordered — not being paid','No application filed yet','Ex-parte order obtained']},
+      {q:'Is there documentary evidence of the other party\'s income?',opts:['Yes — ITR, salary slips, bank statements','Partial income proof only','Self-employed — income hard to establish','No income proof — estimating']},
+      {q:'What is the current living arrangement?',opts:['Separated — living independently','Forced out of matrimonial home','Living together but no financial support','Children are with me (custody already settled)']},
+      {q:'How long has maintenance been denied?',opts:['Recently stopped — less than 3 months','3–12 months','More than 1 year','Never paid since separation']},
+    ];
+  }
+  if(ct.includes('child custody')){
+    return [
+      {q:'Is there a court order for custody or visitation?',opts:['Yes — custody order exists','Interim custody order in place','No order — informal arrangement','Previous order violated']},
+      {q:'Who is the child currently living with?',opts:['With me (seeking legal protection)','With other parent (seeking custody)','With grandparents/relatives','Disputed — child taken without consent']},
+      {q:'What is the age of the child?',opts:['Below 5 years','5–12 years','12–16 years','Above 16 years']},
+      {q:'Are there welfare concerns about the child?',opts:['Yes — safety risk with other parent','Educational / medical neglect alleged','Child\'s preference supports my case','No specific welfare concern — about rights']},
+    ];
+  }
+  if(ct.includes('dowry')||ct.includes('498a')){
+    return [
+      {q:'Has an FIR under Section 498A BNS been registered?',opts:['Yes — FIR already registered','Complaint filed — awaiting FIR','No FIR yet — seeking advice','Section 85 BNS equivalent used']},
+      {q:'What evidence of dowry demand exists?',opts:['Written demand (letter/message)','Witness testimony of demand','Audio/video recording','No documentary evidence — verbal demands only']},
+      {q:'Has any dowry-related physical violence occurred?',opts:['Yes — MLC and hospital records available','Injuries without medical record','Psychological harassment only','Suicidal instigation alleged']},
+      {q:'What is the approximate value of dowry demanded?',opts:['Below ₹1 lakh','₹1–10 lakh','₹10–50 lakh','More than ₹50 lakh or property']},
+    ];
+  }
+  if(ct.includes('muslim')||ct.includes('triple talaq')){
+    return [
+      {q:'Was talaq pronounced verbally, by phone, or in writing?',opts:['Verbal — in presence of witnesses','Written — letter or WhatsApp message','Via phone call or video call','Triple talaq in one sitting']},
+      {q:'Was the prescribed iddat period observed before talaq?',opts:['No — instant triple talaq without iddat','Iddat period not communicated','Khula initiated by wife','Proper Talaq-e-Ahsan procedure followed']},
+      {q:'Have you applied for maintenance under MWPRDA 2019?',opts:['Yes — application under MWPRDA filed','No — not applied yet','Proceeding under CrPC Section 125','Mehr amount being disputed']},
+      {q:'Are there children from this marriage?',opts:['Yes — custody and maintenance for children','Yes — custody already settled','No children','Pregnant at time of divorce']},
+    ];
+  }
+
+  // ── Consumer & Medical ─────────────────────────────────────────────────────
+  if(ct.includes('consumer')||ct.includes('product')||ct.includes('defect')){
+    return [
+      {q:'Do you have a purchase invoice or receipt?',opts:['Yes — original tax invoice','Digital order confirmation only','No formal receipt — cash payment','Warranty card only']},
+      {q:'Have you made a written complaint to the company?',opts:['Yes — with acknowledgment / ticket number','Email complaint only','No written complaint yet','Verbal complaint — no record']},
+      {q:'When did you notice the defect or issue?',opts:['Within 30 days of purchase','1–6 months later','6–12 months later','More than 1 year later']},
+      {q:'What is the approximate value of goods or services involved?',opts:['Below ₹20 lakh (District Commission)','₹20 lakh – ₹1 crore (State Commission)','Above ₹1 crore (National Commission)','Not sure of the threshold']},
+    ];
+  }
+  if(ct.includes('medical negligence')){
+    return [
+      {q:'Do you have all medical records, prescriptions and discharge summaries?',opts:['Yes — complete records obtained','Partial records — hospital not sharing','Records obtained via RTI/legal notice','No records — verbal treatment only']},
+      {q:'Has a second medical opinion confirmed the negligence?',opts:['Yes — another doctor confirmed negligence','Seeking second opinion','No second opinion yet','Expert report commissioned']},
+      {q:'Did you file a complaint with the Medical Council or NMC?',opts:['Yes — NMC/State Medical Council complaint filed','No — not yet filed','Filed with hospital management first','Consumer forum case filed already']},
+      {q:'What was the outcome of the alleged negligence?',opts:['Death of patient','Permanent disability or disfigurement','Prolonged illness due to wrong treatment','Unnecessary surgery or procedure']},
+    ];
+  }
+
+  // ── Cyber ──────────────────────────────────────────────────────────────────
+  if(ct.includes('cyber')||ct.includes('upi fraud')||ct.includes('online fraud')){
+    return [
+      {q:'Did you call Cybercrime Helpline 1930 within 24 hours?',opts:['Yes — within 24 hours (best chance of recovery)','Yes — after 24 hours','No — not called yet','Reported to bank only']},
+      {q:'Do you have transaction IDs, screenshots and call recordings?',opts:['Yes — complete digital evidence','Screenshots only','Bank statement / SMS only','No evidence preserved']},
+      {q:'How much money was lost?',opts:['Below ₹10,000','₹10,000 – ₹1 lakh','₹1 lakh – ₹10 lakh','Above ₹10 lakh']},
+      {q:'Have you filed an online complaint on cybercrime.gov.in?',opts:['Yes — complaint number received','Filed — awaiting acknowledgment','No — not yet filed','Police FIR filed directly']},
+    ];
+  }
+  if(ct.includes('it act')||ct.includes('data')||ct.includes('hacking')||ct.includes('identity theft')){
+    return [
+      {q:'Do you have evidence of unauthorised access (login logs, alerts)?',opts:['Yes — login alerts and account logs','Suspicious transactions only','Compromised credentials as proof','No direct evidence — suspected breach']},
+      {q:'Were your personal documents used fraudulently?',opts:['Yes — Aadhaar/PAN misused','Bank account opened in my name','Loan taken using my identity','Social media impersonation']},
+      {q:'Have you filed a complaint with CERT-In or cybercrime portal?',opts:['Yes — CERT-In notified','Cybercrime portal complaint filed','Police complaint only','Not yet filed']},
+      {q:'Have you immediately secured all affected accounts?',opts:['Yes — passwords changed, accounts secured','Partially secured','Bank accounts frozen by bank','Not yet — unsure what to secure']},
+    ];
+  }
+
+  // ── Civil / RTI / Contract ─────────────────────────────────────────────────
+  if(ct.includes('civil')&&(ct.includes('contract')||ct.includes('recovery')||ct.includes('money'))){
+    return [
+      {q:'Is the debt or obligation documented in a written agreement?',opts:['Yes — signed written contract','Promissory note or cheque','Email / WhatsApp acknowledgment only','Verbal agreement — no document']},
+      {q:'Has the limitation period (3 years from default) expired?',opts:['No — within 3 years','Borderline — near 3 years','Expired — but seeking condonation','Not sure of default date']},
+      {q:'What amount is to be recovered?',opts:['Below ₹3 lakh (SCDRC / Lok Adalat)','₹3 lakh – ₹20 lakh (District Court)','₹20 lakh – ₹2 crore (High Court)','Above ₹2 crore']},
+      {q:'Have you sent a demand notice or legal notice?',opts:['Yes — advocate notice sent','Personal notice sent via registered post','No notice yet','Notice sent — ignored by opposite party']},
+    ];
+  }
+  if(ct.includes('rti')||ct.includes('right to information')){
+    return [
+      {q:'Have you filed an RTI application with the relevant Public Authority?',opts:['Yes — filed and received acknowledgment','Filed — no response in 30 days','Received response but information denied','Not yet filed']},
+      {q:'If denied, have you filed a First Appeal?',opts:['Yes — first appeal filed','No — time for first appeal (30 days) is running','First appeal rejected — considering Second Appeal','Not applicable yet']},
+      {q:'Was the information denied citing Section 8 exemptions?',opts:['Yes — Section 8(1) cited','Privacy exemption cited','Third party objection raised','No reason given for denial']},
+      {q:'Is the information sought related to your personal file or public record?',opts:['My own personal records / service matters','Public project or expenditure records','Environmental or safety records','Policy or government decisions']},
+    ];
+  }
+
+  // ── Succession / Property inheritance ──────────────────────────────────────
+  if(ct.includes('succession')||ct.includes('inheritance')||ct.includes('will')){
+    return [
+      {q:'Is there a registered Will for this property / assets?',opts:['Yes — registered Will exists','Unregistered Will (handwritten or typed)','No Will — intestate succession applies','Will being disputed by other heirs']},
+      {q:'Has probate been applied for in court?',opts:['Yes — probate application filed','No — proceeding by way of succession certificate','Mutation done without probate','Not yet applied']},
+      {q:'Are there multiple legal heirs in dispute?',opts:['Yes — siblings / family members disputing','Only one challenger to the Will','No dispute — seeking formal recognition','Creditors of deceased challenging estate']},
+      {q:'Have you obtained a Legal Heir Certificate?',opts:['Yes — legal heir certificate obtained','Applied — pending issuance','No certificate yet','Death certificate obtained but not legal heir certificate']},
+    ];
+  }
+
+  // ── Tax ────────────────────────────────────────────────────────────────────
+  if(ct.includes('tax')||ct.includes('income tax')||ct.includes('gst')){
+    return [
+      {q:'Have you received a notice from the Income Tax Department or GST authority?',opts:['Yes — assessment / scrutiny notice','Demand notice received','Show-cause notice from GST','Prosecution notice (serious offence)']},
+      {q:'Have you filed all returns for the relevant period?',opts:['Yes — all returns filed','Returns filed but with errors','Some returns pending','Returns not filed for disputed period']},
+      {q:'Is this a dispute about TDS, refund, or assessment?',opts:['TDS mismatch or demand','Refund not received','Assessment added income / disallowance','GST input credit dispute']},
+      {q:'Have you filed a reply or objection to the notice?',opts:['Yes — reply filed within time','Reply filed late','No reply yet','Appealed to CIT(A) / GSTAT']},
+    ];
+  }
+
+  // ── PIL / Environment / Public ─────────────────────────────────────────────
+  if(ct.includes('pil')||ct.includes('environment')||ct.includes('public interest')){
+    return [
+      {q:'Have you first approached the relevant regulatory authority?',opts:['Yes — CPCB / SPCB / Local body notified','Yes — but authority inactive','No — planning to go directly to court','RTI filed first to gather evidence']},
+      {q:'Do you have documented evidence of the public harm?',opts:['Yes — reports, photos, scientific data','Media reports and public complaints','Personal observation — no formal documentation','NGO or group supporting with data']},
+      {q:'Is the violation ongoing or has it caused irreversible damage?',opts:['Ongoing — immediate relief needed','Past damage — seeking compensation','Project approved — preventive action needed','Policy challenge — no immediate harm']},
+      {q:'Are you filing individually or as part of a group / NGO?',opts:['Individual petition','NGO or registered body filing','Group of affected residents','Public-spirited citizen (no personal interest)']},
+    ];
+  }
+
+  // ── Generic fallback ───────────────────────────────────────────────────────
   return [
-    {q:'Is there a written agreement or contract in this matter?',opts:['Yes — fully signed agreement','Partial or unsigned agreement','Verbal agreement only','No agreement — looking to claim rights']},
-    {q:'Have you sent any formal notice to the other party?',opts:['Yes — via registered post/lawyer','Yes — informally via email or message','No — not yet sent any notice','Other party sent notice to me']},
-    {q:'Do you have documentary evidence supporting your claim?',opts:['Yes — strong documented proof','Some documents but incomplete','Digital evidence only','Very limited evidence']},
-    {q:'Is there any immediate threat, deadline, or court date?',opts:['Yes — court date or limitation deadline','Yes — immediate harm or threat ongoing','Moderate urgency — no immediate deadline','No immediate urgency — planning ahead']}
+    {q:'Is there a written agreement, contract, or documentation in this matter?',opts:['Yes — fully signed and registered','Partially documented','Verbal agreement only','No agreement — asserting a right']},
+    {q:'Have you sent any formal notice to the other party?',opts:['Yes — via registered lawyer notice','Yes — personally (registered post / email)','No — not yet sent','Other party sent a notice to me first']},
+    {q:'How strong is your documentary evidence?',opts:['Strong — original documents, photos, records','Moderate — digital records, bank statements','Weak — only witness testimony','No evidence yet — need to gather']},
+    {q:'Is there a court date, legal deadline, or immediate threat pending?',opts:['Yes — urgent (court date or limitation near)','Yes — ongoing harm / threat','Moderate urgency — no immediate deadline','Planning ahead — no current urgency']},
   ];
 }
 
