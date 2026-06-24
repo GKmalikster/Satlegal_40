@@ -452,6 +452,7 @@ async function startRun() {
   document.getElementById('btnRun').style.display = '';
   document.getElementById('btnStop').style.display = 'none';
   updateCatSidebar();
+  renderResults(); // update RESULTS (n) count after run completes
 }
 
 function stopRun() {

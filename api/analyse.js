@@ -124,6 +124,13 @@ STRICT OVER-MAPPING RULES — each rule prevents a specific hallucination:
 28. MENTAL HEALTH / PSYCHIATRIC RIGHTS / FORCED ADMISSION TO MENTAL HOSPITAL / DISABILITY RIGHTS → "Civil – Mental Healthcare Act / Psychiatric Rights / Disability". Not Consumer, not Criminal.
 29. INSOLVENCY / BANKRUPTCY / COMPANY WINDING UP / LIQUIDATION / PERSONAL GUARANTOR → "IBC – Insolvency / Bankruptcy / NCLT Proceedings". Not Corporate alone unless it is purely a shareholder/director dispute without insolvency.
 30. ARBITRATION / MEDIATION / LOK ADALAT / SETTLEMENT NOT HONORED / AWARD NOT ENFORCED → "Civil – Arbitration / ADR / Enforcement of Award". Not Consumer, not PIL.
+31. SARFAESI / BANK SEIZING PROPERTY / NPA / DRT CASE / SECURITISATION / BANK AUCTION OF PROPERTY → "Civil – SARFAESI / Banking Recovery / DRT". Not Property Transfer, not Consumer.
+32. BOTH AGREE TO DIVORCE / MUTUAL CONSENT / WE BOTH WANT DIVORCE / AMICABLE SEPARATION → "Family – Mutual Consent Divorce" ONLY. Not contested divorce. Not succession.
+33. CHILD VISITATION / NOT ALLOWED TO MEET MY CHILD / FATHER DENIED ACCESS / CUSTODY ORDER VIOLATION → "Family – Child Custody / Guardianship" ONLY. Not Domestic Violence unless there is separate abuse.
+34. OLD AGE PENSION NOT RECEIVED / WIDOW PENSION / GOVERNMENT SCHEME BENEFIT DENIED TO INDIVIDUAL → "Livelihood – MGNREGA / Right to Work / Government Schemes". Not Consumer Forum.
+35. MONEY OWED TO ME / LOAN NOT RETURNED / MONEY RECOVERY SUIT / PROMISSORY NOTE / FREELANCE UNPAID → "Civil – Money Recovery / Debt Recovery". Not Consumer (consumer is seller-buyer). Not Fraud unless deliberate deception was involved.
+36. PARTITION OF PROPERTY AMONG FAMILY / JOINT PROPERTY / COURT PARTITION SUIT → "Civil – Partition Suit". Not Succession (succession is about who inherits; partition is about dividing what all co-owners already have).
+37. FUNDAMENTAL RIGHTS VIOLATION BY GOVERNMENT / WRIT PETITION / MANDAMUS / CERTIORARI / RTI REJECTION → "Constitutional – PIL / Writ Petition / Fundamental Rights". Only for clear government action violations, not routine private disputes.
 
 BNS SUBCATEGORY SELECTION RULES — choose the most specific BNS category:
 - Criminal – Medical Negligence / Death by Negligence (BNS 106): A PATIENT DIED during or after medical treatment. Doctor/hospital is accused OR is seeking legal advice. Keywords: died on operation table, died after surgery, patient died in hospital, family blaming doctor, accused of medical negligence, operation went wrong. → USE THIS for all hospital/medical deaths. This overrides the generic murder/death rule below.
