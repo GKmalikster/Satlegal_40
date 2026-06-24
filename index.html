@@ -1591,15 +1591,15 @@ function s1(){
   if(!qs.length) qs=getProbingQs();
 
   // ── Context clarification: prepend 3 questions if query is vague ───────────
-  const domainSignals=/employer|salary|fired|terminate|property|rent|tenant|landlord|police|fir|arrest|fraud|cheat|scam|upi|divorce|husband|wife|maintenance|custody|dowry|assault|threat|harass|money|loan|bank|builder|rera|consumer|defect|negligence|cyber|hack|job|court|notice|legal/i;
+  const domainSignals=/employer|salary|fired|terminate|property|rent|tenant|landlord|police|fir|arrest|fraud|cheat|scam|upi|divorce|husband|wife|maintenance|custody|dowry|assault|threat|harass|money|loan|bank|builder|rera|consumer|defect|negligence|cyber|hack|job|court|notice|legal|murder|kill|dead|died|death|poison|attack|stab|shoot|accident|injury|injur|hospital|stolen|theft|robbery|rape|molest|crimin|bribe|corrupt|blackmail|extort|kidnap|missing|disappear/i;
   const isVague=txt.length<70||!domainSignals.test(txt);
   if(isVague){
     const ctxQs=[
-      {id:'ctx_nature',q:'What best describes the nature of your issue?',type:'opts',
+      {id:'ctx_nature',question:'What best describes the nature of your issue?',type:'radio',
        options:['Employment / Salary / Job termination','Property / Land / Builder dispute','Criminal / FIR / Police matter','Family / Marriage / Divorce / Custody','Financial fraud / Cheating / Money recovery','Consumer / Product / Service complaint','Cyber crime / Online fraud','Government / Rights / Public matter','Other / Not sure']},
-      {id:'ctx_party',q:'Who is the other party in this matter?',type:'opts',
+      {id:'ctx_party',question:'Who is the other party in this matter?',type:'radio',
        options:['Employer or company','Landlord or tenant','Bank or financial institution','Family member (spouse, parent, sibling)','Builder or real estate developer','Government authority / police','Stranger or unknown person','Online seller or service provider','Other']},
-      {id:'ctx_seek',q:'What outcome are you primarily seeking?',type:'opts',
+      {id:'ctx_seek',question:'What outcome are you primarily seeking?',type:'radio',
        options:['File an FIR / criminal complaint','Recover money or compensation','Get a court order / injunction','Negotiate a settlement','Understand my legal rights','File a consumer complaint','Respond to a notice I received','Other / Not sure yet']},
     ];
     qs=[...ctxQs,...qs];
