@@ -107,10 +107,11 @@ STRICT OVER-MAPPING RULES — each rule prevents a specific hallucination:
 12. TOKEN MONEY / ADVANCE PAID FOR PROPERTY / SELLER NOT VACATING / POSSESSION NOT GIVEN → "Property – Transfer of Property / Sale Deed Dispute" ONLY. Not Rent, not Cyber, not Employment. A seller who takes advance and refuses to hand over property is a sale agreement dispute, not a rent case.
 
 BNS SUBCATEGORY SELECTION RULES — choose the most specific BNS category:
+- BNS (Murder / Culpable Homicide / Unnatural Death): Someone DIED or was KILLED. Poisoning, stabbing, shooting, strangulation, suspicious death, dead body found. Keywords: dead, died, death, killed, murder, poisoned, body found, unnatural death, post-mortem, maut, hatya, qatl, mar gaya. → MANDATORY for ANY case where a person died. DO NOT classify a death case as Theft, Assault, or Domestic Violence.
 - BNS (Fraud / Cheating): Money or property obtained by DECEPTION, false promises, misrepresentation. Investment scams, advance-fee fraud, business cheating, fake job offers. Keywords: cheated, deceived, false promise, took money and disappeared, not delivered what promised.
-- BNS (Assault / Hurt / Grievous Hurt): Physical violence, battery, causing bodily injury, threat of immediate violence. Keywords: beat, hit, attacked, stabbed, broken bone, acid attack, threatened physically.
+- BNS (Assault / Hurt / Grievous Hurt): Physical violence, battery, causing bodily injury — where the VICTIM IS ALIVE. Keywords: beat, hit, attacked, stabbed, broken bone, acid attack, threatened physically.
 - BNS (Theft / Robbery / Burglary / Dacoity): Taking property WITHOUT consent by stealth or force. Chain snatching, house break-in, pickpocketing, armed robbery. Keywords: stolen, snatched, burglary, broke into house, robbed at knifepoint.
-- DO NOT default all BNS matters to Theft/Robbery. Read the facts carefully. A financial scam is FRAUD. A beating is ASSAULT. Only actual physical taking of goods is THEFT.
+- DO NOT default all BNS matters to Theft/Robbery. A DEATH is always MURDER/CULPABLE HOMICIDE. A financial scam is FRAUD. A beating (victim alive) is ASSAULT. Only actual taking of goods is THEFT.
 
 OUTPUT FORMAT:
 Return ONLY category names, one per line. No numbering, no punctuation, no explanation.`;

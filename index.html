@@ -2242,6 +2242,14 @@ function getAssessmentQs(law){
       {q:'Do you know the identity of the accused?',opts:['Yes — full identity known','Partial identity (name only)','Only online identity known','Unknown — anonymous fraud']},
     ];
   }
+  if(ct.includes('murder')||ct.includes('culpable homicide')||ct.includes('unnatural death')){
+    return [
+      {q:'Has an FIR for murder (BNS Sec 101/103) been registered?',opts:['Yes — murder FIR registered','Police filed unnatural death report only','FIR not registered yet — police reluctant','Complaint submitted but awaiting action']},
+      {q:'Was a post-mortem / autopsy conducted by a government hospital?',opts:['Yes — post-mortem done, report available','Post-mortem done but report not received','Post-mortem not conducted yet','Family refused post-mortem']},
+      {q:'Is the accused / suspect identified?',opts:['Yes — accused fully known to family','Partial identity known (name / area)','Suspected but no proof yet','Unknown — completely anonymous']},
+      {q:'What was the suspected cause of death?',opts:['Poisoning / toxic substance','Stabbing / sharp weapon','Strangulation / suffocation','Blunt force / beating','Shooting','Unknown — awaiting post-mortem report']},
+    ];
+  }
   if(ct.includes('bns (assault')||ct.includes('assault')||ct.includes('hurt')){
     return [
       {q:'Was an MLC (Medico-Legal Certificate) issued?',opts:['Yes — MLC obtained from hospital','Treated privately — no MLC','Injuries not documented medically','MLC pending']},
