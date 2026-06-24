@@ -2335,62 +2335,228 @@ const CONTEXTUAL_QUESTION_SETS = {
 
 function getContextualQuestions(description) {
   const input = description.toLowerCase();
-  const detectedAreas = [];
 
-  // ── High-priority criminal overrides — these ALWAYS route to criminal first ──
-  // If any of these are present, criminal area is forced regardless of other signals
-  const SERIOUS_CRIME_OVERRIDES = [
-    'rape','raped','gang rape','sexual assault','sexually assaulted','molest','molestation',
-    'murder','murdered','killed','killing','poisoned','stabbed','shot dead','strangulated',
-    'dead body','body found','missing person','kidnapped','kidnap','abducted','abduction',
-    'pocso','child abuse','child sexual','balatkar','jabardasti sex','jabardasti ki',
-    'threatened with knife','threatened with weapon','acid attack','acid thrown',
-  ];
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TIERED DETECTOR TABLE  (replaces flat keyword arrays + case-by-case patches)
+  //
+  //  t1  — instant trigger: one match = score 100, area always included
+  //         Use for: unmistakable crime/situation phrases (rape, murder, pocso…)
+  //  t2  — phrase-level: each match adds 10pts; need score ≥ 8 to qualify
+  //         Use for: multi-word context phrases ("fir filed", "unpaid salary")
+  //  t3  — word-level: each match adds 1pt; 5+ needed to qualify alone
+  //         Use for: generic single words that need supporting context
+  //
+  //  Adding a new area: add t1/t2/t3 here + add its questions to CONTEXTUAL_QUESTION_SETS
+  //  Adding a new collision fix: adjust DOMINATES below — never patch t1/t2/t3 per case
+  // ═══════════════════════════════════════════════════════════════════════════
+  const DETECTORS = {
 
-  const hasSeriousCrime = SERIOUS_CRIME_OVERRIDES.some(k => input.includes(k));
-  if (hasSeriousCrime) detectedAreas.push('criminal');
+    criminal: {
+      t1: [
+        'rape','raped','gang rape','sexual assault','sexually assaulted',
+        'molest','molestation','murder','murdered','killed him','killed her',
+        'killed by','poisoned','stabbed','shot dead','strangulated','hanged',
+        'kidnapped','kidnap','abducted','abduction','pocso','child sexual',
+        'acid attack','acid thrown','balatkar','jabardasti sex','jabardasti ki',
+        'threatened with knife','threatened with weapon','bomb threat',
+        'dead body found','body found','unnatural death',
+      ],
+      t2: [
+        'fir filed','fir registered','fir not registered','police complaint',
+        'bail application','anticipatory bail','chargesheet filed',
+        'arrested by police','police custody','criminal case','criminal complaint',
+        'police refusing','cheque bounce','cheque dishonoured','cheque returned',
+        'criminal proceedings','non bailable','bailable offence',
+        'accused of crime','accused of fraud','blaming me for crime',
+        'blaming me for death','blaming me for patient',
+        'someone died at operation','died on operation table','died during surgery',
+        'died during operation','family blaming doctor','fir against doctor',
+        'operation went wrong','surgery went wrong','criminal case doctor',
+      ],
+      t3: [
+        'police','arrested','accused','crime','bail','fir','violence',
+        'assault','fraud','cheated','hurt','attack','hit','threatened',
+        'criminal','offence','custody','chargesheet','witness','complaint',
+      ],
+    },
 
-  const detectors = {
-    family: ['marriage','divorce','husband','wife','spouse','custody','child','maintenance','alimony','matrimon','conjugal','separation','in-laws','dowry'],
-    property: ['property','land','house','flat','plot','tenant','landlord','rent','builder','rera','encroach','boundary','sale deed','transfer'],
-    succession: ['died','death','will','inheritance','succession','heir','intestate','probate','estate','deceased'],
-    employment: ['job','salary','employer','employee','work','fired','dismissed','office','boss','labour','workman','pf','gratuity','retrench','termination'],
-    criminal: ['arrested','fir','police','bail','crime','assault','beaten','beating','attacked','attack','hurt','injured','fraud','cheated','cheque bounce','custody','chargesheet','accused','violence','hit me','hit by'],
-    cyber: ['online fraud','cyber fraud','hacked','phishing','upi fraud','digital fraud','social media harass','cyberstalking','data breach'],
-    consumer: ['product','hospital','doctor','insurance','refund','defective','consumer','e-commerce']
+    family: {
+      t1: [
+        'dowry death','domestic violence case','wife beaten','husband beats wife',
+        'marital rape','forced marriage','child marriage','honour killing',
+        'husband is abusive','wife is abusive',
+      ],
+      t2: [
+        'child custody','divorce petition','maintenance case','matrimonial dispute',
+        'alimony claim','separation agreement','triple talaq','mutual divorce',
+        'divorce proceedings','custody of child','dowry harassment',
+        'cruelty by husband','cruelty by wife','maintenance not paid',
+        'divorce notice','seeking divorce','divorce lawyer',
+      ],
+      t3: [
+        'divorce','marriage','husband','wife','spouse','custody','child',
+        'maintenance','alimony','separation','in-laws','dowry','matrimon',
+        'conjugal','marital',
+      ],
+    },
+
+    property: {
+      t1: [
+        'illegal possession','forcible eviction','illegal eviction',
+        'property fraud','forged property documents','fake sale deed',
+        'property grabbed','land grabbed',
+      ],
+      t2: [
+        'property dispute','land dispute','builder cheated','rera complaint',
+        'encroachment case','rent dispute','sale deed issue','flat possession',
+        'stamp duty issue','property registration','property transfer',
+        'tenancy dispute','landlord eviction','builder delay','builder not giving possession',
+        'plot dispute','land boundary','property documents',
+      ],
+      t3: [
+        'property','land','house','flat','plot','tenant','landlord',
+        'rent','builder','rera','boundary','transfer','encroach',
+        'ownership','registry','possession',
+      ],
+    },
+
+    succession: {
+      t1: [
+        'inheritance dispute','will contested','probate application',
+        'succession certificate','legal heir dispute','who gets property after death',
+      ],
+      t2: [
+        'property after death','died without will','intestate succession',
+        'legal heir certificate','estate distribution','share in property',
+        'father died property','mother died property','distribute assets',
+        'claim inheritance','sibling dispute property','ancestral property claim',
+      ],
+      t3: [
+        'inheritance','succession','heir','intestate','probate',
+        'estate','will','deceased','ancestral',
+        // 'died'/'death' intentionally excluded — too ambiguous; covered by t2 phrases above
+      ],
+    },
+
+    employment: {
+      t1: [
+        'wrongful termination','sexual harassment at work','posh complaint',
+        'labour court','unfair dismissal','industrial dispute',
+      ],
+      t2: [
+        'unpaid salary','pf not paid','gratuity denied','employment contract',
+        'fired from job','dismissed from service','workplace harassment',
+        'salary not given','notice period dispute','retrenchment compensation',
+        'employee rights violated','employer wrongful','work discrimination',
+        'not paid salary','salary withheld',
+      ],
+      t3: [
+        'job','salary','employer','employee','office','boss',
+        'labour','pf','gratuity','termination','fired','dismissed',
+        'workman','retrench','resignation','appointment letter',
+      ],
+    },
+
+    cyber: {
+      t1: [
+        'cyber fraud','online fraud','upi fraud','phishing attack',
+        'hacked my account','cyberstalking','data breach','sextortion',
+        'online blackmail','digital arrest','fake cbi call','fake ed call',
+      ],
+      t2: [
+        'money lost online','account hacked','fake website','otp fraud',
+        'identity theft','fake profile','social media hacked',
+        'ransomware','online scam','cyber crime complaint','it act',
+        'bank account hacked','net banking fraud',
+      ],
+      t3: [
+        'hacked','phishing','cyber','internet fraud',
+        'scam','dark web','spyware',
+      ],
+    },
+
+    consumer: {
+      t1: [
+        'consumer forum','consumer court','consumer complaint',
+        'defective product','insurance claim rejected','product recall',
+      ],
+      t2: [
+        'product defective','service deficiency','hospital bill dispute',
+        'insurance claim denied','ecommerce fraud','online purchase problem',
+        'builder not delivering flat','warranty claim','medical bill dispute',
+        'doctor fees dispute','treatment cost dispute','refund not given',
+        'deficiency of service','consumer rights','wrong product delivered',
+        'insurance not paying','policy claim rejected',
+      ],
+      t3: [
+        'product','insurance','refund','defective','consumer',
+        'e-commerce','warranty','service complaint',
+        // NOTE: 'hospital' and 'doctor' are intentionally absent from t3.
+        // They only qualify via t2 phrases like 'hospital bill dispute', 'doctor fees dispute'.
+        // This prevents rape/violence at hospital from triggering consumer area.
+      ],
+    },
+
   };
 
-  for (const [area, kws] of Object.entries(detectors)) {
-    if (!detectedAreas.includes(area) && kws.some(k => input.includes(k))) detectedAreas.push(area);
+  // ── SCORING ENGINE ──────────────────────────────────────────────────────────
+  const THRESHOLD = 8;
+  const scores = {};
+
+  for (const [area, tiers] of Object.entries(DETECTORS)) {
+    let score = 0;
+    if ((tiers.t1 || []).some(k => input.includes(k))) {
+      score = 100;
+    } else {
+      (tiers.t2 || []).forEach(k => { if (input.includes(k)) score += 10; });
+      (tiers.t3 || []).forEach(k => { if (input.includes(k)) score += 1; });
+    }
+    scores[area] = score;
   }
 
-  // If serious crime is present, strip consumer/succession that got in via keyword overlap
-  // e.g. "hospital + raped" → criminal only, not consumer
-  if (hasSeriousCrime) {
-    const STRIP_WHEN_SERIOUS = ['consumer', 'succession'];
-    STRIP_WHEN_SERIOUS.forEach(a => {
-      const idx = detectedAreas.indexOf(a);
-      if (idx > -1) detectedAreas.splice(idx, 1);
-    });
-  }
+  // ── DOMINANCE RULES ─────────────────────────────────────────────────────────
+  // When area A is detected and outranks area B, B is stripped.
+  // Add new conflict resolutions here — never patch the detector arrays per case.
+  const DOMINATES = {
+    criminal:   ['consumer', 'succession', 'civil'],
+    family:     ['succession', 'civil'],
+    employment: ['consumer', 'civil'],
+    cyber:      ['consumer', 'civil'],
+    property:   ['succession', 'civil'],
+  };
 
+  let detectedAreas = Object.entries(scores)
+    .filter(([_, s]) => s >= THRESHOLD)
+    .sort((a, b) => b[1] - a[1])
+    .map(([area]) => area);
+
+  const dominated = new Set();
+  detectedAreas.forEach(area => {
+    (DOMINATES[area] || []).forEach(sub => dominated.add(sub));
+  });
+  detectedAreas = detectedAreas.filter(a => !dominated.has(a));
+
+  // ── NO MATCH FALLBACK ───────────────────────────────────────────────────────
   if (detectedAreas.length === 0) {
     return {
       areas: [],
       questions: [
-        { id: 'issue_area', question: 'What area does your legal issue fall under?', type: 'select', options: ['Family / Marriage / Divorce','Property / Land','Employment / Job','Criminal / Police','Cyber / Online','Consumer / Company','Other'], tip: 'Selecting the right area helps us identify the most relevant laws for your situation.' }
+        { id: 'issue_area', question: 'What area does your legal issue fall under?', type: 'select',
+          options: ['Family / Marriage / Divorce','Property / Land','Employment / Job',
+                    'Criminal / Police','Cyber / Online','Consumer / Company','Other'],
+          tip: 'Selecting the right area helps us identify the most relevant laws for your situation.' }
       ]
     };
   }
 
+  // ── ASSEMBLE QUESTIONS ──────────────────────────────────────────────────────
   const questions = [];
   const primaryArea = detectedAreas[0];
   const primaryQs = CONTEXTUAL_QUESTION_SETS[primaryArea] || [];
   questions.push(...primaryQs.slice(0, 3));
 
   if (detectedAreas.length > 1 && questions.length < 4) {
-    const secondaryArea = detectedAreas[1];
-    const secondaryQs = CONTEXTUAL_QUESTION_SETS[secondaryArea] || [];
+    const secondaryQs = CONTEXTUAL_QUESTION_SETS[detectedAreas[1]] || [];
     if (secondaryQs.length > 0) questions.push(secondaryQs[0]);
   }
 
