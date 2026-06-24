@@ -1480,6 +1480,13 @@ const LAWS_DATABASE = [
         'girl raped near my area','my daughter was raped','my sister was raped',
         'my wife was sexually assaulted','rape by teacher','rape by coach','rape by employer',
         'rape after marriage promise','married and now rape case','refused marriage filed rape case',
+        // hospital / workplace / institutional rape scenarios
+        'patient raped in hospital','patient was raped','raped in hospital','raped at hospital',
+        'nurse raped','staff raped patient','doctor raped patient','raped by hospital staff',
+        'raped at workplace','raped at office','raped by colleague','raped by coworker',
+        'rape in workplace','rape at office','rape by doctor','rape by nurse',
+        'she got raped in hospital','she was raped in hospital','she was raped at work',
+        'a patient visited our hospital and she got raped','rape complaint hospital',
       ],
       strong: [
         'rape','raped','gang rape','sexual assault','sexually assaulted','sexual violence',
@@ -2330,6 +2337,19 @@ function getContextualQuestions(description) {
   const input = description.toLowerCase();
   const detectedAreas = [];
 
+  // ── High-priority criminal overrides — these ALWAYS route to criminal first ──
+  // If any of these are present, criminal area is forced regardless of other signals
+  const SERIOUS_CRIME_OVERRIDES = [
+    'rape','raped','gang rape','sexual assault','sexually assaulted','molest','molestation',
+    'murder','murdered','killed','killing','poisoned','stabbed','shot dead','strangulated',
+    'dead body','body found','missing person','kidnapped','kidnap','abducted','abduction',
+    'pocso','child abuse','child sexual','balatkar','jabardasti sex','jabardasti ki',
+    'threatened with knife','threatened with weapon','acid attack','acid thrown',
+  ];
+
+  const hasSeriousCrime = SERIOUS_CRIME_OVERRIDES.some(k => input.includes(k));
+  if (hasSeriousCrime) detectedAreas.push('criminal');
+
   const detectors = {
     family: ['marriage','divorce','husband','wife','spouse','custody','child','maintenance','alimony','matrimon','conjugal','separation','in-laws','dowry'],
     property: ['property','land','house','flat','plot','tenant','landlord','rent','builder','rera','encroach','boundary','sale deed','transfer'],
@@ -2341,7 +2361,17 @@ function getContextualQuestions(description) {
   };
 
   for (const [area, kws] of Object.entries(detectors)) {
-    if (kws.some(k => input.includes(k))) detectedAreas.push(area);
+    if (!detectedAreas.includes(area) && kws.some(k => input.includes(k))) detectedAreas.push(area);
+  }
+
+  // If serious crime is present, strip consumer/succession that got in via keyword overlap
+  // e.g. "hospital + raped" → criminal only, not consumer
+  if (hasSeriousCrime) {
+    const STRIP_WHEN_SERIOUS = ['consumer', 'succession'];
+    STRIP_WHEN_SERIOUS.forEach(a => {
+      const idx = detectedAreas.indexOf(a);
+      if (idx > -1) detectedAreas.splice(idx, 1);
+    });
   }
 
   if (detectedAreas.length === 0) {
