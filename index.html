@@ -1588,21 +1588,25 @@ function s1(){
   if(W.areas.length && qs.length<3){
     qs=getLawAreaQs(W.areas, txt);
   }
-  if(!qs.length) qs=getProbingQs();
 
-  // ── Context clarification: prepend 3 questions if query is vague ───────────
+  // ── Context clarification: if query is vague, replace generic Qs with targeted context Qs ──
   const domainSignals=/employer|salary|fired|terminate|property|rent|tenant|landlord|police|fir|arrest|fraud|cheat|scam|upi|divorce|husband|wife|maintenance|custody|dowry|assault|threat|harass|money|loan|bank|builder|rera|consumer|defect|negligence|cyber|hack|job|court|notice|legal|murder|kill|dead|died|death|poison|attack|stab|shoot|accident|injury|injur|hospital|stolen|theft|robbery|rape|molest|crimin|bribe|corrupt|blackmail|extort|kidnap|missing|disappear/i;
   const isVague=txt.length<70||!domainSignals.test(txt);
   if(isVague){
+    // Query is vague — use targeted context questions only (no generic probing Qs which duplicate these)
     const ctxQs=[
       {id:'ctx_nature',question:'What best describes the nature of your issue?',type:'radio',
-       options:['Employment / Salary / Job termination','Property / Land / Builder dispute','Criminal / FIR / Police matter','Family / Marriage / Divorce / Custody','Financial fraud / Cheating / Money recovery','Consumer / Product / Service complaint','Cyber crime / Online fraud','Government / Rights / Public matter','Other / Not sure']},
-      {id:'ctx_party',question:'Who is the other party in this matter?',type:'radio',
-       options:['Employer or company','Landlord or tenant','Bank or financial institution','Family member (spouse, parent, sibling)','Builder or real estate developer','Government authority / police','Stranger or unknown person','Online seller or service provider','Other']},
-      {id:'ctx_seek',question:'What outcome are you primarily seeking?',type:'radio',
-       options:['File an FIR / criminal complaint','Recover money or compensation','Get a court order / injunction','Negotiate a settlement','Understand my legal rights','File a consumer complaint','Respond to a notice I received','Other / Not sure yet']},
+       options:['Criminal matter — someone was harmed, killed, or a crime occurred','Financial fraud — money taken by deception or false promises','Employment — salary, termination, workplace rights','Property / Land / Builder dispute','Family — divorce, custody, maintenance, domestic violence','Consumer — defective product or poor service','Cyber crime — online fraud, hacking, data theft','Government / Rights / Public matter','Other / Not sure']},
+      {id:'ctx_party',question:'Who is the other party or what happened?',type:'radio',
+       options:['A stranger or unknown person committed a crime against me/my family','A family member or relative','My employer or company','A government authority or police','A builder, landlord, or property developer','A bank, lender, or financial institution','An online seller or platform','Other']},
+      {id:'ctx_harm',question:'What specifically happened?',type:'radio',
+       options:['Someone died, was killed, or poisoned','Physical violence or assault occurred (victim alive)','Money was taken by fraud, deception, or false promise','Property or valuables were stolen','I was fired, not paid, or my workplace rights were violated','I received a legal notice or court summons','A family dispute erupted (divorce, custody, dowry, DV)','Other']},
     ];
-    qs=[...ctxQs,...qs];
+    // If there are already law-specific questions (e.g. murder), keep them; don't add generic probing Qs
+    qs = qs.length ? [...ctxQs, ...qs] : ctxQs;
+  } else if(!qs.length){
+    // Query has clear domain but no specific law matched — use probing Qs (non-vague path)
+    qs=getProbingQs();
   }
 
   W.questions=qs;

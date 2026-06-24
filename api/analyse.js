@@ -236,6 +236,7 @@ const DOMAIN_EXCLUSIONS = {
   tax:         ['family', 'consumer', 'criminal', 'employment', 'cyber'],
   education:   ['family', 'consumer', 'criminal', 'employment', 'tax', 'cyber'],
   environment: ['family', 'consumer', 'employment', 'tax', 'cyber'],
+  criminal:    ['family', 'consumer', 'employment', 'tax', 'education', 'environment'],
 };
 
 // Known ALLOWED exceptions: pairs that genuinely co-occur.
@@ -262,18 +263,54 @@ function getDomain(law) {
   return 'other';
 }
 
+// Intra-domain exclusions: when primary is one of these caseTypes, strip these secondaries
+// (handles cases where domain filter can't help because both are in the same domain)
+const INTRA_EXCLUSIONS = {
+  'Criminal – BNS (Murder / Culpable Homicide / Unnatural Death)': [
+    'Criminal – BNS (Theft / Robbery / Burglary / Dacoity)',
+    'Criminal – Police Excess / Human Rights Violation',
+    'Criminal – BNS (Fraud / Cheating)',
+    'Family – Domestic Violence',
+  ],
+  'Criminal – BNS (Fraud / Cheating)': [
+    'Criminal – BNS (Theft / Robbery / Burglary / Dacoity)',
+    'Criminal – BNS (Assault / Hurt / Grievous Hurt)',
+  ],
+};
+
 function applyDomainExclusion(laws) {
   if (!laws || laws.length <= 1) return laws;
+
   const primaryDomain = getDomain(laws[0]);
-  const excluded = DOMAIN_EXCLUSIONS[primaryDomain] || [];
-  if (!excluded.length) return laws;
+  const primaryConf   = laws[0].confidence ?? 70;
+  const excluded      = DOMAIN_EXCLUSIONS[primaryDomain] || [];
+  const intraBan      = INTRA_EXCLUSIONS[laws[0].caseType] || [];
+
+  // Confidence-ratio filter: if top result is high-confidence (≥65%),
+  // drop any secondary result below 30% of the top score (intra-domain noise).
+  const confRatioFloor = primaryConf >= 65 ? primaryConf * 0.32 : 0;
 
   return laws.filter((law, i) => {
     if (i === 0) return true; // always keep primary
+
+    // Intra-domain caseType exclusion (e.g. Murder strips Theft)
+    if (intraBan.includes(law.caseType)) {
+      console.log(`[intra-filter] stripped "${law.caseType}" — excluded when primary is "${laws[0].caseType}"`);
+      return false;
+    }
+
+    // Confidence-ratio filter
+    const lawConf = law.confidence ?? 55;
+    if (confRatioFloor > 0 && lawConf < confRatioFloor) {
+      console.log(`[conf-filter] stripped "${law.caseType}" (${lawConf}%) — below ${Math.round(confRatioFloor)}% floor`);
+      return false;
+    }
+
+    // Cross-domain exclusion
     const d = getDomain(law);
-    if (!excluded.includes(d)) return true; // domain is compatible — keep
+    if (!excluded.includes(d)) return true;
     const pair = `${primaryDomain}|${d}`;
-    if (ALLOWED_PAIRS.has(pair)) return true; // known valid co-occurrence — keep
+    if (ALLOWED_PAIRS.has(pair)) return true;
     console.log(`[domain-filter] stripped "${law.caseType}" (${d}) — incompatible with primary "${laws[0].caseType}" (${primaryDomain})`);
     return false;
   });
