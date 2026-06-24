@@ -1417,7 +1417,7 @@ function showTesterBanner(){
   b.innerHTML='🔬 TESTER MODE — <span style="font-weight:400;opacity:.85">Debug info appears on Step 3</span>'
     +'<span style="flex:1"></span>'
     +'<button onclick="openTesterPanel()" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700">Test a Query</button>'
-    +'<button onclick="window.open(\'/admin/dashboard.html\',\'_blank\')" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700">⚙️ Admin Panel</button>'
+    +'<button onclick="openAdminModal()" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700">⚙️ Admin Panel</button>'
     +'<button onclick="adminLogout()" style="background:rgba(255,255,255,.15);border:none;color:#fff;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:11px">Logout</button>';
   document.body.prepend(b);
   document.body.style.marginTop='30px';
@@ -2237,53 +2237,71 @@ function getAssessmentQs(law){
     ];
   }
 
+  // ── POCSO / Child Protection ───────────────────────────────────────────────
+  if(ct.includes('pocso')||ct.includes('child sexual')||ct.includes('child abuse')||ct.includes('child protection')){
+    return [
+      {q:'Is the child currently in a safe environment, away from the alleged abuser?',opts:['Yes — child is safe, abuser has no access','Uncertain — abuser still in same household/school','No — child is still exposed to abuser','Child taken by abuser / whereabouts unknown']},
+      {q:'Who is the alleged abuser?',opts:['A family member or close relative','A teacher, tutor, or school staff','A neighbour or acquaintance','A stranger or online predator (no physical contact)']},
+      {q:'Was the abuse physical, digital/online, or both?',opts:['Physical contact abuse (touching, assault)','Online grooming / sharing explicit images','Both physical and online abuse','Exploitation at an institution (school, hostel, orphanage)']},
+      {q:'Has a POCSO FIR been registered at the nearest police station?',opts:['Yes — FIR registered under POCSO','FIR filed but police are reluctant / diluting sections','No — seeking guidance on how to file','Child Welfare Committee (CWC) notified, FIR pending']},
+    ];
+  }
+
   // ── Criminal / Police ──────────────────────────────────────────────────────
   if(ct.includes('bns (fraud')||ct.includes('cheating')||ct.includes('fraud')){
     return [
-      {q:'Do you have proof that money was transferred based on false representation?',opts:['Yes — bank records + messages proving deception','Bank records only (no deception proof)','Witness testimony of false promises','Digital evidence only — no financial records']},
+      {q:'What is the strongest proof of the deception?',opts:['Bank records + messages showing false promise before payment','Contract or written agreement that was deliberately breached','Witnesses who heard the false representation','Only verbal communication — limited documentary proof']},
       {q:'What was the approximate amount involved?',opts:['Less than ₹50,000','₹50,000 – ₹5 lakh','₹5 lakh – ₹50 lakh','More than ₹50 lakh']},
-      {q:'Has an FIR been registered?',opts:['Yes — FIR registered','Police refused — filed Section 156(3) petition','Written complaint only','Not filed yet']},
-      {q:'Do you know the identity of the accused?',opts:['Yes — full identity known','Partial identity (name only)','Only online identity known','Unknown — anonymous fraud']},
+      {q:'How long ago did you make the first payment based on the false promise?',opts:['Less than 1 year ago (within limitation)','1–3 years ago','More than 3 years ago (may need limitation condonation)','Ongoing — money still being siphoned']},
+      {q:'Has the accused absconded, or are they reachable?',opts:['Accused is present and traceable','Accused has disappeared / phone off','Accused is abroad','Accused is local but refuses to respond']},
     ];
   }
   if(ct.includes('murder')||ct.includes('culpable homicide')||ct.includes('unnatural death')){
     return [
-      {q:'Has an FIR for murder (BNS Sec 101/103) been registered?',opts:['Yes — murder FIR registered','Police filed unnatural death report only','FIR not registered yet — police reluctant','Complaint submitted but awaiting action']},
       {q:'Was a post-mortem / autopsy conducted by a government hospital?',opts:['Yes — post-mortem done, report available','Post-mortem done but report not received','Post-mortem not conducted yet','Family refused post-mortem']},
-      {q:'Is the accused / suspect identified?',opts:['Yes — accused fully known to family','Partial identity known (name / area)','Suspected but no proof yet','Unknown — completely anonymous']},
-      {q:'What was the suspected cause of death?',opts:['Poisoning / toxic substance','Stabbing / sharp weapon','Strangulation / suffocation','Blunt force / beating','Shooting','Unknown — awaiting post-mortem report']},
+      {q:'What was the suspected cause of death?',opts:['Poisoning / toxic substance','Stabbing, shooting, or weapon attack','Strangulation / suffocation','Blunt force / severe beating','Suspicious — no visible external injury']},
+      {q:'Is the accused / suspect identified?',opts:['Yes — accused fully known to family','Partial identity known (name / area)','Suspected but no proof yet','Unknown — no suspect identified']},
+      {q:'Has a murder FIR (BNS Sec 101/103) been registered or refused by police?',opts:['Murder FIR registered','Police registered only Sec 174 inquest, not murder FIR','FIR refused — approaching Magistrate','No action taken yet — seeking guidance']},
+    ];
+  }
+  if(ct.includes('death by negligence')||ct.includes('bns 106')||ct.includes('medical negligence / death')){
+    return [
+      {q:'Have all original medical records been secured from the hospital?',opts:['Yes — complete records obtained before discharge','Records secured via legal notice','Hospital is refusing to release records','Records partially obtained — some missing']},
+      {q:'Was a BNSS Sec 174 inquest (magistrate inquiry for unnatural death) conducted?',opts:['Yes — inquest done and report available','Police did basic inquiry but no magistrate inquest','Inquest was bypassed — demanding it now','Not aware — need to initiate this']},
+      {q:'Has an independent expert doctor confirmed that the treatment was negligent?',opts:['Yes — expert opinion obtained','Seeking expert opinion','No expert opinion yet','Second treating doctor confirmed negligence verbally']},
+      {q:'What was the primary cause of the patient\'s death?',opts:['Wrong surgery / wrong organ operated','Wrong medication or lethal overdose','Anaesthesia error or cardiac arrest on table','Emergency refused / delayed treatment','ICU neglect — unattended for hours']},
     ];
   }
   if(ct.includes('bns (assault')||ct.includes('assault')||ct.includes('hurt')){
     return [
-      {q:'Was an MLC (Medico-Legal Certificate) issued?',opts:['Yes — MLC obtained from hospital','Treated privately — no MLC','Injuries not documented medically','MLC pending']},
-      {q:'Has an FIR been registered for the assault?',opts:['Yes — FIR registered','Police filed NCR only','Police refused to register FIR','Not filed yet']},
-      {q:'Were there witnesses to the assault?',opts:['Yes — multiple independent witnesses','CCTV footage available','One witness (known person)','No witnesses — my word only']},
-      {q:'Is the accused known to you?',opts:['Yes — known person / acquaintance','Family member / domestic situation','Employer or colleague','Stranger — identity unknown']},
+      {q:'What is the severity of injury sustained?',opts:['Grievous hurt — broken bone, loss of organ/sight, disfigurement','Significant hurt — internal injuries, required hospitalisation','Simple hurt — bruises, minor cuts treated at hospital','Threat of violence without physical contact (criminal intimidation)']},
+      {q:'Was an MLC (Medico-Legal Certificate) issued by a government hospital?',opts:['Yes — MLC obtained from government hospital','Treated at private hospital — MLC issued there','Treated privately — no MLC obtained','Injuries not medically documented yet']},
+      {q:'Is CCTV footage or any video of the incident available?',opts:['Yes — CCTV footage secured','Witness video on mobile available','No footage — witnesses only','Partial footage — angle doesn\'t clearly show assault']},
+      {q:'Was a weapon used in the assault?',opts:['Yes — sharp weapon (knife, blade)','Yes — blunt weapon (rod, stick)','Acid or chemical attack','No weapon — fists/hands only']},
     ];
   }
   if(ct.includes('bns (theft')||ct.includes('theft')||ct.includes('robbery')||ct.includes('dacoity')){
     return [
-      {q:'Has an FIR been registered for the theft/robbery?',opts:['Yes — FIR filed immediately','FIR filed with delay','Police refusing to register FIR','Complaint filed but not as FIR']},
-      {q:'Do you have evidence of the stolen items (invoices, photos, insurance)?',opts:['Yes — invoices and photos available','Insurance records only','No documentation of items','Partial evidence available']},
-      {q:'Were there any witnesses or CCTV footage?',opts:['CCTV footage captured','Eyewitnesses available','No witnesses or footage','Partial CCTV — unclear footage']},
-      {q:'Was physical violence or threat used during the incident?',opts:['Yes — violence used (robbery)','Threat of violence (dacoity element)','No violence — simple theft','Not sure — happened without my knowledge']},
+      {q:'What type of incident occurred?',opts:['Theft (taken without knowledge — burglary, pickpocket)','Robbery (taken using force or threat — present)','Chain snatching / vehicle theft','Dacoity (gang of 5+ using arms)']},
+      {q:'Do you have documentation of the stolen items?',opts:['Yes — purchase invoices, photos, serial numbers','Insurance policy covering the stolen items','Partial records only','No documentation — stolen items unrecorded']},
+      {q:'Was CCTV footage captured or are eyewitnesses available?',opts:['CCTV footage identified — requesting from authority','Eyewitnesses available and willing to testify','Partial CCTV — unclear quality','No witnesses or footage']},
+      {q:'How quickly was the FIR filed?',opts:['Within 24 hours (highest recovery chance)','Within 1 week','After 1 month or more','FIR not yet filed — police reluctant']},
     ];
   }
   if(ct.includes('bail')||ct.includes('anticipatory bail')||ct.includes('bnss')){
     return [
-      {q:'Has the FIR been registered and is the accused in custody?',opts:['Yes — FIR registered, arrested','FIR registered, warrant issued but not arrested','Anticipatory bail needed (arrest feared)','Summoned by court — not arrested']},
-      {q:'What is the nature of the offence in the FIR?',opts:['Bailable offence','Non-bailable but compoundable','Non-bailable and serious (NDPS, POCSO, murder)','Not sure of offence category']},
-      {q:'Has the accused been produced before a Magistrate?',opts:['Yes — remand hearing done','Police custody — not yet produced','Judicial custody — bail hearing pending','Not produced yet']},
-      {q:'Is there any previous criminal record?',opts:['No prior cases or FIRs','Minor previous matter — compounded','Pending cases in other courts','Previous conviction on record']},
+      {q:'Is the accused currently in custody or anticipating arrest?',opts:['Currently in police custody (remand)','Currently in judicial custody (jail)','Arrest has not happened — anticipatory bail needed','Summoned by court — non-bailable warrant issued']},
+      {q:'What is the nature and seriousness of the alleged offence?',opts:['Bailable offence (bail as of right at police station)','Non-bailable but not heinous (assault, theft)','Serious non-bailable (POCSO, murder, NDPS, financial fraud)','Special act — PMLA / UAPA / NSA (very strict bail conditions)']},
+      {q:'How long has the accused been in custody without bail?',opts:['Less than 7 days','7–30 days','30–90 days','More than 3 months (default bail right may arise)']},
+      {q:'Are there prior FIRs, pending cases, or previous convictions?',opts:['No prior criminal record at all','Previous minor matter — compounded or acquitted','Pending cases in other courts','Previous conviction on record']},
     ];
   }
   if(ct.includes('police excess')||ct.includes('illegal detention')||ct.includes('habeas corpus')){
     return [
-      {q:'Was the detention officially communicated to the family?',opts:['No — whereabouts unknown to family','Informal verbal communication only','Official intimation given','Habeas corpus already filed']},
-      {q:'How long has the person been detained without formal arrest?',opts:['Less than 24 hours','24–48 hours','More than 48 hours','Detained in unknown location']},
-      {q:'Has a lawyer been able to meet the detained person?',opts:['Yes — legal access provided','Lawyer denied access','No lawyer engaged yet','Managed brief contact only']},
-      {q:'Is there medical evidence of custodial abuse?',opts:['Yes — visible injuries, MLC done','Complaints of abuse but no MLC','Psychological abuse / threat alleged','No physical abuse — procedural detention']},
+      {q:'What specific illegal act did the police commit?',opts:['Detained without formal arrest or disclosure of grounds','Refused to register FIR (Sec 166A BNS)','Custodial torture or third-degree methods','Encounter killing / fake encounter alleged']},
+      {q:'Has a lawyer been able to meet the detained person in custody?',opts:['Yes — legal access provided','Lawyer denied access despite request','No lawyer engaged yet','Family has completely lost contact with person']},
+      {q:'Is there medical evidence of custodial torture or abuse?',opts:['Yes — visible injuries, MLC done at government hospital','Victim reports abuse but MLC not yet done','Video/photo evidence of injuries available','No physical abuse — only wrongful procedure / rights violation']},
+      {q:'Has the family approached NHRC, SHRC, or filed a writ petition?',opts:['NHRC / SHRC complaint filed','High Court writ (habeas corpus) filed','Complaint filed with SP / DCP against the officers','No action yet — seeking urgent legal advice']},
     ];
   }
   if(ct.includes('cheque bounce')||ct.includes('negotiable instruments')){
@@ -2354,12 +2372,12 @@ function getAssessmentQs(law){
       {q:'What is the approximate value of goods or services involved?',opts:['Below ₹20 lakh (District Commission)','₹20 lakh – ₹1 crore (State Commission)','Above ₹1 crore (National Commission)','Not sure of the threshold']},
     ];
   }
-  if(ct.includes('medical negligence')){
+  if(ct.includes('medical negligence')&&!ct.includes('death by negligence')){
     return [
-      {q:'Do you have all medical records, prescriptions and discharge summaries?',opts:['Yes — complete records obtained','Partial records — hospital not sharing','Records obtained via RTI/legal notice','No records — verbal treatment only']},
-      {q:'Has a second medical opinion confirmed the negligence?',opts:['Yes — another doctor confirmed negligence','Seeking second opinion','No second opinion yet','Expert report commissioned']},
-      {q:'Did you file a complaint with the Medical Council or NMC?',opts:['Yes — NMC/State Medical Council complaint filed','No — not yet filed','Filed with hospital management first','Consumer forum case filed already']},
-      {q:'What was the outcome of the alleged negligence?',opts:['Death of patient','Permanent disability or disfigurement','Prolonged illness due to wrong treatment','Unnecessary surgery or procedure']},
+      {q:'What specifically was the deviation from standard medical care?',opts:['Wrong diagnosis led to wrong treatment','Correct diagnosis but wrong surgery / wrong organ operated','Correct surgery but negligent post-operative care','Unnecessary surgery / procedure performed without proper indication']},
+      {q:'Has the hospital shared complete medical records (discharge summary, OT notes, nursing charts)?',opts:['Yes — complete records obtained','Partial records — hospital withholding OT notes / nursing charts','Records obtained via legal notice / RTI','Hospital claiming records are unavailable']},
+      {q:'Has an independent expert doctor reviewed the case and confirmed negligence?',opts:['Yes — written expert opinion confirming negligence','Verbal confirmation — expert opinion being documented','Seeking expert review','No expert opinion yet']},
+      {q:'Was informed consent taken before the procedure?',opts:['No consent obtained at all — clear ground for complaint','Consent was vague / general — didn\'t cover specific procedure','Consent was forged or not from patient / guardian','Proper consent was taken but procedure was still negligent']},
     ];
   }
 
@@ -3474,5 +3492,308 @@ document.addEventListener('DOMContentLoaded',function(){
     </div>
   </div>
 </div>
+<!-- ═══════════════════════════════════════════════════════════════════════
+     ADMIN PANEL MODAL — Superadmin only (requires sl_admin_token)
+     Replaces the separate admin/dashboard.html — all admin features in-page.
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div id="adminModal" style="display:none;position:fixed;inset:0;z-index:99999;background:#0f172a;overflow-y:auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+<style>
+#adminModal *{box-sizing:border-box}
+#adminModal .am-topbar{background:#1e293b;border-bottom:1px solid #334155;padding:10px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+#adminModal .am-topbar h1{font-size:15px;font-weight:800;color:#fff;margin:0}
+#adminModal .am-badge{background:#7c3aed;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+#adminModal .am-tabs{display:flex;background:#1e293b;border-bottom:1px solid #334155;padding:0 20px;position:sticky;top:41px;z-index:9}
+#adminModal .am-tab{padding:10px 16px;font-size:12px;font-weight:600;color:#94a3b8;cursor:pointer;border-bottom:2px solid transparent;transition:.15s}
+#adminModal .am-tab.active{color:#a5b4fc;border-bottom-color:#7c3aed}
+#adminModal .am-tab:hover:not(.active){color:#e2e8f0}
+#adminModal .am-pane{display:none;padding:20px;max-width:1100px;margin:0 auto}
+#adminModal .am-pane.active{display:block}
+#adminModal .am-card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:16px;margin-bottom:14px}
+#adminModal .am-card-title{font-size:12px;font-weight:700;color:#a5b4fc;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+#adminModal .am-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+#adminModal .am-stat{background:#1e293b;border:1px solid #334155;border-radius:8px;padding:12px;text-align:center}
+#adminModal .am-stat-n{font-size:24px;font-weight:800;color:#a5b4fc}
+#adminModal .am-stat-l{font-size:10px;color:#64748b;margin-top:3px}
+#adminModal table{width:100%;border-collapse:collapse;font-size:11px}
+#adminModal th{text-align:left;padding:7px 9px;color:#64748b;font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #334155}
+#adminModal td{padding:7px 9px;border-bottom:1px solid #1e293b;color:#cbd5e1;vertical-align:top}
+#adminModal tr:hover td{background:#263248}
+#adminModal .am-badge-accept{background:#d1fae522;color:#6ee7b7;border:1px solid #10b98133;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700}
+#adminModal .am-badge-incorrect{background:#fee2e222;color:#fca5a5;border:1px solid #ef444433;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700}
+#adminModal .am-badge-irrelevant{background:#fef3c722;color:#fcd34d;border:1px solid #f59e0b33;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700}
+#adminModal .am-badge-missing{background:#ede9fe22;color:#c4b5fd;border:1px solid #7c3aed33;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700}
+#adminModal .am-badge-others{background:#f1f5f922;color:#94a3b8;border:1px solid #47556933;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700}
+#adminModal .am-form-group{margin-bottom:12px}
+#adminModal .am-form-group label{display:block;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+#adminModal .am-form-group input,#adminModal .am-form-group select{width:100%;background:#0f172a;border:1px solid #334155;border-radius:6px;padding:7px 10px;color:#e2e8f0;font-size:12px;outline:none}
+#adminModal .am-form-group input:focus,#adminModal .am-form-group select:focus{border-color:#7c3aed}
+#adminModal .am-form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#adminModal .am-btn{background:#7c3aed;border:none;color:#fff;padding:9px 18px;border-radius:7px;cursor:pointer;font-size:12px;font-weight:700;width:100%}
+#adminModal .am-btn:hover{background:#6d28d9}
+#adminModal .am-btn-danger{background:#dc2626}
+#adminModal .am-btn-sm{padding:3px 10px;font-size:10px;width:auto;border-radius:4px}
+#adminModal .am-empty{color:#475569;text-align:center;padding:28px;font-size:12px}
+#adminModal .am-query-text{color:#e2e8f0;font-weight:600;margin-bottom:3px;font-size:13px}
+#adminModal .am-meta-text{color:#64748b;font-size:10px}
+#adminModal .am-alert{background:#7c3aed22;border:1px solid #7c3aed44;border-radius:6px;padding:9px 12px;font-size:11px;color:#c4b5fd;margin-bottom:14px}
+#adminModal .am-role{display:inline-block;padding:1px 8px;border-radius:20px;font-size:10px;font-weight:700}
+#adminModal .am-role-admin{background:#fee2e2;color:#991b1b}
+#adminModal .am-role-tester{background:#ede9fe;color:#5b21b6}
+#adminModal .am-role-lawyer{background:#d1fae5;color:#065f46}
+#adminModal .am-role-end_user{background:#dbeafe;color:#1e40af}
+#adminModal .am-role-unknown{background:#f1f5f9;color:#475569}
+#adminModal #amFeedback{font-size:11px;margin-top:7px;min-height:16px}
+</style>
+
+<!-- Topbar -->
+<div class="am-topbar">
+  <span style="font-size:18px">🔬</span>
+  <h1>SatLegal Admin Panel</h1>
+  <span class="am-badge">SUPERADMIN</span>
+  <div style="margin-left:auto;display:flex;gap:8px">
+    <button onclick="amExportCorrections()" style="background:#334155;border:none;color:#e2e8f0;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600">⬇ Export</button>
+    <button onclick="amClearCorrections()" style="background:#7f1d1d;border:none;color:#fca5a5;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600">🗑 Clear All</button>
+    <button onclick="closeAdminModal()" style="background:#475569;border:none;color:#fff;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700">✕ Close</button>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="am-tabs">
+  <div class="am-tab active" onclick="amSwitchTab('corrections',this)">📋 Corrections</div>
+  <div class="am-tab" onclick="amSwitchTab('analytics',this)">📊 Analytics</div>
+  <div class="am-tab" onclick="amSwitchTab('users',this)">👥 User Management</div>
+</div>
+
+<!-- ── CORRECTIONS TAB ──────────────────────────────────────────────────── -->
+<div class="am-pane active" id="amTab-corrections">
+  <div class="am-alert">Corrections are saved from tester ratings on Step 3. Use these to identify patterns in misclassified queries.</div>
+  <div class="am-stats" id="amCorrStats"></div>
+  <div class="am-card">
+    <div class="am-card-title">🔍 Filter
+      <input id="amCorrFilter" type="text" placeholder="Filter by query or law name…" oninput="amRenderCorrections()" style="flex:1;margin-left:10px;background:#0f172a;border:1px solid #334155;border-radius:5px;padding:4px 8px;color:#e2e8f0;font-size:11px">
+      <select id="amCorrStatus" onchange="amRenderCorrections()" style="margin-left:7px;background:#0f172a;border:1px solid #334155;border-radius:5px;padding:4px 7px;color:#e2e8f0;font-size:11px">
+        <option value="">All</option>
+        <option value="incorrect">Incorrect</option>
+        <option value="irrelevant">Irrelevant</option>
+        <option value="accept">Accept</option>
+        <option value="missing">Missing</option>
+        <option value="others">Others</option>
+      </select>
+    </div>
+  </div>
+  <div id="amCorrList"></div>
+</div>
+
+<!-- ── ANALYTICS TAB ────────────────────────────────────────────────────── -->
+<div class="am-pane" id="amTab-analytics">
+  <div class="am-stats" id="amAnaStats"></div>
+  <div class="am-card"><div class="am-card-title">❌ Most Incorrectly Mapped Laws</div><div id="amTopIncorrect"></div></div>
+  <div class="am-card"><div class="am-card-title">📌 Frequently Missing Laws</div><div id="amTopMissing"></div></div>
+  <div class="am-card"><div class="am-card-title">✅ Most Accepted Laws</div><div id="amTopAccepted"></div></div>
+</div>
+
+<!-- ── USER MANAGEMENT TAB ──────────────────────────────────────────────── -->
+<div class="am-pane" id="amTab-users">
+  <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:16px;align-items:start">
+    <div class="am-card">
+      <div class="am-card-title" id="amUserFormTitle">➕ Create New User</div>
+      <div class="am-form-row">
+        <div class="am-form-group"><label>Full Name</label><input id="amUName" placeholder="Rahul Sharma" type="text"></div>
+        <div class="am-form-group"><label>Email Address</label><input id="amUEmail" placeholder="user@example.com" type="email"></div>
+      </div>
+      <div class="am-form-row">
+        <div class="am-form-group"><label>Mobile</label><input id="amUPhone" placeholder="9876543210" type="tel" maxlength="10"></div>
+        <div class="am-form-group"><label>User Role</label>
+          <select id="amURole" onchange="amToggleLawyerFields()">
+            <option value="end_user">End User</option>
+            <option value="tester">Tester</option>
+            <option value="lawyer">Lawyer</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="am-form-group"><label>Password</label><input id="amUPass" placeholder="Minimum 8 characters" type="password"></div>
+      <div class="am-form-group" id="amLawyerFields" style="display:none"><label>Specialization</label><input id="amUSpec" placeholder="e.g. Family Law, Criminal" type="text"></div>
+      <div class="am-form-group" id="amLawyerCity" style="display:none"><label>City / Bar Council</label><input id="amUCity" placeholder="e.g. Delhi Bar" type="text"></div>
+      <button class="am-btn" onclick="amCreateUser()">Create User →</button>
+      <div id="amFeedback"></div>
+    </div>
+    <div class="am-card">
+      <div class="am-card-title" style="justify-content:space-between">👥 Registered Users <button class="am-btn am-btn-sm" onclick="amLoadUsers()">↺ Refresh</button></div>
+      <div id="amUserList"><div class="am-empty">Loading…</div></div>
+    </div>
+  </div>
+</div>
+</div><!-- end #adminModal -->
+
+<script>
+// ══ Admin Modal ═══════════════════════════════════════════════════════════════
+function openAdminModal(){
+  const modal=document.getElementById('adminModal');
+  if(!modal)return;
+  modal.style.display='block';
+  document.body.style.overflow='hidden';
+  amRenderCorrections();
+}
+function closeAdminModal(){
+  const modal=document.getElementById('adminModal');
+  if(modal)modal.style.display='none';
+  document.body.style.overflow='';
+}
+// Close on Escape key
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAdminModal();});
+
+function amSwitchTab(name,el){
+  document.querySelectorAll('.am-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.am-pane').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('amTab-'+name).classList.add('active');
+  if(name==='corrections')amRenderCorrections();
+  if(name==='analytics')amRenderAnalytics();
+  if(name==='users')amLoadUsers();
+}
+
+function amGetCorrections(){try{return JSON.parse(localStorage.getItem('sl_corrections')||'[]');}catch{return[];}}
+
+function amEsc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function amRenderCorrections(){
+  const all=amGetCorrections();
+  const filter=(document.getElementById('amCorrFilter')?.value||'').toLowerCase();
+  const status=document.getElementById('amCorrStatus')?.value||'';
+  const total=all.length;
+  const incorrect=all.filter(e=>e.ratings?.some(r=>r.status==='incorrect')).length;
+  const accepted=all.filter(e=>e.ratings?.some(r=>r.status==='accept')).length;
+  const hasMissing=all.filter(e=>e.missing?.trim()).length;
+  document.getElementById('amCorrStats').innerHTML=[
+    ['Total Submissions',total,'#a5b4fc'],
+    ['Incorrect Flags',incorrect,'#f87171'],
+    ['Accepted',accepted,'#6ee7b7'],
+    ['Missing Law Reports',hasMissing,'#fbbf24'],
+  ].map(([l,n,c])=>`<div class="am-stat"><div class="am-stat-n" style="color:${c}">${n}</div><div class="am-stat-l">${l}</div></div>`).join('');
+  const filtered=all.filter(e=>{
+    const matchText=!filter||(e.query||'').toLowerCase().includes(filter)||(e.shown||[]).some(l=>l.toLowerCase().includes(filter));
+    const matchStatus=!status||(e.ratings||[]).some(r=>r.status===status);
+    return matchText&&matchStatus;
+  });
+  const list=document.getElementById('amCorrList');
+  if(!filtered.length){list.innerHTML='<div class="am-card am-empty">No corrections match this filter.</div>';return;}
+  list.innerHTML=filtered.map((e,ei)=>{
+    const ratingsHtml=(e.ratings||[]).map(r=>`<tr><td>${amEsc(r.caseType)}</td><td><span class="am-badge-${r.status}">${r.status}</span></td><td style="color:#94a3b8">${amEsc(r.note||'—')}</td></tr>`).join('');
+    return `<div class="am-card">
+      <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">
+        <div style="flex:1"><div class="am-query-text">"${amEsc(e.query||'')}"</div>
+        <div class="am-meta-text">${e.ts?new Date(e.ts).toLocaleString('en-IN'):'—'} · Source: <b>${amEsc(e.source||'—')}</b></div></div>
+        <button class="am-btn am-btn-sm am-btn-danger" onclick="amDeleteCorrection(${ei})">Delete</button>
+      </div>
+      ${ratingsHtml?`<table><thead><tr><th>Law</th><th>Status</th><th>Note</th></tr></thead><tbody>${ratingsHtml}</tbody></table>`:''}
+      ${e.missing?`<div style="margin-top:7px;font-size:10px;color:#fbbf24">📌 Missing: ${amEsc(e.missing)}</div>`:''}
+      ${e.note?`<div style="margin-top:4px;font-size:10px;color:#94a3b8">💬 ${amEsc(e.note)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+function amDeleteCorrection(idx){
+  const all=amGetCorrections();all.splice(idx,1);
+  localStorage.setItem('sl_corrections',JSON.stringify(all));amRenderCorrections();
+}
+function amClearCorrections(){
+  if(!confirm('Delete ALL correction entries? This cannot be undone.'))return;
+  localStorage.removeItem('sl_corrections');amRenderCorrections();
+}
+function amExportCorrections(){
+  const data=JSON.stringify(amGetCorrections(),null,2);
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));
+  a.download=`satlegal-corrections-${new Date().toISOString().slice(0,10)}.json`;a.click();
+}
+
+function amRenderAnalytics(){
+  const all=amGetCorrections();
+  const incorrect={},missing={},accepted={};
+  all.forEach(e=>{
+    (e.ratings||[]).forEach(r=>{
+      if(r.status==='incorrect')incorrect[r.caseType]=(incorrect[r.caseType]||0)+1;
+      if(r.status==='accept')accepted[r.caseType]=(accepted[r.caseType]||0)+1;
+    });
+    if(e.missing)e.missing.split(/[,\n]+/).forEach(m=>{const k=m.trim();if(k)missing[k]=(missing[k]||0)+1;});
+  });
+  const total=all.length;
+  const incorrect_count=all.filter(e=>e.ratings?.some(r=>r.status==='incorrect')).length;
+  document.getElementById('amAnaStats').innerHTML=[
+    ['Total Sessions',total,'#a5b4fc'],['Sessions with Errors',incorrect_count,'#f87171'],
+    ['Unique Wrong Laws',Object.keys(incorrect).length,'#fbbf24'],['Missing Law Reports',Object.keys(missing).length,'#c4b5fd'],
+  ].map(([l,n,c])=>`<div class="am-stat"><div class="am-stat-n" style="color:${c}">${n}</div><div class="am-stat-l">${l}</div></div>`).join('');
+  const topN=(obj,n=8)=>Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,n);
+  document.getElementById('amTopIncorrect').innerHTML=amBuildBar(topN(incorrect),'#f87171');
+  document.getElementById('amTopMissing').innerHTML=amBuildBar(topN(missing),'#fbbf24');
+  document.getElementById('amTopAccepted').innerHTML=amBuildBar(topN(accepted),'#6ee7b7');
+}
+function amBuildBar(entries,color){
+  if(!entries.length)return'<div class="am-empty" style="padding:14px">No data yet</div>';
+  const max=entries[0][1];
+  return`<table><thead><tr><th>Law</th><th>Count</th><th style="width:180px">Bar</th></tr></thead><tbody>
+    ${entries.map(([k,v])=>`<tr><td>${amEsc(k)}</td><td style="color:${color};font-weight:700">${v}</td>
+    <td><div style="height:5px;background:${color}22;border-radius:3px"><div style="height:5px;background:${color};width:${Math.round(v/max*100)}%;border-radius:3px"></div></div></td></tr>`).join('')}
+  </tbody></table>`;
+}
+
+function amToggleLawyerFields(){
+  const isLawyer=document.getElementById('amURole')?.value==='lawyer';
+  document.getElementById('amLawyerFields').style.display=isLawyer?'block':'none';
+  document.getElementById('amLawyerCity').style.display=isLawyer?'block':'none';
+}
+async function amCreateUser(){
+  const fb=document.getElementById('amFeedback');
+  const name=document.getElementById('amUName').value.trim();
+  const email=document.getElementById('amUEmail').value.trim();
+  const phone=document.getElementById('amUPhone').value.trim();
+  const role=document.getElementById('amURole').value;
+  const pass=document.getElementById('amUPass').value;
+  const spec=document.getElementById('amUSpec')?.value.trim()||'';
+  const city=document.getElementById('amUCity')?.value.trim()||'';
+  if(!name||!email||!pass){fb.innerHTML='<span style="color:#f87171">Name, email and password are required.</span>';return;}
+  if(pass.length<8){fb.innerHTML='<span style="color:#f87171">Password must be at least 8 characters.</span>';return;}
+  fb.innerHTML='<span style="color:#94a3b8">Creating user…</span>';
+  try{
+    const resp=await fetch('/api/admin-users',{method:'POST',
+      headers:{'Content-Type':'application/json','x-admin-token':W.adminToken||localStorage.getItem('sl_admin_token')},
+      body:JSON.stringify({name,email,phone,role,password:pass,specialization:spec,city})});
+    const data=await resp.json();
+    if(!resp.ok||!data.success){fb.innerHTML=`<span style="color:#f87171">${data.message||'Failed to create user.'}</span>`;return;}
+    fb.innerHTML=`<span style="color:#6ee7b7">✅ Created: ${data.user?.email||email}</span>`;
+    ['amUName','amUEmail','amUPhone','amUPass','amUSpec','amUCity'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    amLoadUsers();
+  }catch(e){fb.innerHTML=`<span style="color:#f87171">Error: ${e.message}</span>`;}
+}
+async function amLoadUsers(){
+  const list=document.getElementById('amUserList');
+  list.innerHTML='<div class="am-empty">Loading…</div>';
+  try{
+    const resp=await fetch('/api/admin-users',{headers:{'x-admin-token':W.adminToken||localStorage.getItem('sl_admin_token')}});
+    const data=await resp.json();
+    if(!resp.ok||!data.success){list.innerHTML=`<div class="am-empty">${data.message||'Could not load users'}</div>`;return;}
+    const users=data.users||[];
+    if(!users.length){list.innerHTML='<div class="am-empty">No users yet</div>';return;}
+    list.innerHTML=`<table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Change</th></tr></thead><tbody>
+      ${users.map(u=>`<tr>
+        <td>${amEsc(u.name||'—')}</td>
+        <td style="color:#7dd3fc">${amEsc(u.email||'—')}</td>
+        <td><span class="am-role am-role-${u.role||'unknown'}">${u.role||'end_user'}</span></td>
+        <td><select onchange="amChangeRole('${u.id||u._id||u.email}',this.value)" style="background:#0f172a;border:1px solid #334155;border-radius:4px;color:#e2e8f0;font-size:10px;padding:2px 5px">
+          ${['end_user','tester','lawyer','admin'].map(r=>`<option value="${r}"${r===u.role?' selected':''}>${r}</option>`).join('')}
+        </select></td>
+      </tr>`).join('')}
+    </tbody></table>`;
+  }catch(e){list.innerHTML=`<div class="am-empty">Backend not connected — ${e.message}</div>`;}
+}
+async function amChangeRole(userId,newRole){
+  try{
+    const resp=await fetch('/api/admin-users',{method:'PUT',
+      headers:{'Content-Type':'application/json','x-admin-token':W.adminToken||localStorage.getItem('sl_admin_token')},
+      body:JSON.stringify({userId,role:newRole})});
+    const data=await resp.json();if(data.success)amLoadUsers();
+  }catch(e){alert('Failed to update role: '+e.message);}
+}
+</script>
+
 </body>
 </html>

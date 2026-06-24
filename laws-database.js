@@ -1210,6 +1210,78 @@ const LAWS_DATABASE = [
     multiLawCompatible: ['Consumer – Product Defect / Service Deficiency','Constitutional – PIL / Writ Petition / Fundamental Rights']
   },
 
+  // ── CRIMINAL MEDICAL NEGLIGENCE (DEATH BY NEGLIGENCE) ─────────────────────
+  {
+    caseType: 'Criminal – Medical Negligence / Death by Negligence (BNS 106)',
+    lawCategory: 'Criminal',
+    actName: 'Bharatiya Nyaya Sanhita, 2023 – Sec 106 (Death by Negligence) + Indian Medical Council Act',
+    keywords: {
+      exact: [
+        'patient died due to doctor negligence','patient died in hospital due to negligence',
+        'doctor killed my father','doctor killed my mother','hospital killed my wife',
+        'hospital killed my husband','died after wrong surgery','died after wrong treatment',
+        'died due to wrong medicine','death due to anaesthesia error','anesthesia killed patient',
+        'hospital refused emergency and patient died','patient died because hospital refused',
+        'doctor performed wrong surgery and patient died','wrong surgery caused death',
+        'death in icu due to negligence','icu negligence caused death','patient died in icu',
+        'surgeon left instrument inside body patient died','instrument left inside body death',
+        'overdose given by doctor patient died','wrong injection killed patient',
+        'wrong blood transfusion caused death','blood group mismatch transfusion death',
+        'hospital released patient without treatment who then died','discharged without treatment died',
+        'my father died because of medical negligence','my mother died in hospital negligence',
+        'patient died chemotherapy wrong dose','chemo overdose killed patient',
+        'doctor ne meri maa ko maar diya galat ilaj se','hospital mein maa ki maut ho gayi galti se',
+        'galat injection dene se patient ki maut','doctor ki galti se jaan gayi',
+      ],
+      strong: [
+        'patient died hospital','died after surgery','death due to negligence','died due to wrong',
+        'hospital caused death','doctor caused death','fatal medical error','fatal surgical error',
+        'death in hospital','icu death negligence','anaesthesia death','anesthesia death',
+        'post operative death','post-operative complication death','death after operation',
+        'emergency refused patient died','BNS 106','section 106 bns','causing death by negligence',
+        'rash negligent act causing death','medical death','wrongful death doctor','wrongful death hospital',
+        'medicine overdose death','injection overdose death','wrong dose caused death',
+        'blood mismatch death','transfusion error death','discharged prematurely death',
+        'maternity death hospital','childbirth death negligence','delivery complication death',
+      ],
+      weak: [
+        'died','death','hospital','doctor','surgery','treatment','negligence','operation','fatal','killed',
+        'anaesthesia','icu','emergency','refused','wrong','patient','maut','mar gaya','galti',
+      ],
+    },
+    sections: [
+      'BNS Sec 106 (Causing death by rash or negligent act – 2 to 7 years)',
+      'BNS Sec 106(2) (Medical negligence causing death – specifically)',
+      'NMC Act 2020 – National Medical Commission (Doctor deregistration)',
+      'Indian Medical Council (Professional Conduct) Regulations 2002',
+      'Consumer Protection Act 2019 (civil compensation simultaneously)',
+      'BNSS Sec 174 (Mandatory inquest for death in hospital / custody)',
+    ],
+    documents: [
+      { name: 'Hospital Discharge Summary / Death Summary', critical: true },
+      { name: 'Post-mortem / Autopsy Report', critical: true },
+      { name: 'All Medical Records, Prescriptions, OT Notes', critical: true },
+      { name: 'Death Certificate', critical: true },
+      { name: 'Expert Medical Opinion confirming negligence', critical: true },
+      { name: 'CCTV footage from hospital (request immediately)', critical: false },
+      { name: 'Nursing notes / ICU chart / Monitor readings', critical: false },
+    ],
+    probingQuestions: [
+      { q: 'Was an FIR filed under BNS Sec 106 (rash/negligent death)?', tip: 'Police are often reluctant — you can file a private complaint before a Magistrate under Sec 223 BNSS.' },
+      { q: 'Was an BNSS Sec 174 inquest conducted by the local magistrate?', tip: 'Mandatory for all hospital deaths. Demand this from the police immediately.' },
+      { q: 'Have you secured all medical records before the hospital destroys them?', tip: 'Hospital records must be preserved immediately. Send a registered legal notice within 24 hours.' },
+      { q: 'Has an independent expert doctor confirmed the medical negligence?', tip: 'Expert opinion is essential for criminal prosecution and consumer court compensation.' },
+    ],
+    contextualQuestions: ['criminal'],
+    limitation: '3 years (criminal) / 2 years (consumer court)',
+    urgency: 'high',
+    multiLawCompatible: [
+      'Consumer – Medical Negligence / Hospital Deficiency',
+      'Constitutional – PIL / Writ Petition / Fundamental Rights',
+      'Criminal – BNS (Murder / Culpable Homicide / Unnatural Death)',
+    ],
+  },
+
   // ── INSURANCE CLAIM ──────────────────────────────────────────────────────
   {
     caseType: 'Consumer – Insurance Claim Dispute',
