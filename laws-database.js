@@ -2355,7 +2355,7 @@ function getContextualQuestions(description) {
       t1: [
         'rape','raped','gang rape','sexual assault','sexually assaulted',
         'molest','molestation','murder','murdered','killed him','killed her',
-        'killed by','poisoned','stabbed','shot dead','strangulated','hanged',
+        'killed by','poison','poisoned','stabbed','shot dead','strangulated','hanged',
         'kidnapped','kidnap','abducted','abduction','pocso','child sexual',
         'acid attack','acid thrown','balatkar','jabardasti sex','jabardasti ki',
         'threatened with knife','threatened with weapon','bomb threat',
@@ -2370,7 +2370,10 @@ function getContextualQuestions(description) {
         'accused of crime','accused of fraud','blaming me for crime',
         'blaming me for death','blaming me for patient',
         'someone died at operation','died on operation table','died during surgery',
-        'died during operation','family blaming doctor','fir against doctor',
+        'died during operation','died in hospital','died at hospital',
+        'died after surgery','died after treatment','died after operation',
+        'death in hospital','death at hospital','patient death',
+        'family blaming doctor','fir against doctor',
         'operation went wrong','surgery went wrong','criminal case doctor',
       ],
       t3: [
