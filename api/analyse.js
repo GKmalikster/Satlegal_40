@@ -51,12 +51,12 @@ async function extractStructure(client, rawInput) {
       model:      'claude-haiku-4-5-20251001',
       max_tokens: 120,
       messages:   [{ role: 'user', content:
-`Extract key legal facts from this problem. Return ONLY valid JSON, no explanation.
+`Extract key legal facts from this Indian legal problem. It may be in English, Hindi, or Hinglish. Return ONLY valid JSON, no explanation.
 
 Problem: "${rawInput.slice(0, 300)}"
 
 Return exactly this shape (choose the best-fitting value for each field):
-{"what_happened":"core event in 5 words","relationship":"employer-employee|buyer-seller|spouse|landlord-tenant|stranger|other","harm_type":"termination|theft|fraud|assault|deficiency|negligence|harassment|other","context":"workplace|consumer|criminal|family|property|digital|public"}`
+{"what_happened":"core event in 5 words (translate to English if Hindi/Hinglish)","relationship":"employer-employee|buyer-seller|spouse|landlord-tenant|parent-child|doctor-patient|police-citizen|business-partner|stranger|other","harm_type":"termination|theft|fraud|assault|sexual-violence|death|deficiency|negligence|harassment|defamation|eviction|discrimination|data-breach|other","context":"workplace|consumer|criminal|family|property|digital|constitutional|medical|succession|other","perspective":"victim|accused|third-party"}`
       }]
     });
     const raw = resp.content[0].text.trim()
@@ -79,6 +79,7 @@ function buildPrompt(input, structure) {
 - Relationship   : ${structure.relationship}
 - Harm type      : ${structure.harm_type}
 - Context        : ${structure.context}
+- Perspective    : ${structure.perspective || 'unknown'}
 `
     : '';
 
@@ -108,6 +109,21 @@ STRICT OVER-MAPPING RULES — each rule prevents a specific hallucination:
 13. PATIENT DIED / DIED ON OPERATION TABLE / DIED IN HOSPITAL / FAMILY BLAMING DOCTOR → "Criminal – Medical Negligence / Death by Negligence (BNS 106)" ONLY — regardless of whether the query is from VICTIM'S FAMILY or from the ACCUSED DOCTOR. NEVER succession, NEVER murder, NEVER consumer law alone for this scenario. Medical death ≠ succession.
 14. RAPE / SEXUAL ASSAULT (adult victim, 18 or above) → "Criminal – Rape / Sexual Assault / Sexual Violence (BNS 64-70)" ONLY. NOT POCSO (that is for victims UNDER 18). NOT Domestic Violence alone unless there is an ongoing domestic relationship. NOT assault (assault is for non-sexual physical violence).
 15. SUCCESSION / INHERITANCE / WILL / PROPERTY AFTER DEATH → "Property – Hindu Succession / Inheritance Dispute" or related succession law ONLY when the dispute is about WHO GETS THE PROPERTY after someone died naturally. NOT for medical negligence. NOT for murder. Do NOT add succession to any criminal, medical, or violent death case.
+16. TRADEMARK / COPYRIGHT / PATENT / IP / LOGO COPIED / PLAGIARISM / COPIED APP / COPIED DESIGN → "Intellectual Property – Trademark / Copyright / Patent Dispute" ONLY. Not Cyber, not Consumer.
+17. NRI / OCI / PERSON ABROAD / NON-RESIDENT INDIAN legal issue (property, marriage, divorce, family) → "NRI – Property / Family / Legal Issues (Non-Resident Indian)". Add a second family/property law only if the specific dispute is described.
+18. CASTE DISCRIMINATION / SC ST ATROCITY / DALIT ATTACKED / UNTOUCHABILITY / MANUAL SCAVENGING → "Criminal – SC/ST Atrocities / Caste Discrimination" ONLY.
+19. DATA BREACH / AADHAR MISUSED / PERSONAL DATA SHARED / DPDP ACT / PRIVACY VIOLATION (non-financial) → "Digital Privacy – DPDP Act / Data Breach / Aadhaar Misuse". Not Cyber (Cyber is for financial fraud, hacking, and online harassment).
+20. MSME / DELAYED PAYMENT TO SUPPLIER / MSME SAMADHAN / PARTNERSHIP DUES UNPAID → "MSME – Delayed Payment / MSME Samadhan / Partnership Dues". Not Consumer, not Civil.
+21. SENIOR CITIZEN MAINTENANCE / ELDERLY PARENT EVICTED BY CHILDREN / ABANDONED ELDERLY → "Senior Citizen – Maintenance / Protection / Eviction Prevention". Not DV, not Succession.
+22. MATERNITY LEAVE DENIED / PREGNANCY RIGHTS AT WORK / MATERNITY BENEFIT ACT → "Employment – Maternity Benefits / Pregnancy Rights". Not Consumer.
+23. ABORTION RIGHTS / MTP ACT / REPRODUCTIVE RIGHTS / FORCED PREGNANCY → "Civil – Medical Termination of Pregnancy (MTP) / Reproductive Rights". Not Consumer.
+24. MGNREGA / RIGHT TO WORK SCHEME / JOB CARD DENIED / GOVERNMENT SCHEME BENEFIT DENIED → "Livelihood – MGNREGA / Right to Work / Government Schemes". Not Consumer, not PIL.
+25. AGRICULTURAL DISPUTE / CROP INSURANCE / FARMING LOAN / LAND TENANCY / KISAN CREDIT → "Agriculture – Crop Insurance / Land Tenancy / Agricultural Disputes". Not Property, not Consumer.
+26. SHOPS AND ESTABLISHMENTS / SHOP LICENSE / BUSINESS REGISTRATION / COMMERCIAL EMPLOYEE RIGHTS → "Shops & Establishments Act – Labour Compliance". Not Consumer, not Employment general.
+27. ACCUSED PERSPECTIVE / FALSE CASE / WRONGLY ACCUSED / DEFENDING AGAINST / COMPLAINT FILED AGAINST ME → Classify to the UNDERLYING law being alleged. Example: "false rape case filed against me" → Rape law. "false dowry case" → Dowry. "false consumer complaint against my shop" → Consumer. The accused needs the same law as the victim.
+28. MENTAL HEALTH / PSYCHIATRIC RIGHTS / FORCED ADMISSION TO MENTAL HOSPITAL / DISABILITY RIGHTS → "Civil – Mental Healthcare Act / Psychiatric Rights / Disability". Not Consumer, not Criminal.
+29. INSOLVENCY / BANKRUPTCY / COMPANY WINDING UP / LIQUIDATION / PERSONAL GUARANTOR → "IBC – Insolvency / Bankruptcy / NCLT Proceedings". Not Corporate alone unless it is purely a shareholder/director dispute without insolvency.
+30. ARBITRATION / MEDIATION / LOK ADALAT / SETTLEMENT NOT HONORED / AWARD NOT ENFORCED → "Civil – Arbitration / ADR / Enforcement of Award". Not Consumer, not PIL.
 
 BNS SUBCATEGORY SELECTION RULES — choose the most specific BNS category:
 - Criminal – Medical Negligence / Death by Negligence (BNS 106): A PATIENT DIED during or after medical treatment. Doctor/hospital is accused OR is seeking legal advice. Keywords: died on operation table, died after surgery, patient died in hospital, family blaming doctor, accused of medical negligence, operation went wrong. → USE THIS for all hospital/medical deaths. This overrides the generic murder/death rule below.

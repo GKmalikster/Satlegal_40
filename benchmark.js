@@ -1524,6 +1524,7 @@ const TESTS = [
   { q: 'online purchase fraud credit card charge reversal bank refusing',        expect: ['Fraud','Cyber'],        note: '[Edge] fraud card reversal' },
   { q: 'land acquired but tribal rights exist under forest rights act',          expect: ['Land Acquisition','PIL'], note: '[Edge] land acq tribal' },
   { q: 'deceased father had business debt children liable under succession',     expect: ['Succession','IBC'],     note: '[Edge] succession business debt' },
+  ...require('./benchmark-extra.js'),
 ];
 
 // ── Runner ────────────────────────────────────────────────────────────────────

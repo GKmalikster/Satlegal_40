@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SatLegal — Pre-Deployment Tester</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --card: #21253a;
+    --border: #2e3352; --accent: #4f8ef7; --green: #22c55e;
+    --red: #ef4444; --yellow: #f59e0b; --gray: #64748b;
+    --text: #e2e8f0; --muted: #94a3b8;
+    --font: 'Inter', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; }
+  a { color: var(--accent); text-decoration: none; }
+
+  /* Layout */
+  .app { display: grid; grid-template-rows: auto 1fr; height: 100vh; overflow: hidden; }
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 24px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  header h1 { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; white-space: nowrap; }
+  header h1 span { color: var(--accent); }
+  .badge { font-size: 10px; background: var(--accent)22; color: var(--accent);
+    border: 1px solid var(--accent)44; border-radius: 4px; padding: 2px 7px; font-weight: 600; }
+  .spacer { flex: 1; }
+
+  /* Config bar */
+  .config { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .config input[type=text] {
+    background: var(--card); border: 1px solid var(--border); color: var(--text);
+    border-radius: 6px; padding: 7px 12px; font-size: 13px; width: 300px; outline: none;
+  }
+  .config input[type=text]:focus { border-color: var(--accent); }
+  select {
+    background: var(--card); border: 1px solid var(--border); color: var(--text);
+    border-radius: 6px; padding: 7px 10px; font-size: 13px; outline: none; cursor: pointer;
+  }
+  button {
+    border: none; border-radius: 6px; padding: 7px 16px; font-size: 13px;
+    cursor: pointer; font-weight: 600; transition: opacity 0.15s;
+  }
+  button:hover { opacity: 0.85; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-run { background: var(--accent); color: #fff; }
+  .btn-stop { background: var(--red); color: #fff; }
+  .btn-clear { background: var(--card); color: var(--muted); border: 1px solid var(--border); }
+  .btn-export { background: var(--card); color: var(--muted); border: 1px solid var(--border); }
+
+  /* Main columns */
+  .main { display: grid; grid-template-columns: 280px 1fr; overflow: hidden; }
+  .sidebar { background: var(--surface); border-right: 1px solid var(--border);
+    overflow-y: auto; padding: 16px 12px; display: flex; flex-direction: column; gap: 12px; }
+  .content { overflow-y: auto; padding: 20px 24px; }
+
+  /* Score summary */
+  .score-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+  .score-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 12px; text-align: center; }
+  .score-box .num { font-size: 28px; font-weight: 800; line-height: 1; }
+  .score-box .lbl { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .num.pass { color: var(--green); }
+  .num.fail { color: var(--red); }
+  .num.skip { color: var(--yellow); }
+  .num.total { color: var(--accent); }
+
+  /* Progress bar */
+  .progress-wrap { background: var(--card); border-radius: 8px; overflow: hidden; height: 6px; margin: 14px 0 6px; }
+  .progress-bar { height: 100%; background: var(--accent); transition: width 0.1s linear; width: 0; }
+  .progress-label { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+
+  /* Category sidebar */
+  .cat-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.8px; padding: 0 4px 6px; border-bottom: 1px solid var(--border); }
+  .cat-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px;
+    cursor: pointer; transition: background 0.1s; font-size: 13px; }
+  .cat-item:hover, .cat-item.active { background: var(--card); }
+  .cat-item .cat-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cat-pill { font-size: 10px; font-weight: 700; min-width: 20px; text-align: center;
+    border-radius: 10px; padding: 1px 5px; }
+  .pill-pass { background: var(--green)22; color: var(--green); }
+  .pill-fail { background: var(--red)22; color: var(--red); }
+  .pill-skip { background: var(--gray)22; color: var(--gray); }
+
+  /* Results table */
+  .section-title { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 10px; }
+  .filter-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .filter-btn { font-size: 12px; background: var(--card); border: 1px solid var(--border);
+    color: var(--muted); padding: 4px 12px; border-radius: 20px; cursor: pointer; }
+  .filter-btn.active { background: var(--accent)22; border-color: var(--accent); color: var(--accent); }
+
+  .result-list { display: flex; flex-direction: column; gap: 6px; }
+  .result-row { background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 14px; cursor: pointer; transition: border-color 0.1s; }
+  .result-row:hover { border-color: var(--accent)66; }
+  .result-row.pass { border-left: 3px solid var(--green); }
+  .result-row.fail { border-left: 3px solid var(--red); }
+  .result-row.running { border-left: 3px solid var(--yellow); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+  .result-row.pending { border-left: 3px solid var(--border); opacity: 0.5; }
+
+  .result-header { display: flex; align-items: center; gap: 10px; }
+  .result-status { font-size: 11px; font-weight: 700; min-width: 45px; }
+  .status-pass { color: var(--green); }
+  .status-fail { color: var(--red); }
+  .status-run  { color: var(--yellow); }
+  .status-pend { color: var(--gray); }
+  .result-query { flex: 1; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .result-tags { display: flex; gap: 4px; }
+  .tag { font-size: 10px; background: var(--border); color: var(--muted);
+    border-radius: 4px; padding: 1px 5px; white-space: nowrap; }
+
+  .result-detail { display: none; margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid var(--border); font-size: 12px; }
+  .result-row.expanded .result-detail { display: block; }
+  .detail-grid { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; }
+  .detail-label { color: var(--muted); font-weight: 600; white-space: nowrap; }
+  .detail-val { color: var(--text); }
+  .detail-laws { display: flex; flex-direction: column; gap: 3px; margin-top: 6px; }
+  .law-item { display: flex; align-items: center; gap: 8px; background: var(--surface);
+    border-radius: 5px; padding: 4px 8px; }
+  .law-rank { color: var(--muted); font-size: 10px; min-width: 20px; }
+  .law-name { flex: 1; }
+  .law-score { color: var(--accent); font-weight: 700; font-size: 11px; }
+  .law-match { color: var(--green); font-size: 10px; font-weight: 700; }
+
+  /* Manual tester */
+  .manual-section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 18px; margin-bottom: 20px; }
+  .manual-section h2 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+  .manual-row { display: flex; gap: 8px; }
+  .manual-row input { flex: 1; background: var(--card); border: 1px solid var(--border);
+    color: var(--text); border-radius: 6px; padding: 9px 14px; font-size: 14px; outline: none; }
+  .manual-row input:focus { border-color: var(--accent); }
+  .manual-result { margin-top: 12px; font-size: 13px; }
+
+  /* Questions display */
+  .q-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .q-item { background: var(--card); border-radius: 6px; padding: 8px 12px;
+    font-size: 12px; border-left: 3px solid var(--accent)66; }
+  .q-item .q-text { font-weight: 600; }
+  .q-item .q-opts { color: var(--muted); margin-top: 3px; }
+
+  /* Detected areas */
+  .area-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0; }
+  .area-chip { font-size: 11px; background: var(--accent)22; color: var(--accent);
+    border: 1px solid var(--accent)44; border-radius: 20px; padding: 2px 10px; font-weight: 600; }
+
+  /* Speed readout */
+  .speed-bar { display: flex; gap: 16px; font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .speed-bar span { color: var(--text); font-weight: 600; }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* Empty state */
+  .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .empty .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty p { font-size: 14px; }
+
+  /* Error badge */
+  .err-msg { color: var(--red); font-size: 11px; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- HEADER -->
+<header>
+  <h1>⚡ <span>SatLegal</span> Pre-Deploy Tester</h1>
+  <span class="badge">v2.0</span>
+  <div class="config">
+    <input type="text" id="apiUrl" value="https://satlegal-40.vercel.app" placeholder="https://your-site.vercel.app">
+    <select id="testMode">
+      <option value="keyword">Keyword engine only (offline)</option>
+      <option value="api" selected>Live API (Vercel)</option>
+      <option value="both">Both layers</option>
+    </select>
+    <select id="catFilter">
+      <option value="">All categories</option>
+    </select>
+    <button class="btn-run" id="btnRun" onclick="startRun()">▶ Run Tests</button>
+    <button class="btn-stop" id="btnStop" onclick="stopRun()" style="display:none">■ Stop</button>
+    <button class="btn-clear" onclick="clearResults()">Clear</button>
+    <button class="btn-export" onclick="exportCSV()">↓ CSV</button>
+  </div>
+  <div class="spacer"></div>
+  <div style="font-size:12px;color:var(--muted)">
+    <span id="testCountLabel">258 tests loaded</span>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="cat-title">Categories</div>
+    <div id="catList"></div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- Manual query tester -->
+    <div class="manual-section">
+      <h2>🔍 Manual Query Tester</h2>
+      <div class="manual-row">
+        <input type="text" id="manualInput" placeholder="Type any legal query…" onkeydown="if(event.key==='Enter')testManual()">
+        <button class="btn-run" onclick="testManual()">Test</button>
+      </div>
+      <div class="manual-result" id="manualResult"></div>
+    </div>
+
+    <!-- Score summary -->
+    <div class="score-row" style="margin-bottom:12px">
+      <div class="score-box"><div class="num total" id="sTotal">0</div><div class="lbl">Total</div></div>
+      <div class="score-box"><div class="num pass" id="sPass">0</div><div class="lbl">Pass</div></div>
+      <div class="score-box"><div class="num fail" id="sFail">0</div><div class="lbl">Fail</div></div>
+      <div class="score-box"><div class="num" id="sAcc" style="color:var(--accent)">—</div><div class="lbl">Accuracy</div></div>
+    </div>
+
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-label" id="progressLabel"></div>
+    <div class="speed-bar" id="speedBar"></div>
+
+    <!-- Filter -->
+    <div class="filter-row" id="filterRow" style="margin-top:14px">
+      <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+      <button class="filter-btn" onclick="setFilter('pass',this)">✓ Pass</button>
+      <button class="filter-btn" onclick="setFilter('fail',this)">✗ Fail</button>
+    </div>
+
+    <!-- Results -->
+    <div class="section-title" id="resultsTitle">RESULTS</div>
+    <div class="result-list" id="resultList">
+      <div class="empty">
+        <div class="icon">🧪</div>
+        <p>Click <strong>Run Tests</strong> to start the benchmark.<br>Results appear in real-time.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// TEST DATA (embedded — 258 representative cases)
+// ═══════════════════════════════════════════════════════════
+const TESTS_RAW = [{"q":"wife is not agreeing to divorce what can I do","expect":"Divorce","tags":["Divorce","Family"]},{"q":"husband refuses to give divorce living separately for 3 years","expect":"Divorce","tags":["Divorce","Family"]},{"q":"grounds for divorce in India under Hindu Marriage Act","expect":"Divorce","tags":["Divorce","Family"]},{"q":"both husband and wife want divorce what is the process","expect":"Mutual","tags":["MutualDivorce","Family"]},{"q":"mutual consent divorce procedure India","expect":"Mutual","tags":["MutualDivorce","Family"]},{"q":"we both agree to separate what documents needed for divorce","expect":"Mutual","tags":["MutualDivorce","Family"]},{"q":"wife took children away after separation, want custody","expect":"Custody","tags":["Custody","Family"]},{"q":"husband not allowing me to meet my children after divorce","expect":"Custody","tags":["Custody","Family"]},{"q":"child custody order violation, what to do","expect":"Custody","tags":["Custody","Family"]},{"q":"husband not paying maintenance after separation","expect":"Maintenance","tags":["Maintenance","Family"]},{"q":"how much maintenance can wife claim in India","expect":"Maintenance","tags":["Maintenance","Family"]},{"q":"wife demanding excessive maintenance what can I do","expect":"Maintenance","tags":["Maintenance","Family","Accused"]},{"q":"husband is beating me every day what should I do","expect":"Domestic Violence","tags":["DV","Family"]},{"q":"in-laws mentally torturing me after marriage","expect":"Domestic Violence","tags":["DV","Family"]},{"q":"protection order against abusive husband India","expect":"Domestic Violence","tags":["DV","Family"]},{"q":"husband gave triple talaq over phone, what are my rights","expect":"Muslim","tags":["Muslim","Family"]},{"q":"mehr not paid after nikah, how to claim","expect":"Muslim","tags":["Muslim","Family"]},{"q":"Muslim wife maintenance iddat period","expect":"Muslim","tags":["Muslim","Family"]},{"q":"court marriage different religion how to do in India","expect":"Special Marriage","tags":["SpecialMarriage","Family"]},{"q":"inter-caste marriage family not agreeing","expect":"Special Marriage","tags":["SpecialMarriage","Family"]},{"q":"love marriage registration process India","expect":"Special Marriage","tags":["SpecialMarriage","Family"]},{"q":"not ready for divorce but want to live separately legally","expect":"Judicial Separation","tags":["JudicialSep","Family"]},{"q":"restitution of conjugal rights petition India","expect":"Judicial Separation","tags":["JudicialSep","Family"]},{"q":"judicial separation vs divorce what is the difference","expect":"Judicial Separation","tags":["JudicialSep","Family"]},{"q":"friend borrowed money and is not returning, what to do","expect":"Fraud","tags":["Fraud","Criminal"]},{"q":"business partner cheated me and ran away with funds","expect":"Fraud","tags":["Fraud","Criminal"]},{"q":"sold land but buyer not paying remaining amount","expect":"Fraud","tags":["Fraud","Criminal"]},{"q":"neighbour beat me up, want to file complaint","expect":"Assault","tags":["Assault","Criminal"]},{"q":"group of people attacked me on the road","expect":"Assault","tags":["Assault","Criminal"]},{"q":"someone hit me with a rod, I am injured","expect":"Assault","tags":["Assault","Criminal"]},{"q":"my friend was murdered, what should I do","expect":"Murder","tags":["Murder","Criminal"]},{"q":"found dead body of my brother, police not acting","expect":"Murder","tags":["Murder","Criminal"]},{"q":"suspicious death of wife, in-laws may be responsible","expect":"Murder","tags":["Murder","Criminal"]},{"q":"my mobile phone was snatched by two boys","expect":"Theft","tags":["Theft","Criminal"]},{"q":"house was burgled while we were out, valuables stolen","expect":"Theft","tags":["Theft","Criminal"]},{"q":"pickpocketed at railway station, wallet and phone gone","expect":"Theft","tags":["Theft","Criminal"]},{"q":"bail chahiye, bhai arrest hua hai","expect":"Bail","tags":["Bail","Criminal","Hinglish"]},{"q":"how to apply for anticipatory bail India","expect":"Bail","tags":["Bail","Criminal"]},{"q":"police arrested my husband without warrant, need bail","expect":"Bail","tags":["Bail","Criminal"]},{"q":"cheque bounce case how to file complaint","expect":"Cheque Bounce","tags":["ChequeBounce","Criminal"]},{"q":"cheque dishonoured insufficient funds notice period","expect":"Cheque Bounce","tags":["ChequeBounce","Criminal"]},{"q":"cheque bounce hua 15 din ho gaye","expect":"Cheque Bounce","tags":["ChequeBounce","Criminal","Hinglish"]},{"q":"in-laws demanding more dowry, threatening to throw me out","expect":"Dowry","tags":["Dowry","Criminal"]},{"q":"husband and family harassing for car as dowry","expect":"Dowry","tags":["Dowry","Criminal"]},{"q":"filed 498A case against in-laws for dowry harassment","expect":"Dowry","tags":["Dowry","Criminal"]},{"q":"police beating arrested persons in custody","expect":"Police Excess","tags":["PoliceExcess","Criminal"]},{"q":"police took bribe and refused to register FIR","expect":"Police Excess","tags":["PoliceExcess","Criminal"]},{"q":"wrongful arrest by police no reason given","expect":"Police Excess","tags":["PoliceExcess","Criminal"]},{"q":"patient died during surgery, family blaming the doctor, I need help","expect":"Medical Negligence","tags":["MedNeg","Criminal"]},{"q":"someone died at operation table family is blaming me","expect":"Medical Negligence","tags":["MedNeg","Criminal"]},{"q":"operation went wrong patient died, FIR filed against me","expect":"Medical Negligence","tags":["MedNeg","Criminal","Accused"]},{"q":"neighbour is sexually abusing my 10 year old daughter","expect":"POCSO","tags":["POCSO","Criminal"]},{"q":"teacher touched my child inappropriately at school","expect":"POCSO","tags":["POCSO","Criminal"]},{"q":"child sexual abuse complaint POCSO FIR how to file","expect":"POCSO","tags":["POCSO","Criminal"]},{"q":"I was raped by my colleague what should I do","expect":"Rape","tags":["Rape","Criminal"]},{"q":"gang rape complaint how to file FIR","expect":"Rape","tags":["Rape","Criminal"]},{"q":"she was raped by the auto driver","expect":"Rape","tags":["Rape","Criminal"]},{"q":"upper caste person abused me using caste slurs","expect":"SC/ST","tags":["SCST","Criminal"]},{"q":"I am dalit, was physically attacked because of my caste","expect":"SC/ST","tags":["SCST","Criminal"]},{"q":"SC ST Prevention of Atrocities Act case how to file","expect":"SC/ST","tags":["SCST","Criminal"]},{"q":"government officer demanding bribe to process my application","expect":"Corruption","tags":["Corruption","Criminal"]},{"q":"how to file complaint against corrupt police officer","expect":"Corruption","tags":["Corruption","Criminal"]},{"q":"anti-corruption bureau complaint how to file","expect":"Corruption","tags":["Corruption","Criminal"]},{"q":"ED notice received for money laundering what to do","expect":"PMLA","tags":["PMLA","Criminal"]},{"q":"property attached by Enforcement Directorate","expect":"PMLA","tags":["PMLA","Criminal"]},{"q":"PMLA case how to get bail from special court","expect":"PMLA","tags":["PMLA","Criminal","Bail"]},{"q":"father died without will, how is property divided among children","expect":"Succession","tags":["HinduSuccession","Property"]},{"q":"daughter rights in ancestral property Hindu law","expect":"Succession","tags":["HinduSuccession","Property"]},{"q":"brother not giving share in ancestral property","expect":"Succession","tags":["HinduSuccession","Property"]},{"q":"brother has forged fathers will to take all property","expect":"Will","tags":["WillProbate","Succession"]},{"q":"how to challenge a disputed will in court","expect":"Will","tags":["WillProbate","Succession"]},{"q":"probate of will procedure India","expect":"Will","tags":["WillProbate","Succession"]},{"q":"property sale registered but possession not given","expect":"Transfer","tags":["SaleDeed","Property"]},{"q":"sale deed executed but stamp duty not paid correctly","expect":"Transfer","tags":["SaleDeed","Property"]},{"q":"power of attorney misused to sell my property","expect":"Transfer","tags":["SaleDeed","Property"]},{"q":"neighbour built wall on my land, encroachment","expect":"Encroachment","tags":["Encroachment","Property"]},{"q":"government road is passing through my property without compensation","expect":["Encroachment","Land Acquisition"],"tags":["Encroachment","Property"]},{"q":"boundary dispute with adjacent landowner","expect":"Encroachment","tags":["Encroachment","Property"]},{"q":"tenant not paying rent for 6 months, how to evict","expect":"Rent","tags":["Rent","Property"]},{"q":"landlord not returning security deposit after vacating","expect":"Rent","tags":["Rent","Property"]},{"q":"landlord illegally locked my rented premises","expect":"Rent","tags":["Rent","Property"]},{"q":"builder not giving possession of flat after 5 years","expect":"RERA","tags":["RERA","Property"]},{"q":"RERA complaint how to file against builder","expect":"RERA","tags":["RERA","Property"]},{"q":"builder cancelled flat and not refunding my money","expect":"RERA","tags":["RERA","Property"]},{"q":"housing society not maintaining common areas","expect":"Housing Society","tags":["HousingSociety","Property"]},{"q":"society committee election dispute interference","expect":"Housing Society","tags":["HousingSociety","Property"]},{"q":"society charging excessive maintenance from flat owner","expect":"Housing Society","tags":["HousingSociety","Property"]},{"q":"government acquired my agricultural land, compensation too low","expect":"Land Acquisition","tags":["LandAcq","Property"]},{"q":"NHAI taking my land for highway, what are my rights","expect":"Land Acquisition","tags":["LandAcq","Property"]},{"q":"land acquisition compensation enhancement petition","expect":"Land Acquisition","tags":["LandAcq","Property"]},{"q":"new TV stopped working after 2 weeks, company refusing to replace","expect":"Consumer","tags":["Consumer","Product"]},{"q":"online purchase never delivered, seller not refunding","expect":"Consumer","tags":["Consumer","Product"]},{"q":"defective refrigerator company not honouring warranty","expect":"Consumer","tags":["Consumer","Product"]},{"q":"hospital overcharged and the surgery was unnecessary","expect":["Consumer","Medical Negligence"],"tags":["ConsumerMedical","Consumer"]},{"q":"wrong diagnosis by doctor, suffered unnecessary treatment","expect":["Consumer","Medical Negligence"],"tags":["ConsumerMedical","Consumer"]},{"q":"hospital refused treatment without advance payment","expect":["Consumer","Medical Negligence"],"tags":["ConsumerMedical","Consumer"]},{"q":"health insurance claim rejected without valid reason","expect":"Insurance","tags":["Insurance","Consumer"]},{"q":"car accident claim insurance company delaying payment","expect":"Insurance","tags":["Insurance","Consumer"]},{"q":"insurance company calling pre-existing condition for everything","expect":"Insurance","tags":["Insurance","Consumer"]},{"q":"found dead insect in packaged food, want to complain","expect":"Food Safety","tags":["FoodSafety","Consumer"]},{"q":"restaurant serving expired food items","expect":"Food Safety","tags":["FoodSafety","Consumer"]},{"q":"FSSAI complaint against adulterated milk product","expect":"Food Safety","tags":["FoodSafety","Consumer"]},{"q":"business partner owes me money, how to recover legally","expect":"Money Recovery","tags":["MoneyRecovery","Civil"]},{"q":"loan given to friend not being returned, civil suit","expect":"Money Recovery","tags":["MoneyRecovery","Civil"]},{"q":"signed promissory note, debtor not paying","expect":"Money Recovery","tags":["MoneyRecovery","Civil"]},{"q":"want to partition ancestral property among brothers","expect":"Partition","tags":["Partition","Civil"]},{"q":"family property partition how to initiate suit","expect":"Partition","tags":["Partition","Civil"]},{"q":"joint property cannot be agreed upon, need court partition","expect":"Partition","tags":["Partition","Civil"]},{"q":"seller refusing to sell property after signing agreement","expect":"Specific Performance","tags":["Contract","Civil"]},{"q":"breach of contract suit India procedure","expect":"Specific Performance","tags":["Contract","Civil"]},{"q":"contract not honoured, want specific performance order","expect":"Specific Performance","tags":["Contract","Civil"]},{"q":"bank sending SARFAESI notice for loan default","expect":"SARFAESI","tags":["SARFAESI","Civil"]},{"q":"bank seized my property for loan recovery, how to stop","expect":"SARFAESI","tags":["SARFAESI","Civil"]},{"q":"DRT case filed by bank, how to defend","expect":"SARFAESI","tags":["SARFAESI","Civil"]},{"q":"arbitration clause in contract, dispute resolution","expect":"Arbitration","tags":["Arbitration","Civil"]},{"q":"how to enforce arbitration award in India","expect":"Arbitration","tags":["Arbitration","Civil"]},{"q":"arbitrator appointment when parties disagree","expect":"Arbitration","tags":["Arbitration","Civil"]},{"q":"someone is spreading false rumours about me in society","expect":"Defamation","tags":["Defamation","Civil"]},{"q":"ex-employee posting defamatory content about company online","expect":"Defamation","tags":["Defamation","Civil","Cyber"]},{"q":"newspaper published false report about me, defamation suit","expect":"Defamation","tags":["Defamation","Civil"]},{"q":"estate of deceased being mismanaged by executor","expect":["Succession","Will"],"tags":["Succession","Civil"]},{"q":"how to register a will in India","expect":["Will","Succession"],"tags":["Succession","Civil"]},{"q":"foreign will India recognition and enforcement","expect":["Will","Succession"],"tags":["Succession","Civil"]},{"q":"family wants to forcibly admit me to mental hospital","expect":"Mental Healthcare","tags":["MentalHealth","Civil"]},{"q":"mental hospital refusing discharge despite recovery","expect":"Mental Healthcare","tags":["MentalHealth","Civil"]},{"q":"rights of persons with mental illness India","expect":"Mental Healthcare","tags":["MentalHealth","Civil"]},{"q":"hospital refusing abortion despite legal grounds","expect":"MTP","tags":["MTP","Civil"]},{"q":"MTP Act pregnancy termination rights India","expect":"MTP","tags":["MTP","Civil"]},{"q":"forced sterilisation without consent India rights","expect":"MTP","tags":["MTP","Civil"]},{"q":"electricity department charging wrong bill for months","expect":["Electricity","Consumer"],"tags":["Electricity","Civil","Consumer"]},{"q":"illegal power disconnection by electricity board","expect":"Electricity","tags":["Electricity","Civil"]},{"q":"DISCOM overcharging theft of electricity allegation","expect":"Electricity","tags":["Electricity","Civil"]},{"q":"fired from job without any notice, no reason given","expect":"Wrongful Termination","tags":["Termination","Employment"]},{"q":"terminated during probation period unfairly","expect":"Wrongful Termination","tags":["Termination","Employment"]},{"q":"dismissed after raising complaint about harassment","expect":"Wrongful Termination","tags":["Termination","Employment"]},{"q":"company not paying salary for 3 months","expect":"Salary","tags":["Salary","Employment"]},{"q":"PF not deposited by employer for years","expect":"Salary","tags":["Salary","Employment"]},{"q":"gratuity not paid after 10 years of service","expect":"Salary","tags":["Salary","Employment"]},{"q":"boss is sexually harassing me at workplace","expect":"POSH","tags":["POSH","Employment"]},{"q":"colleague making inappropriate comments daily at office","expect":"POSH","tags":["POSH","Employment"]},{"q":"POSH committee complaint how to file India","expect":"POSH","tags":["POSH","Employment"]},{"q":"fired while pregnant, is this legal India","expect":"Maternity","tags":["Maternity","Employment"]},{"q":"maternity leave denied by employer","expect":"Maternity","tags":["Maternity","Employment"]},{"q":"maternity benefit act 26 weeks leave entitlement","expect":"Maternity","tags":["Maternity","Employment"]},{"q":"promotion denied to government employee, want to appeal","expect":"Government Service","tags":["GovtService","Employment"]},{"q":"CAT Central Administrative Tribunal case filing procedure","expect":"Government Service","tags":["GovtService","Employment"]},{"q":"government employee suspension challenged in tribunal","expect":"Government Service","tags":["GovtService","Employment"]},{"q":"shop establishment license not renewed, legal action","expect":"Shops","tags":["ShopsEst","Employment"]},{"q":"employee rights under Shops and Establishment Act state","expect":"Shops","tags":["ShopsEst","Employment"]},{"q":"working hours violation shops establishments act","expect":"Shops","tags":["ShopsEst","Employment"]},{"q":"UPI fraud money transferred to unknown account","expect":["Cyber","Online Fraud"],"tags":["CyberFraud","Cyber"]},{"q":"OTP shared by mistake money deducted what to do","expect":["Cyber","Online Fraud"],"tags":["CyberFraud","Cyber"]},{"q":"received fake call from CBI officer asking money","expect":["Cyber","Online Fraud"],"tags":["CyberFraud","Cyber"]},{"q":"ex-boyfriend posting my private photos online","expect":["Cyber","Harassment"],"tags":["CyberHarass","Cyber"]},{"q":"cyberstalking by unknown person tracking my location","expect":["Cyber","Harassment"],"tags":["CyberHarass","Cyber"]},{"q":"fake social media profile created using my photos","expect":["Cyber","Harassment"],"tags":["CyberHarass","Cyber"]},{"q":"company data stolen by former employee","expect":["Cyber","Data Theft","Hacking"],"tags":["CyberData","Cyber"]},{"q":"website hacked customer data exposed","expect":["Cyber","Data Theft","Hacking"],"tags":["CyberData","Cyber"]},{"q":"ransomware attack on my business system","expect":["Cyber","Data Theft","Hacking"],"tags":["CyberData","Cyber"]},{"q":"Aadhaar data misused by third party","expect":["Digital Privacy","DPDP"],"tags":["DPDP","Cyber"]},{"q":"company sharing my personal data without consent","expect":["Digital Privacy","DPDP"],"tags":["DPDP","Cyber"]},{"q":"DPDP Act complaint data breach by fintech app","expect":["Digital Privacy","DPDP"],"tags":["DPDP","Cyber"]},{"q":"government taking unconstitutional decision, PIL possible","expect":["PIL","Constitutional"],"tags":["PIL","Constitutional"]},{"q":"fundamental rights violation by government authority","expect":["PIL","Constitutional"],"tags":["PIL","Constitutional"]},{"q":"writ petition for mandamus against public authority","expect":["PIL","Constitutional"],"tags":["PIL","Constitutional"]},{"q":"NRI property being mismanaged by relatives in India","expect":"NRI","tags":["NRI","Property"]},{"q":"NRI spouse not giving divorce, living abroad India laws","expect":"NRI","tags":["NRI","Family"]},{"q":"NRI Power of Attorney for property India","expect":"NRI","tags":["NRI","Property"]},{"q":"someone is copying my business logo and brand name","expect":"Trademark","tags":["IP","Corporate"]},{"q":"trademark infringement complaint India how to file","expect":"Trademark","tags":["IP","Corporate"]},{"q":"copyright violation my content being used without permission","expect":"Trademark","tags":["IP","Corporate"]},{"q":"income tax notice received for wrong demand","expect":"Tax","tags":["Tax"]},{"q":"GST department raided my shop, what are my rights","expect":"Tax","tags":["Tax"]},{"q":"tax evasion case filed against me, how to defend","expect":"Tax","tags":["Tax"]},{"q":"school expelled my child without proper reason","expect":"Education","tags":["Education"]},{"q":"university refusing to issue degree certificate","expect":"Education","tags":["Education"]},{"q":"RTE Act admission denied to poor child private school","expect":"Education","tags":["Education"]},{"q":"large company not paying MSME vendor for 90 days","expect":"MSME","tags":["MSME"]},{"q":"MSME Samadhan portal complaint against buyer","expect":"MSME","tags":["MSME"]},{"q":"partnership firm dues not paid by co-partner","expect":"MSME","tags":["MSME","Civil"]},{"q":"children not taking care of elderly parents, legal remedy","expect":"Senior Citizen","tags":["SeniorCitizen"]},{"q":"son transferred property of parents and now neglecting them","expect":"Senior Citizen","tags":["SeniorCitizen","Property"]},{"q":"senior citizen maintenance tribunal complaint India","expect":"Senior Citizen","tags":["SeniorCitizen"]},{"q":"factory releasing toxic waste into river near my village","expect":"Environment","tags":["Environment"]},{"q":"NGT complaint against illegal construction in green zone","expect":"Environment","tags":["Environment"]},{"q":"air pollution from nearby industry affecting health","expect":"Environment","tags":["Environment"]},{"q":"municipal corporation issued demolition notice to my house","expect":"Municipal","tags":["Municipal","Property"]},{"q":"illegal construction by neighbour municipality not acting","expect":"Municipal","tags":["Municipal","Property"]},{"q":"building plan rejected by municipality without reason","expect":"Municipal","tags":["Municipal","Property"]},{"q":"company is insolvent, how to file insolvency proceedings","expect":"IBC","tags":["IBC","Corporate"]},{"q":"NCLT application for corporate insolvency resolution","expect":"IBC","tags":["IBC","Corporate"]},{"q":"personal insolvency bankruptcy procedure India","expect":"IBC","tags":["IBC","Civil"]},{"q":"met with accident, want to claim compensation from insurance","expect":"Motor Accident","tags":["MotorAccident"]},{"q":"hit by drunk driver, hospitalised, seeking compensation","expect":"Motor Accident","tags":["MotorAccident"]},{"q":"MACT tribunal claim how to file for accident injury","expect":"Motor Accident","tags":["MotorAccident"]},{"q":"crop insurance claim rejected by company","expect":["Agriculture","Insurance"],"tags":["Agriculture"]},{"q":"tenant farmer rights on agricultural land India","expect":"Agriculture","tags":["Agriculture","Property"]},{"q":"moneylender charging illegal interest from farmers","expect":"Agriculture","tags":["Agriculture","Civil"]},{"q":"MGNREGA wages not paid for 2 months of work done","expect":"Livelihood","tags":["MGNREGA"]},{"q":"job card not given under MGNREGA scheme","expect":"Livelihood","tags":["MGNREGA"]},{"q":"government scheme benefit denied without reason","expect":"Livelihood","tags":["MGNREGA","Constitutional"]},{"q":"minority shareholder oppression by majority in company","expect":"Corporate","tags":["Corporate"]},{"q":"director removed from company illegally","expect":"Corporate","tags":["Corporate"]},{"q":"NCLT petition against company for oppression mismanagement","expect":"Corporate","tags":["Corporate","IBC"]},{"q":"bail chahiye","expect":"Bail","tags":["Short","Hinglish"]},{"q":"cheque bounce","expect":"Cheque Bounce","tags":["Short"]},{"q":"divorce chahiye","expect":"Divorce","tags":["Short","Hinglish"]},{"q":"false rape case filed against me what to do","expect":"Rape","tags":["Accused","EdgeCase"]},{"q":"wife filed 498A against my whole family, how to get bail","expect":["Dowry","Bail"],"tags":["Accused","EdgeCase"]},{"q":"cheque bounce notice received, I have a defence","expect":"Cheque Bounce","tags":["Accused","EdgeCase"]},{"q":"my sister is being harassed by her husband for dowry","expect":["Dowry","Domestic Violence"],"tags":["ThirdParty","Family"]},{"q":"my friend is in jail, how to help get bail","expect":"Bail","tags":["ThirdParty","Criminal"]},{"q":"my parents are being evicted by landlord illegally","expect":"Rent","tags":["ThirdParty","Property"]},{"q":"husband is violent, also not paying maintenance, and demanding dowry","expect":["Domestic Violence","Dowry","Maintenance"],"tags":["MultiLaw","Family"]},{"q":"cheated by builder who also took money fraudulently without RERA registration","expect":["RERA","Fraud"],"tags":["MultiLaw","Property"]},{"q":"employer fired me, also not paying PF and salary, and sexually harassed me","expect":["Wrongful Termination","Salary","POSH"],"tags":["MultiLaw","Employment"]},{"q":"someone died","expect":["Murder","Medical Negligence","Motor Accident"],"tags":["Vague","Short"]},{"q":"problem with family","expect":["Divorce","Domestic Violence","Maintenance"],"tags":["Vague","Short"]},{"q":"money issue","expect":["Fraud","Money Recovery","Salary"],"tags":["Vague","Short"]},{"q":"meri biwi ne jhooth bol ke case kar diya, ab main kya karoon","expect":["Dowry","Domestic Violence"],"tags":["Hinglish","Complex"]},{"q":"mere bhai ne baap ki zameen apne naam karwa li","expect":["Succession","Property"],"tags":["Hinglish","Complex"]},{"q":"kaam karte karte accident ho gaya factory mein","expect":["Motor Accident","Employment"],"tags":["Hinglish","Complex"]},{"q":"employer not issuing relieving letter after resignation","expect":"Employment","tags":["Employment","Civil"]},{"q":"non-compete clause in employment contract too broad","expect":"Employment","tags":["Employment","Civil"]},{"q":"foreign employee visa issues India company not helping","expect":"Employment","tags":["Employment"]},{"q":"I am a builder, tenant not vacating commercial space","expect":"Rent","tags":["Professional","Property"]},{"q":"hospital received a legal notice for negligence, how to respond","expect":"Medical Negligence","tags":["Professional","MedNeg","Accused"]},{"q":"employer received POSH committee inquiry notice","expect":"POSH","tags":["Professional","POSH","Accused"]},{"q":"employer not paying salary and also confiscating my passport","expect":["Salary","Employment"],"tags":["MultiIssue","Employment"]},{"q":"builder not giving flat and refusing to return money","expect":"RERA","tags":["MultiIssue","Property"]},{"q":"police arrested me and seized my phone","expect":["Bail","Police Excess"],"tags":["MultiIssue","Criminal"]},{"q":"surrogacy contract dispute surrogate mother refusing to hand over child","expect":["MTP","Family"],"tags":["Unusual","Family"]},{"q":"celebrity defamed me in interview on television","expect":"Defamation","tags":["Unusual","Civil"]},{"q":"right to die dignified death euthanasia India law","expect":"Mental Healthcare","tags":["Unusual","Civil","Constitutional"]},{"q":"bomb hoax call filed complaint ignored by police","expect":["Criminal","Police Excess"],"tags":["Criminal","PoliceExcess"]},{"q":"inter-state property dispute jurisdiction issue","expect":["Property","Civil"],"tags":["Property","Civil"]},{"q":"court ordered property handed over but not done yet","expect":["Property","Civil"],"tags":["Property","Civil","EdgeCase"]},{"q":"legal aid free lawyer India procedure","expect":[],"tags":["General"]},{"q":"affidavit attestation procedure India","expect":[],"tags":["General"]},{"q":"notary public attestation India","expect":[],"tags":["General"]},{"q":"stamp paper for agreement India procedure","expect":["Contract","Civil"],"tags":["Civil","General"]},{"q":"company sent me a demand notice for money I do not owe","expect":["Civil","Consumer"],"tags":["Civil","EdgeCase"]},{"q":"woman forced to remove hijab at workplace","expect":["Constitutional","Employment"],"tags":["Constitutional","Employment","EdgeCase"]},{"q":"passport impounded can I challenge it","expect":["Constitutional","PIL"],"tags":["Constitutional","PIL"]},{"q":"religious conversion under force or coercion","expect":["Constitutional","Assault"],"tags":["Constitutional","Criminal"]},{"q":"someone copied my mobile app logo and name","expect":"IPR","tags":["IPR"]},{"q":"my YouTube videos being reposted without credit","expect":"IPR","tags":["IPR","Cyber"]},{"q":"competitor using my registered trademark","expect":"IPR","tags":["IPR"]},{"q":"N:my husband cheated on me in marriage","expect":"Fraud","tags":["Divorce","Family","negative"]},{"q":"N:father died naturally leaving property","expect":"Murder","tags":["Succession","negative"]},{"q":"N:father died in hospital, now who gets the property","expect":"Medical Negligence","tags":["Succession","negative"]},{"q":"N:my 20 year old was sexually assaulted","expect":"POCSO","tags":["Rape","negative"]},{"q":"N:consumer complaint hospital service","expect":"Rape","tags":["Consumer","negative"]},{"q":"N:father died in hospital due to surgery, property dispute","expect":"Medical Negligence","tags":["HinduSuccession","negative"]},{"q":"N:patient died during surgery family wants FIR","expect":"Consumer","tags":["MedNeg","negative"]},{"q":"N:father died peacefully, property dispute","expect":"Medical Negligence","tags":["Succession","negative","EdgeCase"]},{"q":"N:father died peacefully, property dispute","expect":"Murder","tags":["Succession","negative","EdgeCase"]},{"q":"N:cheque bounce","expect":"Fraud","tags":["ChequeBounce","negative","EdgeCase"]}];
+
+// ═══════════════════════════════════════════════════════════
+// KEYWORD ENGINE (inlined from getContextualQuestions)
+// ═══════════════════════════════════════════════════════════
+const DETECTORS = {
+  criminal: {
+    t1: ['rape','raped','gang rape','sexual assault','sexually assaulted','molest','molestation','murder','murdered','killed him','killed her','killed by','poison','poisoned','stabbed','shot dead','strangulated','hanged','kidnapped','kidnap','abducted','abduction','pocso','child sexual','acid attack','acid thrown','balatkar','jabardasti sex','jabardasti ki','threatened with knife','threatened with weapon','bomb threat','dead body found','body found','unnatural death'],
+    t2: ['fir filed','fir registered','fir not registered','police complaint','bail application','anticipatory bail','chargesheet filed','arrested by police','police custody','criminal case','criminal complaint','police refusing','cheque bounce','cheque dishonoured','cheque returned','criminal proceedings','non bailable','bailable offence','accused of crime','accused of fraud','blaming me for crime','blaming me for death','blaming me for patient','someone died at operation','died on operation table','died during surgery','died during operation','died in hospital','died at hospital','died after surgery','died after treatment','died after operation','death in hospital','death at hospital','patient death','family blaming doctor','fir against doctor','operation went wrong','surgery went wrong','criminal case doctor'],
+    t3: ['police','arrested','accused','crime','bail','fir','violence','assault','fraud','cheated','hurt','attack','hit','threatened','criminal','offence','custody','chargesheet','witness','complaint'],
+  },
+  family: {
+    t1: ['dowry death','domestic violence case','wife beaten','husband beats wife','marital rape','forced marriage','child marriage','honour killing','husband is abusive','wife is abusive'],
+    t2: ['child custody','divorce petition','maintenance case','matrimonial dispute','alimony claim','separation agreement','triple talaq','mutual divorce','divorce proceedings','custody of child','dowry harassment','cruelty by husband','cruelty by wife','maintenance not paid','divorce notice','seeking divorce','divorce lawyer'],
+    t3: ['divorce','marriage','husband','wife','spouse','custody','child','maintenance','alimony','separation','in-laws','dowry','matrimon','conjugal','marital'],
+  },
+  property: {
+    t1: ['illegal possession','forcible eviction','illegal eviction','property fraud','forged property documents','fake sale deed','property grabbed','land grabbed'],
+    t2: ['property dispute','land dispute','builder cheated','rera complaint','encroachment case','rent dispute','sale deed issue','flat possession','stamp duty issue','property registration','property transfer','tenancy dispute','landlord eviction','builder delay','builder not giving possession','plot dispute','land boundary','property documents'],
+    t3: ['property','land','house','flat','plot','tenant','landlord','rent','builder','rera','boundary','transfer','encroach','ownership','registry','possession'],
+  },
+  succession: {
+    t1: ['inheritance dispute','will contested','probate application','succession certificate','legal heir dispute','who gets property after death'],
+    t2: ['property after death','died without will','intestate succession','legal heir certificate','estate distribution','share in property','father died property','mother died property','distribute assets','claim inheritance','sibling dispute property','ancestral property claim'],
+    t3: ['inheritance','succession','heir','intestate','probate','estate','will','deceased','ancestral'],
+  },
+  employment: {
+    t1: ['wrongful termination','sexual harassment at work','posh complaint','labour court','unfair dismissal','industrial dispute'],
+    t2: ['unpaid salary','pf not paid','gratuity denied','employment contract','fired from job','dismissed from service','workplace harassment','salary not given','notice period dispute','retrenchment compensation','employee rights violated','employer wrongful','work discrimination','not paid salary','salary withheld'],
+    t3: ['job','salary','employer','employee','office','boss','labour','pf','gratuity','termination','fired','dismissed','workman','retrench','resignation','appointment letter'],
+  },
+  cyber: {
+    t1: ['cyber fraud','online fraud','upi fraud','phishing attack','hacked my account','cyberstalking','data breach','sextortion','online blackmail','digital arrest','fake cbi call','fake ed call'],
+    t2: ['money lost online','account hacked','fake website','otp fraud','identity theft','fake profile','social media hacked','ransomware','online scam','cyber crime complaint','it act','bank account hacked','net banking fraud'],
+    t3: ['hacked','phishing','cyber','internet fraud','scam','dark web','spyware'],
+  },
+  consumer: {
+    t1: ['consumer forum','consumer court','consumer complaint','defective product','insurance claim rejected','product recall'],
+    t2: ['product defective','service deficiency','hospital bill dispute','insurance claim denied','ecommerce fraud','online purchase problem','builder not delivering flat','warranty claim','medical bill dispute','doctor fees dispute','treatment cost dispute','refund not given','deficiency of service','consumer rights','wrong product delivered','insurance not paying','policy claim rejected'],
+    t3: ['product','insurance','refund','defective','consumer','e-commerce','warranty','service complaint'],
+  },
+};
+
+const THRESHOLD = 8;
+const DOMINATES = {
+  criminal:   ['consumer', 'succession', 'civil'],
+  family:     ['succession', 'civil'],
+  employment: ['consumer', 'civil'],
+  cyber:      ['consumer', 'civil'],
+  property:   ['succession', 'civil'],
+};
+
+function detectAreas(query) {
+  const input = query.toLowerCase();
+  const scores = {};
+  for (const [area, tiers] of Object.entries(DETECTORS)) {
+    let score = 0;
+    if ((tiers.t1 || []).some(k => input.includes(k))) {
+      score = 100;
+    } else {
+      (tiers.t2 || []).forEach(k => { if (input.includes(k)) score += 10; });
+      (tiers.t3 || []).forEach(k => { if (input.includes(k)) score += 1; });
+    }
+    scores[area] = score;
+  }
+  const dominated = new Set();
+  let detected = Object.entries(scores)
+    .filter(([, s]) => s >= THRESHOLD)
+    .sort((a, b) => b[1] - a[1])
+    .map(([area]) => area);
+  detected.forEach(area => (DOMINATES[area] || []).forEach(s => dominated.add(s)));
+  return { areas: detected.filter(a => !dominated.has(a)), scores };
+}
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let results = [];
+let running = false;
+let stopFlag = false;
+let activeFilter = 'all';
+let activeCat = '';
+let runStart = 0;
+
+// ═══════════════════════════════════════════════════════════
+// SETUP
+// ═══════════════════════════════════════════════════════════
+const TESTS = TESTS_RAW.map((t, i) => ({ ...t, id: i }));
+
+function init() {
+  document.getElementById('testCountLabel').textContent = `${TESTS.length} tests loaded`;
+  buildCatFilter();
+  buildCatSidebar();
+}
+
+function allCategories() {
+  const cats = new Set();
+  TESTS.forEach(t => (t.tags || ['Other']).forEach(tag => cats.add(tag)));
+  return [...cats].sort();
+}
+
+function buildCatFilter() {
+  const sel = document.getElementById('catFilter');
+  allCategories().forEach(cat => {
+    const o = document.createElement('option');
+    o.value = cat; o.textContent = cat;
+    sel.appendChild(o);
+  });
+}
+
+function buildCatSidebar() {
+  const list = document.getElementById('catList');
+  list.innerHTML = '';
+  const all = document.createElement('div');
+  all.className = 'cat-item active';
+  all.dataset.cat = '';
+  all.innerHTML = `<span class="cat-name">All Tests</span><span class="cat-pill pill-skip" id="pill-all">${TESTS.length}</span>`;
+  all.onclick = () => selectCat('', all);
+  list.appendChild(all);
+
+  allCategories().forEach(cat => {
+    const div = document.createElement('div');
+    div.className = 'cat-item';
+    div.dataset.cat = cat;
+    div.innerHTML = `<span class="cat-name">${cat}</span><span class="cat-pill pill-skip" id="pill-${cat}">${TESTS.filter(t=>(t.tags||['Other']).includes(cat)).length}</span>`;
+    div.onclick = () => selectCat(cat, div);
+    list.appendChild(div);
+  });
+}
+
+function selectCat(cat, el) {
+  activeCat = cat;
+  document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  renderResults();
+}
+
+// ═══════════════════════════════════════════════════════════
+// RUN LOGIC
+// ═══════════════════════════════════════════════════════════
+async function startRun() {
+  if (running) return;
+  running = true; stopFlag = false; runStart = Date.now();
+  results = [];
+
+  const catFilter = document.getElementById('catFilter').value;
+  const mode = document.getElementById('testMode').value;
+  const apiUrl = document.getElementById('apiUrl').value.replace(/\/$/, '');
+
+  let tests = catFilter ? TESTS.filter(t => (t.tags||[]).includes(catFilter)) : [...TESTS];
+
+  document.getElementById('btnRun').style.display = 'none';
+  document.getElementById('btnStop').style.display = '';
+  document.getElementById('resultList').innerHTML = '';
+
+  for (let i = 0; i < tests.length; i++) {
+    if (stopFlag) break;
+    const t = tests[i];
+
+    // Add pending row
+    const row = addResultRow(t, 'pending', null, null);
+
+    let apiResult = null;
+    let kwResult = null;
+    let passed = false;
+
+    if (mode === 'keyword' || mode === 'both') {
+      kwResult = detectAreas(t.q);
+    }
+
+    if (mode === 'api' || mode === 'both') {
+      row.classList.add('running');
+      row.querySelector('.result-status').textContent = '...';
+      try {
+        const resp = await fetch(`${apiUrl}/api/analyse`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ description: t.q.replace(/^N:/,'') }),
+          signal: AbortSignal.timeout(12000),
+        });
+        apiResult = await resp.json();
+      } catch (e) {
+        apiResult = { error: e.message };
+      }
+      row.classList.remove('running');
+    }
+
+    // Evaluate pass/fail
+    passed = evaluate(t, apiResult, kwResult, mode);
+
+    const res = { test: t, apiResult, kwResult, passed, mode };
+    results.push(res);
+    updateRowWithResult(row, res);
+    updateStats(i + 1, tests.length);
+  }
+
+  running = false;
+  document.getElementById('btnRun').style.display = '';
+  document.getElementById('btnStop').style.display = 'none';
+  updateCatSidebar();
+}
+
+function stopRun() {
+  stopFlag = true;
+  document.getElementById('btnStop').disabled = true;
+}
+
+function evaluate(test, apiResult, kwResult, mode) {
+  const isNeg = test.q.startsWith('N:');
+  const expects = Array.isArray(test.expect) ? test.expect : [test.expect];
+
+  if (mode === 'keyword' || mode === 'both') {
+    // Keyword: check detected areas contain expected
+    // (simplified — just area names, not full law names)
+    // Skip keyword evaluation for negative tests in keyword mode
+  }
+
+  if (apiResult && !apiResult.error) {
+    const laws = (apiResult.laws || []).map(l => (l.caseType || l.law || '').toLowerCase());
+    if (isNeg) {
+      return !expects.some(e => laws.some(l => l.includes(e.toLowerCase())));
+    } else {
+      return expects.some(e => laws.some(l => l.includes(e.toLowerCase())));
+    }
+  }
+
+  // Keyword-only fallback
+  if (kwResult) {
+    const areas = kwResult.areas;
+    if (isNeg) {
+      return !expects.some(e => areas.some(a => a.toLowerCase().includes(e.toLowerCase()) || e.toLowerCase().includes(a.toLowerCase())));
+    }
+    return expects.some(e => areas.some(a => a.toLowerCase().includes(e.toLowerCase()) || e.toLowerCase().includes(a.toLowerCase())));
+  }
+
+  return false;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DOM RENDERING
+// ═══════════════════════════════════════════════════════════
+function addResultRow(test, status, apiResult, kwResult) {
+  const list = document.getElementById('resultList');
+  if (list.querySelector('.empty')) list.innerHTML = '';
+
+  const div = document.createElement('div');
+  div.className = `result-row ${status}`;
+  div.dataset.id = test.id;
+  const isNeg = test.q.startsWith('N:');
+  const tags = (test.tags || []).slice(0, 3).map(t => `<span class="tag">${t}</span>`).join('');
+
+  div.innerHTML = `
+    <div class="result-header" onclick="toggleRow(this.parentElement)">
+      <span class="result-status status-pend">WAIT</span>
+      <span class="result-query" title="${esc(test.q)}">${isNeg ? '<span style="color:var(--yellow)" title="Negative test — law must NOT appear">∅</span> ' : ''}${esc(test.q.replace(/^N:/,''))}</span>
+      <div class="result-tags">${tags}</div>
+    </div>
+    <div class="result-detail"></div>
+  `;
+  list.appendChild(div);
+  return div;
+}
+
+function updateRowWithResult(row, res) {
+  const { test, passed, apiResult, kwResult } = res;
+  const isNeg = test.q.startsWith('N:');
+  row.classList.remove('pending','running','pass','fail');
+  row.classList.add(passed ? 'pass' : 'fail');
+
+  const statusEl = row.querySelector('.result-status');
+  statusEl.textContent = passed ? 'PASS' : 'FAIL';
+  statusEl.className = `result-status ${passed ? 'status-pass' : 'status-fail'}`;
+
+  // Fill detail
+  const detail = row.querySelector('.result-detail');
+  const expects = Array.isArray(test.expect) ? test.expect.join(' | ') : (test.expect || 'any');
+  let html = `<div class="detail-grid">
+    <span class="detail-label">Query</span><span class="detail-val">${esc(test.q.replace(/^N:/,''))}${isNeg ? ' <em style="color:var(--yellow)">(must NOT match)</em>' : ''}</span>
+    <span class="detail-label">Expect</span><span class="detail-val">${esc(expects)}</span>
+  </div>`;
+
+  if (apiResult && !apiResult.error) {
+    const laws = apiResult.laws || [];
+    html += `<div style="margin-top:8px;font-size:11px;color:var(--muted);font-weight:600">API TOP LAWS</div>
+    <div class="detail-laws">${laws.slice(0,5).map((l, i) => {
+      const name = l.caseType || l.law || '?';
+      const score = l.score || l.confidence || '';
+      const expectArr = Array.isArray(test.expect) ? test.expect : [test.expect||''];
+      const isMatch = expectArr.some(e => name.toLowerCase().includes(e.toLowerCase()));
+      return `<div class="law-item">
+        <span class="law-rank">#${i+1}</span>
+        <span class="law-name">${esc(name)}</span>
+        ${score ? `<span class="law-score">${typeof score === 'number' ? score.toFixed(0) : score}</span>` : ''}
+        ${isMatch && !isNeg ? '<span class="law-match">✓ MATCH</span>' : ''}
+      </div>`;
+    }).join('')}</div>`;
+  } else if (apiResult && apiResult.error) {
+    html += `<div class="err-msg">API Error: ${esc(apiResult.error)}</div>`;
+  }
+
+  if (kwResult) {
+    html += `<div style="margin-top:8px;font-size:11px;color:var(--muted);font-weight:600">KEYWORD AREAS DETECTED</div>
+    <div class="area-chips">${kwResult.areas.length ? kwResult.areas.map(a => `<span class="area-chip">${a}</span>`).join('') : '<span style="color:var(--muted)">none</span>'}</div>`;
+  }
+
+  detail.innerHTML = html;
+}
+
+function toggleRow(el) {
+  el.classList.toggle('expanded');
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════════════
+function updateStats(done, total) {
+  const pass = results.filter(r => r.passed).length;
+  const fail = results.filter(r => !r.passed).length;
+  const acc = done > 0 ? ((pass / done) * 100).toFixed(1) : '—';
+  const elapsed = ((Date.now() - runStart) / 1000).toFixed(1);
+  const rate = done > 0 ? (done / ((Date.now() - runStart) / 1000)).toFixed(1) : 0;
+
+  document.getElementById('sTotal').textContent = done;
+  document.getElementById('sPass').textContent = pass;
+  document.getElementById('sFail').textContent = fail;
+  document.getElementById('sAcc').textContent = done > 0 ? acc + '%' : '—';
+  document.getElementById('progressBar').style.width = `${(done / total) * 100}%`;
+  document.getElementById('progressLabel').textContent = `${done} / ${total} tested`;
+  document.getElementById('speedBar').innerHTML = `<span>${elapsed}s</span> elapsed &nbsp; <span>${rate}</span> tests/sec &nbsp; ETA: <span>${rate > 0 ? ((total - done) / rate).toFixed(0) : '?'}s</span>`;
+}
+
+function updateCatSidebar() {
+  allCategories().forEach(cat => {
+    const catTests = results.filter(r => (r.test.tags||[]).includes(cat));
+    const pass = catTests.filter(r => r.passed).length;
+    const fail = catTests.filter(r => !r.passed).length;
+    const pill = document.getElementById(`pill-${cat}`);
+    if (pill) {
+      pill.textContent = `${pass}/${catTests.length}`;
+      pill.className = `cat-pill ${fail === 0 && catTests.length > 0 ? 'pill-pass' : fail > 0 ? 'pill-fail' : 'pill-skip'}`;
+    }
+  });
+  const allPass = results.filter(r => r.passed).length;
+  const allPill = document.getElementById('pill-all');
+  if (allPill) allPill.textContent = `${allPass}/${results.length}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// FILTER
+// ═══════════════════════════════════════════════════════════
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderResults();
+}
+
+function renderResults() {
+  let filtered = results;
+  if (activeFilter === 'pass') filtered = filtered.filter(r => r.passed);
+  if (activeFilter === 'fail') filtered = filtered.filter(r => !r.passed);
+  if (activeCat) filtered = filtered.filter(r => (r.test.tags||[]).includes(activeCat));
+
+  document.getElementById('resultsTitle').textContent = `RESULTS (${filtered.length})`;
+  // Re-render is complex; just highlight
+}
+
+function clearResults() {
+  results = [];
+  document.getElementById('resultList').innerHTML = `
+    <div class="empty"><div class="icon">🧪</div><p>Click <strong>Run Tests</strong> to start the benchmark.<br>Results appear in real-time.</p></div>`;
+  document.getElementById('sTotal').textContent = '0';
+  document.getElementById('sPass').textContent = '0';
+  document.getElementById('sFail').textContent = '0';
+  document.getElementById('sAcc').textContent = '—';
+  document.getElementById('progressBar').style.width = '0';
+  document.getElementById('progressLabel').textContent = '';
+  document.getElementById('speedBar').innerHTML = '';
+}
+
+// ═══════════════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════════════
+function exportCSV() {
+  if (!results.length) return alert('No results to export.');
+  const rows = [['Query','Expected','Passed','Top Law 1','Top Law 2','Top Law 3','KW Areas','Tags']];
+  results.forEach(r => {
+    const laws = (r.apiResult && r.apiResult.laws) ? r.apiResult.laws.slice(0,3).map(l => l.caseType||l.law||'') : [];
+    rows.push([
+      r.test.q, Array.isArray(r.test.expect)?r.test.expect.join('|'):r.test.expect||'',
+      r.passed?'PASS':'FAIL',
+      laws[0]||'', laws[1]||'', laws[2]||'',
+      r.kwResult ? r.kwResult.areas.join('|') : '',
+      (r.test.tags||[]).join('|'),
+    ]);
+  });
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `satlegal-test-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MANUAL TESTER
+// ═══════════════════════════════════════════════════════════
+async function testManual() {
+  const query = document.getElementById('manualInput').value.trim();
+  if (!query) return;
+  const apiUrl = document.getElementById('apiUrl').value.replace(/\/$/, '');
+  const mode = document.getElementById('testMode').value;
+  const out = document.getElementById('manualResult');
+  out.innerHTML = `<span style="color:var(--yellow)">Testing…</span>`;
+
+  let html = '';
+
+  // Keyword layer
+  const kw = detectAreas(query);
+  html += `<div style="margin-bottom:10px">
+    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px">Keyword Engine</div>
+    <div class="area-chips">${kw.areas.length ? kw.areas.map(a=>`<span class="area-chip">${a}</span>`).join('') : '<span style="color:var(--muted)">No area detected</span>'}</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px">Scores: ${Object.entries(kw.scores).filter(([,s])=>s>0).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${k}:${v}`).join(' · ')}</div>
+  </div>`;
+
+  if (mode === 'api' || mode === 'both') {
+    try {
+      const resp = await fetch(`${apiUrl}/api/analyse`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description: query }),
+        signal: AbortSignal.timeout(15000),
+      });
+      const data = await resp.json();
+      const laws = data.laws || [];
+      html += `<div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px">Live API Results</div>
+        <div class="detail-laws">${laws.slice(0,6).map((l,i) => {
+          const name = l.caseType || l.law || '?';
+          const score = l.score || l.confidence;
+          return `<div class="law-item">
+            <span class="law-rank">#${i+1}</span>
+            <span class="law-name">${esc(name)}</span>
+            ${score != null ? `<span class="law-score">${typeof score === 'number' ? score.toFixed(0) : score}</span>` : ''}
+          </div>`;
+        }).join('')}</div>`;
+
+      // Show contextual questions if present
+      if (data.contextualQuestions && data.contextualQuestions.length) {
+        html += `<div style="margin-top:10px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px">Questions Shown to User</div>
+          <div class="q-list">${data.contextualQuestions.map(q =>
+            `<div class="q-item"><div class="q-text">${esc(q.question||q)}</div>${q.options ? `<div class="q-opts">${(q.options||[]).join(' · ')}</div>` : ''}</div>`
+          ).join('')}</div>`;
+      }
+      html += `</div>`;
+
+      if (data.error) html += `<div class="err-msg">Error: ${esc(data.error)}</div>`;
+
+    } catch(e) {
+      html += `<div class="err-msg">API call failed: ${esc(e.message)}</div>`;
+    }
+  }
+
+  out.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
