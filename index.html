@@ -1596,11 +1596,11 @@ function s1(){
     // Query is vague — use targeted context questions only (no generic probing Qs which duplicate these)
     const ctxQs=[
       {id:'ctx_nature',question:'What best describes the nature of your issue?',type:'radio',
-       options:['Criminal matter — someone was harmed, killed, or a crime occurred','Financial fraud — money taken by deception or false promises','Employment — salary, termination, workplace rights','Property / Land / Builder dispute','Family — divorce, custody, maintenance, domestic violence','Consumer — defective product or poor service','Cyber crime — online fraud, hacking, data theft','Government / Rights / Public matter','Other / Not sure']},
+       options:['Criminal — someone committed a crime against me or my family','I am being accused / blamed for something (I need to defend myself)','Financial fraud — money taken by deception or false promises','Employment — salary, termination, workplace rights','Property / Land / Builder dispute','Family — divorce, custody, maintenance, domestic violence','Medical — hospital or doctor treatment gone wrong','Consumer — defective product or poor service','Cyber crime / Online fraud']},
       {id:'ctx_party',question:'Who is the other party or what happened?',type:'radio',
-       options:['A stranger or unknown person committed a crime against me/my family','A family member or relative','My employer or company','A government authority or police','A builder, landlord, or property developer','A bank, lender, or financial institution','An online seller or platform','Other']},
+       options:['A stranger or unknown person committed a crime against me / my family','A family member or relative (domestic)','My employer or company','A hospital, doctor, or medical professional','A government authority or police','A builder, landlord, or property developer','A bank, lender, or financial institution','An online seller or platform']},
       {id:'ctx_harm',question:'What specifically happened?',type:'radio',
-       options:['Someone died, was killed, or poisoned','Physical violence or assault occurred (victim alive)','Money was taken by fraud, deception, or false promise','Property or valuables were stolen','I was fired, not paid, or my workplace rights were violated','I received a legal notice or court summons','A family dispute erupted (divorce, custody, dowry, DV)','Other']},
+       options:['Someone died / was killed (not in hospital — suspicious / violent death)','A patient died in hospital — doctor / family blaming each other','Sexual assault, rape, or sexual violence occurred','Physical violence or assault occurred (victim is alive)','Money was taken by fraud, deception, or false promise','I was fired, not paid, or my workplace rights were violated','A family dispute — divorce, custody, dowry, domestic violence','Property or inheritance dispute after someone\'s death']},
     ];
     // If there are already law-specific questions (e.g. murder), keep them; don't add generic probing Qs
     qs = qs.length ? [...ctxQs, ...qs] : ctxQs;
@@ -2234,6 +2234,16 @@ function getAssessmentQs(law){
       {q:'Have you received any compensation award?',opts:['Yes — award given but inadequate','No compensation offered','Compensation disputed','Award pending']},
       {q:'Do you have clear title documents for the land?',opts:['Yes — registered patta and title','Ancestral land — partial documents','Land records disputed','No formal title — possession only']},
       {q:'Have you filed an objection or reference under LARR Act?',opts:['Yes — filed objection within time','Filed reference to court','Time for objection has passed','Not yet filed — seeking advice']},
+    ];
+  }
+
+  // ── Rape / Sexual Assault (Adult) ─────────────────────────────────────────
+  if(ct.includes('rape')||ct.includes('sexual assault')||ct.includes('sexual violence')||ct.includes('bns 64')){
+    return [
+      {q:'Is the survivor currently in a safe place, away from the accused?',opts:['Yes — safe location, no contact with accused','Temporarily safe but accused knows location','Accused is a family member / still in same house','Location is unknown to accused — safe for now']},
+      {q:'Has a medical examination (Forensic / FSLO) been conducted?',opts:['Yes — done at government hospital within 24 hours','Yes — done but more than 24 hours after the incident','Not yet — urgently needed','Done privately — not at government hospital']},
+      {q:'What is the relationship of the accused to the survivor?',opts:['Complete stranger','Acquaintance / neighbour / colleague','Partner / boyfriend (consensual relationship claimed)','Family member / relative','Authority figure — teacher, employer, official']},
+      {q:'Has an FIR been registered, or is police refusing?',opts:['FIR registered under BNS Sec 64/65/66','Police registered complaint but diluted sections','Police refused to file FIR — need guidance','FIR not filed yet — seeking advice first']},
     ];
   }
 

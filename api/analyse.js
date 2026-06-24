@@ -105,13 +105,18 @@ STRICT OVER-MAPPING RULES — each rule prevents a specific hallucination:
 10. When unsure between 1 vs 2 laws, return 1. A precise single answer beats a padded multi-answer.
 11. DIVORCE / CHILD CUSTODY / MAINTENANCE / MARRIAGE → Family law ONLY. Never add BNS Fraud, PIL, Consumer, or any Criminal law to a family dispute unless there is an explicit separate criminal act (e.g. domestic violence, dowry demand). "Fighting for custody" is NOT fraud. "Seeking divorce" is NOT fraud.
 12. TOKEN MONEY / ADVANCE PAID FOR PROPERTY / SELLER NOT VACATING / POSSESSION NOT GIVEN → "Property – Transfer of Property / Sale Deed Dispute" ONLY. Not Rent, not Cyber, not Employment. A seller who takes advance and refuses to hand over property is a sale agreement dispute, not a rent case.
+13. PATIENT DIED / DIED ON OPERATION TABLE / DIED IN HOSPITAL / FAMILY BLAMING DOCTOR → "Criminal – Medical Negligence / Death by Negligence (BNS 106)" ONLY — regardless of whether the query is from VICTIM'S FAMILY or from the ACCUSED DOCTOR. NEVER succession, NEVER murder, NEVER consumer law alone for this scenario. Medical death ≠ succession.
+14. RAPE / SEXUAL ASSAULT (adult victim, 18 or above) → "Criminal – Rape / Sexual Assault / Sexual Violence (BNS 64-70)" ONLY. NOT POCSO (that is for victims UNDER 18). NOT Domestic Violence alone unless there is an ongoing domestic relationship. NOT assault (assault is for non-sexual physical violence).
+15. SUCCESSION / INHERITANCE / WILL / PROPERTY AFTER DEATH → "Property – Hindu Succession / Inheritance Dispute" or related succession law ONLY when the dispute is about WHO GETS THE PROPERTY after someone died naturally. NOT for medical negligence. NOT for murder. Do NOT add succession to any criminal, medical, or violent death case.
 
 BNS SUBCATEGORY SELECTION RULES — choose the most specific BNS category:
-- BNS (Murder / Culpable Homicide / Unnatural Death): Someone DIED or was KILLED. Poisoning, stabbing, shooting, strangulation, suspicious death, dead body found. Keywords: dead, died, death, killed, murder, poisoned, body found, unnatural death, post-mortem, maut, hatya, qatl, mar gaya. → MANDATORY for ANY case where a person died. DO NOT classify a death case as Theft, Assault, or Domestic Violence.
-- BNS (Fraud / Cheating): Money or property obtained by DECEPTION, false promises, misrepresentation. Investment scams, advance-fee fraud, business cheating, fake job offers. Keywords: cheated, deceived, false promise, took money and disappeared, not delivered what promised.
-- BNS (Assault / Hurt / Grievous Hurt): Physical violence, battery, causing bodily injury — where the VICTIM IS ALIVE. Keywords: beat, hit, attacked, stabbed, broken bone, acid attack, threatened physically.
-- BNS (Theft / Robbery / Burglary / Dacoity): Taking property WITHOUT consent by stealth or force. Chain snatching, house break-in, pickpocketing, armed robbery. Keywords: stolen, snatched, burglary, broke into house, robbed at knifepoint.
-- DO NOT default all BNS matters to Theft/Robbery. A DEATH is always MURDER/CULPABLE HOMICIDE. A financial scam is FRAUD. A beating (victim alive) is ASSAULT. Only actual taking of goods is THEFT.
+- Criminal – Medical Negligence / Death by Negligence (BNS 106): A PATIENT DIED during or after medical treatment. Doctor/hospital is accused OR is seeking legal advice. Keywords: died on operation table, died after surgery, patient died in hospital, family blaming doctor, accused of medical negligence, operation went wrong. → USE THIS for all hospital/medical deaths. This overrides the generic murder/death rule below.
+- BNS (Murder / Culpable Homicide / Unnatural Death): Someone DIED outside medical context. Intentional killing, poisoning (non-medical), stabbing, shooting, strangulation, suspicious death at home/street. NOT for hospital deaths.
+- Criminal – Rape / Sexual Assault (BNS 64-70): Non-consensual sexual act against an adult. Rape, gang rape, forced sex, marital rape, assault on promise of marriage.
+- BNS (Fraud / Cheating): Money or property obtained by DECEPTION, false promises, misrepresentation. Investment scams, advance-fee fraud, business cheating, fake job offers.
+- BNS (Assault / Hurt / Grievous Hurt): Physical violence, battery, causing bodily injury (NON-SEXUAL) — where the VICTIM IS ALIVE. Keywords: beat, hit, attacked, stabbed, broken bone, acid attack, threatened physically.
+- BNS (Theft / Robbery / Burglary / Dacoity): Taking property WITHOUT consent by stealth or force. Chain snatching, house break-in, pickpocketing, armed robbery.
+- DO NOT default all BNS matters to Theft/Robbery. A HOSPITAL DEATH is Medical Negligence (BNS 106). A SEXUAL ASSAULT is Rape (BNS 64-70). A NON-MEDICAL intentional killing is Murder. A financial scam is FRAUD. A non-sexual beating (victim alive) is ASSAULT. Only actual taking of goods is THEFT.
 
 OUTPUT FORMAT:
 Return ONLY category names, one per line. No numbering, no punctuation, no explanation.`;
@@ -270,6 +275,20 @@ const INTRA_EXCLUSIONS = {
     'Criminal – BNS (Theft / Robbery / Burglary / Dacoity)',
     'Criminal – Police Excess / Human Rights Violation',
     'Criminal – BNS (Fraud / Cheating)',
+    'Family – Domestic Violence',
+    'Property – Hindu Succession / Inheritance Dispute',
+    'Property – Will / Probate / Succession Certificate',
+  ],
+  'Criminal – Medical Negligence / Death by Negligence (BNS 106)': [
+    'Property – Hindu Succession / Inheritance Dispute',
+    'Property – Will / Probate / Succession Certificate',
+    'Criminal – BNS (Murder / Culpable Homicide / Unnatural Death)',
+    'Criminal – BNS (Theft / Robbery / Burglary / Dacoity)',
+    'Family – Domestic Violence',
+  ],
+  'Criminal – Rape / Sexual Assault / Sexual Violence (BNS 64-70)': [
+    'Criminal – BNS (Assault / Hurt / Grievous Hurt)',
+    'Criminal – BNS (Theft / Robbery / Burglary / Dacoity)',
     'Family – Domestic Violence',
   ],
   'Criminal – BNS (Fraud / Cheating)': [
