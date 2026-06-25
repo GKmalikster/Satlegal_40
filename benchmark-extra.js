@@ -1426,3 +1426,119 @@ const _batch5 = [
   { q: 'police filing fake case to extort money', expect: 'Police Excess', tags: ['PoliceExcess','Criminal','Corruption'] },
 ];
 module.exports = module.exports.concat(_batch5);
+
+// ── Batch 6 — Targeted gap-fill for failing categories ──────────────────────
+const _batch6 = [
+
+  // SARFAESI (was missing from main tests)
+  { q: 'bank sent SARFAESI possession notice for home loan default', expect: 'SARFAESI', tags: ['SARFAESI','Civil'] },
+  { q: 'how to challenge SARFAESI action by bank in DRT', expect: 'SARFAESI', tags: ['SARFAESI','Civil'] },
+  { q: 'bank auctioning my property under securitisation act', expect: 'SARFAESI', tags: ['SARFAESI','Civil'] },
+  { q: 'NPA account declared by bank wrongly how to contest', expect: 'SARFAESI', tags: ['SARFAESI','Civil'] },
+  { q: 'I repaid loan but bank still issued SARFAESI notice', expect: 'SARFAESI', tags: ['SARFAESI','Civil'] },
+  { q: 'DRT tribunal stay on bank auction of property', expect: 'SARFAESI', tags: ['SARFAESI','Civil'] },
+
+  // Money Recovery (civil, not fraud)
+  { q: 'friend borrowed 5 lakh and is not returning, how to file suit', expect: 'Money Recovery', tags: ['MoneyRecovery','Civil'] },
+  { q: 'business partner took money and ran away civil recovery', expect: 'Money Recovery', tags: ['MoneyRecovery','Civil'] },
+  { q: 'promissory note dishonoured, money recovery suit India', expect: 'Money Recovery', tags: ['MoneyRecovery','Civil'] },
+  { q: 'contractor did not complete work and kept advance', expect: 'Money Recovery', tags: ['MoneyRecovery','Civil'] },
+  { q: 'summary suit for recovery of debt India procedure', expect: 'Money Recovery', tags: ['MoneyRecovery','Civil'] },
+  { q: 'civil court money recovery from defaulting debtor', expect: 'Money Recovery', tags: ['MoneyRecovery','Civil'] },
+
+  // Partition (separate from succession)
+  { q: 'joint family property partition among 4 brothers in court', expect: 'Partition', tags: ['Partition','Civil'] },
+  { q: 'co-owners cannot agree on property division, seeking partition decree', expect: 'Partition', tags: ['Partition','Civil'] },
+  { q: 'ancestral agricultural land partition among siblings', expect: 'Partition', tags: ['Partition','Civil'] },
+  { q: 'partition suit preliminary decree India what happens next', expect: 'Partition', tags: ['Partition','Civil'] },
+  { q: 'how to file partition suit for joint property', expect: 'Partition', tags: ['Partition','Civil'] },
+
+  // Mutual Consent Divorce (disambiguation from contested)
+  { q: 'husband and wife both agree to end marriage, procedure', expect: 'Mutual', tags: ['MutualDivorce','Family'] },
+  { q: 'we both want divorce amicably without court fight', expect: 'Mutual', tags: ['MutualDivorce','Family'] },
+  { q: 'cooling off period in mutual consent divorce can we waive it', expect: 'Mutual', tags: ['MutualDivorce','Family'] },
+  { q: 'section 13B Hindu Marriage Act mutual divorce filing', expect: 'Mutual', tags: ['MutualDivorce','Family'] },
+  { q: 'both parties agreed to separate, filing joint divorce petition', expect: 'Mutual', tags: ['MutualDivorce','Family'] },
+
+  // Custody (visitation/access specific)
+  { q: 'father not allowed to see his child by mother, legal remedy', expect: 'Custody', tags: ['Custody','Family'] },
+  { q: 'mother violating custody order father denied access', expect: 'Custody', tags: ['Custody','Family'] },
+  { q: 'court gave custody to wife but she is not following visitation', expect: 'Custody', tags: ['Custody','Family'] },
+  { q: 'application for interim custody during divorce proceedings', expect: 'Custody', tags: ['Custody','Family'] },
+  { q: 'child taken abroad by mother without permission, Hague convention', expect: 'Custody', tags: ['Custody','Family'] },
+
+  // Constitutional / PIL (more targeted)
+  { q: 'RTI application rejected arbitrarily by government office', expect: ['Constitutional','PIL'], tags: ['Constitutional','PIL'] },
+  { q: 'government authority issuing illegal order against me, writ petition', expect: ['Constitutional','PIL'], tags: ['Constitutional','PIL'] },
+  { q: 'municipal corporation not providing water supply, PIL', expect: ['Constitutional','PIL','Municipal'], tags: ['Constitutional','PIL'] },
+  { q: 'fundamental right to education being denied to my child', expect: ['Constitutional','Education'], tags: ['Constitutional','PIL'] },
+  { q: 'filing mandamus against public authority for inaction', expect: ['Constitutional','PIL'], tags: ['Constitutional','PIL'] },
+  { q: 'public interest litigation against illegal construction in area', expect: ['Constitutional','PIL'], tags: ['Constitutional','PIL'] },
+  { q: 'wrongful detention habeas corpus petition India', expect: ['Bail','Constitutional'], tags: ['Constitutional','Bail'] },
+  { q: 'SC ST act victim FIR not filed PIL against police', expect: ['SC/ST','Constitutional'], tags: ['Constitutional','SCST'] },
+
+  // Livelihood / MGNREGA
+  { q: 'job card under MGNREGA denied without reason', expect: 'Livelihood', tags: ['MGNREGA','Livelihood'] },
+  { q: 'MGNREGA wages not paid for 3 months what to do', expect: 'Livelihood', tags: ['MGNREGA','Livelihood'] },
+  { q: 'government scheme ration card cancelled wrongly', expect: 'Livelihood', tags: ['MGNREGA','Livelihood'] },
+  { q: 'BPL family not getting PM Awas Yojana benefit', expect: 'Livelihood', tags: ['MGNREGA','Livelihood'] },
+  { q: 'widow pension stopped without notice what is remedy', expect: 'Livelihood', tags: ['MGNREGA','Livelihood'] },
+  { q: 'Ayushman Bharat card rejected at empanelled hospital', expect: 'Livelihood', tags: ['MGNREGA','Livelihood'] },
+
+  // Agriculture (gap)
+  { q: 'crop destroyed by flood, claim under PM Fasal Bima Yojana', expect: 'Agriculture', tags: ['Agriculture'] },
+  { q: 'kisan credit card loan waiver dispute bank refusing', expect: 'Agriculture', tags: ['Agriculture'] },
+  { q: 'moneylender charging 60% interest from farmer illegally', expect: 'Agriculture', tags: ['Agriculture'] },
+  { q: 'tenancy dispute between farmer and zamindar', expect: 'Agriculture', tags: ['Agriculture'] },
+  { q: 'agricultural land converted to non-agricultural without permission', expect: 'Agriculture', tags: ['Agriculture'] },
+
+  // Mental Healthcare (gap)
+  { q: 'my relative is being kept in mental hospital against his will', expect: 'Mental Healthcare', tags: ['MentalHealth','Civil'] },
+  { q: 'I was forcibly given psychiatric treatment without consent', expect: 'Mental Healthcare', tags: ['MentalHealth','Civil'] },
+  { q: 'rights of a person certified under Mental Healthcare Act 2017', expect: 'Mental Healthcare', tags: ['MentalHealth','Civil'] },
+  { q: 'advance directive for mental health treatment India procedure', expect: 'Mental Healthcare', tags: ['MentalHealth','Civil'] },
+  { q: 'disability certificate for mental illness rights India', expect: 'Mental Healthcare', tags: ['MentalHealth','Civil'] },
+
+  // Corporate (more specific)
+  { q: 'director removed from board illegally minority shareholder', expect: 'Corporate', tags: ['Corporate'] },
+  { q: 'oppression and mismanagement by majority shareholder NCLT', expect: 'Corporate', tags: ['Corporate'] },
+  { q: 'company not holding AGM statutory violation what to do', expect: 'Corporate', tags: ['Corporate'] },
+  { q: 'startup co-founder dispute equity dilution unfair', expect: 'Corporate', tags: ['Corporate'] },
+  { q: 'forged share transfer documents company malpractice', expect: 'Corporate', tags: ['Corporate'] },
+
+  // ChequeBounce (more variations)
+  { q: 'cheque given by builder bounced after flat registration', expect: 'Cheque Bounce', tags: ['ChequeBounce','Criminal'] },
+  { q: 'section 138 NI Act demand notice procedure after bounce', expect: 'Cheque Bounce', tags: ['ChequeBounce','Criminal'] },
+  { q: 'business partner issued 10 cheques all bounced', expect: 'Cheque Bounce', tags: ['ChequeBounce','Criminal'] },
+  { q: 'employee gave cheque for advance salary refund bounced', expect: 'Cheque Bounce', tags: ['ChequeBounce','Criminal'] },
+
+  // Consumer (specific gaps)
+  { q: 'tour package cancelled by travel agency, no refund', expect: 'Consumer', tags: ['Consumer'] },
+  { q: 'nursing home charged extra beyond agreed amount', expect: 'Consumer', tags: ['Consumer'] },
+  { q: 'coaching institute took fees and shut down mid-course', expect: 'Consumer', tags: ['Consumer','Education'] },
+  { q: 'solar panel installation defective company not fixing', expect: 'Consumer', tags: ['Consumer'] },
+  { q: 'internet service provider not giving promised speed', expect: 'Consumer', tags: ['Consumer'] },
+
+  // Hinglish for failing categories
+  { q: 'dono mil ke divorce karna chahte hain', expect: 'Mutual', tags: ['MutualDivorce','Hinglish'] },
+  { q: 'bache ko milne nahi de rahi hai ex-wife', expect: 'Custody', tags: ['Custody','Hinglish'] },
+  { q: 'sarfaesi notice aaya hai bank se kya karein', expect: 'SARFAESI', tags: ['SARFAESI','Hinglish'] },
+  { q: 'dost ne udhar liya wapas nahi de raha', expect: 'Money Recovery', tags: ['MoneyRecovery','Hinglish'] },
+  { q: 'zameen ka baat-wara chahiye bhai log nahi maan rahe', expect: 'Partition', tags: ['Partition','Hinglish'] },
+  { q: 'mgnrega ka paisa nahi mila 3 mahine se', expect: 'Livelihood', tags: ['MGNREGA','Hinglish'] },
+  { q: 'ration card band ho gaya bina kisi reason ke', expect: 'Livelihood', tags: ['MGNREGA','Hinglish'] },
+  { q: 'khet mein fasal kharab hui insurance claim kaise karein', expect: 'Agriculture', tags: ['Agriculture','Hinglish'] },
+
+  // Multi-issue / complex scenarios
+  { q: 'builder took money, gave wrong flat size, and now cheque bounced', expect: ['RERA','Cheque Bounce'], tags: ['MultiIssue','RERA','ChequeBounce'] },
+  { q: 'employer not paying salary and also filing false criminal case', expect: ['Salary','Criminal'], tags: ['MultiIssue','Salary','Criminal'] },
+  { q: 'police not filing FIR for rape and also threatening the victim', expect: ['Rape','Police Excess'], tags: ['MultiIssue','Rape','PoliceExcess'] },
+  { q: 'landlord illegally evicting and also demanding dowry from tenant', expect: ['Rent','Dowry'], tags: ['MultiIssue','Rent','Dowry'] },
+
+  // Negative tests — these laws should NOT appear
+  { q: 'N:partition suit among brothers for ancestral house', expect: 'Murder', tags: ['Partition','negative'] },
+  { q: 'N:SARFAESI bank notice for home loan', expect: 'Rape', tags: ['SARFAESI','negative'] },
+  { q: 'N:mutual consent divorce both agree', expect: 'Fraud', tags: ['MutualDivorce','negative'] },
+  { q: 'N:mgnrega wages not paid', expect: 'Consumer', tags: ['MGNREGA','negative'] },
+];
+module.exports = module.exports.concat(_batch6);
