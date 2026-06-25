@@ -151,6 +151,13 @@ STRICT OVER-MAPPING RULES — each rule prevents a specific hallucination:
 55. DIRECTOR REMOVED FROM COMPANY / REMOVED AS DIRECTOR ILLEGALLY → "Corporate – Companies Act / NCLT / Shareholder Disputes".
 56. EMPLOYER NOT ISSUING RELIEVING LETTER / NON-COMPETE CLAUSE DISPUTE → "Employment – Wrongful Termination / Illegal Dismissal".
 57. COURT ORDERED PROPERTY HANDED OVER BUT NOT DONE / DECREE NOT EXECUTED / COURT ORDER NOT FOLLOWED → "Civil – Specific Performance / Contract Breach" (enforcement of court decree).
+58. WIFE BEAT ME / WIFE IS HITTING ME / WIFE PHYSICALLY ABUSED ME (husband complaining about wife) → Classify as "Family – Domestic Violence" (matrimonial context), NOT "Criminal – BNS (Assault/Hurt)".
+59. POLICE TOOK BRIBE AND REFUSED TO FILE FIR / POLICE TOOK BRIBE AND REFUSED FIR → BOTH "Criminal – Police Excess / Human Rights Violation" AND "Criminal – Corruption / Anti-Bribery". Lead with Police Excess.
+60. NEIGHBOUR SEXUALLY ABUSING CHILD / SEXUALLY ABUSING MY DAUGHTER / CHILD SEXUAL ABUSE BY NEIGHBOUR → "Criminal – POCSO / Child Sexual Abuse / Child Protection".
+61. DALIT ATTACKED / ATTACKED BECAUSE OF CASTE / BEATEN BECAUSE THEY ARE DALIT → "Criminal – SC/ST Atrocities / Caste Discrimination". Include "Criminal – BNS (Assault/Hurt)" as secondary.
+62. CELEBRITY DEFAMED ME IN INTERVIEW / DEFAMED ON TELEVISION / DEFAMED IN PRESS → "Civil/Criminal – Defamation / False Statements / Reputation Damage".
+63. FRIEND BORROWED MONEY NOT RETURNING / PARTNER TOOK MONEY AND DISAPPEARED → BOTH "Civil – Money Recovery / Debt Recovery" AND "Criminal – BNS (Fraud / Cheating)" (criminal cheating applies when there is dishonest intent).
+64. ARBITRATOR APPOINTMENT WHEN PARTIES DISAGREE / APPOINT ARBITRATOR → "Civil – Arbitration / ADR / Commercial Dispute".
 
 BNS SUBCATEGORY SELECTION RULES — choose the most specific BNS category:
 - Criminal – Medical Negligence / Death by Negligence (BNS 106): A PATIENT DIED during or after medical treatment. Doctor/hospital is accused OR is seeking legal advice. Keywords: died on operation table, died after surgery, patient died in hospital, family blaming doctor, accused of medical negligence, operation went wrong. → USE THIS for all hospital/medical deaths. This overrides the generic murder/death rule below.
