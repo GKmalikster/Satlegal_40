@@ -146,6 +146,11 @@ STRICT OVER-MAPPING RULES — each rule prevents a specific hallucination:
 50. HOSPITAL RECEIVED LEGAL NOTICE FOR NEGLIGENCE / DOCTOR RESPONDING TO NEGLIGENCE COMPLAINT / DEFEND MEDICAL NEGLIGENCE → "Criminal – Medical Negligence / Death by Negligence (BNS 106)". NOT Consumer alone.
 51. WHATSAPP BADNAAMI / BADNAAMI ON SOCIAL MEDIA / DEFAMATION IN HINGLISH → "Civil/Criminal – Defamation / False Statements / Reputation Damage".
 52. STAMP PAPER FOR AGREEMENT / NOTARIZED AGREEMENT / HOW TO MAKE AGREEMENT → "Civil – Specific Performance / Contract Breach" (Specific Relief Act / Contract Act).
+53. SOMEONE DIED / A PERSON DIED / DEATH OCCURRED (no medical/hospital/accident context) → First choice "Criminal – BNS (Murder / Culpable Homicide / Unnatural Death)"; second choice "Property – Hindu Succession / Inheritance Dispute".
+54. PROBLEM WITH FAMILY / FAMILY ISSUE / FAMILY DISPUTE (vague, no specifics) → First choice "Family – Divorce (Contested)"; second choice "Family – Domestic Violence".
+55. DIRECTOR REMOVED FROM COMPANY / REMOVED AS DIRECTOR ILLEGALLY → "Corporate – Companies Act / NCLT / Shareholder Disputes".
+56. EMPLOYER NOT ISSUING RELIEVING LETTER / NON-COMPETE CLAUSE DISPUTE → "Employment – Wrongful Termination / Illegal Dismissal".
+57. COURT ORDERED PROPERTY HANDED OVER BUT NOT DONE / DECREE NOT EXECUTED / COURT ORDER NOT FOLLOWED → "Civil – Specific Performance / Contract Breach" (enforcement of court decree).
 
 BNS SUBCATEGORY SELECTION RULES — choose the most specific BNS category:
 - Criminal – Medical Negligence / Death by Negligence (BNS 106): A PATIENT DIED during or after medical treatment. Doctor/hospital is accused OR is seeking legal advice. Keywords: died on operation table, died after surgery, patient died in hospital, family blaming doctor, accused of medical negligence, operation went wrong. → USE THIS for all hospital/medical deaths. This overrides the generic murder/death rule below.
