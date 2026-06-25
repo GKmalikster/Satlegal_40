@@ -137,6 +137,15 @@ STRICT OVER-MAPPING RULES — each rule prevents a specific hallucination:
 41. PM KISAN / KISAN YOJANA / AYUSHMAN BHARAT CARD / GOVERNMENT SCHEME BENEFIT DENIED → "Livelihood – MGNREGA / Right to Work / Government Schemes". NOT PIL unless seeking writ.
 42. IRRIGATION WATER ACCESS / WATER RIGHTS FARMER / WATER DISPUTE BETWEEN FARMERS → "Agriculture – Crop Insurance / Land Tenancy / Agricultural Disputes". NOT Property, NOT PIL.
 43. RIGHTS OF PERSONS WITH MENTAL ILLNESS / MENTAL ILLNESS RIGHT TO VOTE / MENTAL HEALTH RIGHTS / PERSON WITH MENTAL ILLNESS → "Civil – Mental Healthcare Act / Psychiatric Rights / Disability". NOT PIL unless seeking writ against state.
+44. EX-BOYFRIEND / EX-GIRLFRIEND POSTING PRIVATE PHOTOS / INTIMATE IMAGES SHARED WITHOUT CONSENT / REVENGE PORN → "Cyber – Online Harassment / Cyberstalking / Defamation" ONLY. NOT Criminal BNS Assault.
+45. HUSBAND NOT ALLOWING / NOT LETTING ME MEET / SEE MY CHILDREN AFTER DIVORCE → "Family – Child Custody / Guardianship" ONLY. This is about access/visitation. NOT Divorce, NOT Domestic Violence unless abuse is separately described.
+46. CORRUPT POLICE OFFICER / COMPLAINT AGAINST CORRUPT POLICE / POLICE OFFICER DEMANDING BRIBE → "Criminal – Corruption / Bribery / Prevention of Corruption Act". NOT Police Excess (police excess is about brutality/illegal detention, not bribery).
+47. BOMB THREAT / BOMB HOAX / HOAX CALL POLICE NOT ACTING → "Criminal – Police Excess / Human Rights Violation" (for police inaction) or "Criminal – BNS (Murder / Culpable Homicide)" for the threat itself.
+48. FORCED RELIGIOUS CONVERSION / CONVERTING RELIGION UNDER COERCION / HIJAB BANNED / RELIGIOUS DISCRIMINATION → "Constitutional – PIL / Writ Petition / Fundamental Rights" (Art 25 religious freedom) + may add "Criminal – BNS (Assault)" if violence involved.
+49. PASSPORT IMPOUNDED / PASSPORT SEIZED BY GOVERNMENT / PASSPORT CANCELLED / CHALLENGING PASSPORT REVOCATION → "Constitutional – PIL / Writ Petition / Fundamental Rights". This is an Art 21 / Art 19 issue, not Tax or Consumer.
+50. HOSPITAL RECEIVED LEGAL NOTICE FOR NEGLIGENCE / DOCTOR RESPONDING TO NEGLIGENCE COMPLAINT / DEFEND MEDICAL NEGLIGENCE → "Criminal – Medical Negligence / Death by Negligence (BNS 106)". NOT Consumer alone.
+51. WHATSAPP BADNAAMI / BADNAAMI ON SOCIAL MEDIA / DEFAMATION IN HINGLISH → "Civil/Criminal – Defamation / False Statements / Reputation Damage".
+52. STAMP PAPER FOR AGREEMENT / NOTARIZED AGREEMENT / HOW TO MAKE AGREEMENT → "Civil – Specific Performance / Contract Breach" (Specific Relief Act / Contract Act).
 
 BNS SUBCATEGORY SELECTION RULES — choose the most specific BNS category:
 - Criminal – Medical Negligence / Death by Negligence (BNS 106): A PATIENT DIED during or after medical treatment. Doctor/hospital is accused OR is seeking legal advice. Keywords: died on operation table, died after surgery, patient died in hospital, family blaming doctor, accused of medical negligence, operation went wrong. → USE THIS for all hospital/medical deaths. This overrides the generic murder/death rule below.
