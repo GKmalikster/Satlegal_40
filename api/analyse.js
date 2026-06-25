@@ -158,6 +158,17 @@ STRICT OVER-MAPPING RULES — each rule prevents a specific hallucination:
 62. CELEBRITY DEFAMED ME IN INTERVIEW / DEFAMED ON TELEVISION / DEFAMED IN PRESS → "Civil/Criminal – Defamation / False Statements / Reputation Damage".
 63. FRIEND BORROWED MONEY NOT RETURNING / PARTNER TOOK MONEY AND DISAPPEARED → BOTH "Civil – Money Recovery / Debt Recovery" AND "Criminal – BNS (Fraud / Cheating)" (criminal cheating applies when there is dishonest intent).
 64. ARBITRATOR APPOINTMENT WHEN PARTIES DISAGREE / APPOINT ARBITRATOR → "Civil – Arbitration / ADR / Commercial Dispute".
+65. RETRENCHMENT / LAID OFF / RETRENCHED WITHOUT COMPENSATION / WORKFORCE REDUCTION → "Employment – Wrongful Termination / Illegal Dismissal". NOT Motor Accident (compensation is a generic word — it does not make an employment case a motor accident case).
+66. POLICE BEATING IN CUSTODY / CUSTODIAL TORTURE / POLICE BEAT DURING INTERROGATION / BEATEN WHILE IN POLICE CUSTODY → "Criminal – Police Excess / Human Rights Violation" as primary. NOT Bail as primary (Bail is only primary when person is seeking release, not when reporting police brutality).
+67. POLICE ARRESTED WITHOUT WARRANT / ILLEGAL ARREST BY POLICE / ARRESTED WITHOUT SHOWING WARRANT → "Criminal – Police Excess / Human Rights Violation" as primary, BNSS Bail as secondary only if bail is being sought.
+68. POLICE KEPT IN LOCKUP WITHOUT FIR / NO FIR DETAINED / DETAINED WITHOUT CHARGES / LOCKUP WITHOUT FIR → "Criminal – Police Excess / Human Rights Violation". NOT Bail as primary.
+69. RATION CARD NOT ISSUED / VOTER ID NOT ISSUED / PASSPORT NOT ISSUED BY GOVERNMENT / GOVERNMENT CERTIFICATE DENIED / OBC SC ST CERTIFICATE DENIED → "Constitutional – PIL / Writ Petition / Fundamental Rights". NOT Livelihood (Livelihood is for work/MGNREGA schemes). NOT Consumer.
+70. ENCUMBRANCE CERTIFICATE / TITLE VERIFICATION / PROPERTY TITLE CHECK / BEFORE BUYING PROPERTY / PROPERTY DUE DILIGENCE → "Property – Transfer of Property / Sale Deed Dispute". NOT Succession.
+71. NBFC REPOSSESSED VEHICLE / NBFC SEIZED MY VEHICLE / VEHICLE TAKEN BY NBFC / NBFC REPOSSESSION ILLEGAL → "Civil – SARFAESI / Banking Recovery / DRT". NOT Theft.
+72. CIBIL SCORE WRONG / CIBIL ERROR / WRONG CREDIT SCORE / CREDIT BUREAU COMPLAINT / CIBIL DISPUTE → "Civil – SARFAESI / Banking Recovery / DRT".
+73. ONE-TIME SETTLEMENT BANK / OTS WITH BANK / BANK SETTLEMENT OFFER / NEGOTIATE LOAN SETTLEMENT WITH BANK → "Civil – SARFAESI / Banking Recovery / DRT".
+74. JOB PLACEMENT AGENCY TOOK FEES NO JOB / PLACEMENT CONSULTANCY FRAUD / PAID FEES FOR JOB NOT GIVEN → "Criminal – BNS (Fraud / Cheating)".
+75. CONTRACTOR TOOK ADVANCE MONEY RAN AWAY / ADVANCE PAID CONTRACTOR VANISHED / ADVANCE TAKEN NO WORK → "Criminal – BNS (Fraud / Cheating)" AND "Civil – Money Recovery / Debt Recovery". Lead with Fraud.
 
 BNS SUBCATEGORY SELECTION RULES — choose the most specific BNS category:
 - Criminal – Medical Negligence / Death by Negligence (BNS 106): A PATIENT DIED during or after medical treatment. Doctor/hospital is accused OR is seeking legal advice. Keywords: died on operation table, died after surgery, patient died in hospital, family blaming doctor, accused of medical negligence, operation went wrong. → USE THIS for all hospital/medical deaths. This overrides the generic murder/death rule below.
