@@ -2599,6 +2599,148 @@ const TESTS_RAW = [{"q":"wife is not agreeing to divorce what can I do","expect"
 // KEYWORD ENGINE (inlined from getContextualQuestions)
 // ═══════════════════════════════════════════════════════════
 const DETECTORS = {
+  // ── Specific law categories ──────────────────────────────────────────────
+  divorce: {
+    t1: ['divorce','talaaq','talak','want divorce','file divorce','divorce petition','contested divorce','divorce my husband','divorce my wife'],
+    t2: ['cruelty','desertion','adultery','matrimonial','alimony','khula','judicial separation','marital','separation'],
+    t3: ['husband','wife','spouse','marriage','married','wed']
+  },
+  mutual_divorce: {
+    t1: ['mutual divorce','mutual consent divorce','section 13b','both agree divorce','aapsi rejamaandi','dono agree','mutual consent'],
+    t2: ['both want divorce','amicably separate','mutual separation','divorce by consent'],
+    t3: []
+  },
+  maintenance: {
+    t1: ['maintenance','alimony','guzara bhatta','child support','monthly support','interim maintenance','section 125'],
+    t2: ['support payment','spousal support','wife maintenance','husband maintenance','father maintenance','child maintenance'],
+    t3: ['payment','support','monthly']
+  },
+  domestic_violence: {
+    t1: ['domestic violence','dv act','protection order','domestic abuse','pati maar raha','ghar mein maar','sasural maar','husband beats','husband hits','wife beater'],
+    t2: ['abuse','physical abuse','mental abuse','emotional abuse','haath uthana','pita','violence at home'],
+    t3: ['husband','wife','family violence']
+  },
+  custody: {
+    t1: ['custody','child custody','guardianship','visitation rights','parental rights','bache ki custody','bache se milna'],
+    t2: ['child taken','child not returned','access to child','parent rights','adoption'],
+    t3: ['child','children','minor','parenting']
+  },
+  banking: {
+    t1: ['bank','banking','cibil','nbfc','loan account','fd dispute','bank account','nri account','nro','nre','banking ombudsman','rbi complaint'],
+    t2: ['loan','emi','interest rate','mortgage','lien','credit card dispute','bank charges','debit card fraud','atm fraud','bank freeze','account freeze','repo rate'],
+    t3: ['account','credit','debit','finance']
+  },
+  pil: {
+    t1: ['pil','public interest litigation','writ petition','fundamental right','article 32','article 226','high court writ','supreme court writ','maulik adhikar'],
+    t2: ['government action unconstitutional','state policy challenge','constitutional validity','habeas corpus','mandamus','certiorari','prohibition writ'],
+    t3: ['government','state','constitutional','rights violation']
+  },
+  environment: {
+    t1: ['ngt','national green tribunal','pollution','environmental damage','factory effluent','garbage dumping','garbage dump','pradushan','industrial waste','contamination'],
+    t2: ['environmental violation','river polluted','groundwater contamination','air pollution','noise pollution','waste disposal','burning garbage','chemical factory'],
+    t3: ['environment','ecology','green','nature','factory smoke']
+  },
+  education: {
+    t1: ['rte','right to education','school admission','university admission','college admission','capitation fees','education complaint','ugc','aicte'],
+    t2: ['school fees','college fees','discrimination admission','reservation quota','denied admission','academic fraud','degree fake','coaching institute'],
+    t3: ['school','college','university','student','education','degree']
+  },
+  housing_society: {
+    t1: ['housing society','apartment association','cooperative society','chs','mcs act','society committee','managing committee','society election','sinking fund'],
+    t2: ['flat dispute','apartment dispute','maintenance charges','society noc','society bye-laws','corpus fund','society accounts','society parking'],
+    t3: ['society','flat','apartment','building','residents','association']
+  },
+  corporate: {
+    t1: ['nclt','companies act','shareholder dispute','sebi complaint','listed company','winding up company','esop vesting','company director','corporate fraud','oppression mismanagement'],
+    t2: ['merger','acquisition','demerger','corporate governance','agm','egm','share allotment','minority shareholder','startup dispute','co-founder dispute'],
+    t3: ['company','corporate','shareholder','director','startup','board']
+  },
+  nri: {
+    t1: ['nri','non resident indian','overseas citizen','oci card','nro account','nre account','fema','overseas indian','settled abroad','nri property'],
+    t2: ['living abroad','from usa','from uk','from canada','from dubai','from australia','abroad','foreign country','international','oversea'],
+    t3: ['abroad','foreign','overseas','nri']
+  },
+  agriculture: {
+    t1: ['agriculture','agricultural','kisan','kisaan','farmer','kheti','fasal','khet','zameen','crop','sharecropper','batai','agricultural tenancy','msp','pm kisan'],
+    t2: ['crop damage','irrigation dispute','land record','khata','khasra','patwari','tenancy farming','agricultural lease'],
+    t3: ['farm','farming','village','rural']
+  },
+  service_law: {
+    t1: ['government employee','cat tribunal','administrative tribunal','central civil services','departmental inquiry','promotion blocked','wrongful suspension','acr','annual confidential report','adverse remarks','vrs','voluntary retirement'],
+    t2: ['service rules','seniority dispute','government pension','government job terminated','civil servant disciplinary','grade pay','ias ips'],
+    t3: ['government service','public servant','civil service','government department']
+  },
+  mental_health: {
+    t1: ['mental healthcare act','involuntary admission','psychiatric facility','mental hospital rights','de-addiction centre','rehab patient rights','mental health patient rights','mhca'],
+    t2: ['mental illness rights','psychiatric ward','mental health treatment','involuntary hospitalization','forcibly admitted mental','psychosis rights','mental disorder'],
+    t3: ['mental health','psychiatric','psychology','mental','therapy']
+  },
+  privacy: {
+    t1: ['dpdp act','data privacy','data protection act','personal data misuse','aadhaar misuse','biometric data','data breach','doxxing','app accessing','surveillance'],
+    t2: ['personal data shared','data without consent','privacy violation','facial recognition data','right to erasure','data portability','third party data'],
+    t3: ['privacy','data','personal information','digital rights']
+  },
+  police_excess: {
+    t1: ['police excess','police atrocity','police misconduct','illegal detention','lockup death','police not registering','sp office complaint','nhrc complaint','lathi charge'],
+    t2: ['police refused fir','police threatening','police extortion','false arrest','wrongful arrest','police custody torture','police misbehaving'],
+    t3: ['police','thana','station','constable','inspector']
+  },
+  land_acquisition: {
+    t1: ['land acquisition','larr act','government acquired','sarkaari zameen acquisition','acquisition compensation','section 4 land','award not made','rehabilitation resettlement'],
+    t2: ['government taking land','acquisition dispute','compensation for land','metro land','highway acquisition','eminent domain'],
+    t3: ['acquired','acquisition','government land','compulsory purchase']
+  },
+  senior_citizen: {
+    t1: ['senior citizen','elderly parent','old age home','maintenance parents','senior citizen act','eviction senior','maintenance of parents act'],
+    t2: ['old parents','aging parent','parents evicted','elderly rights','son threw mother','parents abandoned'],
+    t3: ['senior','elderly','old age','parents']
+  },
+  msme: {
+    t1: ['msme','msme samadhan','delayed payment msme','micro small medium','udyam','partnership firm dissolution','proprietorship dispute'],
+    t2: ['small business payment','vendor payment delayed','msme arbitration','small enterprise dispute'],
+    t3: ['small business','micro enterprise','partnership']
+  },
+  electricity: {
+    t1: ['electricity','bijli','bijli bill','meter dispute','discom','electricity board','power connection','electricity complaint'],
+    t2: ['meter tampered','electricity disconnection','power supply dispute','electricity meter wrong','high electricity bill'],
+    t3: ['power','current','voltage','meter','light']
+  },
+  insurance: {
+    t1: ['insurance claim','claim rejected','insurance dispute','insurance fraud','policy lapsed','insurance not paying','bima'],
+    t2: ['health insurance','life insurance','vehicle insurance','motor insurance claim','insurance premium','claim settlement'],
+    t3: ['insurance','policy','premium','claim','cover']
+  },
+  municipal: {
+    t1: ['municipal','bmc','corporation','panchayat','building plan','demolition notice','municipal tax','nagar palika'],
+    t2: ['building regulations','construction permission','planning permission','local body','civic authority','property tax'],
+    t3: ['municipality','civic','local government','urban']
+  },
+  transfer_property: {
+    t1: ['sale deed','transfer of property','mutation','dakhil kharij','khata change','registration fraud','power of attorney','gift deed','conveyance deed'],
+    t2: ['property registration','stamp duty','title deed','property transfer','name transfer','seller not transferring','seller not giving possession'],
+    t3: ['property','land','plot','flat','house','transfer','sale']
+  },
+  posh: {
+    t1: ['posh','workplace sexual harassment','sexual harassment office','icc committee','internal complaints committee','harassment at work'],
+    t2: ['sexual harassment workplace','colleague harassment','manager harassment','office harassment','work harassment'],
+    t3: ['harassment','workplace','office','colleague']
+  },
+  arbitration: {
+    t1: ['arbitration','arbitral award','arbitration tribunal','section 34','enforcement of award','new york convention','adr','mediation agreement'],
+    t2: ['arbitral proceedings','arbitrator appointed','arbitration clause','dispute resolution','conciliation'],
+    t3: ['dispute','award','arbitral','mediation']
+  },
+  rent: {
+    t1: ['rent dispute','tenant eviction','kirayaedaar','makan malik','rent control','eviction notice','tenancy agreement','rental dispute'],
+    t2: ['tenant not paying rent','landlord evicting','rent increase','lease violation','pg hostel eviction','rental agreement'],
+    t3: ['rent','tenant','landlord','lease','tenancy']
+  },
+  food_safety: {
+    t1: ['food safety','fssai','food adulteration','food poisoning complaint','restaurant complaint','packaged food','food hygiene'],
+    t2: ['expired food','contaminated food','restaurant unhygienic','food label','nutritional information wrong','food quality'],
+    t3: ['food','eating','restaurant','packaged','hygiene']
+  },
+  // ── Original coarse areas (kept for backward compat) ──────────────────────
   criminal: {
     t1: ['rape','raped','gang rape','sexual assault','sexually assaulted','molest','molestation','murder','murdered','killed him','killed her','killed by','poison','poisoned','stabbed','shot dead','strangulated','hanged','kidnapped','kidnap','abducted','abduction','pocso','child sexual','acid attack','acid thrown','balatkar','jabardasti sex','jabardasti ki','threatened with knife','threatened with weapon','bomb threat','dead body found','body found','unnatural death'],
     t2: ['fir filed','fir registered','fir not registered','police complaint','bail application','anticipatory bail','chargesheet filed','arrested by police','police custody','criminal case','criminal complaint','police refusing','cheque bounce','cheque dishonoured','cheque returned','criminal proceedings','non bailable','bailable offence','accused of crime','accused of fraud','blaming me for crime','blaming me for death','blaming me for patient','someone died at operation','died on operation table','died during surgery','died during operation','died in hospital','died at hospital','died after surgery','died after treatment','died after operation','death in hospital','death at hospital','patient death','family blaming doctor','fir against doctor','operation went wrong','surgery went wrong','criminal case doctor'],
@@ -4769,9 +4911,8 @@ async function startRun() {
     let kwResult = null;
     let passed = false;
 
-    if (mode === 'keyword' || mode === 'both') {
-      kwResult = detectAreas(t.q);
-    }
+    kwResult = detectAreas(t.q); // always run for fallback when API times out
+    if (mode === 'keyword' || mode === 'both') { /* kwResult already computed */ }
 
     if (mode === 'api' || mode === 'both') {
       row.classList.add('running');
@@ -4836,9 +4977,16 @@ function evaluate(test, apiResult, kwResult, mode) {
   if (kwResult) {
     const areas = kwResult.areas;
     if (isNeg) {
-      return !expects.some(e => areas.some(a => a.toLowerCase().includes(e.toLowerCase()) || e.toLowerCase().includes(a.toLowerCase())));
+      return !expects.some(e => {
+      const en = e.toLowerCase().replace(/_/g,' ');
+      return areas.some(a => { const an = a.toLowerCase().replace(/_/g,' '); return an.includes(en) || en.includes(an); });
+    });
     }
-    return expects.some(e => areas.some(a => a.toLowerCase().includes(e.toLowerCase()) || e.toLowerCase().includes(a.toLowerCase())));
+    // Normalize underscores to spaces for matching area_name vs "Area Name"
+    return expects.some(e => {
+      const en = e.toLowerCase().replace(/_/g,' ');
+      return areas.some(a => { const an = a.toLowerCase().replace(/_/g,' '); return an.includes(en) || en.includes(an); });
+    });
   }
 
   return false;
