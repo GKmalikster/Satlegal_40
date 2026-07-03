@@ -79,7 +79,8 @@ body{font-family:var(--font);min-height:100vh;display:flex;align-items:center;ju
   try{
     const a=JSON.parse(localStorage.getItem('sl_admin_auth')||'null');
     if(a&&a.email&&(Date.now()-a.loginTime<8*60*60*1000)){
-      window.location.href='../dashboard/admin-cms.html';
+      const dest = (a.role === 'superadmin') ? '../dashboard/admin-dashboard.html' : '../dashboard/admin-cms.html';
+      window.location.href = dest;
     }
   }catch(e){}
 })();
@@ -162,11 +163,17 @@ function doLogin(){
       clearAttempts();
       auditLog('login_success',user.email+' ('+user.role+')');
       try{
-        localStorage.setItem('sl_admin_auth',JSON.stringify({
-          email:user.email,name:user.name,role:user.role,loginTime:Date.now()
+        const session = {email:user.email,name:user.name,role:user.role,loginTime:Date.now()};
+        localStorage.setItem('sl_admin_auth', JSON.stringify(session));
+        // Also bridge to regular Auth system so Auth.requireRole() works on dashboards
+        const bridgeRole = (user.role === 'superadmin') ? 'admin' : 'editor';
+        localStorage.setItem('sl_user', JSON.stringify({
+          email:user.email, name:user.name, role:bridgeRole, adminRole:user.role
         }));
+        localStorage.setItem('sl_token', 'admin-session-' + Date.now());
       }catch(e){}
-      window.location.href='../dashboard/admin-cms.html';
+      const dest = (user.role === 'superadmin') ? '../dashboard/admin-dashboard.html' : '../dashboard/admin-cms.html';
+      window.location.href = dest;
     } else {
       recordAttempt();
       auditLog('login_failed',email);
