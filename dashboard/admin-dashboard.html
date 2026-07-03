@@ -1344,10 +1344,19 @@ tbody tr:last-child td { border-bottom: none; }
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 <script>
-if (!Auth.requireRole('admin')) {}
+// ── Admin auth check: accept sl_admin_auth OR bridged sl_user ──
+(function(){
+  try {
+    const a = JSON.parse(localStorage.getItem('sl_admin_auth') || 'null');
+    const u = JSON.parse(localStorage.getItem('sl_user') || 'null');
+    const validAdmin = (a && a.role && (a.role === 'superadmin' || a.role === 'editor') && (Date.now() - a.loginTime < 8*60*60*1000))
+                    || (u && (u.role === 'admin' || u.adminRole === 'superadmin') && localStorage.getItem('sl_token'));
+    if (!validAdmin) { window.location.href = '/auth/admin-login.html'; return; }
+  } catch(e) { window.location.href = '/auth/admin-login.html'; }
+})();
 
 // Set admin name
-const _adminUser = Auth.getUser();
+const _adminUser = (function(){ try{ return JSON.parse(localStorage.getItem('sl_admin_auth')||'null') || JSON.parse(localStorage.getItem('sl_user')||'null'); }catch(e){return null;} })();
 if (_adminUser) document.getElementById('adminName').textContent = _adminUser.name || 'Admin';
 
 // ── Overview ────────────────────────────────────────────────────────────────
@@ -1374,7 +1383,10 @@ async function loadOverview() {
         <td>${fmt.gender(u.gender)}</td>
         <td>${fmt.date(u.createdAt)}</td>
       </tr>`).join('') || '<tr><td colspan="5" class="text-center text-muted">No users yet</td></tr>';
-  } catch (err) { Toast.error('Failed to load stats: ' + err.message); }
+  } catch (err) {
+    document.getElementById('statsGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--text-light);font-size:14px">⚠️ Backend not connected — stats unavailable. Data will appear once the backend API is deployed.</div>';
+    document.getElementById('recentUsersBody').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-light);padding:20px">Backend not connected</td></tr>';
+  }
 
   // Load mini-analytics
   try {
@@ -1478,7 +1490,14 @@ async function loadAnalytics() {
           </tr>`).join('')}</tbody>
       </table>`;
 
-  } catch (err) { Toast.error('Analytics failed: ' + err.message); }
+  } catch (err) {
+    ['topLawsChart','genderChart','userTypeChart','geoChart'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-light);font-size:13px">⚠️ Backend not connected</div>';
+    });
+    const tbl = document.getElementById('lawsByGenderTable');
+    if (tbl) tbl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-light);font-size:13px">⚠️ Backend not connected</div>';
+  }
   finally { Loader.hide(); }
 }
 
@@ -1507,7 +1526,7 @@ async function loadLawyers(status = 'pending') {
           ${l.status === 'approved' ? `<button onclick="verifyLawyer('${l._id}','suspended')" class="btn btn-danger btn-sm" style="margin-left:3px">Suspend</button>` : ''}
         </td>
       </tr>`).join('');
-  } catch (err) { Toast.error(err.message); }
+  } catch (err) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-light)">⚠️ Backend not connected — lawyer data unavailable</td></tr>'; }
 }
 
 async function openLawyerDetail(id) {
@@ -1618,7 +1637,7 @@ async function loadUsers() {
         <td style="text-transform:capitalize">${u.userType||'—'}</td>
         <td>${fmt.date(u.createdAt)}</td>
       </tr>`).join('') || '<tr><td colspan="7" class="text-center text-muted" style="padding:30px">No users found.</td></tr>';
-  } catch (err) { Toast.error(err.message); }
+  } catch (err) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-light)">⚠️ Backend not connected — user data unavailable</td></tr>'; }
 }
 
 // ── Inquiries ────────────────────────────────────────────────────────────────
@@ -1645,7 +1664,7 @@ async function loadInquiries() {
           <td>${fmt.date(inq.createdAt)}</td>
         </tr>`;
     }).join('') || '<tr><td colspan="7" class="text-center text-muted" style="padding:30px">No inquiries found.</td></tr>';
-  } catch (err) { Toast.error(err.message); }
+  } catch (err) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-light)">⚠️ Backend not connected — inquiry data unavailable</td></tr>'; }
 }
 
 // ── Export ───────────────────────────────────────────────────────────────────
