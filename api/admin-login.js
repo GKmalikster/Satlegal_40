@@ -1,54 +1,67 @@
 /**
- * api/admin-login.js — Admin / Tester login endpoint
+ * api/admin-login.js — Admin login endpoint
  * POST /api/admin-login
  *
- * Validates admin credentials and returns a signed token.
- * Token is an HMAC-SHA256 signature — no database or JWT library needed.
+ * Reads admin credentials from ADMIN_USERS env var (JSON array).
+ * Returns a time-limited signed HMAC token — no database needed.
  *
- * Set these in Vercel environment variables for production:
- *   ADMIN_EMAIL     → the admin email address
- *   ADMIN_PASSWORD  → the admin password
- *   ADMIN_SECRET    → a long random string used to sign tokens (keep secret)
- *
- * If env vars are not set, falls back to hardcoded defaults below.
- * CHANGE THE DEFAULTS before going to production.
+ * Vercel env vars required:
+ *   ADMIN_USERS   → JSON array: [{"email":"...","password":"...","name":"...","role":"superadmin|editor"}]
+ *   ADMIN_SECRET  → long random string for signing tokens (keep secret)
  */
 
 const crypto = require('crypto');
 
-// ── Credentials (override via Vercel env vars) ────────────────────────────────
-const ADMIN_EMAIL    = process.env.ADMIN_EMAIL    || 'tester@satlegal.in';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'SL@QA#8847';
-const ADMIN_SECRET   = process.env.ADMIN_SECRET   || 'sl-admin-secret-x7k9q2m4p1';
+const ADMIN_SECRET = process.env.ADMIN_SECRET || 'sl-admin-secret-x7k9q2m4p1';
 
-/**
- * Generate a deterministic signed token for a given email.
- * Token = HMAC-SHA256("tester:" + email, ADMIN_SECRET)
- * Deterministic so Vercel cold starts don't invalidate tokens.
- */
-function makeToken(email) {
-  return crypto
-    .createHmac('sha256', ADMIN_SECRET)
-    .update('tester:' + email.toLowerCase())
-    .digest('hex');
+// ── Load admin users from env var ─────────────────────────────────────────────
+function getAdminUsers() {
+  try {
+    if (process.env.ADMIN_USERS) return JSON.parse(process.env.ADMIN_USERS);
+  } catch (e) {
+    console.error('[admin-login] ADMIN_USERS parse error:', e.message);
+  }
+  // Single-user fallback (legacy env vars)
+  return [{
+    email:    process.env.ADMIN_EMAIL    || 'tester@satlegal.in',
+    password: process.env.ADMIN_PASSWORD || 'SL@QA#8847',
+    name:     'SatLegal Admin',
+    role:     'superadmin'
+  }];
 }
 
-/**
- * Verify a token presented in a request.
- * Exported so api/analyse.js can import and use it.
- */
+// ── Token: base64(email:role:timestamp).HMAC ──────────────────────────────────
+function makeToken(email, role) {
+  const ts      = Date.now();
+  const payload = `${email.toLowerCase()}:${role}:${ts}`;
+  const sig     = crypto.createHmac('sha256', ADMIN_SECRET).update(payload).digest('hex');
+  return Buffer.from(payload).toString('base64url') + '.' + sig;
+}
+
 function verifyToken(token) {
-  if (!token || typeof token !== 'string') return false;
-  const expected = makeToken(ADMIN_EMAIL);
-  // Constant-time comparison to prevent timing attacks
+  if (!token || typeof token !== 'string') return null;
   try {
-    return crypto.timingSafeEqual(
-      Buffer.from(token, 'hex'),
+    const dot = token.lastIndexOf('.');
+    if (dot === -1) return null;
+    const payloadB64 = token.slice(0, dot);
+    const sig        = token.slice(dot + 1);
+    const payload    = Buffer.from(payloadB64, 'base64url').toString();
+    const parts      = payload.split(':');
+    if (parts.length < 3) return null;
+    const role  = parts[1];
+    const ts    = parseInt(parts[parts.length - 1], 10);
+    const email = parts.slice(0, parts.length - 2).join(':'); // handle emails with colons
+    if (Date.now() - ts > 8 * 60 * 60 * 1000) return null; // expired
+    const expected = crypto.createHmac('sha256', ADMIN_SECRET).update(payload).digest('hex');
+    const valid = crypto.timingSafeEqual(
+      Buffer.from(sig.padEnd(64, '0').slice(0, 64), 'hex'),
       Buffer.from(expected, 'hex')
     );
-  } catch { return false; }
+    return valid ? { email, role } : null;
+  } catch { return null; }
 }
 
+// ── Handler ───────────────────────────────────────────────────────────────────
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin',  '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -57,35 +70,30 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST')   return res.status(405).json({ error: 'Method not allowed' });
 
-  const { email, password } = req.body || {};
-
+  const { email = '', password = '' } = req.body || {};
   if (!email || !password) {
     return res.status(400).json({ success: false, message: 'Email and password required' });
   }
 
-  // Case-insensitive email comparison
-  const emailMatch    = email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase();
-  const passwordMatch = password === ADMIN_PASSWORD;
+  const users = getAdminUsers();
+  const user  = users.find(u =>
+    u.email.toLowerCase() === email.toLowerCase().trim() && u.password === password
+  );
 
-  if (!emailMatch || !passwordMatch) {
-    // Deliberate vague error — don't reveal which field was wrong
-    return res.status(401).json({ success: false, message: 'Invalid credentials' });
+  if (!user) {
+    console.log('[admin-login] failed attempt for', email.slice(0, 3) + '***');
+    return res.status(401).json({ success: false, message: 'Invalid email or password' });
   }
 
-  const token = makeToken(email);
-
-  console.log('[admin-login] successful login for', email.slice(0, 3) + '***');
+  const token = makeToken(user.email, user.role);
+  console.log('[admin-login] success:', user.email.slice(0, 3) + '*** role=' + user.role);
 
   return res.json({
     success: true,
     token,
-    user: {
-      name:  'SatLegal Admin',
-      email: ADMIN_EMAIL,
-      role:  'tester',
-    },
+    user: { email: user.email, name: user.name, role: user.role }
   });
 };
 
-// Export verifyToken so other API functions can use it
+// Exported for use by admin API endpoints
 module.exports.verifyToken = verifyToken;

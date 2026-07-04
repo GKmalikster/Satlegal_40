@@ -151,37 +151,44 @@ function doLogin(){
 
   btn.classList.add('loading');btn.disabled=true;
 
-  setTimeout(function(){
-    const ADMIN_USERS=[
-      {email:'admin@satlegal.in',password:'Admin@2024',name:'Super Admin',role:'superadmin'},
-      {email:'cms@satlegal.in',password:'CMS@2024',name:'CMS Editor',role:'editor'},
-      {email:'contactus@gkconsulting.in',password:'GKAdmin@2024',name:'GK Consulting Admin',role:'superadmin'}
-    ];
-    const user=ADMIN_USERS.find(u=>u.email===email&&u.password===pass);
-    if(user){
+  fetch('/api/admin-login',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email,password:pass})
+  })
+  .then(r=>r.json())
+  .then(function(data){
+    if(data.success&&data.user){
+      const user=data.user;
       clearAttempts();
       auditLog('login_success',user.email+' ('+user.role+')');
       try{
-        const session = {email:user.email,name:user.name,role:user.role,loginTime:Date.now()};
-        localStorage.setItem('sl_admin_auth', JSON.stringify(session));
-        // Also bridge to regular Auth system so Auth.requireRole() works on dashboards
-        const bridgeRole = (user.role === 'superadmin') ? 'admin' : 'editor';
-        localStorage.setItem('sl_user', JSON.stringify({
-          email:user.email, name:user.name, role:bridgeRole, adminRole:user.role
+        localStorage.setItem('sl_admin_auth',JSON.stringify({
+          email:user.email,name:user.name,role:user.role,loginTime:Date.now()
         }));
-        localStorage.setItem('sl_token', 'admin-session-' + Date.now());
+        const bridgeRole=(user.role==='superadmin')?'admin':'editor';
+        localStorage.setItem('sl_user',JSON.stringify({
+          email:user.email,name:user.name,role:bridgeRole,adminRole:user.role
+        }));
+        // Store the real signed token for API calls
+        localStorage.setItem('sl_token', data.token);
       }catch(e){}
-      window.location.href = '../dashboard/admin-cms.html';
+      window.location.href='../dashboard/admin-cms.html';
     } else {
       recordAttempt();
       auditLog('login_failed',email);
-      err.textContent='❌ Invalid email or password. Please check and try again.';
+      err.textContent='❌ '+(data.message||'Invalid email or password.');
       err.classList.add('show');
       btn.classList.remove('loading');btn.disabled=false;
       document.getElementById('loginPass').value='';
       document.getElementById('loginPass').focus();
     }
-  },800);
+  })
+  .catch(function(){
+    err.textContent='❌ Login service unavailable. Please try again.';
+    err.classList.add('show');
+    btn.classList.remove('loading');btn.disabled=false;
+  });
 }
 </script>
 </body>
