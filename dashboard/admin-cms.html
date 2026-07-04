@@ -3542,15 +3542,40 @@ function loadDashboard(){
 // ══════════════════════════════════════════════════════════════
 // SALES PANEL
 // ══════════════════════════════════════════════════════════════
-function loadSales(){
-  const sales=JSON.parse(localStorage.getItem('sl_sales')||'[]');
-  const total=sales.reduce((s,t)=>s+(parseInt(t.amt)||0),0);
+function _applySalesData(sales, kpi) {
   const sk1=document.getElementById('sales-kpi-total'),sk2=document.getElementById('sales-kpi-count'),sk3=document.getElementById('sales-kpi-reports'),sk4=document.getElementById('sales-kpi-consult');
-  if(sk1)sk1.textContent=fmt(total);
-  if(sk2)sk2.textContent=sales.length;
-  if(sk3)sk3.textContent=sales.filter(s=>s.plan==='report').length;
-  if(sk4)sk4.textContent=sales.filter(s=>s.plan==='consultation').length;
+  if (kpi) {
+    if(sk1)sk1.textContent=fmt(kpi.total||0);
+    if(sk2)sk2.textContent=kpi.count||0;
+    if(sk3)sk3.textContent=kpi.reports||0;
+    if(sk4)sk4.textContent=kpi.consult||0;
+  } else {
+    const total=sales.reduce((s,t)=>s+(parseInt(t.amt)||0),0);
+    if(sk1)sk1.textContent=fmt(total);
+    if(sk2)sk2.textContent=sales.length;
+    if(sk3)sk3.textContent=sales.filter(s=>s.plan==='report').length;
+    if(sk4)sk4.textContent=sales.filter(s=>s.plan==='consultation').length;
+  }
+  // Store to localStorage so export still works
+  try{localStorage.setItem('sl_sales',JSON.stringify(sales));}catch(e){}
   renderSalesTable();
+}
+
+function loadSales(){
+  // Render localStorage immediately
+  const cached=JSON.parse(localStorage.getItem('sl_sales')||'[]');
+  _applySalesData(cached, null);
+
+  // Fetch from MongoDB in background
+  const tok=localStorage.getItem('sl_token')||'';
+  fetch('/api/sales',{headers:{'Authorization':'Bearer '+tok}})
+    .then(r=>r.ok?r.json():null)
+    .then(function(data){
+      if(data&&data.success&&Array.isArray(data.sales)){
+        _applySalesData(data.sales, data.kpi||null);
+      }
+    })
+    .catch(function(){});
 }
 function renderSalesTable(){
   const sales=JSON.parse(localStorage.getItem('sl_sales')||'[]');

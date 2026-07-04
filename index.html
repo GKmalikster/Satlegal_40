@@ -2637,13 +2637,16 @@ function verifyOtp(){
     try{localStorage.setItem('sl_user',JSON.stringify(user));localStorage.setItem('sl_pending_report',JSON.stringify({input:W.input,laws:W.selected,answers:W.answers,files:Object.keys(W.files).length}))}catch(e){}
     // Track signup
     slTrack('signup_completed',{uid,plan:W.selectedPlan||'report',amt:W.selectedPlanAmt||499});
-    // Persist to sales ledger
+    // Persist to sales ledger (localStorage + MongoDB)
     try{
       const k='sl_sales';
       const sales=JSON.parse(localStorage.getItem(k)||'[]');
-      sales.unshift({id:uid,name:W.name,email:W.email,phone:W.phone||'',plan:W.selectedPlan||'report',amt:W.selectedPlanAmt||499,status:'signup_completed',laws:(W.selected||[]).slice(0,3).map(l=>l.name||l.caseType),ts:new Date().toISOString()});
+      const saleEntry={id:uid,name:W.name,email:W.email,phone:W.phone||'',plan:W.selectedPlan||'report',amt:W.selectedPlanAmt||499,status:'signup_completed',laws:(W.selected||[]).slice(0,3).map(l=>l.name||l.caseType),ts:new Date().toISOString()};
+      sales.unshift(saleEntry);
       if(sales.length>5000)sales.length=5000;
       localStorage.setItem(k,JSON.stringify(sales));
+      // Fire-and-forget to MongoDB
+      fetch('/api/sales',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(saleEntry)}).catch(function(){});
     }catch(e){}
     // Store ₹500 discount for lawyer consultation (valid 7 days) if plan is report
     if((W.selectedPlan||'report')==='report'){
@@ -3316,6 +3319,16 @@ function _openRazorpay(keyId,plan,amt,planLabel){
         ts:new Date().toISOString()
       };
       localStorage.setItem('sl_last_payment',JSON.stringify(txn));
+      // Update sales record in MongoDB with payment_completed status
+      try{
+        const _u=JSON.parse(localStorage.getItem('sl_user')||'{}');
+        const _uid=_u.uid||_u.id||('pay_'+Date.now());
+        fetch('/api/sales',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+          id:_uid,name:_u.name||'',email:_u.email||'',phone:_u.phone||'',
+          plan:planObj.type||'report',amt:amt,status:'payment_completed',
+          razorpay_payment_id:txn.razorpay_payment_id,razorpay_order_id:txn.razorpay_order_id,ts:txn.ts
+        })}).catch(function(){});
+      }catch(e){}
       toast('✅ Payment successful! Loading your '+planLabel+'…');
       const legacyType=planObj.type==='report'?'report':'consult';
       selectPlan(legacyType,amt);

@@ -9,7 +9,8 @@
     "api/admin/inquiries.js":         { "maxDuration": 10 },
     "api/admin/analytics/summary.js": { "maxDuration": 10 },
     "api/admin/content.js":           { "maxDuration": 10 },
-    "api/admin/config.js":            { "maxDuration": 10 }
+    "api/admin/config.js":            { "maxDuration": 10 },
+    "api/sales.js":                   { "maxDuration": 10 }
   },
   "routes": [
     { "src": "/api/analyse",                 "dest": "/api/analyse.js" },
@@ -24,6 +25,7 @@
     { "src": "/api/admin/analytics/summary", "dest": "/api/admin/analytics/summary.js" },
     { "src": "/api/admin/content",           "dest": "/api/admin/content.js" },
     { "src": "/api/admin/config",            "dest": "/api/admin/config.js" },
+    { "src": "/api/sales",                   "dest": "/api/sales.js" },
     { "src": "/(.*)",                        "dest": "/$1" }
   ]
 }
