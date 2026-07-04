@@ -3357,6 +3357,13 @@ document.addEventListener('DOMContentLoaded',function(){
     }
   }).catch(function(){});
 
+  // Fetch flow config from MongoDB — store to localStorage so all gates use latest settings
+  fetch('/api/admin/config').then(function(r){return r.json();}).then(function(data){
+    if(data.success&&data.config&&Object.keys(data.config).length){
+      try{localStorage.setItem('sl_flow_config',JSON.stringify(data.config));}catch(e){}
+    }
+  }).catch(function(){});
+
   // Restore wizard session if user left mid-way
   try{
     const restoredStep=restoreWizardSession();

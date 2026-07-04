@@ -3928,19 +3928,34 @@ const FC_DEFAULTS = {
   maxLawsInReport: 5
 };
 
-function loadConfigurator() {
-  const cfg = Object.assign({}, FC_DEFAULTS, JSON.parse(localStorage.getItem(FC_KEY)||'{}'));
-  // Toggles
+function _applyFCConfig(cfg) {
   ['paymentRequired','signupRequired','freeReportAccess','consultationBooking','lawFirmAssignment','chatbotEnabled','showConfidence','showDisclaimer'].forEach(k => {
     const el = document.getElementById('fc-'+k);
     if (el) el.checked = !!cfg[k];
   });
-  // Numbers
   ['reportPrice','consultationFee','freeQueryLimit','reportValidityDays','maxQueriesPerDay','maxLawsInReport'].forEach(k => {
     const el = document.getElementById('fc-'+k);
     if (el) el.value = cfg[k];
   });
   updateFCPreview();
+}
+
+function loadConfigurator() {
+  // Render from localStorage immediately (instant UI)
+  const cfg = Object.assign({}, FC_DEFAULTS, JSON.parse(localStorage.getItem(FC_KEY)||'{}'));
+  _applyFCConfig(cfg);
+
+  // Sync from MongoDB in background
+  fetch('/api/admin/config')
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (data && data.success && data.config && Object.keys(data.config).length) {
+        const merged = Object.assign({}, FC_DEFAULTS, data.config);
+        localStorage.setItem(FC_KEY, JSON.stringify(merged));
+        _applyFCConfig(merged);
+      }
+    })
+    .catch(() => {});
 }
 
 function getFCValues() {
@@ -4003,6 +4018,14 @@ function saveFlowConfig() {
   localStorage.setItem(FC_KEY, JSON.stringify(cfg));
   showToast('Flow configuration saved! Frontend pages will read new settings on next load.');
   updateFCPreview();
+
+  // Persist to MongoDB
+  const tok = localStorage.getItem('sl_token') || '';
+  fetch('/api/admin/config', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok },
+    body: JSON.stringify(cfg)
+  }).catch(() => {});
 }
 
 function resetFlowConfig() {
