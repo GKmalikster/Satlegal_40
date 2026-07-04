@@ -1099,24 +1099,20 @@ function slTrack(event, data){
 // Track law searches for admin analytics
 function slTrackLawSearch(query, laws){
   try{
+    const lawList=(laws||[]).slice(0,5).map(l=>({name:l.name||l.caseType,conf:Math.round(l.confidence||l.score||0)}));
     const k='sl_law_searches';
     const searches=JSON.parse(localStorage.getItem(k)||'[]');
-    searches.unshift({
-      id:'srch_'+Date.now(),
-      query:query.substring(0,200),
-      laws:(laws||[]).slice(0,5).map(l=>({name:l.name||l.caseType,conf:Math.round(l.confidence||l.score||0)})),
-      ts:new Date().toISOString()
-    });
+    searches.unshift({id:'srch_'+Date.now(),query:query.substring(0,200),laws:lawList,ts:new Date().toISOString()});
     if(searches.length>1000)searches.length=1000;
     localStorage.setItem(k,JSON.stringify(searches));
-    // Also update law frequency counts
     const k2='sl_law_freq';
     const freq=JSON.parse(localStorage.getItem(k2)||'{}');
-    (laws||[]).slice(0,5).forEach(l=>{
-      const n=l.name||l.caseType||'Unknown';
-      freq[n]=(freq[n]||0)+1;
-    });
+    lawList.forEach(l=>{const n=l.name||'Unknown';freq[n]=(freq[n]||0)+1;});
     localStorage.setItem(k2,JSON.stringify(freq));
+    // Also persist to MongoDB via serverless function (fire-and-forget)
+    fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'search',query:query.substring(0,300),laws:lawList,sessionId:window._slSession,source:'wizard'})
+    }).catch(()=>{});
   }catch(e){}
 }
 
@@ -1127,23 +1123,25 @@ function slTrackLead(stage, extra){
     const leads=JSON.parse(localStorage.getItem(k)||'[]');
     const existing=leads.find(l=>l.session===window._slSession);
     if(existing){
-      existing.stage=stage;
-      existing.updatedAt=new Date().toISOString();
+      existing.stage=stage;existing.updatedAt=new Date().toISOString();
       if(extra)Object.assign(existing,extra);
     } else {
-      leads.unshift({
-        id:'lead_'+Date.now()+'_'+Math.random().toString(36).substr(2,5),
-        session:window._slSession,
-        stage, // 'query'|'analysis'|'signup'|'payment'|'consultation'
+      leads.unshift({id:'lead_'+Date.now()+'_'+Math.random().toString(36).substr(2,5),
+        session:window._slSession,stage,
         query:(window.W&&window.W.input||'').substring(0,150),
         laws:(window.W&&window.W.selected||[]).slice(0,3).map(l=>l.name||l.caseType),
-        createdAt:new Date().toISOString(),
-        updatedAt:new Date().toISOString(),
-        ...extra
-      });
+        createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),...extra});
     }
     if(leads.length>2000)leads.length=2000;
     localStorage.setItem(k,JSON.stringify(leads));
+    // Also persist to MongoDB (fire-and-forget)
+    fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'lead',stage,sessionId:window._slSession,
+        query:(window.W&&window.W.input||'').substring(0,150),
+        laws:(window.W&&window.W.selected||[]).slice(0,3).map(l=>l.name||l.caseType),
+        ...(extra&&extra.email?{email:extra.email}:{}),
+        ...(extra&&extra.name?{name:extra.name}:{})})
+    }).catch(()=>{});
   }catch(e){}
 }
 
