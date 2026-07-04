@@ -3335,16 +3335,27 @@ function _openRazorpay(keyId,plan,amt,planLabel){
 }
 
 /* ── CMS banner + deep-link plan handler ── */
-document.addEventListener('DOMContentLoaded',function(){
+function _applyBanner(c){
   try{
-    const c=JSON.parse(localStorage.getItem('sl_cms_v1')||'{}');
-    if(c.banners?.showDemo&&c.banners?.demoText){
-      const b=document.createElement('div');
-      b.style.cssText='background:var(--sf-500);color:#fff;text-align:center;padding:7px;font-size:13px;font-weight:700';
-      b.textContent=c.banners.demoText;
-      document.body.insertBefore(b,document.body.firstChild);
-    }
+    if(!c.banners?.showDemo||!c.banners?.demoText)return;
+    if(document.getElementById('_cmsBanner'))return;
+    const b=document.createElement('div');
+    b.id='_cmsBanner';
+    b.style.cssText='background:var(--sf-500);color:#fff;text-align:center;padding:7px;font-size:13px;font-weight:700';
+    b.textContent=c.banners.demoText;
+    document.body.insertBefore(b,document.body.firstChild);
   }catch(e){}
+}
+document.addEventListener('DOMContentLoaded',function(){
+  // Show banner from localStorage immediately
+  try{_applyBanner(JSON.parse(localStorage.getItem('sl_cms_v1')||'{}'));}catch(e){}
+  // Fetch latest CMS content from MongoDB, update localStorage + banner
+  fetch('/api/admin/content').then(function(r){return r.json();}).then(function(data){
+    if(data.success&&data.content){
+      try{localStorage.setItem('sl_cms_v1',JSON.stringify(data.content));}catch(e){}
+      _applyBanner(data.content);
+    }
+  }).catch(function(){});
 
   // Restore wizard session if user left mid-way
   try{

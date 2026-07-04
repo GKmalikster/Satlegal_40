@@ -2291,17 +2291,43 @@ const STORAGE_KEY = 'sl_cms_v1';
 
 // ── Init ──────────────────────────────────────────────────────
 function init() {
+  // 1. Render from localStorage immediately (instant, no flash)
   const saved = localStorage.getItem(STORAGE_KEY);
   content = saved ? deepMerge(JSON.parse(JSON.stringify(DEFAULTS)), JSON.parse(saved)) : JSON.parse(JSON.stringify(DEFAULTS));
   renderAllEditors();
   updateStatusBar(false);
 
-  // Check auth
+  // Check auth + set admin label
   const token = localStorage.getItem('sl_token');
   const user = localStorage.getItem('sl_user');
   if (user) {
     try { const u = JSON.parse(user); document.getElementById('adminLabel').textContent = u.name || 'Admin'; } catch(e){}
   }
+
+  // 2. Sync from MongoDB in background (only if no unsaved changes)
+  if (token) tryLoadFromAPI(token);
+}
+
+async function tryLoadFromAPI(token) {
+  try {
+    const r = await fetch('/api/admin/content', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!r.ok) return;
+    const data = await r.json();
+    if (!data.success || !data.content) return;
+    // Only apply if admin hasn't started editing
+    if (dirtyPanels.size > 0) return;
+    const merged = deepMerge(JSON.parse(JSON.stringify(DEFAULTS)), data.content);
+    const localStr = localStorage.getItem(STORAGE_KEY) || '{}';
+    // Only re-render if server data differs from local
+    if (JSON.stringify(merged) !== JSON.stringify(content)) {
+      content = merged;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
+      renderAllEditors();
+      showToast('✅ Content synced from server');
+    }
+  } catch(e) { /* API unavailable — localStorage is fine */ }
 }
 
 function deepMerge(target, source) {

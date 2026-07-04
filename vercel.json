@@ -7,7 +7,8 @@
     "api/admin/users.js":             { "maxDuration": 10 },
     "api/admin/lawyers.js":           { "maxDuration": 10 },
     "api/admin/inquiries.js":         { "maxDuration": 10 },
-    "api/admin/analytics/summary.js": { "maxDuration": 10 }
+    "api/admin/analytics/summary.js": { "maxDuration": 10 },
+    "api/admin/content.js":           { "maxDuration": 10 }
   },
   "routes": [
     { "src": "/api/analyse",                 "dest": "/api/analyse.js" },
@@ -20,6 +21,7 @@
     { "src": "/api/admin/lawyers",           "dest": "/api/admin/lawyers.js" },
     { "src": "/api/admin/inquiries",         "dest": "/api/admin/inquiries.js" },
     { "src": "/api/admin/analytics/summary", "dest": "/api/admin/analytics/summary.js" },
+    { "src": "/api/admin/content",           "dest": "/api/admin/content.js" },
     { "src": "/(.*)",                        "dest": "/$1" }
   ]
 }
