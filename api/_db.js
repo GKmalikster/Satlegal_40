@@ -8,28 +8,19 @@
 const mongoose = require('mongoose');
 
 // ── Auth helper (shared by all admin endpoints) ──────────────────────────────
-// Accepts:
-//   1. New HMAC token from api/admin-login.js (preferred)
-//   2. Legacy 'admin-session-<timestamp>' tokens (backwards compat)
+// Accepts HMAC-signed tokens issued by api/admin-login.js ONLY.
+// Legacy timestamp-only tokens ('admin-session-*') are no longer accepted.
 function isAdmin(req) {
   const auth = (req.headers['authorization'] || '').replace('Bearer ', '').trim();
   if (!auth) return false;
 
-  // New signed token (contains a dot separator)
-  if (auth.includes('.')) {
-    try {
-      const { verifyToken } = require('./admin-login');
-      return verifyToken(auth) !== null;
-    } catch { return false; }
-  }
+  // Only accept dot-separated HMAC tokens
+  if (!auth.includes('.')) return false;
 
-  // Legacy token set by old admin-login.html: 'admin-session-<timestamp>'
-  if (auth.startsWith('admin-session-')) {
-    const ts = parseInt(auth.replace('admin-session-', ''), 10);
-    return !isNaN(ts) && (Date.now() - ts < 8 * 60 * 60 * 1000);
-  }
-
-  return false;
+  try {
+    const { verifyToken } = require('./admin-login');
+    return verifyToken(auth) !== null;
+  } catch { return false; }
 }
 
 // ── Connection singleton ──────────────────────────────────────────────────────

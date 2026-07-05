@@ -224,16 +224,17 @@ a{color:var(--sf-700);text-decoration:none}
 </head>
 <body>
 <script>
-// ── Auth Guard — inline overlay (works on file:// and deployed) ──
-const ADMIN_USERS=[
-  {email:'admin@satlegal.in',password:'Admin@2024',name:'Super Admin',role:'superadmin'},
-  {email:'cms@satlegal.in',password:'CMS@2024',name:'CMS Editor',role:'editor'},
-  {email:'contactus@gkconsulting.in',password:'GKAdmin@2024',name:'GK Consulting Admin',role:'superadmin'}
-];
+// ── Auth Guard — API-backed (no credentials stored in frontend) ──
+// Credentials are verified by /api/admin-login (server-side only).
+// The token stored in localStorage is a signed HMAC — not a password.
+const _API_BASE = window.location.hostname === 'localhost' || window.location.protocol === 'file:'
+  ? 'https://satlegal-40.vercel.app'
+  : '';
+
 function _checkAuth(){
   try{
     const a=JSON.parse(localStorage.getItem('sl_admin_auth')||'null');
-    return a&&a.email&&(Date.now()-a.loginTime<8*60*60*1000)?a:null;
+    return a&&a.token&&a.email&&(Date.now()-a.loginTime<8*60*60*1000)?a:null;
   }catch(e){return null;}
 }
 function _showLoginOverlay(){
@@ -244,17 +245,36 @@ function _hideLoginOverlay(){
   const ov=document.getElementById('adminLoginOverlay');
   if(ov){ov.style.display='none';document.body.style.overflow='';}
 }
-function adminDoLogin(){
+async function adminDoLogin(){
   const email=(document.getElementById('ovEmail')?.value||'').trim().toLowerCase();
   const pass=document.getElementById('ovPass')?.value||'';
   const err=document.getElementById('ovErr');
-  const user=ADMIN_USERS.find(u=>u.email===email&&u.password===pass);
-  if(!user){if(err){err.style.display='block';err.textContent='Invalid email or password. Please try again.';}return;}
-  localStorage.setItem('sl_admin_auth',JSON.stringify({email:user.email,name:user.name,role:user.role,loginTime:Date.now()}));
-  _hideLoginOverlay();
-  const el=document.getElementById('adminLabel');if(el)el.textContent=user.name;
-  const roleEl=document.getElementById('adminRole');if(roleEl)roleEl.textContent=user.role;
-  if(typeof init==='function')init();
+  const btn=document.getElementById('ovLoginBtn');
+  if(!email||!pass){if(err){err.style.display='block';err.textContent='Email and password required.';}return;}
+  if(btn){btn.disabled=true;btn.textContent='Signing in...';}
+  try{
+    const resp=await fetch(`${_API_BASE}/api/admin-login`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,password:pass})
+    });
+    const data=await resp.json();
+    if(!data.success){
+      if(err){err.style.display='block';err.textContent=data.message||'Invalid email or password.';}
+      return;
+    }
+    localStorage.setItem('sl_admin_auth',JSON.stringify({
+      email:data.user.email,name:data.user.name,role:data.user.role,
+      token:data.token,loginTime:Date.now()
+    }));
+    _hideLoginOverlay();
+    const el=document.getElementById('adminLabel');if(el)el.textContent=data.user.name;
+    const roleEl=document.getElementById('adminRole');if(roleEl)roleEl.textContent=data.user.role;
+    if(typeof init==='function')init();
+  }catch(e){
+    if(err){err.style.display='block';err.textContent='Network error. Please check your connection.';}
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Sign In';}
+  }
 }
 function adminLogout(){
   if(!confirm('Sign out of Admin Console?'))return;
@@ -286,7 +306,7 @@ document.addEventListener('DOMContentLoaded',function(){
       <input id="ovPass" type="password" placeholder="Enter your password" onkeydown="if(event.key==='Enter')adminDoLogin()" style="width:100%;padding:11px 14px;border:1.5px solid #E5E7EB;border-radius:8px;font-size:14px;outline:none;transition:.2s" onfocus="this.style.borderColor='#138808'" onblur="this.style.borderColor='#E5E7EB'"/>
     </div>
     <div id="ovErr" style="display:none;background:#FDECEA;color:#C0392B;padding:9px 14px;border-radius:8px;font-size:12px;font-weight:600;margin-bottom:16px;text-align:left"></div>
-    <button onclick="adminDoLogin()" style="width:100%;background:linear-gradient(135deg,#138808,#1A6B1A);color:#fff;border:none;padding:13px;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.5px">🔐 Sign In to Admin Console</button>
+    <button id="ovLoginBtn" onclick="adminDoLogin()" style="width:100%;background:linear-gradient(135deg,#138808,#1A6B1A);color:#fff;border:none;padding:13px;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.5px">🔐 Sign In to Admin Console</button>
     <div style="margin-top:16px;font-size:11px;color:#9CA3AF">Session lasts 8 hours · Secured by SatLegal</div>
   </div>
 </div>

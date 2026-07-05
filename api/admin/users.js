@@ -21,15 +21,17 @@ module.exports = async function handler(req, res) {
     const { search = '', role = '', state = '', userType = '', limit = 200 } = req.query;
     const filter = {};
     if (search) {
+      // Escape regex special chars to prevent ReDoS attacks
+      const safe = String(search).replace(/[.*+?^${}()|[\]\\]/g, '\\$&').slice(0, 100);
       filter.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
-        { phone: { $regex: search, $options: 'i' } }
+        { name:  { $regex: safe, $options: 'i' } },
+        { email: { $regex: safe, $options: 'i' } },
+        { phone: { $regex: safe, $options: 'i' } }
       ];
     }
-    if (role)     filter.role     = role;
-    if (state)    filter.state    = state;
-    if (userType) filter.userType = userType;
+    if (role)     filter.role     = String(role).slice(0, 30);
+    if (state)    filter.state    = String(state).slice(0, 50);
+    if (userType) filter.userType = String(userType).slice(0, 30);
 
     const users = await User.find(filter)
       .sort({ createdAt: -1 })
@@ -39,6 +41,6 @@ module.exports = async function handler(req, res) {
     return res.json({ success: true, users, total: users.length });
   } catch (err) {
     console.error('[admin/users]', err.message);
-    return res.status(500).json({ success: false, message: err.message });
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
