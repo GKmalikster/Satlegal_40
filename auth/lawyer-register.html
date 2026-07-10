@@ -788,18 +788,44 @@ tbody tr:last-child td { border-bottom: none; }
 Auth.redirectIfLoggedIn();
 
 const SPECIALIZATIONS = [
+  // Property
   'Property – Boundary Dispute / Encroachment','Property – Rent Dispute / Tenant Eviction',
   'Property – RERA Disputes / Builder Fraud','Property – Hindu Succession / Inheritance Dispute',
+  'Property – Land Acquisition (RFCTLARR)','Property – Title Dispute / Benami',
+  // Civil
   'Civil – Partition Suit','Civil – Money Recovery','Civil – Specific Performance',
-  'Civil – Injunction','Civil – Declaration Suit',
+  'Civil – Injunction','Civil – Declaration Suit','Civil – Recovery of Dues',
+  // Family
   'Family – Divorce (Hindu Marriage Act)','Family – Muslim Divorce (Triple Talaq/Khula)',
   'Family – Maintenance / Alimony','Family – Child Custody','Family – Domestic Violence',
-  'Criminal – IPC Fraud / Cheating','Criminal – Cheque Bounce (NI Act)',
-  'Criminal – Cybercrime (IT Act)','Criminal – FIR Quashing',
+  'Family – Protection Order (DV Act)','Family – Guardianship',
+  // Criminal
+  'Criminal – BNS / IPC Fraud / Cheating','Criminal – Cheque Bounce (NI Act)',
+  'Criminal – Cybercrime (IT Act / BNSS)','Criminal – FIR Quashing',
+  'Criminal – Bail Application','Criminal – POCSO / Child Protection',
+  'Criminal – Narcotics (NDPS Act)','Criminal – Anticipatory Bail',
+  // Consumer
   'Consumer – Product Defect','Consumer – Service Deficiency',
   'Consumer – Medical Negligence','Consumer – Insurance Claim',
+  'Consumer – E-commerce / Online Fraud','Consumer – Banking / UPI Fraud',
+  // Labour & Employment
   'Labour – Wrongful Termination','Labour – Wage Dispute',
-  'Labour – Gratuity / PF','Motor Accident – MACT Claim'
+  'Labour – Gratuity / PF / ESI','Labour – Workplace Harassment (POSH)',
+  'Labour – Industrial Dispute','Labour – Contract Labour',
+  // Motor & Personal Injury
+  'Motor Accident – MACT Claim','Personal Injury – Compensation',
+  // Corporate & Commercial
+  'Corporate – Company Law / MCA','Corporate – Insolvency (IBC)',
+  'Corporate – Contract Dispute','Corporate – Intellectual Property',
+  'Corporate – Startup / Founder Dispute',
+  // Taxation
+  'Tax – Income Tax Dispute','Tax – GST Dispute','Tax – Custom / Excise',
+  // Other
+  'Writ Petition – High Court / Supreme Court',
+  'RTI / Government Authority Dispute',
+  'Municipal / Local Body Dispute',
+  'Environmental / NGT Matter',
+  'Matrimonial Property Settlement'
 ];
 
 const grid = document.getElementById('specGrid');

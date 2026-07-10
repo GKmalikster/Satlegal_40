@@ -662,6 +662,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
       <a href="laws-reference.html">Laws Library</a>
       <a href="pricing.html">Pricing</a>
       
+      <a href="how-it-works.html">How It Works</a>
       <a href="about.html">About Us</a>
       <a href="contact.html">Contact Us</a>
     </div>
@@ -701,7 +702,6 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
       <div class="hero-trust-row">
         <span class="hero-trust-badge">🔒 100% Confidential</span>
         <span class="hero-trust-badge">⚡ Instant Analysis</span>
-        <span class="hero-trust-badge">🧑‍⚖️ Verified Lawyers</span>
       </div>
       <p class="hero-note">Trusted by 10,000+ Indians to understand their rights before spending on legal fees</p>
     </div>
@@ -734,7 +734,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
         <!-- Professional Disclaimer — visible inside query card -->
         <div style="display:flex;align-items:flex-start;gap:10px;background:#FFFBF0;border:1.5px solid #FFD580;border-radius:8px;padding:11px 14px;margin-top:4px;font-size:12px;color:#7A5800;line-height:1.6">
           <span style="font-size:16px;flex-shrink:0;margin-top:1px">⚠️</span>
-          <span><strong style="color:#5A3F00">Professional Disclaimer:</strong> The Site cannot and does not contain legal advice. The legal information is provided for general informational and educational purposes only and is not a substitute for professional advice. Accordingly, before taking any actions based upon such information, we encourage you to consult with the appropriate legal professionals. We do not provide any kind of legal advice. Use of this platform does not create an attorney-client relationship. All analysis is preliminary and for informational use only. <strong style="color:#5A3F00">SatLegal is not a law firm.</strong></span>
+          <span><strong style="color:#5A3F00">Professional Disclaimer:</strong> The Site does not contain any legal advice or legal recourse to the problem stated. The legal information so provided is for general informational and educational purposes only and is not a substitute for any professional advice. Accordingly, before taking any actions based upon such information, we encourage you to consult with a legal professional. Use of this platform does not create an attorney-client relationship. All analysis is preliminary and for informational use only. <strong style="color:#5A3F00">SatLegal is not a law firm.</strong></span>
         </div>
         <button class="btn-analyze-main" onclick="heroAnalyze()" style="margin-top:14px">
           🔍 Analyze My Case →
@@ -766,7 +766,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
           <div class="char-ct"><span id="cc">0</span>/2000</div>
           <div class="query-disclaimer">
             <span class="qdl-icon">⚠️</span>
-            <span><strong>Professional Disclaimer:</strong> The Site cannot and does not contain legal advice. The legal information is provided for general informational and educational purposes only and is not a substitute for professional advice. Accordingly, before taking any actions based upon such information, we encourage you to consult with the appropriate legal professionals by taking a consultation by paying the appropriate fees. We do not provide any kind of legal advice.</span>
+            <span><strong>Professional Disclaimer:</strong> The Site does not contain any legal advice or legal recourse to the problem stated. The legal information so provided is for general informational and educational purposes only and is not a substitute for any professional advice. Accordingly, before taking any actions based upon such information, we encourage you to consult with a legal professional. Use of this platform does not create an attorney-client relationship. All analysis is preliminary and for informational use only. SatLegal is not a law firm.</span>
           </div>
           <div class="ex-chips">
             <span class="ex-chip" onclick="fillEx('My landlord changed the locks and is refusing to return my security deposit of ₹50,000. I have a registered rent agreement.')">🏠 Landlord dispute</span>
@@ -937,7 +937,6 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
       <div class="feat-card"><div class="feat-icon" style="background:var(--sf-100)">📊</div><h3>Case Readiness Score</h3><p>Based on your facts, evidence quality, and law match strength — get an honest assessment before spending on lawyers.</p></div>
       <div class="feat-card"><div class="feat-icon" style="background:var(--gr-50)">📋</div><h3>Step-by-Step Action Plan</h3><p>Know exactly what to do next: file FIR, send legal notice, which court to approach, what documents to gather.</p></div>
       <div class="feat-card"><div class="feat-icon" style="background:var(--sf-100)">🔒</div><h3>Private by Design</h3><p>Law analysis runs in your browser. Your data is only saved when you create a user ID to unlock the full report.</p></div>
-      <div class="feat-card"><div class="feat-icon" style="background:var(--gr-50)">⚖️</div><h3>Verified Lawyer Connect</h3><p>Get matched to verified Indian lawyers by specialization and city — with direct WhatsApp and call access.</p></div>
     </div>
   </div>
 </section>
@@ -991,7 +990,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
     <a href="laws-reference.html">Laws Library</a><a href="legal-topics.html">Legal Topics</a>
     <a href="contact.html">Contact Us</a>
     <a href="report-sample.html">Sample Report</a>
-    <a href="privacy-policy.html">Privacy Policy</a><a href="terms-conditions.html">Terms &amp; Conditions</a>
+    <a href="privacy-policy.html">Privacy Policy</a><a href="terms-conditions.html">Terms &amp; Conditions</a><a href="#" onclick="window.slCookieConsent&&window.slCookieConsent.openPreferences();return false">Cookie Preferences</a>
   </div>
   <p>⚠️ The content provided on this website is for informational purposes only and should not be relied upon as a substitute for legal advice. Recipients are advised to consult with qualified legal counsel before implementing any recommendations herein. SatLegal shall not be liable for actions taken based on this information.</p>
   <p style="margin-top:6px">© 2025 SatLegal · Built for India 🇮🇳 · All rights reserved</p>
@@ -1161,6 +1160,9 @@ function heroAnalyze(){
   // Copy into main wizard textarea then trigger s1
   const main=document.getElementById('issueTa');
   if(main){main.value=txt;updCC();}
+  // Hide hero query card to avoid showing textarea twice
+  const hqc=document.getElementById('heroQueryCard');
+  if(hqc)hqc.style.display='none';
   // Show & scroll to wiz-card
   const wc=document.getElementById('wizCard');
   if(wc)wc.style.display='';
@@ -2634,7 +2636,7 @@ function verifyOtp(){
   if(entered===W.otp||entered==='123456'){
     const uid='SL'+Date.now().toString(36).toUpperCase();
     const user={uid,name:W.name,email:W.email,phone:'+91'+W.phone.slice(0,5)+'XXXXX',createdAt:new Date().toLocaleString('en-IN'),plan:W.selectedPlan||'report',amt:W.selectedPlanAmt||499};
-    try{localStorage.setItem('sl_user',JSON.stringify(user));localStorage.setItem('sl_pending_report',JSON.stringify({input:W.input,laws:W.selected,answers:W.answers,files:Object.keys(W.files).length}))}catch(e){}
+    try{localStorage.setItem('sl_user',JSON.stringify(user));localStorage.setItem('sl_token','wizard_'+uid);localStorage.setItem('sl_pending_report',JSON.stringify({input:W.input,laws:W.selected,answers:W.answers,files:Object.keys(W.files).length}))}catch(e){}
     // Track signup
     slTrack('signup_completed',{uid,plan:W.selectedPlan||'report',amt:W.selectedPlanAmt||499});
     // Persist to sales ledger (localStorage + MongoDB)
@@ -2665,7 +2667,7 @@ function verifyOtp(){
       toast('✅ Verified! Redirecting to payment...');
       slTrackLead('payment',{uid,email:W.email,phone:W.phone?W.phone.substring(0,5)+'XXXXX':'',name:W.name,plan:W.selectedPlan||'report',amt:W.selectedPlanAmt||499});
       const plan=W.selectedPlan||'report';
-      setTimeout(()=>{ window.location.href=`payment.html?plan=${plan}&amt=${W.selectedPlanAmt||499}&uid=${uid}`; },600);
+      setTimeout(()=>{ window.location.replace(`payment.html?plan=${plan}&amt=${W.selectedPlanAmt||499}&uid=${uid}`); },600);
     }
   } else {
     toast('Incorrect OTP. Please try again.','err');
@@ -2865,7 +2867,7 @@ function addBotMsg(t){
 async function chatAnswer(q){
   const laws=await classifyLaws(q);
   if(!laws||!laws.length||(laws[0].confidence||laws[0].score||0)<15){
-    return 'I need more context to help you accurately. Could you describe your situation in more detail? For example: who is involved, what happened, and what outcome you are seeking?';
+    return 'Your query may be outside SatLegal\'s current coverage, or we need more detail to map it to the right law. Please try describing: (1) what happened, (2) who is involved, and (3) what outcome you are seeking. If your query remains unmapped, we recommend consulting a qualified lawyer directly. SatLegal currently covers 66+ Indian law categories including criminal law (BNS 2023), family law, property, labour, consumer protection, and more.';
   }
   const top=laws[0];
   const sections=(top.sections||[]).slice(0,3).map(s=>`• ${s}`).join('\n');

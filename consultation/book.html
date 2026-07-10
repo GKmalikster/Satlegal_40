@@ -79,7 +79,7 @@ a{text-decoration:none;color:inherit}
 <div class="tribar"></div>
 <nav class="nav">
   <a class="nav-brand" href="../index.html"><img src="../assets/logo.png" alt="SatLegal"/></a>
-  <a class="nav-back" href="../report.html">← Back to Report</a>
+  <div style="display:flex;gap:12px;align-items:center"><a class="nav-back" href="../report.html">← Back to Report</a><a href="../index.html" style="font-size:13px;color:var(--gr-700);font-weight:500;text-decoration:none">🏠 Home</a></div>
 </nav>
 
 <!-- Progress -->
@@ -110,8 +110,8 @@ a{text-decoration:none;color:inherit}
 <div class="main">
   <!-- Step 1: Select Lawyer -->
   <div class="card">
-    <h2>🧑‍⚖️ Choose Your Lawyer</h2>
-    <p class="sub">These lawyers are matched to your case type and are available for a consultation.</p>
+    <h2>🧑‍⚖️ We Shall Connect You to a Qualified Lawyer</h2>
+    <p class="sub">SatLegal will connect you with a qualified lawyer matched to your case type. Please select your preferred specialty and we will arrange your consultation.</p>
     <div class="lawyer-grid" id="lawyerGrid"><!-- populated by JS --></div>
   </div>
 
@@ -186,10 +186,10 @@ let lawyers=[];
 try{lawyers=JSON.parse(localStorage.getItem('sl_law_firms')||'[]')}catch(e){}
 if(!lawyers.length){
   lawyers=[
-    {id:'l1',name:'Adv. Priya Sharma',specialty:'Family Law · Divorce · Succession',location:'Mumbai',icon:'👩‍⚖️',exp:'12 years',lang:'Hindi, English, Marathi',rating:'4.9',reviews:142},
-    {id:'l2',name:'Adv. Rajesh Kapoor',specialty:'Civil Law · Property · RERA',location:'Delhi',icon:'👨‍⚖️',exp:'8 years',lang:'Hindi, English, Punjabi',rating:'4.8',reviews:87},
-    {id:'l3',name:'Adv. Meena Krishnamurthy',specialty:'Criminal Law · BNS · Consumer',location:'Bengaluru',icon:'👩‍⚖️',exp:'15 years',lang:'Kannada, English, Tamil',rating:'4.9',reviews:203},
-    {id:'l4',name:'Adv. Suresh Patel',specialty:'Employment · Labour · Minimum Wages',location:'Ahmedabad',icon:'👨‍⚖️',exp:'10 years',lang:'Gujarati, Hindi, English',rating:'4.7',reviews:66},
+    {id:'l1',name:'Qualified Lawyer (Family Law)',specialty:'Family Law · Divorce · Succession',location:'Delhi / Online',icon:'👩‍⚖️',exp:'10+ years',lang:'Hindi, English',rating:'4.9',reviews:0,showRating:false},
+    {id:'l2',name:'Qualified Lawyer (Property & Civil)',specialty:'Civil Law · Property · RERA',location:'Delhi / Online',icon:'👨‍⚖️',exp:'8+ years',lang:'Hindi, English',rating:'4.8',reviews:0,showRating:false},
+    {id:'l3',name:'Qualified Lawyer (Criminal Law)',specialty:'Criminal Law · BNS · Consumer',location:'Delhi / Online',icon:'👩‍⚖️',exp:'12+ years',lang:'Hindi, English',rating:'4.9',reviews:0,showRating:false},
+    {id:'l4',name:'Qualified Lawyer (Employment & Labour)',specialty:'Employment · Labour · Minimum Wages',location:'Delhi / Online',icon:'👨‍⚖️',exp:'10+ years',lang:'Hindi, English',rating:'4.7',reviews:0,showRating:false},
   ];
 }
 

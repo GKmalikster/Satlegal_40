@@ -23,7 +23,11 @@ const Auth = (() => {
     catch { return null; }
   };
 
-  const isLoggedIn = () => !!getToken();
+  const isLoggedIn = () => {
+    if (!!getToken()) return true;
+    // Also accept wizard OTP sessions (no JWT, just sl_user)
+    try { const u = JSON.parse(localStorage.getItem(USER_KEY)); return !!(u && u.uid); } catch(e) { return false; }
+  };
 
   const getUserRole = () => getUser()?.role || null;
 

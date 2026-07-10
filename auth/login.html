@@ -640,7 +640,7 @@ tbody tr:last-child td { border-bottom: none; }
 </div>
 
 <nav class="navbar">
-  <a href="/" class="navbar-brand"><span class="brand-sat">Sat</span><span class="brand-legal">Legal</span><span class="brand-dot">.in</span></a>
+  <a href="/" class="navbar-brand"><img src="../assets/logo.png" alt="SatLegal" style="height:38px;width:auto;display:block"></a>
   <div class="nav-links">
     <a href="/auth/signup.html" class="btn btn-primary btn-sm">Sign Up Free</a>
   </div>
@@ -648,7 +648,7 @@ tbody tr:last-child td { border-bottom: none; }
 
 <div class="auth-wrap">
   <div class="auth-box">
-    <div class="auth-logo"><a href="/"><span class="brand-sat">Sat</span><span class="brand-legal">Legal</span><span class="brand-dot">.in</span></a></div>
+    <div class="auth-logo"><a href="/"><img src="../assets/logo.png" alt="SatLegal" style="height:44px;width:auto;display:inline-block"></a></div>
     <h2 class="auth-title">Welcome back</h2>
     <p class="auth-subtitle">Login to access your legal dashboard</p>
 
@@ -744,9 +744,15 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
       const role = data.user.role;
       const params = new URLSearchParams(window.location.search);
       const returnUrl = params.get('return');
-      if (role === 'admin')       window.location.href = returnUrl || '/dashboard/admin-dashboard.html';
-      else if (role === 'lawyer') window.location.href = returnUrl || '/dashboard/lawyer-dashboard.html';
-      else                        window.location.href = returnUrl || '/dashboard/user-dashboard.html';
+      // If there's a pending report in wizard, return there instead of dashboard
+      let finalUrl;
+      if (role === 'admin')        finalUrl = returnUrl || '/dashboard/admin-dashboard.html';
+      else if (role === 'lawyer')  finalUrl = returnUrl || '/dashboard/lawyer-dashboard.html';
+      else {
+        const pendingReport = localStorage.getItem('sl_pending_report');
+        finalUrl = returnUrl || (pendingReport ? '/#wizard' : '/dashboard/user-dashboard.html');
+      }
+      window.location.href = finalUrl;
     }, 800);
   } catch (err) {
     alertBox.innerHTML = `<div class="alert alert-danger">❌ ${err.message}</div>`;

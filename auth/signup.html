@@ -634,13 +634,13 @@ tbody tr:last-child td { border-bottom: none; }
 <div id="loading-overlay" class="loading-overlay"><div class="loading-box"><div class="loader"></div></div></div>
 
 <nav class="navbar">
-  <a href="/" class="navbar-brand"><span class="brand-sat">Sat</span><span class="brand-legal">Legal</span><span class="brand-dot">.in</span></a>
+  <a href="/" class="navbar-brand"><img src="../assets/logo.png" alt="SatLegal" style="height:38px;width:auto;display:block"></a>
   <div class="nav-links"><a href="/auth/login.html" class="btn btn-outline btn-sm">Login</a></div>
 </nav>
 
 <div class="auth-wrap">
   <div class="auth-box">
-    <div class="auth-logo"><a href="/"><span class="brand-sat">Sat</span><span class="brand-legal">Legal</span><span class="brand-dot">.in</span></a></div>
+    <div class="auth-logo"><a href="/"><img src="../assets/logo.png" alt="SatLegal" style="height:44px;width:auto;display:inline-block"></a></div>
     <h2 style="font-size:20px;font-weight:700;text-align:center;margin-bottom:4px">Create Free Account</h2>
     <p style="text-align:center;color:var(--text-light);font-size:13px;margin-bottom:18px">Save your analysis and track your cases</p>
 
@@ -722,7 +722,13 @@ tbody tr:last-child td { border-bottom: none; }
       <div class="form-group">
         <label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;cursor:pointer;font-size:13px">
           <input type="checkbox" id="terms" required style="margin-top:3px;flex-shrink:0" />
-          I agree to the <a href="#" style="margin-left:3px">Terms of Service</a> and understand that SatLegal provides legal information, not legal advice.
+          I agree to the <a href="../terms-conditions.html" style="margin-left:3px" target="_blank">Terms of Service</a> and understand that SatLegal provides legal information, not legal advice.
+        </label>
+      </div>
+      <div class="form-group" style="margin-top:8px">
+        <label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;cursor:pointer;font-size:13px">
+          <input type="checkbox" id="dpdpConsent" required style="margin-top:3px;flex-shrink:0" />
+          I consent to SatLegal collecting and processing my personal data for the purpose of providing legal information services, as required under the Digital Personal Data Protection Act 2023 (DPDP Act). I may withdraw this consent at any time by writing to <a href="mailto:privacy@satlegal.in">privacy@satlegal.in</a>.
         </label>
       </div>
       <button type="submit" class="btn btn-primary btn-block btn-lg" id="signupBtn">Create My Account →</button>
@@ -774,7 +780,8 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
     Toast.success('Account created! Welcome to SatLegal!');
     // Redirect to return URL if set, else dashboard
     const params = new URLSearchParams(window.location.search);
-    const returnUrl = params.get('return') || '/dashboard/user-dashboard.html';
+    const pendingReport = localStorage.getItem('sl_pending_report');
+    const returnUrl = params.get('return') || (pendingReport ? '/#wizard' : '/dashboard/user-dashboard.html');
     setTimeout(() => { window.location.href = returnUrl; }, 1000);
   } catch (err) {
     alertBox.innerHTML = `<div class="alert alert-danger">❌ ${err.message}</div>`;

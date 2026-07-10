@@ -12716,6 +12716,12 @@ const LAWS_DATABASE = [
         "ancestral home heritage building",
         "ancestral declared heritage building",
         "heritage building dispute municipal",
+        "my shop has been sealed in delhi what should i do",
+        "my shop has been sealed by the corporation",
+        "municipality sealed my shop",
+        "authorities sealed my shop",
+        "trade license cancelled and shop sealed",
+        "shop sealed without notice",
         "bmc issued demolition notice for my shop",
         "municipality is refusing to give building permission for my house",
         "municipal corporation demolished my legal house without notice or order",
@@ -12750,6 +12756,23 @@ const LAWS_DATABASE = [
         "neighbour construction illegal",
         "nagarpalika ne giraya",
         "municipality demolition without notice",
+        "shop sealed",
+        "shop seal",
+        "sealed shop",
+        "shop sealing",
+        "dukan sealed",
+        "dukan band",
+        "my shop has been sealed",
+        "shop band kar diya",
+        "property sealed by authorities",
+        "business sealed",
+        "premises sealed",
+        "sealed by corporation",
+        "trade license cancelled",
+        "license seal",
+        "shop sealed by mcgm",
+        "shop sealed by mcd",
+        "shop sealed by nagar nigam",
         "noise from neighbour music",
         "loud music noise complaint",
         "noisy neighbour complaint",
@@ -12886,6 +12909,53 @@ const LAWS_DATABASE = [
       "Property – Boundary Dispute / Encroachment",
       "Constitutional – PIL / Writ Petition / Fundamental Rights"
     ]
+  },
+  {
+    "caseType": "Criminal – Evidence Law / Bharatiya Sakshya Adhiniyam 2023 (BSA)",
+    "lawCategory": "Criminal",
+    "actName": "Bharatiya Sakshya Adhiniyam 2023 (BSA) – Evidence Act (New)",
+    "keywords": {
+      "exact": [
+        "BSA 2023 evidence act",
+        "bharatiya sakshya adhiniyam",
+        "new evidence act 2023",
+        "bsa evidence act what is",
+        "electronic evidence admissibility",
+        "cctv evidence not admitted court",
+        "whatsapp chat as evidence court",
+        "electronic records admissibility court"
+      ],
+      "strong": [
+        "BSA 2023",
+        "evidence act new",
+        "bharatiya sakshya",
+        "electronic evidence",
+        "digital evidence admissible",
+        "admissibility of evidence",
+        "evidence court admissible",
+        "section 65B certificate",
+        "electronic record court",
+        "cctv footage evidence",
+        "whatsapp evidence court",
+        "digital evidence",
+        "burden of proof",
+        "oral evidence",
+        "documentary evidence"
+      ],
+      "moderate": [
+        "evidence act",
+        "evidence admissible",
+        "court evidence",
+        "proof in court",
+        "witness evidence",
+        "document as evidence"
+      ]
+    },
+    "assessment": [
+      { "q": "What type of evidence are you relying on?", "opts": ["Electronic/digital (WhatsApp, email, CCTV)", "Documentary (contracts, agreements)", "Oral/witness evidence", "Forensic/scientific evidence"] },
+      { "q": "Has the evidence been challenged for admissibility?", "opts": ["Yes — other party challenged it", "No — but I want to know if it's admissible", "Not yet in court", "Already admitted by court"] }
+    ],
+    "multiLawCompatible": ["Criminal – BNS 2023 / New Criminal Code", "Civil – Contract Dispute / Money Recovery"]
   },
   {
     "caseType": "IBC – Insolvency / Bankruptcy / NCLT Proceedings",

@@ -140,7 +140,8 @@
       .hero-stats{gap:16px}
       .info-grid{grid-template-columns:1fr}
     }
-  </style>
+  .law-summary,.law-text,p{text-align:justify}
+</style>
 </head>
 <body>
 
@@ -386,6 +387,21 @@ const REF_LAWS = [
       {title:'Scenario 2', text:'Hit-and-run accident in 2024, driver flees. Charged under BNS Sec 106(2): mandatory minimum 10 years (new provision).'}
     ],
     limitation:'Varies by offence; no limitation for serious crimes',
+    link:'/'
+  },
+  {
+    id:'bsa-2023', section:'Criminal', icon:'📜', iconBg:'#FFF5F5',
+    name:'Bharatiya Sakshya Adhiniyam 2023 (BSA 2023) — New Evidence Act',
+    act:'Bharatiya Sakshya Adhiniyam, 2023 (Replaces Indian Evidence Act 1872 from 1 July 2024)',
+    urgency:'medium',
+    summary:'The BSA 2023 (aka the new Evidence Act) replaced the Indian Evidence Act 1872 from 1 July 2024. It governs what evidence is admissible in Indian courts, how facts are proved, and the burden of proof. Key changes: electronic records (emails, CCTV, WhatsApp chats, phone data) are now explicitly and comprehensively covered as admissible documentary evidence. The BSA works together with the BNS 2023 (new penal code) and BNSS 2023 (new CrPC). Important for all criminal and civil cases filed after 1 July 2024.',
+    whenToUse:['Any case where documentary or electronic evidence is being disputed','Criminal cases after 1 July 2024','Civil disputes where evidence admissibility is contested','Cases involving digital/electronic records (emails, CCTV, call records, bank statements)'],
+    keyPoints:['BSA Sec 57 – Oral evidence must be direct (eyewitness / expert)','BSA Sec 61 – Documents: primary and secondary evidence','BSA Sec 63 – Electronic records are admissible as documentary evidence','BSA Sec 65 – Primary evidence is the original document','BSA Sec 65B – Certificate required for admissibility of electronic records','Burden of proof: person asserting a fact must prove it (BSA Sec 101)','Confession to police: still not admissible (BSA Sec 22 — same as old Sec 25)','DNA evidence and forensic evidence rules updated and codified'],
+    scenarios:[
+      {title:'Scenario 1', text:'CCTV footage from a shop is to be used as evidence in a theft case filed in 2024. Under BSA Sec 63 and 65B, a certificate from the person in charge of the computer/CCTV system is required for admissibility.'},
+      {title:'Scenario 2', text:'WhatsApp messages between buyer and seller are key evidence in a civil contract dispute. Under BSA 2023, these are admissible as electronic records, with appropriate certification.'}
+    ],
+    limitation:'No specific limitation — applies to ongoing and new cases post 1 July 2024',
     link:'/'
   },
   {
