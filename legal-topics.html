@@ -159,11 +159,6 @@
     .sl-btn-admin:hover{background:#F3F4F6;color:#374151}
     .sl-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:6px;cursor:pointer}
     .sl-hamburger span{width:24px;height:2px;background:#0D3D0D;border-radius:2px;display:block}
-    .sl-mob-menu{display:none;background:#fff;flex-direction:column;padding:10px 16px 14px;border-top:1px solid #E5E7EB;position:sticky;top:64px;z-index:499}
-    .sl-mob-menu a{color:#0D3D0D;padding:10px 12px;border-radius:6px;font-size:15px;text-decoration:none;display:block}
-    .sl-mob-menu a:hover{background:#F0FBF0}
-    .sl-mob-menu .sl-mob-signup{background:#FF9933;color:#fff!important;text-align:center;font-weight:700;border-radius:8px;margin-top:6px}
-    .sl-mob-menu.open{display:flex;flex-direction:column}
     @media(max-width:768px){.sl-hamburger{display:flex}.sl-links,.sl-actions{display:none}}
   
     /* ── Nav Account Dropdown (nav.js) ── */
@@ -231,7 +226,7 @@ footer a:hover{color:#fff}
 <!-- Navbar -->
 <div class="sl-tribar"></div>
 <nav class="nav" id="mainNav">
-  <div class="nav-inner">
+  <div class="nav-inner" style="display:flex;align-items:center;justify-content:space-between;height:64px;max-width:1160px;margin:0 auto;padding:0 20px;box-sizing:border-box;">
     <a href="index.html" class="brand"><img src="assets/logo.png" alt="SatLegal – Legalities Simplified"></a>
     <div class="nav-links">
       <a href="index.html">Home</a>
@@ -247,7 +242,7 @@ footer a:hover{color:#fff}
       <span></span><span></span><span></span>
     </button>
   </div>
-  <div class="mob-menu" id="mobMenu">
+  <div class="mob-menu" id="mobMenu" style="display:none;">
     <a href="index.html">🏠 Home</a>
     <a href="legal-topics.html">📋 Legal Topics</a>
     <a href="laws-reference.html">📚 Laws Library</a>
@@ -258,15 +253,6 @@ footer a:hover{color:#fff}
     <a href="auth/signup.html" class="mob-btn-signup sl-mob-signup">⚡ Sign Up Free — Analyze My Case</a>
   </div>
 </nav>
-<div class="sl-mob-menu" id="mobMenu">
-  <a href="index.html">🏠 Home</a>
-  <a href="legal-topics.html">📋 Legal Topics</a>
-  <a href="laws-reference.html">📚 Laws Library</a>
-  <a href="pricing.html">💰 Pricing</a>
-  <a href="about.html">ℹ️ About Us</a>
-  <a href="contact.html">📞 Contact Us</a>
-  <a href="auth/signup.html" class="sl-mob-signup">⚡ Sign Up Free — Analyze My Case</a>
-</div>
 
 <!-- Hero -->
 <div class="topics-hero">
