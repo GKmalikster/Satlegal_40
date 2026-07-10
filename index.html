@@ -2864,17 +2864,14 @@ function buildSteps(laws,ans,areas){
 }
 
 /* ── Lawyers ── */
-const LDB=[
-  {n:'Adv. Priya Malhotra',sp:'Family & Matrimonial Law',c:'Delhi',e:'12 yrs',a:['family','muslim_family'],i:'PM'},
-  {n:'Adv. Rahul Sinha',sp:'Criminal Defense',c:'Mumbai',e:'8 yrs',a:['criminal','sc_st'],i:'RS'},
-  {n:'Adv. Kavitha Reddy',sp:'Cyber Crime & IT Law',c:'Hyderabad',e:'9 yrs',a:['cyber'],i:'KR'},
-  {n:'Adv. Suresh Nair',sp:'Property & Real Estate',c:'Kochi',e:'15 yrs',a:['property','land_acquisition'],i:'SN'},
-  {n:'Adv. Deepika Joshi',sp:'Labour & Employment',c:'Pune',e:'11 yrs',a:['employment'],i:'DJ'},
-  {n:'Adv. Mohammed Raza',sp:'Muslim Personal Law',c:'Hyderabad',e:'14 yrs',a:['muslim_family','family'],i:'MR'},
-  {n:'Adv. Anita Sharma',sp:'Consumer Protection',c:'Bengaluru',e:'7 yrs',a:['consumer','civil'],i:'AS'},
-  {n:'Adv. Vikram Tiwari',sp:'Civil & Succession Law',c:'Lucknow',e:'18 yrs',a:['succession','civil'],i:'VT'},
-];
+const LDB=[]; // Populated as lawyers register — no dummy data
 function buildLawyers(){
+  if(!LDB.length){
+    return `<div style="text-align:center;padding:20px 0;color:var(--text-lt);font-size:13px">
+      <p style="margin-bottom:12px">Our verified lawyer network is being set up.</p>
+      <a href="lawyers.html" style="background:#138808;color:#fff;border-radius:8px;padding:9px 18px;text-decoration:none;font-size:13px;font-weight:700">Browse Lawyers →</a>
+    </div>`;
+  }
   const ar=W.areas.length?W.areas:['civil'];
   const sc=LDB.map(l=>({...l,m:l.a.filter(a=>ar.includes(a)).length})).sort((a,b)=>b.m-a.m).slice(0,4);
   return sc.map(l=>`<div class="lyr-card">

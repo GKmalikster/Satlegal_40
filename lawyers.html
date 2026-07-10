@@ -205,19 +205,8 @@ footer a:hover{color:#fff}
 </footer>
 
 <script>
-// Demo lawyer data — in production, fetch from /api/lawyer/list
-const LAWYERS=[
-  {id:'l1',name:'Adv. Priya Sharma',icon:'👩‍⚖️',specialty:'Family Law',spec_detail:'Divorce · Succession · Guardianship · Hindu Marriage Act',city:'Mumbai',exp:'12 years',languages:'Hindi, English, Marathi',rating:4.9,reviews:142,online:true,fee:2500,desc:'Specialises in matrimonial disputes with extensive High Court experience. Known for amicable settlements.'},
-  {id:'l2',name:'Adv. Rajesh Kapoor',icon:'👨‍⚖️',specialty:'Property & RERA',spec_detail:'Property Disputes · RERA · Land Acquisition · Transfer of Property',city:'Delhi',exp:'8 years',languages:'Hindi, English, Punjabi',rating:4.8,reviews:87,online:true,fee:2500,desc:'RERA-certified specialist with deep expertise in builder disputes and property fraud cases.'},
-  {id:'l3',name:'Adv. Meena Krishnamurthy',icon:'👩‍⚖️',specialty:'Criminal Law',spec_detail:'BNS · POCSO · Bail Applications · FIR · Anticipatory Bail',city:'Bengaluru',exp:'15 years',languages:'Kannada, English, Tamil',rating:4.9,reviews:203,online:true,fee:2500,desc:'Senior criminal advocate with 15 years at Karnataka High Court. Handles bail, trials, and appeals.'},
-  {id:'l4',name:'Adv. Suresh Patel',icon:'👨‍⚖️',specialty:'Employment Law',spec_detail:'Wrongful Termination · Labour Disputes · Gratuity · PF · Minimum Wages',city:'Ahmedabad',exp:'10 years',languages:'Gujarati, Hindi, English',rating:4.7,reviews:66,online:false,fee:2500,desc:'Expert in labour disputes and employment law. Represented 300+ employees in labour courts.'},
-  {id:'l5',name:'Adv. Kavya Nair',icon:'👩‍⚖️',specialty:'Consumer Rights',spec_detail:'Consumer Protection Act · Product Liability · E-commerce Disputes · Insurance',city:'Chennai',exp:'7 years',languages:'Tamil, English, Malayalam',rating:4.8,reviews:94,online:true,fee:2500,desc:'Active in consumer forums with a 90% success rate in consumer court cases.'},
-  {id:'l6',name:'Adv. Arjun Mehta',icon:'👨‍⚖️',specialty:'Cyber Law',spec_detail:'IT Act · Cyber Fraud · Data Protection · Online Defamation · DPDP Act',city:'Hyderabad',exp:'6 years',languages:'Telugu, Hindi, English',rating:4.7,reviews:51,online:true,fee:2500,desc:'Specialises in cyber crime cases, online fraud recovery, and digital personal data protection.'},
-  {id:'l7',name:'Adv. Sunita Devi',icon:'👩‍⚖️',specialty:'Family Law',spec_detail:'Domestic Violence · Maintenance · Divorce · SC/ST Protection',city:'Jaipur',exp:'9 years',languages:'Hindi, English, Rajasthani',rating:4.6,reviews:78,online:false,fee:2500,desc:'Women and SC/ST rights specialist. Works with Rajasthan High Court Legal Services Authority.'},
-  {id:'l8',name:'Adv. Bikash Sarkar',icon:'👨‍⚖️',specialty:'Civil Law',spec_detail:'Contracts · Money Recovery · Injunction · Specific Performance · CPC',city:'Kolkata',exp:'11 years',languages:'Bengali, Hindi, English',rating:4.8,reviews:119,online:true,fee:2500,desc:'Handles civil suits including money recovery, contract enforcement, and injunctive relief at Calcutta High Court.'},
-  {id:'l9',name:'Adv. Ramesh Iyer',icon:'👨‍⚖️',specialty:'Corporate Law',spec_detail:'Company Law · Partnership Disputes · Insolvency · NCLT',city:'Mumbai',exp:'14 years',languages:'Tamil, English, Marathi',rating:4.9,reviews:167,online:true,fee:2500,desc:'Corporate lawyer with expertise in NCLT proceedings, insolvency, and business disputes.'},
-  {id:'l10',name:'Adv. Pooja Aggarwal',icon:'👩‍⚖️',specialty:'Taxation',spec_detail:'GST · Income Tax · Tax Notices · Appeals · Tribunal',city:'Delhi',exp:'8 years',languages:'Hindi, English, Punjabi',rating:4.7,reviews:54,online:true,fee:2500,desc:'Tax disputes specialist handling income tax and GST notices, appeals, and tribunal representation.'},
-];
+// Lawyer roster — populated via /api/lawyer/list as lawyers register
+const LAWYERS=[];
 
 let filtered=[...LAWYERS];
 

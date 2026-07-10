@@ -192,93 +192,41 @@ a{text-decoration:none;color:inherit}
 </div>
 
 <script>
-// Same lawyer data as lawyers.html — in production fetch from /api/lawyer/:id
-const LAWYERS={
-  l1:{id:'l1',name:'Adv. Priya Sharma',icon:'👩‍⚖️',specialty:'Family Law',spec_detail:'Divorce · Succession · Guardianship · Hindu Marriage Act',city:'Mumbai',exp:'12 years',languages:'Hindi, English, Marathi',rating:4.9,reviews:142,online:true,fee:2500,
-    bio:'Adv. Priya Sharma is a Mumbai-based family law specialist with 12 years of High Court experience. She is known for achieving amicable settlements in matrimonial disputes, reducing stress and legal costs for her clients. She has represented over 400 clients across divorce, succession, guardianship, and domestic violence matters. She is empanelled with the Maharashtra State Legal Services Authority.',
-    areas:['Divorce & Separation','Succession & Inheritance','Child Guardianship','Hindu Marriage Act','Domestic Violence (PWDVA)','Muslim Personal Law','Maintenance & Alimony','Mutual Consent Divorce'],
-    cases:'400+',success:'88%',expYrs:12,
-    bar:'Bar Council of Maharashtra & Goa · Enrolment No. MH/3421/2013 · Verified April 2025',
-    reviews:[
-      {name:'Rahul M.',stars:5,date:'March 2025',text:'Priya Ma\'am handled my divorce case with great professionalism. The settlement was fair and reached faster than I expected. Highly recommend.'},
-      {name:'Sunita P.',stars:5,date:'February 2025',text:'Excellent guidance on succession and property matters. She explained every document clearly and made the process stress-free.'},
-      {name:'Anonymous',stars:4,date:'January 2025',text:'Very knowledgeable and empathetic. Response times could be a bit faster but the consultation was very thorough.'},
-    ]},
-  l2:{id:'l2',name:'Adv. Rajesh Kapoor',icon:'👨‍⚖️',specialty:'Property & RERA',spec_detail:'Property Disputes · RERA · Land Acquisition · Transfer of Property',city:'Delhi',exp:'8 years',languages:'Hindi, English, Punjabi',rating:4.8,reviews:87,online:true,fee:2500,
-    bio:'Adv. Rajesh Kapoor is a Delhi-based property and RERA specialist who has successfully recovered crores for homebuyers cheated by builders. He is RERA-certified and has deep expertise in builder disputes, property fraud, transfer of property, and land acquisition cases. He practises regularly at the Delhi High Court and RERA tribunals.',
-    areas:['RERA Complaints','Builder Disputes','Property Fraud','Transfer of Property Act','Land Acquisition','Possession Delays','Title Verification','Landlord-Tenant Disputes'],
-    cases:'300+',success:'85%',expYrs:8,
-    bar:'Bar Council of Delhi · Enrolment No. DL/2847/2017 · Verified March 2025',
-    reviews:[
-      {name:'Vikash T.',stars:5,date:'April 2025',text:'Got full refund + interest from builder thanks to Rajesh sir\'s RERA complaint. Outstanding result.'},
-      {name:'Priti K.',stars:5,date:'March 2025',text:'Very thorough property verification before I bought my flat. Caught a title defect that could have been a disaster. Worth every rupee.'},
-      {name:'Harpreet S.',stars:4,date:'February 2025',text:'Good knowledge of RERA, helped me get possession date enforced by builder. Process took time but the outcome was great.'},
-    ]},
-  l3:{id:'l3',name:'Adv. Meena Krishnamurthy',icon:'👩‍⚖️',specialty:'Criminal Law',spec_detail:'BNS · POCSO · Bail Applications · FIR · Anticipatory Bail',city:'Bengaluru',exp:'15 years',languages:'Kannada, English, Tamil',rating:4.9,reviews:203,online:true,fee:2500,
-    bio:'Adv. Meena Krishnamurthy is one of Bengaluru\'s most respected criminal advocates with 15 years at Karnataka High Court. She handles bail applications, FIR quashing, criminal trials, POCSO matters, and appeals. She is empanelled with Karnataka Legal Services Authority and has argued before the Supreme Court of India.',
-    areas:['Bail & Anticipatory Bail','FIR Quashing','Criminal Trials','POCSO Cases','BNS / IPC Matters','Cybercrime','White-collar Crime','Supreme Court Appeals'],
-    cases:'900+',success:'91%',expYrs:15,
-    bar:'Bar Council of Karnataka · Enrolment No. KAR/1122/2010 · Verified May 2025',
-    reviews:[
-      {name:'Family of Client',stars:5,date:'May 2025',text:'Got anticipatory bail within 48 hours when we were completely lost. Meena Ma\'am was a lifesaver. Incredible lawyer.'},
-      {name:'Rahul D.',stars:5,date:'April 2025',text:'FIR quashed after detailed petition. Meena Ma\'am knows the courts and judges very well. Best criminal lawyer in Bangalore.'},
-      {name:'Anonymous',stars:5,date:'March 2025',text:'Very professional, always available for updates, and extremely knowledgeable about criminal law. 10/10.'},
-    ]},
-  l4:{id:'l4',name:'Adv. Suresh Patel',icon:'👨‍⚖️',specialty:'Employment Law',spec_detail:'Wrongful Termination · Labour Disputes · Gratuity · PF · Minimum Wages',city:'Ahmedabad',exp:'10 years',languages:'Gujarati, Hindi, English',rating:4.7,reviews:66,online:false,fee:2500,
-    bio:'Adv. Suresh Patel is Ahmedabad\'s leading employment lawyer with 10 years representing employees in labour courts and industrial tribunals. He has helped over 300 employees recover unpaid gratuity, PF, and compensation for wrongful termination. He also advises SMEs on employment compliance.',
-    areas:['Wrongful Termination','Labour Court Matters','Gratuity Recovery','PF Disputes','Minimum Wages Act','Industrial Disputes Act','POSH Complaints','Employment Contracts'],
-    cases:'300+',success:'82%',expYrs:10,
-    bar:'Bar Council of Gujarat · Enrolment No. GJ/4567/2015 · Verified April 2025',
-    reviews:[
-      {name:'Jayesh R.',stars:5,date:'March 2025',text:'Recovered 3 years of pending gratuity. Suresh sir handled everything efficiently and got a quick resolution.'},
-      {name:'Manisha S.',stars:4,date:'February 2025',text:'Helped me with wrongful termination case. Very knowledgeable and patient in explaining the process.'},
-      {name:'Dinesh P.',stars:5,date:'January 2025',text:'Got my PF settlement issue resolved that had been pending for 2 years. Great lawyer.'},
-    ]},
-  l5:{id:'l5',name:'Adv. Kavya Nair',icon:'👩‍⚖️',specialty:'Consumer Rights',spec_detail:'Consumer Protection Act · Product Liability · E-commerce Disputes · Insurance',city:'Chennai',exp:'7 years',languages:'Tamil, English, Malayalam',rating:4.8,reviews:94,online:true,fee:2500,
-    bio:'Adv. Kavya Nair specialises in consumer protection with a 90% success rate in consumer forum cases. She handles disputes against e-commerce companies, insurance firms, real estate builders, banks, and product manufacturers. She is empanelled with the Tamil Nadu Consumer Dispute Redressal Commission.',
-    areas:['Consumer Protection Act','E-commerce Disputes','Insurance Claim Rejection','Banking & Loan Disputes','Real Estate Buyers','Defective Products','Medical Negligence','Airline/Hotel Disputes'],
-    cases:'250+',success:'90%',expYrs:7,
-    bar:'Bar Council of Tamil Nadu · Enrolment No. TN/2198/2018 · Verified March 2025',
-    reviews:[
-      {name:'Arun K.',stars:5,date:'April 2025',text:'Won compensation from Amazon for a defective product. Kavya Ma\'am handled the entire consumer forum process. Highly recommend.'},
-      {name:'Deepa M.',stars:5,date:'March 2025',text:'Insurance claim was wrongly rejected. She helped file a consumer complaint and I got the full amount plus compensation.'},
-      {name:'Srinivas R.',stars:4,date:'February 2025',text:'Very good at consumer law. The process took 4 months but the outcome was excellent.'},
-    ]},
-  l6:{id:'l6',name:'Adv. Arjun Mehta',icon:'👨‍⚖️',specialty:'Cyber Law',spec_detail:'IT Act · Cyber Fraud · Data Protection · Online Defamation · DPDP Act',city:'Hyderabad',exp:'6 years',languages:'Telugu, Hindi, English',rating:4.7,reviews:51,online:true,fee:2500,
-    bio:'Adv. Arjun Mehta is Hyderabad\'s leading cyber law specialist with expertise in online fraud recovery, IT Act violations, cyberbullying, digital data protection, and the new DPDP Act 2023. He has helped hundreds of victims of online scams, deepfakes, and social media defamation. He coordinates with cybercrime cells across Telangana.',
-    areas:['Cyber Fraud & Scams','IT Act Violations','Online Defamation','Data Protection (DPDP)','Social Media Harassment','Deepfake & Identity Theft','Cryptocurrency Fraud','Cybercrime FIR Filing'],
-    cases:'200+',success:'78%',expYrs:6,
-    bar:'Bar Council of Telangana · Enrolment No. TS/1876/2019 · Verified April 2025',
-    reviews:[
-      {name:'Priya A.',stars:5,date:'April 2025',text:'Helped recover ₹4 lakhs lost in online fraud. Arjun sir worked with the cybercrime cell and got results in 6 weeks.'},
-      {name:'Rohit K.',stars:4,date:'March 2025',text:'Excellent knowledge of IT Act and digital laws. Handled my social media defamation case professionally.'},
-      {name:'Anita M.',stars:5,date:'February 2025',text:'Got fake profiles removed and filed an FIR successfully. Very knowledgeable about digital law.'},
-    ]},
-};
-
-// Default data
-const DEFAULT_LAWYER={id:'l1',name:'Adv. Priya Sharma',icon:'👩‍⚖️',specialty:'Family Law',spec_detail:'Divorce · Succession · Guardianship · Hindu Marriage Act',city:'Mumbai',exp:'12 years',languages:'Hindi, English, Marathi',rating:4.9,reviews:142,online:true,fee:2500,bio:'Specialises in matrimonial disputes with extensive High Court experience.',areas:['Family Law'],cases:'400+',success:'88%',expYrs:12,bar:'Bar Council of Maharashtra',reviews:[]};
+// Lawyer profiles — populated as lawyers register via /api/lawyer/:id
+const LAWYERS={};
 
 const params=new URLSearchParams(location.search);
-const id=params.get('id')||'l1';
-const lawyer=LAWYERS[id]||DEFAULT_LAWYER;
+const id=params.get('id')||'';
+const lawyer=LAWYERS[id]||null;
 
 // Also check localStorage (if coming from book flow)
 let selLawyer=null;
 try{selLawyer=JSON.parse(localStorage.getItem('sl_selected_lawyer')||'null')}catch(e){}
-const L=LAWYERS[id]||selLawyer||DEFAULT_LAWYER;
+const L=LAWYERS[id]||selLawyer||null;
+
+// If no lawyer found, show not-found state
+if(!L){
+  document.title='Lawyer Not Found – SatLegal';
+  document.body.innerHTML=`<div style="max-width:560px;margin:80px auto;padding:32px 24px;text-align:center;font-family:system-ui,sans-serif">
+    <div style="font-size:48px;margin-bottom:16px">⚖️</div>
+    <h2 style="color:#0D3D0D;margin-bottom:8px">Lawyer profile not found</h2>
+    <p style="color:#5c5c7a;margin-bottom:24px">This profile may not be available yet. Our lawyer network is being set up — check back soon.</p>
+    <a href="../lawyers.html" style="background:#138808;color:#fff;border-radius:9px;padding:12px 24px;text-decoration:none;font-weight:700;font-size:14px">← Browse All Lawyers</a>
+  </div>`;
+  throw new Error('Lawyer not found — stopping script');
+}
 
 // Populate
 document.title=`${L.name} – SatLegal`;
 document.getElementById('bcName').textContent=L.name;
-document.getElementById('profAvatar').textContent=L.icon;
+document.getElementById('profAvatar').textContent=L.icon||'⚖️';
 document.getElementById('profName').textContent=L.name;
-document.getElementById('profSpec').textContent=`${L.specialty} · ${L.city}`;
-document.getElementById('profCity').textContent=L.city;
-document.getElementById('profExp').textContent=L.exp;
-document.getElementById('profLang').textContent=L.languages;
-document.getElementById('profRating').textContent=L.rating;
-document.getElementById('profReviews').textContent=L.reviews;
+document.getElementById('profSpec').textContent=`${L.specialty||''} · ${L.city||''}`;
+document.getElementById('profCity').textContent=L.city||'—';
+document.getElementById('profExp').textContent=L.exp||'—';
+document.getElementById('profLang').textContent=L.languages||'—';
+document.getElementById('profRating').textContent=L.rating||'—';
+document.getElementById('profReviews').textContent=typeof L.reviews==='number'?L.reviews:(L.reviews||[]).length;
 document.getElementById('profBio').textContent=L.bio||'—';
 document.getElementById('statCases').textContent=L.cases||'—';
 document.getElementById('statSuccess').textContent=L.success||'—';
@@ -287,15 +235,17 @@ document.getElementById('bcBox').innerHTML=`<strong>✅ Verified</strong>${L.bar
 
 // Badges
 const bd=document.getElementById('profBadges');
-bd.innerHTML=`<span class="badge badge-verified">✅ Bar Verified</span>`+(L.online?'<span class="badge badge-online">🟢 Online Now</span>':'')+L.languages.split(', ').map(l=>`<span class="badge badge-lang">${l}</span>`).join('');
+const langs=(L.languages||'').split(', ').filter(Boolean);
+bd.innerHTML=`<span class="badge badge-verified">✅ Bar Verified</span>`+(L.online?'<span class="badge badge-online">🟢 Online Now</span>':'')+langs.map(l=>`<span class="badge badge-lang">${l}</span>`).join('');
 
 // Practice areas
-document.getElementById('practiceAreas').innerHTML=(L.areas||[L.specialty]).map(a=>`<span class="area-tag">${a}</span>`).join('');
+document.getElementById('practiceAreas').innerHTML=(L.areas||[L.specialty]).filter(Boolean).map(a=>`<span class="area-tag">${a}</span>`).join('');
 
 // Reviews
 const rv=document.getElementById('reviewsList');
-if(L.reviews&&L.reviews.length){
-  rv.innerHTML=L.reviews.map(r=>`
+const reviewList=Array.isArray(L.reviews)?L.reviews:[];
+if(reviewList.length){
+  rv.innerHTML=reviewList.map(r=>`
     <div class="review-card">
       <div class="review-head">
         <div class="reviewer">${r.name}</div>
@@ -310,7 +260,7 @@ if(L.reviews&&L.reviews.length){
 }
 
 function bookThisLawyer(){
-  localStorage.setItem('sl_selected_lawyer',JSON.stringify({id:L.id,name:L.name,specialty:L.specialty,icon:L.icon}));
+  localStorage.setItem('sl_selected_lawyer',JSON.stringify({id:L.id,name:L.name,specialty:L.specialty,icon:L.icon||'⚖️'}));
   const payment=JSON.parse(localStorage.getItem('sl_payment')||'{}');
   if(payment.plan==='consult'){
     window.location.href='../consultation/book.html?lawyer='+L.id;
