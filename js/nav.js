@@ -3,13 +3,22 @@
  * Handles: auth-aware nav links, My Account dropdown, admin visibility
  */
 (function(){
-  // Detect user session
+  // Detect user session — checks both legacy sl_user and new auth modal sl_user_session
   function getUser(){
-    try{ return JSON.parse(localStorage.getItem('sl_user')||'{}'); }catch(e){ return {}; }
+    try{
+      const u=JSON.parse(localStorage.getItem('sl_user')||'{}');
+      if(u.name) return u;
+      // New auth modal flow stores session here
+      const s=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
+      if(s.name) return s;
+      return {};
+    }catch(e){ return {}; }
   }
-  function getToken(){ return localStorage.getItem('sl_auth_token')||''; }
+  function getToken(){
+    return localStorage.getItem('sl_auth_token')||localStorage.getItem('sl_token')||'';
+  }
   function isAdmin(){ try{ const u=getUser(); return u.role==='admin'; }catch(e){ return false; } }
-  function isLoggedIn(){ return !!getToken() && !!getUser().name; }
+  function isLoggedIn(){ return !!(getToken()||getUser().loggedIn) && !!getUser().name; }
 
   // Resolve relative path to auth pages (works from any depth)
   function authPath(p){

@@ -1321,12 +1321,23 @@ function renderAnalysisSummary(){
     </div>`;
   });
   previewEl.innerHTML=h;
-  // Reset reg form visibility
+  // Reset reg form visibility — old auth forms always hidden at step 6
   const reg=document.getElementById('uid-register');const otp=document.getElementById('uid-otp');
   const cta=document.getElementById('signinCtaBox');
   if(reg){reg.style.display='none';reg.classList.remove('reg-form-wrap')}
   if(otp)otp.style.display='none';
-  if(cta)cta.style.display='none'; // Auth handled by new modal — never show old plan cards at Step 6
+  if(cta)cta.style.display='none';
+  // Update analysis-ready-head to reflect logged-in state
+  const head=document.querySelector('.analysis-ready-head');
+  if(head){
+    const sess=JSON.parse(localStorage.getItem('sl_user_session')||localStorage.getItem('sl_user')||'{}');
+    if(sess.name||sess.loggedIn){
+      head.innerHTML=`<div style="font-size:38px;margin-bottom:8px">✅</div>
+        <h3>Report Generated!</h3>
+        <p>Welcome back, <strong>${esc(sess.name?sess.name.split(' ')[0]:'')}</strong>. Your full legal analysis report is ready — scroll up to view or print it.</p>
+        <a href="dashboard/user-dashboard.html" style="display:inline-block;margin-top:10px;background:#138808;color:#fff;border-radius:8px;padding:9px 20px;text-decoration:none;font-size:13px;font-weight:700">📋 My Dashboard →</a>`;
+    }
+  }
 }
 
 // Plan selection
@@ -3174,6 +3185,8 @@ function _authOnSuccess(userData, token){
   W.phone=userData.phone||'';
   const session={name:W.name,email:W.email,phone:W.phone,plan:W.selectedPlan,loggedIn:true,token};
   localStorage.setItem('sl_user_session',JSON.stringify(session));
+  // Also write sl_user so nav.js (which reads sl_user) shows My Account correctly
+  localStorage.setItem('sl_user',JSON.stringify({name:W.name,email:W.email,phone:W.phone,loggedIn:true}));
   if(token)localStorage.setItem('sl_auth_token',token);
   const _fc=JSON.parse(localStorage.getItem('sl_flow_config')||'{}');
   const _payReq=(_fc.paymentRequired!==undefined?_fc.paymentRequired:true)&&!_fc.freeReportAccess;
