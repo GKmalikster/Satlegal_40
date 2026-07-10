@@ -3357,12 +3357,17 @@ function initiateRazorpayPayment(plan,amt){
   const planLabel=(plan&&plan.name)?plan.name:(plan==='report'?'Digital Legal Report':'Expert Consultation');
   const planType=(plan&&plan.type)?plan.type:(typeof plan==='string'?plan:'report');
   if(!keyId){
-    toast('Payment gateway not configured. Opening report…');
     try{sessionStorage.setItem('sl_session_paid','1');}catch(e){}
-    const _fbSess=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
-    const _fbUid='SL'+Date.now().toString(36).toUpperCase();
-    genReport(_fbUid,_fbSess);
-    showStep(6);
+    if(planType==='consult'){
+      toast('Redirecting to consultation booking…');
+      setTimeout(()=>{window.location.href='consultation/book.html';},600);
+    } else {
+      toast('Payment gateway not configured. Opening report…');
+      const _fbSess=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
+      const _fbUid='SL'+Date.now().toString(36).toUpperCase();
+      genReport(_fbUid,_fbSess);
+      showStep(6);
+    }
     return;
   }
   // Load Razorpay SDK dynamically
@@ -3412,11 +3417,19 @@ function _openRazorpay(keyId,plan,amt,planLabel){
           razorpay_payment_id:txn.razorpay_payment_id,razorpay_order_id:txn.razorpay_order_id,ts:txn.ts
         })}).catch(function(){});
       }catch(e){}
-      toast('✅ Payment successful! Loading your '+planLabel+'…');
-      const _paidSess=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
-      const _paidUid='SL'+Date.now().toString(36).toUpperCase();
-      genReport(_paidUid,_paidSess);
-      showStep(6);
+      if(planObj.type==='consult'||planObj.id==='consult'){
+        // Consultation payment — save payment details and redirect to booking
+        localStorage.setItem('sl_payment',JSON.stringify(txn));
+        toast('✅ Payment successful! Redirecting to book your consultation…');
+        setTimeout(()=>{window.location.href='consultation/book.html';},800);
+      } else {
+        // Report payment — generate and show report
+        toast('✅ Payment successful! Loading your '+planLabel+'…');
+        const _paidSess=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
+        const _paidUid='SL'+Date.now().toString(36).toUpperCase();
+        genReport(_paidUid,_paidSess);
+        showStep(6);
+      }
     },
     modal:{
       ondismiss:function(){toast('Payment cancelled. You can try again.','err');}

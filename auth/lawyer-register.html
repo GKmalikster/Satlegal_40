@@ -721,9 +721,31 @@ tbody tr:last-child td { border-bottom: none; }
         <textarea id="bio" class="form-control" rows="3" placeholder="Brief description of your practice areas and experience..."></textarea>
       </div>
 
-      <div class="section-sep">⚖️ Specialisations * (select all that apply)</div>
+      <div class="section-sep">⚖️ Primary Practice Area *</div>
+      <div class="form-group">
+        <label>Main Specialisation *</label>
+        <select id="primarySpec" class="form-control" required>
+          <option value="">Select your primary area of practice…</option>
+          <option>Family Law</option>
+          <option>Criminal Law</option>
+          <option>Property Law &amp; RERA</option>
+          <option>Consumer Rights</option>
+          <option>Employment &amp; Labour Law</option>
+          <option>Cyber Law &amp; IT</option>
+          <option>Civil Law</option>
+          <option>Corporate &amp; Commercial Law</option>
+          <option>Taxation</option>
+          <option>Constitutional &amp; Writ Matters</option>
+          <option>Motor Accident &amp; Personal Injury</option>
+          <option>Matrimonial &amp; Succession</option>
+          <option>Intellectual Property</option>
+          <option>Environmental &amp; NGT</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="section-sep">Additional Areas of Practice</div>
       <div class="specializations-grid" id="specGrid"></div>
-      <div class="form-hint" style="margin-top:8px">Select all areas where you practice</div>
+      <div class="form-hint" style="margin-top:8px">Optionally select other areas where you also practice</div>
 
       <div class="section-sep">💰 Fee Structure</div>
       <div class="grid-2">
@@ -845,11 +867,13 @@ document.getElementById('lawyerForm').addEventListener('submit', async (e) => {
   const alertBox = document.getElementById('alertBox');
   alertBox.innerHTML = '';
 
-  const specs = [...document.querySelectorAll('.spec-check:checked')].map(c => c.value);
-  if (specs.length === 0) {
-    alertBox.innerHTML = '<div class="alert alert-danger">Please select at least one specialisation.</div>';
+  const primarySpec = document.getElementById('primarySpec').value;
+  if (!primarySpec) {
+    alertBox.innerHTML = '<div class="alert alert-danger">Please select your primary practice area.</div>';
     return;
   }
+  const additionalSpecs = [...document.querySelectorAll('.spec-check:checked')].map(c => c.value);
+  const specs = [primarySpec, ...additionalSpecs.filter(s => s !== primarySpec)];
 
   const days = [...document.querySelectorAll('.day-btn.selected')].map(d => d.dataset.day);
   const langs = document.getElementById('languages').value.split(',').map(l => l.trim()).filter(Boolean);
