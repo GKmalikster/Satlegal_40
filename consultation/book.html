@@ -78,9 +78,16 @@ a{text-decoration:none;color:inherit}
 <body>
 <div class="tribar"></div>
 <nav class="nav">
-  <a class="nav-brand" href="../index.html"><img src="../assets/logo.png" alt="SatLegal"/></a>
-  <div style="display:flex;gap:12px;align-items:center"><a class="nav-back" href="../report.html">← Back to Report</a><a href="../index.html" style="font-size:13px;color:var(--gr-700);font-weight:500;text-decoration:none">🏠 Home</a></div>
+  <a class="nav-brand" href="../index.html" style="display:flex;align-items:center;gap:8px;text-decoration:none">
+    <img src="../assets/logo.png" alt="" onerror="this.style.display='none'" style="height:36px"/>
+    <span style="font-size:17px;font-weight:900;color:var(--gr-700);letter-spacing:-.3px">Sat<span style="color:var(--sf-500)">Legal</span></span>
+  </a>
+  <div style="display:flex;gap:12px;align-items:center">
+    <a href="../index.html" style="font-size:13px;color:var(--gr-700);font-weight:600;text-decoration:none;display:flex;align-items:center;gap:4px">&#8592; Home</a>
+    <div class="nav-actions sl-nav-actions"></div>
+  </div>
 </nav>
+<script src="../js/nav.js" defer></script>
 
 <!-- Progress -->
 <div class="progress-bar">
@@ -110,8 +117,8 @@ a{text-decoration:none;color:inherit}
 <div class="main">
   <!-- Step 1: Select Lawyer -->
   <div class="card">
-    <h2>🧑‍⚖️ We Shall Connect You to a Qualified Lawyer</h2>
-    <p class="sub">SatLegal will connect you with a qualified lawyer matched to your case type. Please select your preferred specialty and we will arrange your consultation.</p>
+    <h2>🧑‍⚖️ Choose Your Lawyer</h2>
+    <p class="sub" id="lawyerSubtitle">These lawyers are matched to your case type and are available for a consultation.</p>
     <div class="lawyer-grid" id="lawyerGrid"><!-- populated by JS --></div>
   </div>
 
@@ -181,36 +188,40 @@ document.getElementById('bkName').value=user.name||'';
 document.getElementById('bkEmail').value=(user.email&&!user.email.includes('@satlegal.in'))?user.email:'';
 document.getElementById('bkPhone').value=user.phone||'';
 
-// Lawyer data (from localStorage or demo)
+// Lawyer data — populated via /api/lawyer/list as lawyers register
 let lawyers=[];
 try{lawyers=JSON.parse(localStorage.getItem('sl_law_firms')||'[]')}catch(e){}
-if(!lawyers.length){
-  lawyers=[
-    {id:'l1',name:'Qualified Lawyer (Family Law)',specialty:'Family Law · Divorce · Succession',location:'Delhi / Online',icon:'👩‍⚖️',exp:'10+ years',lang:'Hindi, English',rating:'4.9',reviews:0,showRating:false},
-    {id:'l2',name:'Qualified Lawyer (Property & Civil)',specialty:'Civil Law · Property · RERA',location:'Delhi / Online',icon:'👨‍⚖️',exp:'8+ years',lang:'Hindi, English',rating:'4.8',reviews:0,showRating:false},
-    {id:'l3',name:'Qualified Lawyer (Criminal Law)',specialty:'Criminal Law · BNS · Consumer',location:'Delhi / Online',icon:'👩‍⚖️',exp:'12+ years',lang:'Hindi, English',rating:'4.9',reviews:0,showRating:false},
-    {id:'l4',name:'Qualified Lawyer (Employment & Labour)',specialty:'Employment · Labour · Minimum Wages',location:'Delhi / Online',icon:'👨‍⚖️',exp:'10+ years',lang:'Hindi, English',rating:'4.7',reviews:0,showRating:false},
-  ];
-}
+// No fallback dummy data — real lawyers only
 
 let selectedLawyer=null,selectedDate=null,selectedSlot=null;
 
 // Render lawyers
 const caseType=(report.laws||[])[0]?.caseType||'';
-document.getElementById('lawyerGrid').innerHTML=lawyers.map((l,i)=>`
-  <div class="lawyer-option" id="lwo${i}" onclick="selectLawyer(${i})">
-    <input type="radio" name="lawyer" value="${i}"/>
-    <div class="lw-icon">${l.icon||'⚖️'}</div>
-    <div class="lw-name">${l.name}</div>
-    <div class="lw-spec">${l.specialty||''}</div>
-    <div class="lw-meta">
-      <span>📍 ${l.location||''}</span>
-      <span>⏱ ${l.exp||''}</span>
-      <span>⭐ ${l.rating||'4.8'} (${l.reviews||0})</span>
+const lawyerGrid=document.getElementById('lawyerGrid');
+if(!lawyers.length){
+  const sub=document.getElementById('lawyerSubtitle');
+  if(sub)sub.textContent='SatLegal will assign a verified lawyer matched to your case. Leave your details below and we\'ll be in touch within 24 hours.';
+  lawyerGrid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:32px 20px;color:#6B7280;background:#F8F9FA;border-radius:10px;border:1px dashed #D1D5DB">
+    <div style="font-size:36px;margin-bottom:10px">⚖️</div>
+    <div style="font-size:15px;font-weight:700;color:#374151;margin-bottom:6px">Lawyer Network Coming Soon</div>
+    <div style="font-size:13px;line-height:1.6;max-width:360px;margin:0 auto">Our verified lawyer network is being set up. SatLegal will assign you a qualified lawyer matched to your case — please leave your details below and we will contact you within 24 hours.</div>
+  </div>`;
+} else {
+  lawyerGrid.innerHTML=lawyers.map((l,i)=>`
+    <div class="lawyer-option" id="lwo${i}" onclick="selectLawyer(${i})">
+      <input type="radio" name="lawyer" value="${i}"/>
+      <div class="lw-icon">${l.icon||'⚖️'}</div>
+      <div class="lw-name">${l.name}</div>
+      <div class="lw-spec">${l.specialty||''}</div>
+      <div class="lw-meta">
+        <span>📍 ${l.location||''}</span>
+        <span>⏱ ${l.exp||''}</span>
+        <span>⭐ ${l.rating||'4.8'} (${l.reviews||0})</span>
+      </div>
+      <div style="margin-top:8px"><span class="lw-badge lw-verified">✅ Bar Council Verified</span></div>
     </div>
-    <div style="margin-top:8px"><span class="lw-badge lw-verified">✅ Bar Council Verified</span></div>
-  </div>
-`).join('');
+  `).join('');
+}
 
 // Auto-select first lawyer
 selectLawyer(0);

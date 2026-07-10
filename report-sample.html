@@ -197,7 +197,10 @@ footer a:hover{color:#fff}
 
 <nav class="nav" id="mainNav">
   <div class="nav-inner" style="display:flex;align-items:center;justify-content:space-between;height:64px;max-width:1160px;margin:0 auto;padding:0 20px;box-sizing:border-box;">
-    <a href="index.html" class="brand"><img src="assets/logo.png" alt="SatLegal – Legalities Simplified"></a>
+    <a href="index.html" class="brand" style="display:flex;align-items:center;gap:8px;text-decoration:none">
+      <img src="assets/logo.png" alt="" onerror="this.style.display='none'" style="height:36px"/>
+      <span style="font-size:17px;font-weight:900;color:var(--gr-700,#145214);letter-spacing:-.3px">Sat<span style="color:#FF9933">Legal</span></span>
+    </a>
     <div class="nav-links">
       <a href="index.html">Home</a>
       <a href="legal-topics.html">Legal Topics</a>
@@ -243,7 +246,7 @@ footer a:hover{color:#fff}
   <div class="disclaimer-box">
     <div class="disc-icon">⚠️</div>
     <div>
-      <strong style="color:#5A3F00">Professional Disclaimer:</strong> This report is AI-generated and is for informational and educational purposes only. It does not constitute a legal advice or establish a lawyer-client relationship. The analysis is based solely on the facts you have described. Laws cited are indicative based upon the facts described by you — consult a qualified lawyer before taking any legal action. SatLegal shall not be liable for outcomes arising from use of this report.
+      <strong style="color:#5A3F00">Professional Disclaimer:</strong> The Site does not contain any legal advice or legal recourse to the problem stated. The legal information so provided is for general informational and educational purposes only and is not a substitute for any professional advice. Accordingly, before taking any actions based upon such information, we encourage you to consult with a legal professional. Use of this platform does not create an attorney-client relationship. All analysis is preliminary and for informational use only. SatLegal is not a law firm.
     </div>
   </div>
 
@@ -467,5 +470,6 @@ window.addEventListener('load', function(){
   }, 400);
 });
 </script>
+<script src="js/nav.js" defer></script>
 </body>
 </html>

@@ -49,9 +49,16 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 
 <body>
 <div class="tribar"></div>
 <nav class="nav">
-  <a class="nav-brand" href="../index.html"><img src="../assets/logo.png" alt="SatLegal"/></a>
-  <a href="../dashboard/user-dashboard.html" style="font-size:13px;color:var(--gr-700);font-weight:600">📋 My Dashboard</a>
+  <a class="nav-brand" href="../index.html" style="display:flex;align-items:center;gap:8px;text-decoration:none">
+    <img src="../assets/logo.png" alt="" onerror="this.style.display='none'" style="height:36px"/>
+    <span style="font-size:17px;font-weight:900;color:var(--gr-700);letter-spacing:-.3px">Sat<span style="color:var(--sf-500)">Legal</span></span>
+  </a>
+  <div style="display:flex;gap:12px;align-items:center">
+    <a href="../index.html" style="font-size:13px;color:var(--gr-700);font-weight:600;text-decoration:none">&#8592; Home</a>
+    <div class="nav-actions sl-nav-actions"></div>
+  </div>
 </nav>
+<script src="../js/nav.js" defer></script>
 
 <main>
   <div class="confirm-card">
