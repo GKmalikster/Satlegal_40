@@ -1209,7 +1209,7 @@ function dismissResume(){
   localStorage.removeItem('sl_wizard_session');
   const rb=document.getElementById('resumeBanner');if(rb)rb.remove();
 }
-function openWizard(){resetW();scrollToWizard();showStep(1)}
+function openWizard(){resetW();const hqc=document.getElementById('heroQueryCard');if(hqc)hqc.style.display='none';scrollToWizard();showStep(1)}
 function closeWizard(){resetW();showStep(1)}
 
 function resetW(){
