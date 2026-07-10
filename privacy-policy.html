@@ -70,19 +70,32 @@
 <body>
 
 <div class="sl-tribar"></div>
-<nav class="sl-nav">
-  <div class="sl-nav-inner">
-    <a href="index.html" class="sl-brand"><img src="assets/logo.png" alt="SatLegal – Legalities Simplified" style="height:42px;width:auto"></a>
-    <div class="sl-links">
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="SatLegal – Legalities Simplified"></a>
+    <div class="nav-links">
       <a href="index.html">Home</a>
       <a href="legal-topics.html">Legal Topics</a>
       <a href="laws-reference.html">Laws Library</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="how-it-works.html">How It Works</a>
       <a href="about.html">About Us</a>
+      <a href="contact.html">Contact Us</a>
     </div>
-    <div class="sl-actions">
-      <a href="index.html" class="sl-btn-login">Login</a>
-      <a href="index.html" class="sl-btn-signup">⚡ Sign Up Free</a>
-    </div>
+    <div class="nav-actions" id="navActions"><!-- populated by nav.js --></div>
+    <button class="hamburger" onclick="toggleMob()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mob-menu" id="mobMenu">
+    <a href="index.html">🏠 Home</a>
+    <a href="legal-topics.html">📋 Legal Topics</a>
+    <a href="laws-reference.html">📚 Laws Library</a>
+    <a href="pricing.html">💰 Pricing</a>
+    <a href="how-it-works.html">💡 How It Works</a>
+    <a href="about.html">ℹ️ About Us</a>
+    <a href="contact.html">📞 Contact Us</a>
+    <a href="auth/signup.html" class="mob-btn-signup sl-mob-signup">⚡ Sign Up Free — Analyze My Case</a>
   </div>
 </nav>
 
@@ -341,17 +354,18 @@
 </div>
 
 <footer>
-  <p style="font-size:16px;font-weight:800;color:#FFB366;margin-bottom:10px">SatLegal</p>
+  <div class="foot-logo"><div style="display:inline-block;background:#fff;border-radius:12px;padding:6px 18px;margin-bottom:6px"><img src="assets/logo.png" alt="SatLegal" style="height:44px;width:auto;display:block"></div></div>
   <div class="foot-links">
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="legal-topics.html">Legal Topics</a>
-    <a href="laws-reference.html">Laws Library</a>
-    <a href="privacy-policy.html">Privacy Policy</a>
-    <a href="terms-conditions.html">Terms &amp; Conditions</a>
-    <a href="#" onclick="window.slCookieConsent&&window.slCookieConsent.openPreferences();return false;">Cookie Preferences</a>
+    <a href="index.html">Home</a><a href="about.html">About Us</a>
+    <a href="how-it-works.html">How It Works</a><a href="pricing.html">Pricing</a>
+    <a href="faq.html">FAQ</a>
+    <a href="laws-reference.html">Laws Library</a><a href="legal-topics.html">Legal Topics</a>
+    <a href="contact.html">Contact Us</a>
+    <a href="report-sample.html">Sample Report</a>
+    <a href="privacy-policy.html">Privacy Policy</a><a href="terms-conditions.html">Terms &amp; Conditions</a><a href="#" onclick="window.slCookieConsent&&window.slCookieConsent.openPreferences();return false">Cookie Preferences</a>
   </div>
-  <p>© 2025 SatLegal. All rights reserved. · Legal information platform — not a law firm.</p>
+  <p>⚠️ The content provided on this website is for informational purposes only and should not be relied upon as a substitute for legal advice. Recipients are advised to consult with qualified legal counsel before implementing any recommendations herein. SatLegal shall not be liable for actions taken based on this information.</p>
+  <p style="margin-top:6px">© 2025 SatLegal · Built for India 🇮🇳 · All rights reserved</p>
 </footer>
 
 <script src="cookie-consent.js"></script>

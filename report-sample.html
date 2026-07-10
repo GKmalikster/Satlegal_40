@@ -146,16 +146,44 @@ a{text-decoration:none;color:inherit}
   .rpt-hero{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 .nav-brand img{height:38px;width:auto}
+/* ── Footer ── */
+footer{background:var(--gr-900);color:rgba(255,255,255,.5);padding:40px 20px;text-align:center;font-size:13px}
+footer a{color:rgba(255,255,255,.6);text-decoration:none;transition:.2s}
+footer a:hover{color:#fff}
+.foot-logo{margin-bottom:12px}
+.foot-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 20px;margin-bottom:16px}
+.foot-links a{font-size:13px}
 </style>
 </head>
 <body>
 <div class="tribar"></div>
 
-<nav class="nav">
-  <a href="index.html" class="nav-brand" style="text-decoration:none"><img src="assets/logo.png" alt="SatLegal" style="height:38px;width:auto;display:block"></a>
-  <div class="nav-right">
-    <button class="btn-back" onclick="history.back()">← Back</button>
-    <button class="btn-print" onclick="window.print()">⬇ Download PDF</button>
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="SatLegal – Legalities Simplified"></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="legal-topics.html">Legal Topics</a>
+      <a href="laws-reference.html">Laws Library</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="how-it-works.html">How It Works</a>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact Us</a>
+    </div>
+    <div class="nav-actions" id="navActions"><!-- populated by nav.js --></div>
+    <button class="hamburger" onclick="toggleMob()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mob-menu" id="mobMenu">
+    <a href="index.html">🏠 Home</a>
+    <a href="legal-topics.html">📋 Legal Topics</a>
+    <a href="laws-reference.html">📚 Laws Library</a>
+    <a href="pricing.html">💰 Pricing</a>
+    <a href="how-it-works.html">💡 How It Works</a>
+    <a href="about.html">ℹ️ About Us</a>
+    <a href="contact.html">📞 Contact Us</a>
+    <a href="auth/signup.html" class="mob-btn-signup sl-mob-signup">⚡ Sign Up Free — Analyze My Case</a>
   </div>
 </nav>
 
@@ -378,6 +406,21 @@ a{text-decoration:none;color:inherit}
 <div class="report-footer">
   Report ID: <strong>SL-2026-0614-8742</strong> &nbsp;|&nbsp; Generated: 14 June 2026, 11:42 AM IST &nbsp;|&nbsp; <strong>SatLegal</strong> · AI-Powered Legal Guidance Platform &nbsp;|&nbsp; Not legal advice — for informational use only
 </div>
+
+<footer>
+  <div class="foot-logo"><div style="display:inline-block;background:#fff;border-radius:12px;padding:6px 18px;margin-bottom:6px"><img src="assets/logo.png" alt="SatLegal" style="height:44px;width:auto;display:block"></div></div>
+  <div class="foot-links">
+    <a href="index.html">Home</a><a href="about.html">About Us</a>
+    <a href="how-it-works.html">How It Works</a><a href="pricing.html">Pricing</a>
+    <a href="faq.html">FAQ</a>
+    <a href="laws-reference.html">Laws Library</a><a href="legal-topics.html">Legal Topics</a>
+    <a href="contact.html">Contact Us</a>
+    <a href="report-sample.html">Sample Report</a>
+    <a href="privacy-policy.html">Privacy Policy</a><a href="terms-conditions.html">Terms &amp; Conditions</a><a href="#" onclick="window.slCookieConsent&&window.slCookieConsent.openPreferences();return false">Cookie Preferences</a>
+  </div>
+  <p>⚠️ The content provided on this website is for informational purposes only and should not be relied upon as a substitute for legal advice. Recipients are advised to consult with qualified legal counsel before implementing any recommendations herein. SatLegal shall not be liable for actions taken based on this information.</p>
+  <p style="margin-top:6px">© 2025 SatLegal · Built for India 🇮🇳 · All rights reserved</p>
+</footer>
 
 <script>
 // Animate win bar on load

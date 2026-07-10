@@ -103,20 +103,32 @@ p,.faq-a,.pc-tagline{text-align:justify}
 </head>
 <body>
 <div class="tribar"></div>
-<nav class="sl-nav">
-  <div class="sl-nav-inner">
-    <a class="sl-brand" href="index.html"><img src="assets/logo.png" alt="SatLegal"/></a>
-    <div class="sl-nav-links">
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="SatLegal – Legalities Simplified"></a>
+    <div class="nav-links">
       <a href="index.html">Home</a>
       <a href="legal-topics.html">Legal Topics</a>
       <a href="laws-reference.html">Laws Library</a>
-      
-      <a href="about.html">About Us</a>
       <a href="pricing.html" class="active">Pricing</a>
+      <a href="how-it-works.html">How It Works</a>
+      <a href="about.html">About Us</a>
       <a href="contact.html">Contact Us</a>
     </div>
-    <div class="nav-actions" id="navActions" style="display:flex;align-items:center;gap:8px"><!-- populated by nav.js --></div>
-    <button class="btn-nav-start" onclick="window.location='index.html#wizard'">Start Free Analysis →</button>
+    <div class="nav-actions" id="navActions"><!-- populated by nav.js --></div>
+    <button class="hamburger" onclick="toggleMob()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mob-menu" id="mobMenu">
+    <a href="index.html">🏠 Home</a>
+    <a href="legal-topics.html">📋 Legal Topics</a>
+    <a href="laws-reference.html">📚 Laws Library</a>
+    <a href="pricing.html">💰 Pricing</a>
+    <a href="how-it-works.html">💡 How It Works</a>
+    <a href="about.html">ℹ️ About Us</a>
+    <a href="contact.html">📞 Contact Us</a>
+    <a href="auth/signup.html" class="mob-btn-signup sl-mob-signup">⚡ Sign Up Free — Analyze My Case</a>
   </div>
 </nav>
 
@@ -253,10 +265,18 @@ p,.faq-a,.pc-tagline{text-align:justify}
 </section>
 
 <footer>
-  <a href="index.html"><div style="display:inline-block;background:#fff;border-radius:10px;padding:5px 16px;margin-bottom:4px"><img src="assets/logo.png" alt="SatLegal" style="height:36px;width:auto;display:block"></div></a>
-  <p><a href="how-it-works.html">How It Works</a> ·  · <a href="faq.html">FAQ</a> · <a href="contact.html">Contact</a> · <a href="report-sample.html">Sample Report</a></p>
-  <p>© 2025 SatLegal · <a href="privacy-policy.html">Privacy Policy</a> · <a href="terms-conditions.html">Terms &amp; Conditions</a></p>
-  <p style="margin-top:8px;font-size:11px;max-width:700px;margin-left:auto;margin-right:auto">The content on this website is for informational purposes only and should not be relied upon as a substitute for legal advice. Recipients are advised to consult qualified legal counsel. SatLegal shall not be liable for actions taken based on this information.</p>
+  <div class="foot-logo"><div style="display:inline-block;background:#fff;border-radius:12px;padding:6px 18px;margin-bottom:6px"><img src="assets/logo.png" alt="SatLegal" style="height:44px;width:auto;display:block"></div></div>
+  <div class="foot-links">
+    <a href="index.html">Home</a><a href="about.html">About Us</a>
+    <a href="how-it-works.html">How It Works</a><a href="pricing.html">Pricing</a>
+    <a href="faq.html">FAQ</a>
+    <a href="laws-reference.html">Laws Library</a><a href="legal-topics.html">Legal Topics</a>
+    <a href="contact.html">Contact Us</a>
+    <a href="report-sample.html">Sample Report</a>
+    <a href="privacy-policy.html">Privacy Policy</a><a href="terms-conditions.html">Terms &amp; Conditions</a><a href="#" onclick="window.slCookieConsent&&window.slCookieConsent.openPreferences();return false">Cookie Preferences</a>
+  </div>
+  <p>⚠️ The content provided on this website is for informational purposes only and should not be relied upon as a substitute for legal advice. Recipients are advised to consult with qualified legal counsel before implementing any recommendations herein. SatLegal shall not be liable for actions taken based on this information.</p>
+  <p style="margin-top:6px">© 2025 SatLegal · Built for India 🇮🇳 · All rights reserved</p>
 </footer>
 
 <script>
