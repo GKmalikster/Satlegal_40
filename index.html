@@ -1573,6 +1573,7 @@ function s1(){
   W.answers={};
   W.assessmentAnswers={};
   W.laws=[];W.selected=[];W.areas=[];W.questions=[];W.files={};
+  W.noInitialMatch=false;
   W.laws=(window.analyzeMultipleLaws||analyzeMultipleLaws)(txt,{});
   if(!Array.isArray(W.laws))W.laws=[];
 
@@ -1592,8 +1593,16 @@ function s1(){
   // ── Context clarification: if query is vague, replace generic Qs with targeted context Qs ──
   const domainSignals=/employer|salary|fired|terminate|property|rent|tenant|landlord|police|fir|arrest|fraud|cheat|scam|upi|divorce|husband|wife|maintenance|custody|dowry|assault|threat|harass|money|loan|bank|builder|rera|consumer|defect|negligence|cyber|hack|job|court|notice|legal|murder|kill|dead|died|death|poison|attack|stab|shoot|accident|injury|injur|hospital|stolen|theft|robbery|rape|molest|crimin|bribe|corrupt|blackmail|extort|kidnap|missing|disappear/i;
   const isVague=txt.length<70||!domainSignals.test(txt);
-  if(isVague){
-    // Query is vague — use targeted context questions only (no generic probing Qs which duplicate these)
+
+  // ── No initial match: domain signal present but keyword engine found nothing ──
+  // This means the query is probably valid but outside current coverage, or too niche.
+  // We don't block — we ask 3 context questions so Claude gets a richer description.
+  if(!W.laws.length && !isVague){
+    W.noInitialMatch=true;
+  }
+
+  if(isVague || W.noInitialMatch){
+    // Query is vague OR no keyword match — use targeted context questions
     const ctxQs=[
       {id:'ctx_nature',question:'What best describes the nature of your issue?',type:'radio',
        options:['Criminal — someone committed a crime against me or my family','I am being accused / blamed for something (I need to defend myself)','Financial fraud — money taken by deception or false promises','Employment — salary, termination, workplace rights','Property / Land / Builder dispute','Family — divorce, custody, maintenance, domestic violence','Medical — hospital or doctor treatment gone wrong','Consumer — defective product or poor service','Cyber crime / Online fraud']},
@@ -1602,7 +1611,6 @@ function s1(){
       {id:'ctx_harm',question:'What specifically happened?',type:'radio',
        options:['Someone died / was killed (not in hospital — suspicious / violent death)','A patient died in hospital — doctor / family blaming each other','Sexual assault, rape, or sexual violence occurred','Physical violence or assault occurred (victim is alive)','Money was taken by fraud, deception, or false promise','I was fired, not paid, or my workplace rights were violated','A family dispute — divorce, custody, dowry, domestic violence','Property or inheritance dispute after someone\'s death']},
     ];
-    // If there are already law-specific questions (e.g. murder), keep them; don't add generic probing Qs
     qs = qs.length ? [...ctxQs, ...qs] : ctxQs;
   } else if(!qs.length){
     // Query has clear domain but no specific law matched — use probing Qs (non-vague path)
@@ -1614,7 +1622,9 @@ function s1(){
   // Update step-2 subtitle with detected context
   const p2sub=document.getElementById('p2sub');
   if(p2sub){
-    if(isVague){
+    if(W.noInitialMatch){
+      p2sub.textContent=`We couldn't auto-detect the law category from your description. Answer 3 quick questions so we can find the right law for you.`;
+    } else if(isVague){
       p2sub.textContent=`A few quick context questions first — then targeted law-specific questions will follow.`;
     } else if(W.areas.length){
       const aNames=W.areas.slice(0,2).map(a=>a.replace(/_/g,' ')).join(' & ');
@@ -1626,7 +1636,7 @@ function s1(){
   renderQs();
   showStep(2);
   slTrackLawSearch(txt, W.laws);
-  slTrack('analysis_done',{lawCount:(W.laws||[]).length,topLaw:(W.laws&&W.laws[0])?W.laws[0].name||W.laws[0].caseType:'none'});
+  slTrack('analysis_done',{lawCount:(W.laws||[]).length,noInitialMatch:W.noInitialMatch||false,topLaw:(W.laws&&W.laws[0])?W.laws[0].name||W.laws[0].caseType:'none'});
   slTrackLead('analysis',{laws:(W.laws||[]).slice(0,3).map(l=>l.name||l.caseType)});
 }
 
@@ -1884,14 +1894,64 @@ async function s2(){
     }
 
     if(!W.laws.length){
-      toast('We need more detail to identify applicable laws. Please add more context to your description.','err');
-      showStep(1);return;
+      renderNoMatch();
+      showStep(3);return;
     }
     renderLaws();
     showStep(3);
   }finally{
     if(btn){btn.disabled=false;btn.textContent='Next →';}
   }
+}
+
+/* ── No-match card: shown when query is outside current law coverage ── */
+function renderNoMatch(){
+  // Hide the Next/Back footer buttons — they don't apply here
+  const bn=document.getElementById('btnNext');
+  if(bn)bn.style.display='none';
+
+  // Log coverage gap for admin review
+  slTrack('no_match',{query:(W.input||'').substring(0,200),answers:W.answers});
+
+  const c=document.getElementById('lawCont');
+  c.innerHTML=`
+    <div style="background:#fff;border:1.5px solid #e2e6ea;border-radius:14px;padding:24px 22px;text-align:center;max-width:620px;margin:0 auto">
+      <div style="font-size:40px;margin-bottom:10px">🔍</div>
+      <div style="font-size:17px;font-weight:800;color:#0D3D0D;margin-bottom:8px">Your query is outside our current coverage</div>
+      <p style="font-size:13.5px;color:#5c5c7a;line-height:1.7;margin-bottom:18px">
+        We couldn't map your issue to any of the <strong>71 Indian law categories</strong> we currently cover.
+        This may mean the topic is very niche, involves international law, or needs specialised expertise
+        beyond what SatLegal currently handles.
+      </p>
+
+      <div style="background:#f8f9fa;border-radius:10px;padding:14px 16px;margin-bottom:18px;text-align:left">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#138808;margin-bottom:8px">What SatLegal covers</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          ${['Criminal / BNS 2023','Family & Divorce','Property & RERA','Employment & Labour','Consumer Rights','Cyber Crime','Civil Suits','Constitutional / PIL','Tax & GST','NRI Matters','Corporate / IBC','Motor Accident','Medical Negligence','Evidence / BSA 2023'].map(t=>`<span style="background:#F0F9F0;border:1px solid #99DD99;border-radius:6px;padding:3px 9px;font-size:11px;font-weight:600;color:#0A5204">${t}</span>`).join('')}
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <div style="font-size:13px;color:#5c5c7a;margin-bottom:12px">
+          <strong style="color:#0D3D0D">Recommended next steps:</strong>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <a href="contact.html" style="display:flex;align-items:center;gap:10px;background:#0D3D0D;color:#fff;border-radius:9px;padding:11px 16px;text-decoration:none;font-size:13px;font-weight:700">
+            <span style="font-size:16px">📞</span>
+            <span>Speak to a SatLegal lawyer — we'll find the right expert for your matter</span>
+          </a>
+          <a href="lawyers.html" style="display:flex;align-items:center;gap:10px;background:#FF9933;color:#fff;border-radius:9px;padding:11px 16px;text-decoration:none;font-size:13px;font-weight:700">
+            <span style="font-size:16px">⚖️</span>
+            <span>Browse verified lawyers by specialisation</span>
+          </a>
+        </div>
+      </div>
+
+      <button onclick="resetW();showStep(1);document.getElementById('btnNext').style.display='';document.getElementById('issueTa').focus()"
+        style="background:transparent;border:1.5px solid #e2e6ea;border-radius:8px;padding:9px 20px;font-size:13px;color:#5c5c7a;cursor:pointer;font-family:inherit;margin-top:4px">
+        ← Try a different description
+      </button>
+    </div>`;
 }
 
 /* ── Render law cards ── */
