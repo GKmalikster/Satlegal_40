@@ -38,6 +38,7 @@ module.exports = async function handler(req, res) {
 
     // ── POST: record a sale (public — called fire-and-forget from index.html) ──
     if (req.method === 'POST') {
+      if (JSON.stringify(req.body || {}).length > 10000) return res.status(413).json({ error: 'Payload too large' });
       // Respond immediately — never block the user
       res.status(200).json({ success: true });
 
@@ -111,6 +112,6 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (err) {
     console.error('[sales]', err.message);
-    return res.status(500).json({ success: false, message: err.message });
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };

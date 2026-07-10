@@ -26,6 +26,7 @@ module.exports = async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST')   return res.status(405).end();
+  if (JSON.stringify(req.body || {}).length > 10000) return res.status(413).json({ error: 'Payload too large' });
 
   try {
     const {
