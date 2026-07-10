@@ -12911,53 +12911,6 @@ const LAWS_DATABASE = [
     ]
   },
   {
-    "caseType": "Criminal – Evidence Law / Bharatiya Sakshya Adhiniyam 2023 (BSA)",
-    "lawCategory": "Criminal",
-    "actName": "Bharatiya Sakshya Adhiniyam 2023 (BSA) – Evidence Act (New)",
-    "keywords": {
-      "exact": [
-        "BSA 2023 evidence act",
-        "bharatiya sakshya adhiniyam",
-        "new evidence act 2023",
-        "bsa evidence act what is",
-        "electronic evidence admissibility",
-        "cctv evidence not admitted court",
-        "whatsapp chat as evidence court",
-        "electronic records admissibility court"
-      ],
-      "strong": [
-        "BSA 2023",
-        "evidence act new",
-        "bharatiya sakshya",
-        "electronic evidence",
-        "digital evidence admissible",
-        "admissibility of evidence",
-        "evidence court admissible",
-        "section 65B certificate",
-        "electronic record court",
-        "cctv footage evidence",
-        "whatsapp evidence court",
-        "digital evidence",
-        "burden of proof",
-        "oral evidence",
-        "documentary evidence"
-      ],
-      "moderate": [
-        "evidence act",
-        "evidence admissible",
-        "court evidence",
-        "proof in court",
-        "witness evidence",
-        "document as evidence"
-      ]
-    },
-    "assessment": [
-      { "q": "What type of evidence are you relying on?", "opts": ["Electronic/digital (WhatsApp, email, CCTV)", "Documentary (contracts, agreements)", "Oral/witness evidence", "Forensic/scientific evidence"] },
-      { "q": "Has the evidence been challenged for admissibility?", "opts": ["Yes — other party challenged it", "No — but I want to know if it's admissible", "Not yet in court", "Already admitted by court"] }
-    ],
-    "multiLawCompatible": ["Criminal – BNS 2023 / New Criminal Code", "Civil – Contract Dispute / Money Recovery"]
-  },
-  {
     "caseType": "IBC – Insolvency / Bankruptcy / NCLT Proceedings",
     "lawCategory": "Commercial",
     "actName": "Insolvency and Bankruptcy Code 2016 (IBC) + IBBI Regulations – Corporate / Personal Insolvency",
@@ -16610,6 +16563,215 @@ const LAWS_DATABASE = [
     "multiLawCompatible": [
       "Consumer – Product Defect / Service Deficiency",
       "Constitutional – PIL / Writ Petition / Fundamental Rights"
+    ]
+  },
+  {
+    "caseType": "Evidence – BSA 2023 / Electronic Evidence / Proof in Court",
+    "lawCategory": "Evidence & Procedure",
+    "actName": "Bharatiya Sakshya Adhiniyam, 2023 (BSA) – formerly Indian Evidence Act 1872",
+    "keywords": {
+      "exact": [
+        "court not accepting my whatsapp messages as evidence",
+        "judge refused my whatsapp chat as evidence",
+        "whatsapp screenshot not admitted as evidence in court",
+        "my screenshots were rejected by court as evidence",
+        "how to submit digital evidence in indian court",
+        "electronic evidence not accepted by court",
+        "cctv footage not accepted as evidence",
+        "court rejected cctv footage",
+        "email not accepted as evidence in court",
+        "how to use email as evidence in court india",
+        "how to prove whatsapp messages in court india",
+        "how to make digital evidence admissible",
+        "section 65b certificate for electronic evidence",
+        "i need 65b certificate for electronic record",
+        "how to certify electronic evidence india",
+        "electronic evidence certificate bsa",
+        "how to prove electronic record in court india",
+        "my confession was forced by police",
+        "police took my forced confession statement",
+        "confession made to police is it valid",
+        "police forced me to sign statement confession",
+        "can police confession be used against me in court",
+        "my witness turned hostile in court",
+        "witness turned hostile what to do",
+        "my witness is refusing to testify",
+        "hostile witness examination cross examination",
+        "my document was lost how to prove in court",
+        "original document destroyed how to prove",
+        "lost original agreement how to prove in court",
+        "secondary evidence for lost document",
+        "how to prove lost document in court india",
+        "opponent forged documents submitted in court",
+        "forged document submitted in court",
+        "opponent produced fake evidence in court",
+        "how to challenge forged document court",
+        "handwriting expert needed to prove forgery",
+        "forensic expert report as evidence",
+        "dna test as evidence in court",
+        "dna evidence india court",
+        "expert witness opinion evidence",
+        "audio recording admissible as evidence",
+        "voice recording admissible in court india",
+        "call recording as evidence in court",
+        "video recording as evidence india court",
+        "photo evidence in court india",
+        "how to prove bank statement in court",
+        "how to submit computer generated records as evidence"
+      ],
+      "strong": [
+        "bsa 2023",
+        "bharatiya sakshya adhiniyam",
+        "evidence act india",
+        "indian evidence act",
+        "electronic evidence",
+        "digital evidence court",
+        "electronic record admissible",
+        "electronic evidence admissibility",
+        "65b certificate",
+        "section 63 bsa",
+        "section 65b",
+        "electronic evidence certificate",
+        "certified copy electronic record",
+        "computer generated evidence",
+        "digital document court",
+        "whatsapp evidence court",
+        "screenshot evidence court",
+        "email evidence court",
+        "cctv evidence court",
+        "video evidence court",
+        "audio evidence court",
+        "call recording evidence",
+        "voice recording evidence",
+        "electronic record india",
+        "primary evidence secondary evidence",
+        "secondary evidence lost document",
+        "document lost secondary evidence",
+        "original document not available",
+        "prove document in court",
+        "document authentication court",
+        "witness examination",
+        "hostile witness",
+        "witness refusing to testify",
+        "cross examination witness",
+        "witness turned hostile",
+        "confession police",
+        "confession to police",
+        "police confession admissible",
+        "forced confession police",
+        "confession statement police",
+        "confession magistrate",
+        "judicial confession",
+        "extra judicial confession",
+        "statement to police",
+        "expert witness",
+        "expert opinion evidence",
+        "handwriting expert",
+        "forensic expert evidence",
+        "forensic report evidence",
+        "dna evidence",
+        "dna test court",
+        "forgery proof court",
+        "forged document challenge",
+        "admission in court",
+        "admission evidence",
+        "evidence burden of proof",
+        "burden of proof india",
+        "presumption of law",
+        "res gestae",
+        "hearsay evidence india",
+        "relevancy of facts",
+        "facts in issue",
+        "evidence in civil case",
+        "evidence in criminal case"
+      ],
+      "weak": [
+        "evidence",
+        "proof in court",
+        "prove in court",
+        "document proof",
+        "court evidence",
+        "admissible evidence",
+        "evidence india",
+        "digital proof",
+        "electronic proof",
+        "whatsapp proof",
+        "screenshot proof",
+        "evidence law",
+        "proof law india",
+        "sakshya",
+        "sakshya act",
+        "witness",
+        "confession",
+        "admission",
+        "document evidence",
+        "certified copy"
+      ]
+    },
+    "sections": [
+      "BSA 2023 Sec 57 (Electronic records as primary evidence)",
+      "BSA 2023 Sec 61-63 (Admissibility of electronic records – replaces IEA Sec 65B)",
+      "BSA 2023 Sec 63 (Certificate for electronic evidence – court officer/custodian)",
+      "BSA 2023 Sec 23-25 (Confession to police not admissible)",
+      "BSA 2023 Sec 26 (Confession in custody – only before Magistrate)",
+      "BSA 2023 Sec 2(1)(c) (Definition of electronic record includes WhatsApp, email, CCTV)",
+      "BSA 2023 Sec 47 (Expert opinion on handwriting, electronic signature)",
+      "BSA 2023 Sec 85A-85C (Presumptions as to electronic agreements, records)",
+      "BSA 2023 Sec 106 (Burden of proof – special knowledge)"
+    ],
+    "documents": [
+      {
+        "name": "Electronic evidence + Section 63 BSA certificate (from device custodian / service provider)",
+        "critical": true
+      },
+      {
+        "name": "Original device / screenshot with metadata (date, time, sender)",
+        "critical": true
+      },
+      {
+        "name": "Certified copy or printout of electronic record with authentication",
+        "critical": true
+      },
+      {
+        "name": "Expert report (handwriting / forensic / digital forensics)",
+        "critical": false
+      },
+      {
+        "name": "Affidavit confirming authenticity of document submitted",
+        "critical": false
+      },
+      {
+        "name": "FIR / police complaint if evidence is being tampered or forged",
+        "critical": false
+      }
+    ],
+    "probingQuestions": [
+      {
+        "q": "Is your evidence digital (WhatsApp, email, CCTV, call recording) or physical (paper document)?",
+        "tip": "Digital evidence requires a Section 63 BSA certificate from the device custodian or service provider. Paper documents need originals or certified secondary evidence."
+      },
+      {
+        "q": "Has the court already rejected your evidence, or are you trying to submit it for the first time?",
+        "tip": "If already rejected: file an application to re-produce with proper Sec 63 certificate. First time: ensure authentication before submission."
+      },
+      {
+        "q": "Are you in a civil or criminal case?",
+        "tip": "Burden of proof differs — civil: balance of probabilities; criminal: beyond reasonable doubt. Confession to police is never admissible in criminal cases under BSA 2023."
+      }
+    ],
+    "contextualQuestions": [
+      "criminal",
+      "civil"
+    ],
+    "limitation": "No separate limitation — applies within the limitation period of the underlying case",
+    "urgency": "high",
+    "quickTip": "Under BSA 2023 (replaces Indian Evidence Act 1872), WhatsApp messages, emails, CCTV footage, and call recordings ARE admissible as electronic records — but only with a proper Section 63 certificate from the device/platform custodian. Confessions to police cannot be used against you in court.",
+    "multiLawCompatible": [
+      "Criminal – Cheating / IPC 420 / BNS 318",
+      "Cyber – Online Fraud / Financial Cyber Crime",
+      "Property – Civil Suit / Specific Performance / Injunction",
+      "Family – Divorce (Contested)",
+      "Criminal – PMLA / Money Laundering / Enforcement Directorate"
     ]
   }
 ];
