@@ -3282,6 +3282,10 @@ async function authSignup(){
   if(!userId.trim()){toast('Enter your email or mobile number','err');return;}
   if(pw.length<6){toast('Password must be at least 6 characters','err');return;}
   if(pw!==pw2){toast('Passwords do not match','err');return;}
+  const termsEl=document.getElementById('signupTerms');
+  if(termsEl&&!termsEl.checked){toast('Please accept the Terms & Conditions to proceed','err');return;}
+  const dpdpEl=document.getElementById('signupDpdp');
+  if(dpdpEl&&!dpdpEl.checked){toast('Please provide your DPDP consent to proceed','err');return;}
   const btn=document.getElementById('signupSubmitBtn');
   if(btn){btn.disabled=true;btn.textContent='Creating account…';}
   try{
@@ -3590,6 +3594,18 @@ document.addEventListener('DOMContentLoaded',function(){
             <input class="auth-input" id="signupConfirm" type="password" placeholder="Repeat your password" autocomplete="new-password" onkeydown="if(event.key==='Enter')authSignup()">
             <button class="auth-pw-toggle" type="button" onclick="authTogglePwd('signupConfirm',this)" title="Show/hide">👁</button>
           </div>
+        </div>
+        <div class="auth-form-group" style="margin-bottom:10px">
+          <label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;cursor:pointer;font-size:12px;color:var(--text-lt);line-height:1.5">
+            <input type="checkbox" id="signupTerms" style="margin-top:2px;flex-shrink:0;accent-color:var(--gr-500)"/>
+            <span>I agree to the <a href="terms-conditions.html" target="_blank" style="color:var(--sf-600);font-weight:600">Terms &amp; Conditions</a> and understand that SatLegal provides legal information, not legal advice.</span>
+          </label>
+        </div>
+        <div class="auth-form-group" style="margin-bottom:14px">
+          <label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;cursor:pointer;font-size:12px;color:var(--text-lt);line-height:1.5">
+            <input type="checkbox" id="signupDpdp" style="margin-top:2px;flex-shrink:0;accent-color:var(--gr-500)"/>
+            <span>I consent to SatLegal collecting and processing my personal data to provide legal information services, as required under the <strong style="color:var(--gr-800)">Digital Personal Data Protection Act 2023 (DPDP Act)</strong>. I may withdraw this consent at any time by writing to <a href="mailto:privacy@satlegal.in" style="color:var(--sf-600)">privacy@satlegal.in</a>.</span>
+          </label>
         </div>
         <button class="auth-btn" id="signupSubmitBtn" onclick="authSignup()">✅ Create Account</button>
         <div class="auth-switch">Already registered? <a onclick="switchAuthTab('login')">Login here</a></div>
