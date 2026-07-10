@@ -18,9 +18,9 @@ body{font-family:var(--font);color:var(--text);background:var(--white);line-heig
 a{text-decoration:none;color:inherit}
 .tribar{height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
 /* Navbar */
-.sl-nav{background:#fff;position:sticky;top:0;z-index:900;border-bottom:1px solid var(--border);box-shadow:0 2px 10px rgba(0,0,0,.06)}
-.sl-nav-inner{max-width:1160px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:64px}
-.sl-brand{display:flex;align-items:center;gap:0;text-decoration:none}
+
+
+
 .sl-brand img{height:42px;width:auto;display:block}
 .sl-nav-links{display:flex;gap:2px;align-items:center}
 .sl-nav-links a{color:var(--gr-800);font-size:14px;font-weight:500;padding:7px 14px;border-radius:6px;transition:.2s}
@@ -99,7 +99,46 @@ footer p{font-size:12px;line-height:1.8}
 footer a{color:rgba(255,255,255,.6);transition:.2s}
 footer a:hover{color:#fff}
 p,.faq-a,.pc-tagline{text-align:justify}
+
+/* ── Canonical Nav (shared) ── */
+.nav{background:#fff;position:sticky;top:0;z-index:900;border-bottom:1px solid var(--border,#e2e6ea);box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.nav-inner{max-width:1160px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;text-decoration:none}
+.brand img{height:44px;width:auto;display:block}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{color:var(--gr-800,#0D3D0D);font-size:14px;font-weight:500;padding:7px 13px;border-radius:6px;transition:.2s;text-decoration:none}
+.nav-links a:hover,.nav-links a.active{color:var(--gr-700,#0A5204);background:var(--gr-50,#F0F9F0)}
+.nav-actions{display:flex;align-items:center;gap:8px}
+.btn-nav-admin,.sl-btn-admin{color:#6B7280;font-size:12px;font-weight:600;padding:6px 10px;border-radius:6px;text-decoration:none;transition:.15s;opacity:.7}
+.btn-nav-login,.sl-btn-login{color:var(--gr-700,#0A5204);border:2px solid var(--gr-500,#138808);padding:7px 16px;border-radius:8px;font-weight:700;font-size:13px;background:transparent;transition:.2s;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block}
+.btn-nav-login:hover,.sl-btn-login:hover{background:var(--gr-50,#F0F9F0)}
+.btn-nav-signup,.sl-btn-signup{background:var(--sf-500,#FF9933);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;transition:.2s;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block}
+.btn-nav-signup:hover,.sl-btn-signup:hover{background:var(--sf-600,#E5891E);transform:translateY(-1px)}
+.nav-acct-wrap{position:relative}
+.btn-nav-acct{color:var(--gr-700,#0A5204);border:2px solid var(--gr-500,#138808);padding:7px 14px;border-radius:8px;font-weight:700;font-size:13px;background:transparent;cursor:pointer;font-family:inherit;transition:.2s}
+.btn-nav-acct:hover{background:var(--gr-50,#F0F9F0)}
+.nav-acct-menu{display:none;position:absolute;right:0;top:calc(100% + 8px);background:#fff;border:1px solid var(--border,#e2e6ea);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.12);min-width:200px;z-index:999;overflow:hidden}
+.nav-acct-menu.open{display:block}
+.nav-acct-menu a{display:block;padding:10px 16px;font-size:13px;color:var(--gr-800,#0D3D0D);text-decoration:none;transition:.15s}
+.nav-acct-menu a:hover{background:var(--gr-50,#F0F9F0)}
+.nav-acct-divider{height:1px;background:var(--border,#e2e6ea);margin:4px 0}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:6px;cursor:pointer}
+.hamburger span{width:24px;height:2px;background:var(--gr-800,#0D3D0D);border-radius:2px;display:block;transition:.3s}
+.mob-menu{display:none;background:#fff;flex-direction:column;padding:10px 16px 14px;border-top:1px solid var(--border,#e2e6ea)}
+.mob-menu a{color:var(--gr-800,#0D3D0D);padding:10px 12px;border-radius:6px;font-size:15px;text-decoration:none;display:block}
+.mob-menu a:hover{background:var(--gr-50,#F0F9F0);color:var(--gr-700,#0A5204)}
+.mob-menu .mob-btn-signup{background:var(--sf-500,#FF9933);color:#fff;text-align:center;font-weight:700;border-radius:8px;margin-top:6px}
+.mob-menu.open{display:flex}
+@media(max-width:768px){.hamburger{display:flex}.nav-links,.nav-actions{display:none}}
+/* ── Footer (shared) ── */
+footer{background:var(--gr-900,#071a07);color:rgba(255,255,255,.5);padding:40px 20px;text-align:center;font-size:13px}
+footer a{color:rgba(255,255,255,.6);text-decoration:none;transition:.2s}
+footer a:hover{color:#fff}
+.foot-logo{margin-bottom:12px}
+.foot-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 20px;margin-bottom:16px}
+.foot-links a{font-size:13px}
 </style>
+<link rel="stylesheet" href="css/nav-footer.css">
 </head>
 <body>
 <div class="tribar"></div>

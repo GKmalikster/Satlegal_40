@@ -1,0 +1,212 @@
+/* ══════════════════════════════════════════════════
+   SatLegal — Shared Nav + Footer CSS
+   Loaded AFTER each page's <style> block to override
+   any page-specific conflicting rules.
+   ══════════════════════════════════════════════════ */
+
+/* ── NAV ──────────────────────────────────────────── */
+.nav {
+  background: #fff !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 900 !important;
+  border-bottom: 1px solid #e2e6ea !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06) !important;
+}
+.nav-inner {
+  max-width: 1160px !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  height: 64px !important;
+}
+.brand {
+  display: flex !important;
+  align-items: center !important;
+  text-decoration: none !important;
+  flex-shrink: 0 !important;
+}
+.brand img {
+  height: 44px !important;
+  width: auto !important;
+  display: block !important;
+}
+.nav-links {
+  display: flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+}
+.nav-links a {
+  color: #0D3D0D !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  padding: 7px 13px !important;
+  border-radius: 6px !important;
+  transition: .2s !important;
+  text-decoration: none !important;
+}
+.nav-links a:hover,
+.nav-links a.active {
+  color: #0A5204 !important;
+  background: #F0F9F0 !important;
+}
+.nav-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+/* Login / Signup / Account buttons */
+.btn-nav-login, .sl-btn-login {
+  color: #0A5204 !important;
+  border: 2px solid #138808 !important;
+  padding: 7px 16px !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  background: transparent !important;
+  transition: .2s !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+}
+.btn-nav-login:hover, .sl-btn-login:hover { background: #F0F9F0 !important; }
+.btn-nav-signup, .sl-btn-signup {
+  background: #FF9933 !important;
+  color: #fff !important;
+  border: none !important;
+  padding: 9px 18px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  transition: .2s !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+}
+.btn-nav-signup:hover, .sl-btn-signup:hover {
+  background: #E5891E !important;
+  transform: translateY(-1px) !important;
+}
+.btn-nav-admin, .sl-btn-admin {
+  color: #6B7280 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 6px 10px !important;
+  border-radius: 6px !important;
+  text-decoration: none !important;
+  opacity: .7 !important;
+}
+/* My Account dropdown */
+.nav-acct-wrap { position: relative !important; }
+.btn-nav-acct {
+  color: #0A5204 !important;
+  border: 2px solid #138808 !important;
+  padding: 7px 14px !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  transition: .2s !important;
+}
+.btn-nav-acct:hover { background: #F0F9F0 !important; }
+.nav-acct-menu {
+  display: none !important;
+  position: absolute !important;
+  right: 0 !important;
+  top: calc(100% + 8px) !important;
+  background: #fff !important;
+  border: 1px solid #e2e6ea !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,.12) !important;
+  min-width: 200px !important;
+  z-index: 999 !important;
+  overflow: hidden !important;
+}
+.nav-acct-menu.open { display: block !important; }
+.nav-acct-menu a {
+  display: block !important;
+  padding: 10px 16px !important;
+  font-size: 13px !important;
+  color: #0D3D0D !important;
+  text-decoration: none !important;
+  transition: .15s !important;
+}
+.nav-acct-menu a:hover { background: #F0F9F0 !important; }
+.nav-acct-divider { height: 1px !important; background: #e2e6ea !important; margin: 4px 0 !important; }
+/* Hamburger */
+.hamburger {
+  display: none !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  background: none !important;
+  border: none !important;
+  padding: 6px !important;
+  cursor: pointer !important;
+}
+.hamburger span {
+  width: 24px !important;
+  height: 2px !important;
+  background: #0D3D0D !important;
+  border-radius: 2px !important;
+  display: block !important;
+}
+/* Mobile menu — MUST be hidden on desktop */
+.mob-menu {
+  display: none !important;
+  background: #fff !important;
+  flex-direction: column !important;
+  padding: 10px 16px 14px !important;
+  border-top: 1px solid #e2e6ea !important;
+}
+.mob-menu.open { display: flex !important; }
+.mob-menu a {
+  color: #0D3D0D !important;
+  padding: 10px 12px !important;
+  border-radius: 6px !important;
+  font-size: 15px !important;
+  text-decoration: none !important;
+  display: block !important;
+}
+.mob-menu a:hover { background: #F0F9F0 !important; color: #0A5204 !important; }
+.mob-menu .mob-btn-signup {
+  background: #FF9933 !important;
+  color: #fff !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
+  margin-top: 6px !important;
+}
+/* Responsive breakpoint */
+@media (max-width: 768px) {
+  .hamburger { display: flex !important; }
+  .nav-links  { display: none !important; }
+  .nav-actions { display: none !important; }
+}
+
+/* ── FOOTER ───────────────────────────────────────── */
+footer {
+  background: #071a07 !important;
+  color: rgba(255,255,255,.5) !important;
+  padding: 40px 20px !important;
+  text-align: center !important;
+  font-size: 13px !important;
+}
+footer a {
+  color: rgba(255,255,255,.6) !important;
+  text-decoration: none !important;
+  transition: .2s !important;
+}
+footer a:hover { color: #fff !important; }
+.foot-logo { margin-bottom: 12px !important; }
+.foot-links {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 8px 20px !important;
+  margin-bottom: 16px !important;
+}
+.foot-links a { font-size: 13px !important; }
+footer p { color: rgba(255,255,255,.45) !important; line-height: 1.6 !important; max-width: 800px !important; margin: 0 auto !important; }
