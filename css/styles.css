@@ -76,6 +76,7 @@ body {
   color: var(--text);
   background: var(--bg-light);
   line-height: 1.6;
+  text-align: justify;
 }
 
 a { color: var(--sf-700); text-decoration: none; }
