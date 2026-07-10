@@ -1326,7 +1326,7 @@ function renderAnalysisSummary(){
   const cta=document.getElementById('signinCtaBox');
   if(reg){reg.style.display='none';reg.classList.remove('reg-form-wrap')}
   if(otp)otp.style.display='none';
-  if(cta)cta.style.display='block';
+  if(cta)cta.style.display='none'; // Auth handled by new modal — never show old plan cards at Step 6
 }
 
 // Plan selection
@@ -3099,7 +3099,7 @@ function closeAuthModal(){
   if(mo)mo.classList.remove('open');
   const _fc=JSON.parse(localStorage.getItem('sl_flow_config')||'{}');
   const _isFree=!((_fc.paymentRequired!==undefined?_fc.paymentRequired:true)&&!_fc.freeReportAccess);
-  if(_isFree){showStep(4);}
+  if(_isFree){showStep(5);} // Return to documents step, not assessment
   else{renderPlanCards();document.getElementById('actionChoiceModal').classList.add('open');}
 }
 
@@ -3186,8 +3186,16 @@ function _authOnSuccess(userData, token){
     const _uid='SL'+Date.now().toString(36).toUpperCase();
     setTimeout(()=>{genReport(_uid,JSON.parse(localStorage.getItem('sl_user_session')||'{}'));showStep(6);},400);
   } else {
-    toast('✅ Logged in! Proceeding to payment…');
-    setTimeout(()=>initiateRazorpayPayment(W.selectedPlan,W.selectedPlanAmt),400);
+    // Check if payment already completed in this tab session — skip re-payment on relogin
+    const _sessionPaid=sessionStorage.getItem('sl_session_paid')==='1';
+    if(_sessionPaid){
+      toast('✅ Welcome back'+( W.name?' '+W.name.split(' ')[0]:'')+' ! Loading your report…');
+      const _rUid='SL'+Date.now().toString(36).toUpperCase();
+      setTimeout(()=>{genReport(_rUid,JSON.parse(localStorage.getItem('sl_user_session')||'{}'));showStep(6);},400);
+    } else {
+      toast('✅ Logged in! Proceeding to payment…');
+      setTimeout(()=>initiateRazorpayPayment(W.selectedPlan,W.selectedPlanAmt),400);
+    }
   }
 }
 
@@ -3339,7 +3347,10 @@ function initiateRazorpayPayment(plan,amt){
   const planType=(plan&&plan.type)?plan.type:(typeof plan==='string'?plan:'report');
   if(!keyId){
     toast('Payment gateway not configured. Opening report…');
-    selectPlan(planType==='report'?'report':'consult',amt);
+    try{sessionStorage.setItem('sl_session_paid','1');}catch(e){}
+    const _fbSess=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
+    const _fbUid='SL'+Date.now().toString(36).toUpperCase();
+    genReport(_fbUid,_fbSess);
     showStep(6);
     return;
   }
@@ -3379,6 +3390,7 @@ function _openRazorpay(keyId,plan,amt,planLabel){
         ts:new Date().toISOString()
       };
       localStorage.setItem('sl_last_payment',JSON.stringify(txn));
+      try{sessionStorage.setItem('sl_session_paid','1');}catch(e){}
       // Update sales record in MongoDB with payment_completed status
       try{
         const _u=JSON.parse(localStorage.getItem('sl_user')||'{}');
@@ -3390,8 +3402,9 @@ function _openRazorpay(keyId,plan,amt,planLabel){
         })}).catch(function(){});
       }catch(e){}
       toast('✅ Payment successful! Loading your '+planLabel+'…');
-      const legacyType=planObj.type==='report'?'report':'consult';
-      selectPlan(legacyType,amt);
+      const _paidSess=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
+      const _paidUid='SL'+Date.now().toString(36).toUpperCase();
+      genReport(_paidUid,_paidSess);
       showStep(6);
     },
     modal:{

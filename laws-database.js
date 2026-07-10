@@ -12707,7 +12707,7 @@ const LAWS_DATABASE = [
     ]
   },
   {
-    "caseType": "Municipal – Building Regulations / Local Body / Demolition Notice",
+    "caseType": "Municipal – Shop Sealing / Building Regulations / Local Body / Demolition Notice",
     "lawCategory": "Municipal",
     "actName": "Municipal Corporation Acts (State-specific) + Building Bye-Laws + Noise Pollution Rules – Municipal Disputes",
     "keywords": {
@@ -12874,7 +12874,15 @@ const LAWS_DATABASE = [
     ],
     "documents": [
       {
-        "name": "Property documents / Sale deed",
+        "name": "Sealing Order / Notice from Municipal Authority",
+        "critical": true
+      },
+      {
+        "name": "Trade Licence / Shop Registration Certificate",
+        "critical": true
+      },
+      {
+        "name": "Property documents / Sale deed / Lease deed",
         "critical": true
       },
       {
@@ -12883,21 +12891,22 @@ const LAWS_DATABASE = [
       },
       {
         "name": "Demolition Notice (if received)",
-        "critical": true
+        "critical": false
       },
       {
-        "name": "Photographs of construction/violation",
+        "name": "Photographs of shop / construction / violation",
         "critical": false
       }
     ],
+    "quickTip": "If your shop has been sealed by MCD/BMC/local body, immediately obtain the sealing order in writing. You can challenge it before the municipal tribunal or High Court. If no prior show-cause notice was given, the sealing is prima facie illegal and courts routinely grant interim relief.",
     "probingQuestions": [
       {
-        "q": "Is this about demolition of your structure or illegal construction by others?",
-        "tip": "If your structure: challenging demolition. If others: filing municipal complaint."
+        "q": "Is this about sealing of your shop/premises, or demolition of a structure?",
+        "tip": "Shop sealing: challenge via Municipal Tribunal or High Court. Demolition: requires show-cause notice first; without notice, demolition is challengeable."
       },
       {
-        "q": "Was a proper show cause notice given before demolition?",
-        "tip": "Law requires show cause notice before demolition. Without notice, demolition can be challenged in High Court."
+        "q": "Did the municipal authority give you a prior show-cause notice before sealing/demolition?",
+        "tip": "Law requires show-cause notice before sealing or demolition. Without notice, the action can be challenged in the High Court on natural justice grounds."
       }
     ],
     "contextualQuestions": [
