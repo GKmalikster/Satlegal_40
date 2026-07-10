@@ -295,7 +295,7 @@ footer a:hover{color:#fff}
     <a href="privacy-policy.html">Privacy Policy</a><a href="terms-conditions.html">Terms &amp; Conditions</a><a href="#" onclick="window.slCookieConsent&&window.slCookieConsent.openPreferences();return false">Cookie Preferences</a>
   </div>
   <p>⚠️ The content provided on this website is for informational purposes only and should not be relied upon as a substitute for legal advice. Recipients are advised to consult with qualified legal counsel before implementing any recommendations herein. SatLegal shall not be liable for actions taken based on this information.</p>
-  <p style="margin-top:6px">© 2025 SatLegal · Built for India 🇮🇳 · All rights reserved</p>
+  <p style="margin-top:6px">© 2026 SatLegal · Built for India 🇮🇳 · All rights reserved</p>
 </footer>
 
 <script>
@@ -407,11 +407,14 @@ function sendChat(){
   msgs.innerHTML+=`<div class="chat-sent-msg">${msg}</div>`;
   input.value='';
   msgs.scrollTop=msgs.scrollHeight;
-  // Auto-reply
+  // Route to email + show auto-reply
+  const subject=encodeURIComponent('SatLegal Chat Message');
+  const body=encodeURIComponent('Message from website chat:\n\n'+msg+'\n\n---\nSent via SatLegal live chat widget');
   setTimeout(()=>{
-    msgs.innerHTML+=`<div class="chat-msg">✅ Thanks — our support team has seen your message and will respond shortly. For urgent matters, also email <a href="mailto:support@satlegal.in" style="color:var(--sf-600)">support@satlegal.in</a></div>`;
+    msgs.innerHTML+=`<div class="chat-msg">✅ Got it! We've opened your email app with your message pre-filled — just hit Send to reach us directly. You can also email us anytime at <a href="mailto:support@satlegal.in" style="color:var(--sf-600)">support@satlegal.in</a></div>`;
     msgs.scrollTop=msgs.scrollHeight;
-  },1200);
+    window.location.href='mailto:support@satlegal.in?subject='+subject+'&body='+body;
+  },800);
 }
 
 function chatEnter(e){

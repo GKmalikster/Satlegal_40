@@ -74,6 +74,14 @@ a{text-decoration:none;color:inherit}
 .btn-confirm{width:100%;background:var(--gr-800);color:#fff;border:none;padding:15px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:var(--font);transition:.2s;margin-top:8px}
 .btn-confirm:hover{background:var(--gr-700)}
 .btn-confirm:disabled{background:var(--border);cursor:not-allowed}
+/* Enquiry card (no-lawyer state) */
+.enquiry-card{display:none;background:linear-gradient(135deg,#F0FBF0,#FFF4E6);border:2px solid var(--sf-200);border-radius:14px;padding:28px;margin-bottom:20px}
+.enquiry-card h2{font-size:17px;font-weight:800;color:var(--gr-800);margin-bottom:4px}
+.enquiry-card .sub{font-size:13px;color:var(--text-lt);margin-bottom:24px;line-height:1.6}
+.btn-enquiry{width:100%;background:var(--sf-500);color:#fff;border:none;padding:15px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:var(--font);transition:.2s;margin-top:8px}
+.btn-enquiry:hover{background:var(--sf-600)}
+.btn-enquiry:disabled{background:var(--border);cursor:not-allowed}
+.enq-note{font-size:12px;color:var(--text-lt);margin-top:10px;text-align:center}
 </style>
 </head>
 <body>
@@ -175,6 +183,32 @@ a{text-decoration:none;color:inherit}
     </table>
     <button class="btn-confirm" id="confirmBtn" onclick="confirmBooking()">✅ Confirm Booking →</button>
   </div>
+
+  <!-- Enquiry card — shown only when no lawyers in network yet -->
+  <div class="enquiry-card" id="enquiryCard">
+    <h2>📩 Request a Consultation</h2>
+    <p class="sub">Our verified lawyer network is being set up. Share your details and we will assign a qualified lawyer matched to your case and contact you within 24 hours to confirm your slot.</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" id="enqName" placeholder="Your full name"/>
+      </div>
+      <div class="form-group">
+        <label>Mobile Number *</label>
+        <input type="tel" id="enqPhone" placeholder="10-digit mobile"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Email Address *</label>
+      <input type="email" id="enqEmail" placeholder="for confirmation"/>
+    </div>
+    <div class="form-group">
+      <label>Briefly describe your legal issue</label>
+      <textarea id="enqNote" rows="3" placeholder="e.g., property dispute with landlord, need advice on sending legal notice…"></textarea>
+    </div>
+    <button class="btn-enquiry" id="enquiryBtn" onclick="submitEnquiry()">📩 Submit Enquiry Request →</button>
+    <p class="enq-note">We will respond within 24 hours · Mon–Fri, 10am–6pm IST · support@satlegal.in</p>
+  </div>
 </div>
 
 <script>
@@ -188,6 +222,10 @@ try{payment=JSON.parse(localStorage.getItem('sl_payment')||'{}')}catch(e){}
 document.getElementById('bkName').value=user.name||'';
 document.getElementById('bkEmail').value=(user.email&&!user.email.includes('@satlegal.in'))?user.email:'';
 document.getElementById('bkPhone').value=user.phone||'';
+// Pre-fill enquiry form too
+document.getElementById('enqName').value=user.name||'';
+document.getElementById('enqEmail').value=(user.email&&!user.email.includes('@satlegal.in'))?user.email:'';
+document.getElementById('enqPhone').value=user.phone||'';
 
 // Lawyer data — populated via /api/lawyer/list as lawyers register
 let lawyers=[];
@@ -200,12 +238,24 @@ let selectedLawyer=null,selectedDate=null,selectedSlot=null;
 const caseType=(report.laws||[])[0]?.caseType||'';
 const lawyerGrid=document.getElementById('lawyerGrid');
 if(!lawyers.length){
+  // Hide steps that require a lawyer — show enquiry card instead
+  ['dateGrid','slotGrid','summaryCard'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){const card=el.closest('.card');if(card)card.style.display='none';}
+  });
+  // Hide date + slot parent cards by heading text
+  document.querySelectorAll('.card').forEach(c=>{
+    const h=c.querySelector('h2');
+    if(h&&(h.textContent.includes('Select a Date')||h.textContent.includes('Select a Time')))c.style.display='none';
+  });
+  document.getElementById('enquiryCard').style.display='block';
+
   const sub=document.getElementById('lawyerSubtitle');
-  if(sub)sub.textContent='SatLegal will assign a verified lawyer matched to your case. Leave your details below and we\'ll be in touch within 24 hours.';
-  lawyerGrid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:32px 20px;color:#6B7280;background:#F8F9FA;border-radius:10px;border:1px dashed #D1D5DB">
+  if(sub)sub.textContent='SatLegal will assign a verified lawyer matched to your case and contact you within 24 hours.';
+  lawyerGrid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:28px 20px;color:#6B7280;background:#F0FBF0;border-radius:10px;border:1px dashed #A8E6A0">
     <div style="font-size:36px;margin-bottom:10px">⚖️</div>
-    <div style="font-size:15px;font-weight:700;color:#374151;margin-bottom:6px">Lawyer Network Coming Soon</div>
-    <div style="font-size:13px;line-height:1.6;max-width:360px;margin:0 auto">Our verified lawyer network is being set up. SatLegal will assign you a qualified lawyer matched to your case — please leave your details below and we will contact you within 24 hours.</div>
+    <div style="font-size:15px;font-weight:700;color:#0D3D0D;margin-bottom:6px">Lawyer Network Coming Soon</div>
+    <div style="font-size:13px;line-height:1.6;max-width:360px;margin:0 auto;color:#374151">Fill the enquiry form below — we will assign a qualified verified lawyer and confirm your slot within 24 hours.</div>
   </div>`;
 } else {
   lawyerGrid.innerHTML=lawyers.map((l,i)=>`
@@ -328,6 +378,41 @@ async function confirmBooking(){
   }catch(e){}
 
   // Redirect to confirmation
+  window.location.href='confirm.html';
+}
+
+async function submitEnquiry(){
+  const name=document.getElementById('enqName').value.trim();
+  const phone=document.getElementById('enqPhone').value.trim();
+  const email=document.getElementById('enqEmail').value.trim();
+  const note=document.getElementById('enqNote').value.trim();
+
+  if(!name){alert('Please enter your full name.');return;}
+  if(!phone||phone.length<10){alert('Please enter a valid 10-digit mobile number.');return;}
+  if(!email||!email.includes('@')){alert('Please enter a valid email address.');return;}
+
+  const btn=document.getElementById('enquiryBtn');
+  btn.disabled=true;btn.textContent='Submitting…';
+
+  const enquiry={
+    type:'enquiry',
+    name,phone,email,note,
+    paymentId:payment.paymentId||'',
+    submittedAt:new Date().toISOString()
+  };
+  localStorage.setItem('sl_booking',JSON.stringify(enquiry));
+
+  // POST to backend (non-blocking)
+  try{
+    const token=localStorage.getItem('sl_auth_token');
+    const _API=location.hostname==='localhost'?'http://localhost:5000/api':'/api';
+    await fetch(_API+'/inquiry/book-consultation',{
+      method:'POST',
+      headers:{'Content-Type':'application/json',...(token?{'Authorization':'Bearer '+token}:{})},
+      body:JSON.stringify({...enquiry,inquiryId:localStorage.getItem('sl_last_inquiry_id')})
+    });
+  }catch(e){}
+
   window.location.href='confirm.html';
 }
 </script>
