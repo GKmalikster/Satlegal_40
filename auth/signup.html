@@ -638,7 +638,10 @@ tbody tr:last-child td { border-bottom: none; }
   <a href="/" class="navbar-brand" style="display:flex;align-items:center;gap:8px;text-decoration:none">
     <img src="../assets/logo.png" alt="" onerror="this.style.display='none'" style="height:38px;width:auto;display:block"/>
   </a>
-  <div class="nav-links"><a href="/auth/login.html" class="btn btn-outline btn-sm">Login</a></div>
+  <div class="nav-links">
+    <a href="/" style="font-size:13px;color:var(--text-light);padding:7px 12px;border-radius:6px;text-decoration:none;transition:.2s" onmouseover="this.style.color='var(--gr-700)'" onmouseout="this.style.color='var(--text-light)'">← Home</a>
+    <a href="/auth/login.html" class="btn btn-outline btn-sm">Login</a>
+  </div>
 </nav>
 
 <div class="auth-wrap">
