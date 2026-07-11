@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>My Dashboard – SatLegal</title>
+<style>
+:root{
+  --sf-500:#FF9933;--sf-600:#FF8800;--sf-700:#E07000;--sf-800:#B35100;
+  --sf-100:#FFF4E6;--sf-200:#FFE4C2;--sf-50:#FFFAF4;
+  --gr-500:#138808;--gr-600:#1A6B1A;--gr-700:#145214;--gr-800:#0D3D0D;--gr-900:#062206;
+  --gr-50:#F0FBF0;--gr-100:#D4F5D2;--gr-400:#2EAD22;
+  --danger:#C0392B;--danger-lt:#FDECEA;--warning:#CC8800;
+  --text:#1A1A1A;--text-lt:#6B7280;--border:#E5E7EB;--bg:#F4F6F8;
+  --white:#fff;--shadow:0 2px 12px rgba(0,0,0,.07);--r:8px;
+  --font:'Segoe UI',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);color:var(--text);background:var(--bg);line-height:1.5;}
+a{text-decoration:none;color:inherit;}
+
+/* ── Nav ── */
+.navbar{height:62px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:20px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);border-image:linear-gradient(to right,var(--sf-500) 33%,#fff 33% 66%,var(--gr-500) 66%) 1;border-bottom-width:3px;border-bottom-style:solid;}
+.brand{font-size:21px;font-weight:900;letter-spacing:-.5px;flex-shrink:0;}
+.brand span:first-child{color:var(--sf-600);}
+.brand span:last-child{color:var(--gr-600);}
+.nav-mid{display:flex;gap:4px;flex:1;}
+.nav-mid a{font-size:13px;font-weight:600;color:var(--text-lt);padding:6px 13px;border-radius:6px;transition:.15s;}
+.nav-mid a:hover,.nav-mid a.active{color:var(--gr-700);background:var(--gr-50);}
+.nav-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+.avatar-pill{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:4px 12px 4px 6px;font-size:13px;font-weight:600;color:var(--gr-800);}
+.avatar-circle{width:28px;height:28px;border-radius:50%;background:var(--gr-500);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:var(--r);border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;white-space:nowrap;}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-danger-outline{background:transparent;border:1.5px solid var(--danger);color:var(--danger);}
+.btn-danger-outline:hover{background:var(--danger);color:#fff;}
+.btn-success{background:var(--gr-500);color:#fff;}
+.btn-success:hover{background:var(--gr-700);color:#fff;}
+.btn-outline{background:transparent;border:1.5px solid var(--sf-500);color:var(--sf-700);}
+.btn-outline:hover{background:var(--sf-500);color:#fff;}
+
+/* ── Layout ── */
+.page{max-width:1100px;margin:0 auto;padding:28px 24px 60px;}
+
+/* ── Status banners ── */
+.status-banner{border-radius:var(--r);padding:14px 18px;margin-bottom:24px;display:flex;align-items:center;gap:12px;font-size:14px;}
+.banner-pending{background:#FFF8E6;border:1px solid #FFD966;color:#7A4800;}
+.banner-rejected{background:var(--danger-lt);border:1px solid #F5A8A0;color:#7A1A12;}
+.banner-approved{background:var(--gr-50);border:1px solid var(--gr-200);color:var(--gr-800);}
+.banner-icon{font-size:22px;flex-shrink:0;}
+
+/* ── Welcome strip ── */
+.welcome{background:linear-gradient(135deg,var(--gr-800) 0%,var(--gr-700) 60%,var(--sf-700) 100%);border-radius:12px;padding:24px 28px;color:#fff;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
+.welcome-text h1{font-size:22px;font-weight:800;margin-bottom:4px;}
+.welcome-text p{font-size:14px;opacity:.85;}
+.welcome-badge{background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700;white-space:nowrap;}
+
+/* ── KPI cards ── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+@media(max-width:700px){.kpi-row{grid-template-columns:1fr 1fr;}}
+@media(max-width:420px){.kpi-row{grid-template-columns:1fr;}}
+.kpi-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.kpi-saffron::before{background:var(--sf-500);}
+.kpi-green::before{background:var(--gr-500);}
+.kpi-amber::before{background:var(--sf-700);}
+.kpi-forest::before{background:var(--gr-700);}
+.kpi-icon{font-size:28px;margin-bottom:8px;}
+.kpi-val{font-size:32px;font-weight:900;color:var(--gr-800);line-height:1;margin-bottom:4px;}
+.kpi-label{font-size:12px;color:var(--text-lt);font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.kpi-trend{font-size:12px;margin-top:8px;color:var(--text-lt);}
+.kpi-trend.up{color:var(--gr-600);}
+
+/* ── Main 2-col grid ── */
+.main-grid{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start;}
+@media(max-width:860px){.main-grid{grid-template-columns:1fr;}}
+
+/* ── Cards ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:22px;box-shadow:var(--shadow);}
+.card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.card-title{font-size:15px;font-weight:800;color:var(--gr-800);}
+
+/* ── Lead list ── */
+.lead-row{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+.lead-row:last-child{border:none;padding-bottom:0;}
+.lead-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.dot-new{background:var(--sf-500);}
+.dot-accepted{background:var(--gr-500);}
+.dot-completed{background:var(--gr-700);}
+.dot-rejected{background:var(--danger);}
+.dot-viewed{background:#94A3B8;}
+.lead-case{flex:1;min-width:0;}
+.lead-case-type{font-size:12px;font-weight:700;color:var(--gr-700);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.lead-case-desc{font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lead-meta{font-size:11px;color:var(--text-lt);margin-top:4px;}
+.lead-status{flex-shrink:0;}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;}
+.badge-new{background:var(--sf-100);color:var(--sf-800);}
+.badge-accepted{background:var(--gr-100);color:var(--gr-800);}
+.badge-completed{background:var(--gr-50);color:var(--gr-700);border:1px solid var(--gr-200);}
+.badge-rejected{background:var(--danger-lt);color:var(--danger);}
+.badge-viewed{background:#F1F5F9;color:#475569;}
+.badge-pending{background:#FFF8E6;color:#7A4800;}
+
+/* ── Quick actions ── */
+.action-list{display:flex;flex-direction:column;gap:10px;}
+.action-link{display:flex;align-items:center;gap:12px;padding:13px 16px;border:1.5px solid var(--border);border-radius:var(--r);transition:.15s;color:var(--text);}
+.action-link:hover{border-color:var(--gr-400);background:var(--gr-50);color:var(--gr-800);}
+.action-link-icon{font-size:20px;flex-shrink:0;}
+.action-link-text{font-size:14px;font-weight:600;}
+.action-link-sub{font-size:12px;color:var(--text-lt);}
+
+/* ── Bar chart ── */
+.chart-wrap{margin-top:16px;}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:80px;padding:0 2px;}
+.chart-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.chart-bar{width:100%;background:var(--gr-500);border-radius:3px 3px 0 0;transition:.4s;min-height:2px;opacity:.85;}
+.chart-bar:hover{opacity:1;}
+.chart-label{font-size:10px;color:var(--text-lt);text-align:center;}
+.chart-legend{display:flex;gap:14px;margin-top:10px;font-size:11px;color:var(--text-lt);}
+.legend-dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;}
+
+/* ── Profile completeness ── */
+.completeness-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin:10px 0;}
+.completeness-fill{height:100%;background:linear-gradient(to right,var(--gr-400),var(--sf-500));border-radius:4px;transition:.5s;}
+.completeness-items{display:flex;flex-direction:column;gap:8px;margin-top:14px;}
+.ci{display:flex;align-items:center;gap:8px;font-size:13px;}
+.ci-check{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;}
+.ci-done{background:var(--gr-100);color:var(--gr-700);}
+.ci-todo{background:var(--border);color:var(--text-lt);}
+
+/* ── Empty state ── */
+.empty{text-align:center;padding:40px 20px;color:var(--text-lt);}
+.empty-icon{font-size:40px;margin-bottom:10px;}
+
+/* ── Loading ── */
+.loading-row{display:flex;align-items:center;justify-content:center;gap:10px;padding:40px;color:var(--text-lt);}
+.spinner{width:22px;height:22px;border:3px solid var(--sf-200);border-top-color:var(--sf-500);border-right-color:var(--gr-500);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="/" class="brand"><span>Sat</span><span>Legal</span></a>
+  <div class="nav-mid">
+    <a href="/lawyer/dashboard.html" class="active">📊 Dashboard</a>
+    <a href="/lawyer/leads.html">📋 My Leads</a>
+    <a href="/lawyer/profile.html" id="profileLink">👤 Public Profile</a>
+  </div>
+  <div class="nav-right">
+    <div class="avatar-pill">
+      <div class="avatar-circle" id="avatarInitial">?</div>
+      <span id="navName">Loading…</span>
+    </div>
+    <button class="btn btn-danger-outline btn-sm" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- Status banner (shown based on profile status) -->
+  <div id="statusBanner" style="display:none"></div>
+
+  <!-- Welcome strip -->
+  <div class="welcome">
+    <div class="welcome-text">
+      <h1 id="welcomeTitle">Welcome back!</h1>
+      <p id="welcomeSub">Loading your profile…</p>
+    </div>
+    <div id="welcomeBadge" class="welcome-badge" style="display:none"></div>
+  </div>
+
+  <!-- KPI cards -->
+  <div class="kpi-row">
+    <div class="kpi-card kpi-saffron">
+      <div class="kpi-icon">📨</div>
+      <div class="kpi-val" id="kpiTotal">—</div>
+      <div class="kpi-label">Total Leads</div>
+      <div class="kpi-trend" id="kpiNew">— new</div>
+    </div>
+    <div class="kpi-card kpi-green">
+      <div class="kpi-icon">✅</div>
+      <div class="kpi-val" id="kpiActive">—</div>
+      <div class="kpi-label">Active Cases</div>
+      <div class="kpi-trend">Accepted leads</div>
+    </div>
+    <div class="kpi-card kpi-amber">
+      <div class="kpi-icon">🏆</div>
+      <div class="kpi-val" id="kpiClosure">—%</div>
+      <div class="kpi-label">Closure Rate</div>
+      <div class="kpi-trend" id="kpiCompleted">— completed</div>
+    </div>
+    <div class="kpi-card kpi-forest">
+      <div class="kpi-icon">⭐</div>
+      <div class="kpi-val" id="kpiRating">—</div>
+      <div class="kpi-label">Average Rating</div>
+      <div class="kpi-trend" id="kpiReviews">— reviews</div>
+    </div>
+  </div>
+
+  <!-- Main grid -->
+  <div class="main-grid">
+
+    <!-- Left: Recent leads + chart -->
+    <div>
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-hdr">
+          <span class="card-title">📋 Recent Leads</span>
+          <a href="/lawyer/leads.html" class="btn btn-outline btn-sm">View All →</a>
+        </div>
+        <div id="recentLeads">
+          <div class="loading-row"><div class="spinner"></div> Loading leads…</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-title">📈 Monthly Leads (Last 6 Months)</span>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-bars" id="chartBars">
+            <div class="loading-row" style="padding:20px;flex:1"><div class="spinner"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Quick actions + profile completeness -->
+    <div>
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-hdr"><span class="card-title">⚡ Quick Actions</span></div>
+        <div class="action-list">
+          <a class="action-link" href="/lawyer/leads.html?status=new">
+            <span class="action-link-icon">🔔</span>
+            <div><div class="action-link-text">View New Leads</div><div class="action-link-sub" id="newLeadCount">Loading…</div></div>
+          </a>
+          <a class="action-link" href="/lawyer/leads.html?status=accepted">
+            <span class="action-link-icon">⚖️</span>
+            <div><div class="action-link-text">Active Cases</div><div class="action-link-sub">Leads you've accepted</div></div>
+          </a>
+          <a class="action-link" href="/lawyers.html" target="_blank" id="viewPublicProfile">
+            <span class="action-link-icon">🌐</span>
+            <div><div class="action-link-text">View Public Profile</div><div class="action-link-sub">How clients see you</div></div>
+          </a>
+          <a class="action-link" href="mailto:support@satlegal.in">
+            <span class="action-link-icon">💬</span>
+            <div><div class="action-link-text">Contact Support</div><div class="action-link-sub">support@satlegal.in</div></div>
+          </a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">✅ Profile Completeness</span></div>
+        <div id="completenessScore" style="font-size:24px;font-weight:900;color:var(--gr-700)">—%</div>
+        <div class="completeness-bar"><div class="completeness-fill" id="completenessFill" style="width:0%"></div></div>
+        <div class="completeness-items" id="completenessItems">
+          <div class="loading-row" style="padding:10px"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-grid -->
+</div><!-- /page -->
+
+<script>
+// ── Session ─────────────────────────────────────────────────────────────────
+function getSession() {
+  const token = localStorage.getItem('sl_token');
+  const raw   = localStorage.getItem('sl_user');
+  if (!token || !raw) return null;
+  try {
+    const user = JSON.parse(raw);
+    if (user.role !== 'lawyer') return null;
+    return { token, user };
+  } catch { return null; }
+}
+
+const session = getSession();
+if (!session) {
+  window.location.href = '/auth/login.html?redirect=' + encodeURIComponent(location.pathname);
+}
+
+function logout() {
+  localStorage.removeItem('sl_token');
+  localStorage.removeItem('sl_user');
+  window.location.href = '/auth/login.html';
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function statusBadge(s) {
+  const map = { new:'badge-new', accepted:'badge-accepted', completed:'badge-completed', rejected:'badge-rejected', viewed:'badge-viewed' };
+  return `<span class="badge ${map[s]||'badge-viewed'}">${s}</span>`;
+}
+function dotClass(s) {
+  return { new:'dot-new', accepted:'dot-accepted', completed:'dot-completed', rejected:'dot-rejected' }[s] || 'dot-viewed';
+}
+function timeAgo(d) {
+  const diff = (Date.now() - new Date(d)) / 1000;
+  if (diff < 60)   return 'just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+
+// ── Load data ────────────────────────────────────────────────────────────────
+async function loadDashboard() {
+  try {
+    const [meRes, leadsRes] = await Promise.all([
+      fetch('/api/lawyer/me',    { headers: { Authorization: 'Bearer ' + session.token } }),
+      fetch('/api/lawyer/leads?limit=5', { headers: { Authorization: 'Bearer ' + session.token } })
+    ]);
+
+    if (meRes.status === 401 || leadsRes.status === 401) { logout(); return; }
+
+    const me    = await meRes.json();
+    const leads = await leadsRes.json();
+
+    if (me.success) renderMe(me);
+    if (leads.success) renderLeads(leads);
+
+  } catch (e) {
+    console.error(e);
+    $('recentLeads').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><p>Could not load data. Please refresh.</p></div>';
+  }
+}
+
+function renderMe(data) {
+  const { user, profile, stats } = data;
+
+  // Navbar
+  $('navName').textContent = user.name.split(' ')[0];
+  $('avatarInitial').textContent = user.name[0].toUpperCase();
+
+  // Welcome
+  $('welcomeTitle').textContent = 'Welcome back, ' + user.name;
+  $('welcomeSub').textContent   = profile.primarySpecialization + ' · ' + profile.city + ', ' + profile.state;
+
+  // Status banner + badge
+  const statusMap = {
+    pending_review: { cls:'banner-pending', icon:'⏳', text:'Your profile is under review. You\'ll receive leads once approved (usually within 24–48 hours).' },
+    approved:       { cls:'banner-approved', icon:'✅', text:'Your profile is verified and visible to clients.' },
+    rejected:       { cls:'banner-rejected', icon:'❌', text:'Profile rejected: ' + (profile.rejectionReason || 'Please contact support for details.') },
+    suspended:      { cls:'banner-rejected', icon:'⛔', text:'Your profile has been suspended. Contact support@satlegal.in.' }
+  };
+  const bs = statusMap[profile.status] || statusMap.pending_review;
+  const banner = $('statusBanner');
+  banner.className = 'status-banner ' + bs.cls;
+  banner.innerHTML = `<span class="banner-icon">${bs.icon}</span><span>${bs.text}</span>`;
+  banner.style.display = 'flex';
+
+  const wbText = { pending_review:'Pending Review', approved:'Verified ✓', rejected:'Rejected', suspended:'Suspended' };
+  $('welcomeBadge').textContent = wbText[profile.status] || profile.status;
+  $('welcomeBadge').style.display = 'block';
+
+  // KPIs
+  $('kpiTotal').textContent    = stats.totalLeads;
+  $('kpiNew').textContent      = stats.new + ' unread';
+  $('kpiActive').textContent   = stats.active;
+  $('kpiClosure').textContent  = stats.closureRate + '%';
+  $('kpiCompleted').textContent = stats.completed + ' completed';
+  $('kpiRating').textContent   = stats.rating ? stats.rating.toFixed(1) : '—';
+  $('kpiReviews').textContent  = stats.totalReviews + ' review' + (stats.totalReviews !== 1 ? 's' : '');
+  $('newLeadCount').textContent = stats.new + ' new lead' + (stats.new !== 1 ? 's' : '') + ' awaiting your response';
+
+  // Monthly trend chart
+  renderChart(stats.monthlyTrend);
+
+  // Profile completeness
+  const checks = [
+    { label: 'Email verified',           done: user.isVerified },
+    { label: 'Bio added',                done: !!profile.bio },
+    { label: 'Profile photo',            done: !!profile.profilePhoto },
+    { label: 'Consultation fee set',     done: (profile.feeStructure?.consultationFee || 0) > 0 },
+    { label: 'LinkedIn profile',         done: !!profile.linkedinUrl },
+    { label: 'Multiple specializations', done: (profile.specializations || []).length >= 2 },
+    { label: 'Availability hours set',   done: !!profile.availability?.hours }
+  ];
+  const pct = Math.round(checks.filter(c => c.done).length / checks.length * 100);
+  $('completenessScore').textContent = pct + '%';
+  $('completenessFill').style.width  = pct + '%';
+  $('completenessItems').innerHTML   = checks.map(c => `
+    <div class="ci">
+      <div class="ci-check ${c.done ? 'ci-done' : 'ci-todo'}">${c.done ? '✓' : '○'}</div>
+      <span style="color:${c.done ? 'var(--text)' : 'var(--text-lt)'};${c.done ? '' : 'text-decoration:line-through'}">${c.label}</span>
+    </div>`).join('');
+}
+
+function renderChart(trend) {
+  if (!trend || !trend.length) {
+    $('chartBars').innerHTML = '<div class="empty" style="flex:1;padding:12px;font-size:13px">No lead data yet</div>';
+    return;
+  }
+  // Fill in all 6 months
+  const now = new Date();
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ year: d.getFullYear(), month: d.getMonth() + 1, label: MONTHS[d.getMonth()], count: 0 });
+  }
+  trend.forEach(t => {
+    const m = months.find(m => m.year === t._id.year && m.month === t._id.month);
+    if (m) m.count = t.count;
+  });
+  const maxCount = Math.max(...months.map(m => m.count), 1);
+  $('chartBars').innerHTML = months.map(m => {
+    const h = Math.round(m.count / maxCount * 72);
+    return `<div class="chart-bar-col" title="${m.label}: ${m.count} leads">
+      <div class="chart-bar" style="height:${h}px;background:${m.count > 0 ? 'var(--gr-500)' : 'var(--border)'}"></div>
+      <div class="chart-label">${m.label}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderLeads(data) {
+  if (!data.leads || !data.leads.length) {
+    $('recentLeads').innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">📭</div>
+        <p>No leads yet. Your profile will start receiving leads once approved.</p>
+      </div>`;
+    return;
+  }
+  $('recentLeads').innerHTML = data.leads.map(l => `
+    <div class="lead-row">
+      <div class="lead-dot ${dotClass(l.status)}"></div>
+      <div class="lead-case">
+        <div class="lead-case-type">${(l.caseTypes || []).join(' · ') || 'General Query'}</div>
+        <div class="lead-case-desc">${escHtml((l.description || '').slice(0, 120))}</div>
+        <div class="lead-meta">${l.userName || 'Anonymous'} · ${timeAgo(l.createdAt)}</div>
+      </div>
+      <div class="lead-status">${statusBadge(l.status)}</div>
+    </div>`).join('');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+loadDashboard();
+</script>
+</body>
+</html>
