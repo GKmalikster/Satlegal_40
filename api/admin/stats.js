@@ -1,6 +1,7 @@
 /**
- * GET /api/admin/stats
- * Returns dashboard overview stats: user counts, lawyer counts, inquiry counts.
+ * GET /api/admin/stats           → dashboard overview counts
+ * GET /api/admin/analytics/summary → search analytics (merged to avoid function limit)
+ *
  * Requires admin session token in Authorization header.
  */
 
@@ -16,6 +17,48 @@ module.exports = async function handler(req, res) {
 
   if (!isAdmin(req)) return res.status(401).json({ success: false, message: 'Unauthorized' });
 
+  // Route: ?action=analytics → analytics summary (was admin/analytics/summary.js)
+  if (req.query.action === 'analytics') {
+    try {
+      await connectDB();
+      const { SearchQuery, User } = getModels();
+
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+      const [totalSearches, topLawsAgg, dailyTrendAgg, totalUsers, recentSearches] = await Promise.all([
+        SearchQuery.countDocuments(),
+        SearchQuery.aggregate([
+          { $unwind: '$detectedLaws' },
+          { $group: { _id: '$detectedLaws', count: { $sum: 1 } } },
+          { $sort: { count: -1 } },
+          { $limit: 15 }
+        ]),
+        SearchQuery.aggregate([
+          { $match: { ts: { $gte: thirtyDaysAgo } } },
+          { $group: {
+              _id: { year: { $year: '$ts' }, month: { $month: '$ts' }, day: { $dayOfMonth: '$ts' } },
+              count: { $sum: 1 }
+          }},
+          { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } }
+        ]),
+        User.countDocuments({ role: { $in: ['user', 'end_user'] } }),
+        SearchQuery.find().sort({ ts: -1 }).limit(10).select('query detectedLaws source ts')
+      ]);
+
+      const topLaws    = topLawsAgg.map(l => ({ name: l._id, count: l.count }));
+      const dailyTrend = dailyTrendAgg.map(d => ({
+        date: `${d._id.year}-${String(d._id.month).padStart(2,'0')}-${String(d._id.day).padStart(2,'0')}`,
+        count: d.count
+      }));
+
+      return res.json({ success: true, totalSearches, totalUsers, topLaws, dailyTrend, recentSearches });
+    } catch (err) {
+      console.error('[admin/analytics/summary]', err.message);
+      return res.status(500).json({ success: false, message: err.message });
+    }
+  }
+
+  // Default: overview stats
   try {
     await connectDB();
     const { User, LawyerProfile, CaseInquiry, LawyerLead, SearchQuery } = getModels();

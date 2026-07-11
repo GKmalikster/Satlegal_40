@@ -343,9 +343,9 @@ async function createUser() {
   fb.innerHTML = '<span style="color:#94a3b8">Creating user…</span>';
 
   try {
-    const resp = await fetch('/api/admin-users', {
+    const resp = await fetch('/api/admin/users', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ADMIN_TOKEN },
       body: JSON.stringify({ name, email, phone, role, password: pass, specialization: spec, city }),
     });
     const data = await resp.json();
@@ -363,8 +363,8 @@ async function loadUsers() {
   const list = document.getElementById('userList');
   list.innerHTML = '<div class="empty">Loading…</div>';
   try {
-    const resp = await fetch('/api/admin-users', {
-      headers: { 'x-admin-token': ADMIN_TOKEN }
+    const resp = await fetch('/api/admin/users', {
+      headers: { 'Authorization': 'Bearer ' + ADMIN_TOKEN }
     });
     const data = await resp.json();
     if (!resp.ok || !data.success) { list.innerHTML = `<div class="empty">${data.message || 'Could not load users'}</div>`; return; }
@@ -389,9 +389,9 @@ async function loadUsers() {
 
 async function changeRole(userId, newRole) {
   try {
-    const resp = await fetch('/api/admin-users', {
+    const resp = await fetch('/api/admin/users', {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ADMIN_TOKEN },
       body: JSON.stringify({ userId, role: newRole }),
     });
     const data = await resp.json();
