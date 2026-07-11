@@ -23,6 +23,8 @@
   "functions": {
     "api/analyse.js":                 { "maxDuration": 15 },
     "api/track.js":                   { "maxDuration": 10 },
+    "api/lawyer-register.js":         { "maxDuration": 10 },
+    "api/lawyer-list.js":             { "maxDuration": 10 },
     "api/admin/stats.js":             { "maxDuration": 10 },
     "api/admin/users.js":             { "maxDuration": 10 },
     "api/admin/lawyers.js":           { "maxDuration": 10 },
@@ -38,6 +40,8 @@
     { "src": "/api/feedback",                "dest": "/api/feedback.js" },
     { "src": "/api/admin-users",             "dest": "/api/admin/users.js" },
     { "src": "/api/track",                   "dest": "/api/track.js" },
+    { "src": "/api/lawyer/register",         "dest": "/api/lawyer-register.js" },
+    { "src": "/api/lawyer/list",             "dest": "/api/lawyer-list.js" },
     { "src": "/api/admin/stats",             "dest": "/api/admin/stats.js" },
     { "src": "/api/admin/users",             "dest": "/api/admin/users.js" },
     { "src": "/api/admin/lawyers",           "dest": "/api/admin/lawyers.js" },

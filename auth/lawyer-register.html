@@ -620,9 +620,9 @@ tbody tr:last-child td { border-bottom: none; }
 
 </style>
   <style>
-    body { background: linear-gradient(135deg, #0A2463 0%, #103080 60%, #0D6B06 100%); min-height: 100vh; display: flex; flex-direction: column; }
+    body { background: linear-gradient(135deg, var(--gr-900) 0%, var(--gr-800) 60%, #0a3010 100%); min-height: 100vh; display: flex; flex-direction: column; }
     .reg-wrap { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 30px 20px; }
-    .reg-box { background: #fff; border-radius: 12px; padding: 40px; width: 100%; max-width: 680px; box-shadow: 0 20px 60px rgba(10,36,99,0.25); border-top: 4px solid var(--saffron); }
+    .reg-box { background: #fff; border-radius: 12px; padding: 40px; width: 100%; max-width: 720px; box-shadow: 0 20px 60px rgba(0,0,0,0.35); border-top: 4px solid var(--sf-500); }
     .reg-header { text-align: center; margin-bottom: 30px; }
     .section-sep { font-size: 13px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin: 25px 0 15px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
     .specializations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; max-height: 280px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
@@ -631,13 +631,22 @@ tbody tr:last-child td { border-bottom: none; }
     .spec-item input { flex-shrink: 0; }
     .days-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
     .day-btn { padding: 6px 12px; border: 2px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; background: #fff; transition: all 0.2s; }
-    .day-btn.selected { background: var(--saffron); color: #fff; border-color: var(--saffron); }
+    .day-btn.selected { background: var(--sf-500); color: #fff; border-color: var(--sf-500); }
+    .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+    .check-item { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); background: #fff; }
+    .check-item:hover { background: var(--sf-50); border-color: var(--sf-400); }
+    .check-item input { flex-shrink: 0; }
+    .radio-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+    .radio-item { display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer; padding: 8px 14px; border: 1.5px solid var(--border); border-radius: 8px; }
+    .radio-item:hover { border-color: var(--sf-400); background: var(--sf-50); }
+    .radio-item input[type=radio]:checked + span { color: var(--sf-700); font-weight: 700; }
+    .radio-item:has(input:checked) { border-color: var(--sf-500); background: var(--sf-100); }
   </style>
 </head>
 <body>
 <div id="loading-overlay" class="loading-overlay"><div class="loading-box"><div class="loader"></div><p style="margin-top:10px;color:#666">Registering...</p></div></div>
 <nav class="navbar">
-  <a href="/" class="navbar-brand"><span class="brand-sat">Sat</span><span class="brand-legal">Legal</span><span class="brand-dot">.in</span></a>
+  <a href="/" class="navbar-brand" style="display:inline-block"><img src="../assets/logo.png" alt="SatLegal" onerror="this.style.display='none'" style="height:38px;width:auto"></a>
   <div class="nav-links"><a href="/auth/login.html" class="btn btn-outline btn-sm">Login</a></div>
 </nav>
 
@@ -651,6 +660,8 @@ tbody tr:last-child td { border-bottom: none; }
     <div id="alertBox"></div>
 
     <form id="lawyerForm">
+
+      <!-- ── Personal Information ── -->
       <div class="section-sep">👤 Personal Information</div>
       <div class="grid-2">
         <div class="form-group">
@@ -673,6 +684,31 @@ tbody tr:last-child td { border-bottom: none; }
         </div>
       </div>
 
+      <!-- ── Firm / Practice Type ── -->
+      <div class="section-sep">🏢 Practice Setup</div>
+      <div class="form-group">
+        <label>I practice as *</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="firmType" value="solo" checked><span>Solo Advocate</span></label>
+          <label class="radio-item"><input type="radio" name="firmType" value="firm"><span>Part of a Law Firm</span></label>
+        </div>
+      </div>
+      <div class="form-group" id="firmNameWrap" style="display:none">
+        <label>Firm Name</label>
+        <input type="text" id="firmName" class="form-control" placeholder="e.g. Sharma & Associates" />
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>LinkedIn Profile URL</label>
+          <input type="url" id="linkedinUrl" class="form-control" placeholder="https://linkedin.com/in/..." />
+        </div>
+        <div class="form-group">
+          <label>Website URL</label>
+          <input type="url" id="websiteUrl" class="form-control" placeholder="https://yourlawfirm.com" />
+        </div>
+      </div>
+
+      <!-- ── Bar Council Details ── -->
       <div class="section-sep">🏛️ Bar Council Details</div>
       <div class="grid-2">
         <div class="form-group">
@@ -688,7 +724,7 @@ tbody tr:last-child td { border-bottom: none; }
             <option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option>
             <option>Jharkhand</option><option>Karnataka</option><option>Kerala</option>
             <option>Madhya Pradesh</option><option>Maharashtra</option><option>Odisha</option>
-            <option>Punjab & Haryana</option><option>Rajasthan</option><option>Tamil Nadu</option>
+            <option>Punjab &amp; Haryana</option><option>Rajasthan</option><option>Tamil Nadu</option>
             <option>Telangana</option><option>Uttar Pradesh</option><option>Uttarakhand</option>
             <option>West Bengal</option>
           </select>
@@ -700,27 +736,108 @@ tbody tr:last-child td { border-bottom: none; }
           <input type="number" id="yearsOfExperience" class="form-control" placeholder="e.g. 10" min="0" required />
         </div>
         <div class="form-group">
-          <label>Preferred Languages</label>
-          <input type="text" id="languages" class="form-control" placeholder="e.g. English, Hindi, Marathi" />
+          <label>High Court Jurisdiction</label>
+          <select id="highCourtJurisdiction" class="form-control">
+            <option value="">Select High Court (if applicable)</option>
+            <option>Allahabad High Court</option><option>Bombay High Court</option>
+            <option>Calcutta High Court</option><option>Delhi High Court</option>
+            <option>Gujarat High Court</option><option>Karnataka High Court</option>
+            <option>Kerala High Court</option><option>Madras High Court</option>
+            <option>Madhya Pradesh High Court</option><option>Patna High Court</option>
+            <option>Punjab &amp; Haryana High Court</option><option>Rajasthan High Court</option>
+            <option>Telangana High Court</option><option>Supreme Court of India</option>
+            <option>Other</option>
+          </select>
         </div>
       </div>
 
-      <div class="section-sep">📍 Location & Practice</div>
-      <div class="grid-2">
+      <!-- ── Location ── -->
+      <div class="section-sep">📍 Location</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
         <div class="form-group">
           <label>City *</label>
           <input type="text" id="city" class="form-control" placeholder="e.g. Mumbai" required />
         </div>
         <div class="form-group">
+          <label>District</label>
+          <input type="text" id="district" class="form-control" placeholder="e.g. South Mumbai" />
+          <div class="form-hint">Helps match local court queries</div>
+        </div>
+        <div class="form-group">
           <label>State *</label>
-          <input type="text" id="state" class="form-control" placeholder="e.g. Maharashtra" required />
+          <select id="state" class="form-control" required>
+            <option value="">Select State</option>
+            <option>Andhra Pradesh</option><option>Assam</option><option>Bihar</option>
+            <option>Chhattisgarh</option><option>Delhi</option><option>Goa</option>
+            <option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option>
+            <option>Jharkhand</option><option>Karnataka</option><option>Kerala</option>
+            <option>Madhya Pradesh</option><option>Maharashtra</option><option>Odisha</option>
+            <option>Punjab</option><option>Rajasthan</option><option>Tamil Nadu</option>
+            <option>Telangana</option><option>Uttar Pradesh</option><option>Uttarakhand</option>
+            <option>West Bengal</option>
+          </select>
         </div>
       </div>
+
+      <!-- ── Courts ── -->
+      <div class="section-sep">⚖️ Courts of Practice</div>
       <div class="form-group">
-        <label>Professional Bio</label>
-        <textarea id="bio" class="form-control" rows="3" placeholder="Brief description of your practice areas and experience..."></textarea>
+        <div class="check-grid" id="courtsGrid">
+          <label class="check-item"><input type="checkbox" class="court-check" value="District Court"> District Court</label>
+          <label class="check-item"><input type="checkbox" class="court-check" value="State High Court"> State High Court</label>
+          <label class="check-item"><input type="checkbox" class="court-check" value="Supreme Court of India"> Supreme Court of India</label>
+          <label class="check-item"><input type="checkbox" class="court-check" value="NCDRC / State Consumer Forum"> NCDRC / Consumer Forum</label>
+          <label class="check-item"><input type="checkbox" class="court-check" value="NCLT / NCLAT"> NCLT / NCLAT</label>
+          <label class="check-item"><input type="checkbox" class="court-check" value="Income Tax Appellate Tribunal"> ITAT</label>
+          <label class="check-item"><input type="checkbox" class="court-check" value="Labour Court / Industrial Tribunal"> Labour Court</label>
+          <label class="check-item"><input type="checkbox" class="court-check" value="Armed Forces Tribunal"> Armed Forces Tribunal</label>
+          <label class="check-item"><input type="checkbox" class="court-check" value="Revenue / Taluk Court"> Revenue / Taluk Court</label>
+        </div>
       </div>
 
+      <!-- ── Practice Type ── -->
+      <div class="section-sep">🔍 Type of Practice</div>
+      <div class="form-group">
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="practiceType" value="litigation" checked><span>Litigation</span></label>
+          <label class="radio-item"><input type="radio" name="practiceType" value="transactional"><span>Transactional / Advisory</span></label>
+          <label class="radio-item"><input type="radio" name="practiceType" value="both"><span>Both</span></label>
+        </div>
+      </div>
+
+      <!-- ── Client Types ── -->
+      <div class="section-sep">👥 Client Types Served</div>
+      <div class="form-group">
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" class="client-check" value="Individuals" checked> Individuals</label>
+          <label class="check-item"><input type="checkbox" class="client-check" value="Startups / MSMEs"> Startups / MSMEs</label>
+          <label class="check-item"><input type="checkbox" class="client-check" value="Corporates"> Corporates</label>
+          <label class="check-item"><input type="checkbox" class="client-check" value="NGOs / Trusts"> NGOs / Trusts</label>
+        </div>
+      </div>
+
+      <!-- ── Languages ── -->
+      <div class="section-sep">🗣️ Languages You Work In</div>
+      <div class="form-group">
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" class="lang-check" value="Hindi"> Hindi</label>
+          <label class="check-item"><input type="checkbox" class="lang-check" value="English" checked> English</label>
+          <label class="check-item"><input type="checkbox" class="lang-check" value="Tamil"> Tamil</label>
+          <label class="check-item"><input type="checkbox" class="lang-check" value="Telugu"> Telugu</label>
+          <label class="check-item"><input type="checkbox" class="lang-check" value="Kannada"> Kannada</label>
+          <label class="check-item"><input type="checkbox" class="lang-check" value="Malayalam"> Malayalam</label>
+          <label class="check-item"><input type="checkbox" class="lang-check" value="Marathi"> Marathi</label>
+          <label class="check-item"><input type="checkbox" class="lang-check" value="Bengali"> Bengali</label>
+          <label class="check-item"><input type="checkbox" class="lang-check" value="Gujarati"> Gujarati</label>
+          <label class="check-item"><input type="checkbox" class="lang-check" value="Punjabi"> Punjabi</label>
+          <label class="check-item"><input type="checkbox" class="lang-check" value="Odia"> Odia</label>
+          <label class="check-item"><input type="checkbox" class="lang-check" value="Urdu"> Urdu</label>
+          <label class="check-item"><input type="checkbox" class="lang-check" value="Assamese"> Assamese</label>
+          <label class="check-item"><input type="checkbox" class="lang-check" value="Sanskrit"> Sanskrit</label>
+        </div>
+      </div>
+
+      <!-- ── Primary Specialisation ── -->
       <div class="section-sep">⚖️ Primary Practice Area *</div>
       <div class="form-group">
         <label>Main Specialisation *</label>
@@ -747,6 +864,13 @@ tbody tr:last-child td { border-bottom: none; }
       <div class="specializations-grid" id="specGrid"></div>
       <div class="form-hint" style="margin-top:8px">Optionally select other areas where you also practice</div>
 
+      <!-- ── Bio ── -->
+      <div class="section-sep">📝 Professional Bio</div>
+      <div class="form-group">
+        <textarea id="bio" class="form-control" rows="4" placeholder="Describe your practice areas, notable cases, approach and experience in 2–4 sentences. This appears on your public profile."></textarea>
+      </div>
+
+      <!-- ── Fee Structure ── -->
       <div class="section-sep">💰 Fee Structure</div>
       <div class="grid-2">
         <div class="form-group">
@@ -770,6 +894,7 @@ tbody tr:last-child td { border-bottom: none; }
         </div>
       </div>
 
+      <!-- ── Availability ── -->
       <div class="section-sep">📅 Availability</div>
       <div class="form-group">
         <label>Working Days</label>
@@ -785,16 +910,17 @@ tbody tr:last-child td { border-bottom: none; }
       </div>
       <div class="form-group">
         <label>Working Hours</label>
-        <input type="text" id="availabilityHours" class="form-control" value="10 AM - 6 PM" placeholder="e.g. 10 AM - 6 PM" />
+        <input type="text" id="availabilityHours" class="form-control" value="10 AM – 6 PM" placeholder="e.g. 10 AM – 6 PM" />
       </div>
 
+      <!-- ── Consent ── -->
       <div class="form-group" style="margin-top:20px">
         <label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;cursor:pointer">
           <input type="checkbox" id="terms" required style="margin-top:3px;flex-shrink:0" />
-          I confirm that my Bar Council details are accurate and I am a practising advocate. I agree to SatLegal's <a href="#">Terms for Lawyers</a>.
+          I confirm that my Bar Council details are accurate and I am a practising advocate. I agree to SatLegal's <a href="/terms-conditions.html">Terms &amp; Conditions</a>.
         </label>
       </div>
-      <button type="submit" class="btn btn-primary btn-block btn-lg" id="regBtn">Submit Registration</button>
+      <button type="submit" class="btn btn-success btn-block btn-lg" id="regBtn">Submit Registration →</button>
     </form>
 
     <div style="background:var(--bg-light);border-radius:var(--radius);padding:16px;margin-top:20px;font-size:13px;color:var(--text-light)">
@@ -810,106 +936,134 @@ tbody tr:last-child td { border-bottom: none; }
 <script>
 Auth.redirectIfLoggedIn();
 
+// ── Populate additional specializations grid ────────────────────────────────
 const SPECIALIZATIONS = [
-  // Property
   'Property – Boundary Dispute / Encroachment','Property – Rent Dispute / Tenant Eviction',
-  'Property – RERA Disputes / Builder Fraud','Property – Hindu Succession / Inheritance Dispute',
+  'Property – RERA Disputes / Builder Fraud','Property – Hindu Succession / Inheritance',
   'Property – Land Acquisition (RFCTLARR)','Property – Title Dispute / Benami',
-  // Civil
   'Civil – Partition Suit','Civil – Money Recovery','Civil – Specific Performance',
   'Civil – Injunction','Civil – Declaration Suit','Civil – Recovery of Dues',
-  // Family
   'Family – Divorce (Hindu Marriage Act)','Family – Muslim Divorce (Triple Talaq/Khula)',
   'Family – Maintenance / Alimony','Family – Child Custody','Family – Domestic Violence',
   'Family – Protection Order (DV Act)','Family – Guardianship',
-  // Criminal
   'Criminal – BNS / IPC Fraud / Cheating','Criminal – Cheque Bounce (NI Act)',
   'Criminal – Cybercrime (IT Act / BNSS)','Criminal – FIR Quashing',
   'Criminal – Bail Application','Criminal – POCSO / Child Protection',
   'Criminal – Narcotics (NDPS Act)','Criminal – Anticipatory Bail',
-  // Consumer
   'Consumer – Product Defect','Consumer – Service Deficiency',
   'Consumer – Medical Negligence','Consumer – Insurance Claim',
   'Consumer – E-commerce / Online Fraud','Consumer – Banking / UPI Fraud',
-  // Labour & Employment
   'Labour – Wrongful Termination','Labour – Wage Dispute',
   'Labour – Gratuity / PF / ESI','Labour – Workplace Harassment (POSH)',
   'Labour – Industrial Dispute','Labour – Contract Labour',
-  // Motor & Personal Injury
   'Motor Accident – MACT Claim','Personal Injury – Compensation',
-  // Corporate & Commercial
   'Corporate – Company Law / MCA','Corporate – Insolvency (IBC)',
   'Corporate – Contract Dispute','Corporate – Intellectual Property',
   'Corporate – Startup / Founder Dispute',
-  // Taxation
-  'Tax – Income Tax Dispute','Tax – GST Dispute','Tax – Custom / Excise',
-  // Other
+  'Tax – Income Tax Dispute','Tax – GST Dispute','Tax – Customs / Excise',
   'Writ Petition – High Court / Supreme Court',
   'RTI / Government Authority Dispute',
   'Municipal / Local Body Dispute',
   'Environmental / NGT Matter',
   'Matrimonial Property Settlement'
 ];
-
-const grid = document.getElementById('specGrid');
+const specGrid = document.getElementById('specGrid');
 SPECIALIZATIONS.forEach(s => {
-  grid.innerHTML += `<label class="spec-item"><input type="checkbox" value="${s}" class="spec-check"> ${s}</label>`;
+  specGrid.innerHTML += `<label class="spec-item"><input type="checkbox" value="${s}" class="spec-check"> ${s}</label>`;
 });
 
-// Day toggle
+// ── Firm type toggle ───────────────────────────────────────────────────────
+document.querySelectorAll('input[name="firmType"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('firmNameWrap').style.display =
+      document.querySelector('input[name="firmType"]:checked').value === 'firm' ? '' : 'none';
+  });
+});
+
+// ── Day toggle ─────────────────────────────────────────────────────────────
 document.getElementById('daysGrid').addEventListener('click', e => {
   const btn = e.target.closest('.day-btn');
   if (btn) btn.classList.toggle('selected');
 });
 
+// ── Toast / Loader helpers (inline if js/auth.js doesn't export them globally) ─
+const Loader = {
+  show: () => { const o = document.getElementById('loading-overlay'); if(o) o.classList.add('show'); },
+  hide: () => { const o = document.getElementById('loading-overlay'); if(o) o.classList.remove('show'); }
+};
+
+// ── Form submit ────────────────────────────────────────────────────────────
 document.getElementById('lawyerForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const alertBox = document.getElementById('alertBox');
   alertBox.innerHTML = '';
 
-  const primarySpec = document.getElementById('primarySpec').value;
-  if (!primarySpec) {
+  const primarySpecialization = document.getElementById('primarySpec').value;
+  if (!primarySpecialization) {
     alertBox.innerHTML = '<div class="alert alert-danger">Please select your primary practice area.</div>';
     return;
   }
-  const additionalSpecs = [...document.querySelectorAll('.spec-check:checked')].map(c => c.value);
-  const specs = [primarySpec, ...additionalSpecs.filter(s => s !== primarySpec)];
 
-  const days = [...document.querySelectorAll('.day-btn.selected')].map(d => d.dataset.day);
-  const langs = document.getElementById('languages').value.split(',').map(l => l.trim()).filter(Boolean);
+  const additionalSpecs = [...document.querySelectorAll('.spec-check:checked')].map(c => c.value);
+  const specializations  = additionalSpecs.filter(s => s !== primarySpecialization);
+  const courtsOfPractice = [...document.querySelectorAll('.court-check:checked')].map(c => c.value);
+  const clientTypes      = [...document.querySelectorAll('.client-check:checked')].map(c => c.value);
+  const languagesSpoken  = [...document.querySelectorAll('.lang-check:checked')].map(c => c.value);
+  const availabilityDays = [...document.querySelectorAll('.day-btn.selected')].map(d => d.dataset.day);
+  const firmType         = document.querySelector('input[name="firmType"]:checked').value;
+  const practiceType     = document.querySelector('input[name="practiceType"]:checked').value;
+
+  if (!languagesSpoken.length) {
+    alertBox.innerHTML = '<div class="alert alert-danger">Please select at least one language.</div>';
+    return;
+  }
 
   const btn = document.getElementById('regBtn');
-  btn.disabled = true; btn.textContent = 'Submitting...';
+  btn.disabled = true; btn.textContent = 'Submitting…';
   Loader.show();
 
   try {
     const data = await API.lawyerRegister({
-      name: document.getElementById('name').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      phone: document.getElementById('phone').value.trim(),
-      password: document.getElementById('password').value,
-      barCouncilNumber: document.getElementById('barCouncilNumber').value.trim(),
-      barCouncilState: document.getElementById('barCouncilState').value,
-      yearsOfExperience: document.getElementById('yearsOfExperience').value,
-      specializations: specs,
-      city: document.getElementById('city').value.trim(),
-      state: document.getElementById('state').value.trim(),
-      languages: langs,
-      bio: document.getElementById('bio').value.trim(),
-      consultationFee: document.getElementById('consultationFee').value,
-      hourlyRate: document.getElementById('hourlyRate').value,
-      caseFilingFee: document.getElementById('caseFilingFee').value,
-      minimumFee: document.getElementById('minimumFee').value,
-      availabilityDays: days,
-      availabilityHours: document.getElementById('availabilityHours').value.trim()
+      name:               document.getElementById('name').value.trim(),
+      email:              document.getElementById('email').value.trim(),
+      phone:              document.getElementById('phone').value.trim(),
+      password:           document.getElementById('password').value,
+      firmType,
+      firmName:           document.getElementById('firmName').value.trim(),
+      linkedinUrl:        document.getElementById('linkedinUrl').value.trim(),
+      websiteUrl:         document.getElementById('websiteUrl').value.trim(),
+      barCouncilNumber:   document.getElementById('barCouncilNumber').value.trim(),
+      barCouncilState:    document.getElementById('barCouncilState').value,
+      yearsOfExperience:  document.getElementById('yearsOfExperience').value,
+      highCourtJurisdiction: document.getElementById('highCourtJurisdiction').value,
+      city:               document.getElementById('city').value.trim(),
+      district:           document.getElementById('district').value.trim(),
+      state:              document.getElementById('state').value,
+      courtsOfPractice,
+      practiceType,
+      clientTypes,
+      languagesSpoken,
+      primarySpecialization,
+      specializations,
+      bio:                document.getElementById('bio').value.trim(),
+      consultationFee:    document.getElementById('consultationFee').value,
+      hourlyRate:         document.getElementById('hourlyRate').value,
+      caseFilingFee:      document.getElementById('caseFilingFee').value,
+      minimumFee:         document.getElementById('minimumFee').value,
+      availabilityDays,
+      availabilityHours:  document.getElementById('availabilityHours').value.trim()
     });
+
     Auth.setSession(data.token, data.user);
-    Toast.success('Registration submitted! Our team will review your profile within 24–48 hours.');
-    setTimeout(() => { window.location.href = '/dashboard/lawyer-dashboard.html'; }, 2000);
+    alertBox.innerHTML = '<div class="alert alert-success">✅ Registration submitted! Our team will review your profile within 24–48 hours.</div>';
+    setTimeout(() => { window.location.href = '/dashboard/lawyer-dashboard.html'; }, 2500);
   } catch (err) {
     alertBox.innerHTML = `<div class="alert alert-danger">❌ ${err.message}</div>`;
-    btn.disabled = false; btn.textContent = 'Submit Registration';
-  } finally { Loader.hide(); }
+    btn.disabled = false;
+    btn.textContent = 'Submit Registration →';
+  } finally {
+    Loader.hide();
+  }
 });
 </script>
 </body>

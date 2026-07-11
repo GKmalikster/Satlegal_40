@@ -186,7 +186,38 @@ footer a:hover{color:#fff}
   <div class="bottom-cta">
     <h3>Looking for legal help?</h3>
     <p>SatLegal will match you with a qualified, verified lawyer suited to your case. Complete your legal analysis first, then proceed to consultation booking.</p>
-    <a class="btn-register" href="../index.html">Analyse My Case →</a>
+    <a class="btn-register" href="index.html">Analyse My Case →</a>
+  </div>
+
+  <!-- For Lawyers CTA -->
+  <div style="background:linear-gradient(135deg,var(--gr-900) 0%,var(--gr-800) 60%,#0a3010 100%);border-radius:16px;padding:40px 32px;margin-top:32px;color:#fff;text-align:center">
+    <div style="font-size:40px;margin-bottom:12px">⚖️</div>
+    <h2 style="font-size:22px;font-weight:900;margin-bottom:8px">Are You a Practising Advocate?</h2>
+    <p style="color:rgba(255,255,255,.75);font-size:14px;max-width:540px;margin:0 auto 24px">Join the SatLegal Network and receive pre-qualified leads — clients who already understand their case and are ready to engage a lawyer.</p>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:28px">
+      <div style="background:rgba(255,255,255,.08);border-radius:10px;padding:14px 20px;min-width:140px">
+        <div style="font-size:22px;margin-bottom:4px">🎯</div>
+        <div style="font-size:13px;font-weight:700">Pre-Qualified Leads</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.6)">Clients with AI-assessed cases</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border-radius:10px;padding:14px 20px;min-width:140px">
+        <div style="font-size:22px;margin-bottom:4px">📍</div>
+        <div style="font-size:13px;font-weight:700">Location Matching</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.6)">City, district &amp; court-level</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border-radius:10px;padding:14px 20px;min-width:140px">
+        <div style="font-size:22px;margin-bottom:4px">⚡</div>
+        <div style="font-size:13px;font-weight:700">Quick Onboarding</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.6)">Register in under 10 minutes</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border-radius:10px;padding:14px 20px;min-width:140px">
+        <div style="font-size:22px;margin-bottom:4px">✅</div>
+        <div style="font-size:13px;font-weight:700">Verified Directory</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.6)">Bar Council verified listing</div>
+      </div>
+    </div>
+    <a href="auth/lawyer-register.html" style="display:inline-block;background:var(--sf-500);color:#fff;font-size:15px;font-weight:800;padding:14px 32px;border-radius:10px;text-decoration:none;transition:.2s" onmouseover="this.style.background='#E07000'" onmouseout="this.style.background='var(--sf-500)'">Register Your Practice →</a>
+    <p style="font-size:12px;color:rgba(255,255,255,.5);margin-top:12px">Free to register · Team reviews your profile within 24–48 hours</p>
   </div>
 </div>
 
@@ -200,88 +231,145 @@ footer a:hover{color:#fff}
     <a href="contact.html">Contact Us</a>
     <a href="report-sample.html">Sample Report</a>
     <a href="privacy-policy.html">Privacy Policy</a><a href="terms-conditions.html">Terms &amp; Conditions</a><a href="#" onclick="window.slCookieConsent&&window.slCookieConsent.openPreferences();return false">Cookie Preferences</a>
+    <a href="auth/lawyer-register.html" style="color:var(--sf-400,#FFB366);font-weight:700">⚖️ For Lawyers</a>
   </div>
   <p>⚠️ The content provided on this website is for informational purposes only and should not be relied upon as a substitute for legal advice. Recipients are advised to consult with qualified legal counsel before implementing any recommendations herein. SatLegal shall not be liable for actions taken based on this information.</p>
   <p style="margin-top:6px">© 2026 SatLegal · Built for India 🇮🇳 · All rights reserved</p>
 </footer>
 
 <script>
-// Lawyer roster — populated via /api/lawyer/list as lawyers register
-const LAWYERS=[];
+let ALL_LAWYERS = [];
+let _fetchTimer = null;
 
-let filtered=[...LAWYERS];
-
+// ── Render lawyers from API response ──────────────────────────────────────────
 function renderLawyers(list){
-  const grid=document.getElementById('lawyerGrid');
-  document.getElementById('noResults').style.display=list.length?'none':'block';
-  document.getElementById('resultCount').textContent=`${list.length} lawyer${list.length!==1?'s':''} found`;
-  grid.innerHTML=list.map(l=>`
+  const grid = document.getElementById('lawyerGrid');
+  const noRes = document.getElementById('noResults');
+  document.getElementById('resultCount').textContent =
+    `${list.length} lawyer${list.length !== 1 ? 's' : ''} found`;
+
+  if (!list.length) {
+    noRes.style.display = 'block';
+    grid.innerHTML = '';
+    return;
+  }
+  noRes.style.display = 'none';
+
+  const stars = (r) => r >= 4.5 ? '★★★★★' : r >= 3.5 ? '★★★★☆' : r >= 2.5 ? '★★★☆☆' : '★★☆☆☆';
+
+  grid.innerHTML = list.map(l => {
+    const langBadges = (l.languages || []).slice(0, 2).map(la =>
+      `<span class="badge badge-lang">${la}</span>`).join('');
+    const fee = l.consultFee > 0
+      ? `₹${l.consultFee.toLocaleString('en-IN')} <span>/ session</span>`
+      : '<span style="color:var(--text-lt)">Fee on request</span>';
+    const bioTxt = (l.bio || '').slice(0, 140) + ((l.bio || '').length > 140 ? '…' : '');
+    const expText = l.experience > 0 ? `${l.experience} yr${l.experience !== 1 ? 's' : ''}` : '';
+    return `
     <div class="lawyer-card">
       <div class="lc-head">
-        <div class="lc-avatar">${l.icon}</div>
+        <div class="lc-avatar">⚖️</div>
         <div class="lc-info">
           <div class="lc-name">${l.name}</div>
-          <div class="lc-spec">${l.specialty} · ${l.city}</div>
-          <div class="lc-rating"><span class="stars">★★★★★</span> ${l.rating} (${l.reviews} reviews)</div>
+          <div class="lc-spec">${l.primarySpec || ''} · ${l.city}</div>
+          ${l.rating > 0 ? `<div class="lc-rating"><span class="stars">${stars(l.rating)}</span> ${l.rating.toFixed(1)} (${l.reviews})</div>` : ''}
           <div class="lc-badges">
             <span class="badge badge-verified">✅ Bar Verified</span>
-            ${l.online?'<span class="badge badge-online">🟢 Online</span>':''}
-            ${l.languages.split(', ').slice(0,2).map(lang=>`<span class="badge badge-lang">${lang}</span>`).join('')}
+            ${langBadges}
           </div>
         </div>
       </div>
       <div class="lc-body">
         <div class="meta-row">
-          <span>⏱ ${l.exp}</span>
-          <span>🗣 ${l.languages}</span>
+          ${expText ? `<span>⏱ ${expText} exp.</span>` : ''}
+          ${l.practiceType ? `<span>⚖️ ${l.practiceType.charAt(0).toUpperCase()+l.practiceType.slice(1)}</span>` : ''}
+          ${l.district ? `<span>📍 ${l.district}</span>` : ''}
         </div>
-        <p style="font-size:12px;color:var(--text-lt);margin-bottom:10px;line-height:1.6">${l.spec_detail}</p>
-        <div class="lc-fee">₹${l.fee.toLocaleString('en-IN')} <span>/ 30-min session</span></div>
+        ${bioTxt ? `<p style="font-size:12px;color:var(--text-lt);margin-bottom:10px;line-height:1.6">${bioTxt}</p>` : ''}
+        <div class="lc-fee">${fee}</div>
         <div class="lc-actions">
           <button class="btn-book-now" onclick="bookLawyer('${l.id}')">Book Consultation</button>
           <button class="btn-view-profile" onclick="viewProfile('${l.id}')">View Profile</button>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+}
+
+// ── Fetch from API with current filter state ──────────────────────────────────
+async function fetchLawyers(){
+  const city = document.getElementById('fCity').value;
+  const spec = document.getElementById('fSpec').value;
+  const lang = document.getElementById('fLang').value;
+  const name = document.getElementById('srchName').value.trim();
+
+  const params = new URLSearchParams();
+  if (city) params.set('city', city);
+  if (spec) params.set('spec', spec);
+  if (lang) params.set('lang', lang);
+  params.set('limit', '60');
+
+  try {
+    const res = await fetch('/api/lawyer/list?' + params.toString());
+    const data = await res.json();
+    if (data.success) {
+      ALL_LAWYERS = data.lawyers || [];
+      applyClientFilter(name);
+    }
+  } catch(e) {
+    // API not yet live — show empty state with CTA
+    renderLawyers([]);
+    document.getElementById('noResults').innerHTML = `
+      <div class="no-results-icon">⚖️</div>
+      <h3>Our lawyer directory is launching soon</h3>
+      <p style="margin-top:8px">Are you a lawyer? <a href="auth/lawyer-register.html" style="color:var(--sf-700);font-weight:700">Register now</a> to be among the first listed.</p>`;
+  }
+}
+
+// ── Client-side name filter (applied after API results) ──────────────────────
+function applyClientFilter(name){
+  if (!name) { renderLawyers(ALL_LAWYERS); return; }
+  const q = name.toLowerCase();
+  renderLawyers(ALL_LAWYERS.filter(l =>
+    (l.name || '').toLowerCase().includes(q) ||
+    (l.primarySpec || '').toLowerCase().includes(q) ||
+    (l.specs || []).some(s => s.toLowerCase().includes(q))
+  ));
 }
 
 function applyFilters(){
-  const name=document.getElementById('srchName').value.toLowerCase();
-  const city=document.getElementById('fCity').value;
-  const spec=document.getElementById('fSpec').value.toLowerCase();
-  const lang=document.getElementById('fLang').value.toLowerCase();
-
-  filtered=LAWYERS.filter(l=>{
-    if(name&&!l.name.toLowerCase().includes(name)&&!l.specialty.toLowerCase().includes(name)&&!l.spec_detail.toLowerCase().includes(name))return false;
-    if(city&&l.city!==city)return false;
-    if(spec&&!l.specialty.toLowerCase().includes(spec.replace(' & rea',''))&&!l.spec_detail.toLowerCase().includes(spec))return false;
-    if(lang&&!l.languages.toLowerCase().includes(lang))return false;
-    return true;
-  });
-  renderLawyers(filtered);
+  clearTimeout(_fetchTimer);
+  const name = document.getElementById('srchName').value.trim();
+  // Debounce name search; fetch immediately on dropdown changes
+  if (name) {
+    applyClientFilter(name);
+    _fetchTimer = setTimeout(fetchLawyers, 600);
+  } else {
+    fetchLawyers();
+  }
 }
 
 function bookLawyer(id){
-  const lawyer=LAWYERS.find(l=>l.id===id);
-  if(lawyer){
-    localStorage.setItem('sl_selected_lawyer',JSON.stringify(lawyer));
-    // Check if consultation is already paid
-    const payment=JSON.parse(localStorage.getItem('sl_payment')||'{}');
-    if(payment.plan==='consult'){
-      window.location.href='consultation/book.html?lawyer='+id;
+  const lawyer = ALL_LAWYERS.find(l => l.id === id);
+  if (lawyer) {
+    localStorage.setItem('sl_selected_lawyer', JSON.stringify(lawyer));
+    const payment = JSON.parse(localStorage.getItem('sl_payment') || '{}');
+    if (payment.plan === 'consult') {
+      window.location.href = 'consultation/book.html?lawyer=' + id;
     } else {
-      window.location.href='payment.html?plan=consult&amt=2500';
+      window.location.href = 'payment.html?plan=consult&amt=' + (lawyer.consultFee || 2500);
     }
   }
 }
 
 function viewProfile(id){
-  window.location.href='lawyer/profile.html?id='+id;
+  window.location.href = 'lawyer/profile.html?id=' + id;
 }
 
-// Initial render
-renderLawyers(LAWYERS);
+// ── Boot ──────────────────────────────────────────────────────────────────────
+document.getElementById('lawyerGrid').innerHTML =
+  '<div style="text-align:center;padding:40px;color:var(--text-lt)"><div style="font-size:32px;margin-bottom:10px">⏳</div>Loading lawyers…</div>';
+fetchLawyers();
 </script>
 <script src="js/nav.js"></script>
 </body>

@@ -66,7 +66,11 @@ const API = (() => {
     uploadDocument: (id, fd) => postForm(`/inquiry/${id}/documents`, fd),
     requestLawyer:  (id, d) => post(`/inquiry/${id}/request-lawyer`, d),
 
-    // ── Lawyer ──────────────────────────────────────────────────────────────
+    // ── Lawyer (public) ─────────────────────────────────────────────────────
+    lawyerRegister: (d) => post('/lawyer/register', d, false),
+    getLawyerList:  (p) => get('/lawyer/list' + (p ? '?' + p : ''), false),
+
+    // ── Lawyer (authenticated) ───────────────────────────────────────────────
     getLawyerDashboard:  () => get('/lawyer/dashboard'),
     updateLawyerProfile: (d) => put('/lawyer/profile', d),
     getLeads:    (params = '') => get('/lawyer/leads' + (params ? '?' + params : '')),
