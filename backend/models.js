@@ -44,15 +44,39 @@ const LawyerProfileSchema = new mongoose.Schema({
   barCouncilState: { type: String, required: true },
   yearsOfExperience: { type: Number, required: true },
 
-  // ── Location (fine-grained for discovery) ───────────────────
+  // ── Primary Location (from first office — kept for backward compat & indexing) ─
   city: { type: String, required: true },
-  district: { type: String, default: '' },   // NEW — more granular
+  district: { type: String, default: '' },
   state: { type: String, required: true },
   highCourtJurisdiction: { type: String, default: '' },
 
+  // ── Office Locations (multi-office support) ──────────────────
+  offices: [{
+    city:      { type: String, required: true },
+    district:  { type: String, default: '' },
+    state:     { type: String, required: true },
+    address:   { type: String, default: '' },
+    isPrimary: { type: Boolean, default: false }
+  }],
+
   // ── Legal Expertise ──────────────────────────────────────────
-  primarySpecialization: { type: String, required: true },
-  specializations: [{ type: String }],       // Additional areas
+  primarySpecialization: {
+    type: String,
+    required: true,
+    enum: [
+      'Civil Litigation',
+      'Criminal Litigation',
+      'Real Estate Law',
+      'Labour & Employment Law',
+      'Family Law',
+      'Estate, Succession and Trust Law',
+      'Cyber Crime Law',
+      'Intellectual Property Law',
+      'Consumer Dispute Law',
+      'Data and Privacy Law'
+    ]
+  },
+  specializations: [{ type: String }],       // Sub-specializations
 
   // Courts practicing in (checkboxes)
   courtsOfPractice: [{

@@ -754,33 +754,10 @@ tbody tr:last-child td { border-bottom: none; }
         </div>
       </div>
 
-      <!-- ── Location ── -->
-      <div class="section-sep">📍 Location</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
-        <div class="form-group">
-          <label>City *</label>
-          <input type="text" id="city" class="form-control" placeholder="e.g. Mumbai" required />
-        </div>
-        <div class="form-group">
-          <label>District</label>
-          <input type="text" id="district" class="form-control" placeholder="e.g. South Mumbai" />
-          <div class="form-hint">Helps match local court queries</div>
-        </div>
-        <div class="form-group">
-          <label>State *</label>
-          <select id="state" class="form-control" required>
-            <option value="">Select State</option>
-            <option>Andhra Pradesh</option><option>Assam</option><option>Bihar</option>
-            <option>Chhattisgarh</option><option>Delhi</option><option>Goa</option>
-            <option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option>
-            <option>Jharkhand</option><option>Karnataka</option><option>Kerala</option>
-            <option>Madhya Pradesh</option><option>Maharashtra</option><option>Odisha</option>
-            <option>Punjab</option><option>Rajasthan</option><option>Tamil Nadu</option>
-            <option>Telangana</option><option>Uttar Pradesh</option><option>Uttarakhand</option>
-            <option>West Bengal</option>
-          </select>
-        </div>
-      </div>
+      <!-- ── Office Locations ── -->
+      <div class="section-sep">📍 Office Locations</div>
+      <div id="officesContainer"></div>
+      <button type="button" id="addOfficeBtn" onclick="addOffice()" style="margin-top:10px;padding:8px 16px;border:1.5px dashed var(--sf-400,#FFB366);background:transparent;color:var(--sf-600,#E07000);border-radius:6px;cursor:pointer;font-size:13px;font-weight:600">+ Add Another Office Location</button>
 
       <!-- ── Courts ── -->
       <div class="section-sep">⚖️ Courts of Practice</div>
@@ -843,24 +820,19 @@ tbody tr:last-child td { border-bottom: none; }
       <!-- ── Primary Specialisation ── -->
       <div class="section-sep">⚖️ Primary Practice Area *</div>
       <div class="form-group">
-        <label>Main Specialisation *</label>
+        <label>Main Area of Practice *</label>
         <select id="primarySpec" class="form-control" required>
           <option value="">Select your primary area of practice…</option>
+          <option>Civil Litigation</option>
+          <option>Criminal Litigation</option>
+          <option>Real Estate Law</option>
+          <option>Labour &amp; Employment Law</option>
           <option>Family Law</option>
-          <option>Criminal Law</option>
-          <option>Property Law &amp; RERA</option>
-          <option>Consumer Rights</option>
-          <option>Employment &amp; Labour Law</option>
-          <option>Cyber Law &amp; IT</option>
-          <option>Civil Law</option>
-          <option>Corporate &amp; Commercial Law</option>
-          <option>Taxation</option>
-          <option>Constitutional &amp; Writ Matters</option>
-          <option>Motor Accident &amp; Personal Injury</option>
-          <option>Matrimonial &amp; Succession</option>
-          <option>Intellectual Property</option>
-          <option>Environmental &amp; NGT</option>
-          <option>Other</option>
+          <option>Estate, Succession and Trust Law</option>
+          <option>Cyber Crime Law</option>
+          <option>Intellectual Property Law</option>
+          <option>Consumer Dispute Law</option>
+          <option>Data and Privacy Law</option>
         </select>
       </div>
       <div class="section-sep">Additional Areas of Practice</div>
@@ -939,41 +911,134 @@ tbody tr:last-child td { border-bottom: none; }
 <script>
 Auth.redirectIfLoggedIn();
 
-// ── Populate additional specializations grid ────────────────────────────────
+// ── Practice area sub-specializations ──────────────────────────────────────
 const SPECIALIZATIONS = [
-  'Property – Boundary Dispute / Encroachment','Property – Rent Dispute / Tenant Eviction',
-  'Property – RERA Disputes / Builder Fraud','Property – Hindu Succession / Inheritance',
-  'Property – Land Acquisition (RFCTLARR)','Property – Title Dispute / Benami',
-  'Civil – Partition Suit','Civil – Money Recovery','Civil – Specific Performance',
-  'Civil – Injunction','Civil – Declaration Suit','Civil – Recovery of Dues',
-  'Family – Divorce (Hindu Marriage Act)','Family – Muslim Divorce (Triple Talaq/Khula)',
-  'Family – Maintenance / Alimony','Family – Child Custody','Family – Domestic Violence',
-  'Family – Protection Order (DV Act)','Family – Guardianship',
-  'Criminal – BNS / IPC Fraud / Cheating','Criminal – Cheque Bounce (NI Act)',
-  'Criminal – Cybercrime (IT Act / BNSS)','Criminal – FIR Quashing',
-  'Criminal – Bail Application','Criminal – POCSO / Child Protection',
-  'Criminal – Narcotics (NDPS Act)','Criminal – Anticipatory Bail',
-  'Consumer – Product Defect','Consumer – Service Deficiency',
-  'Consumer – Medical Negligence','Consumer – Insurance Claim',
-  'Consumer – E-commerce / Online Fraud','Consumer – Banking / UPI Fraud',
-  'Labour – Wrongful Termination','Labour – Wage Dispute',
-  'Labour – Gratuity / PF / ESI','Labour – Workplace Harassment (POSH)',
-  'Labour – Industrial Dispute','Labour – Contract Labour',
-  'Motor Accident – MACT Claim','Personal Injury – Compensation',
-  'Corporate – Company Law / MCA','Corporate – Insolvency (IBC)',
-  'Corporate – Contract Dispute','Corporate – Intellectual Property',
-  'Corporate – Startup / Founder Dispute',
-  'Tax – Income Tax Dispute','Tax – GST Dispute','Tax – Customs / Excise',
-  'Writ Petition – High Court / Supreme Court',
-  'RTI / Government Authority Dispute',
-  'Municipal / Local Body Dispute',
-  'Environmental / NGT Matter',
-  'Matrimonial Property Settlement'
+  // Civil Litigation
+  'Civil – Money Recovery Suit','Civil – Specific Performance',
+  'Civil – Injunction / Stay Order','Civil – Partition Suit',
+  'Civil – Declaratory Suit','Civil – Easement / Right of Way',
+  'Civil – Civil Appeals (District / High Court)',
+  // Criminal Litigation
+  'Criminal – FIR Registration / Quashing','Criminal – Bail Application',
+  'Criminal – Anticipatory Bail','Criminal – Trial Defence (BNS / IPC)',
+  'Criminal – Cheque Bounce (NI Act 138)','Criminal – POCSO / Child Protection',
+  'Criminal – Narcotics (NDPS Act)','Criminal – White-Collar Crime / Fraud',
+  // Real Estate Law
+  'Real Estate – RERA Disputes / Builder Fraud','Real Estate – Property Title Dispute',
+  'Real Estate – Rental / Tenant Eviction','Real Estate – Encroachment / Boundary Dispute',
+  'Real Estate – Land Acquisition (RFCTLARR)','Real Estate – Benami Property',
+  'Real Estate – Mortgage / Housing Loan Dispute',
+  // Labour & Employment Law
+  'Labour – Wrongful Termination','Labour – Wage & Salary Dispute',
+  'Labour – Gratuity / PF / ESI','Labour – POSH / Workplace Harassment',
+  'Labour – Industrial Dispute (ID Act)','Labour – Contract Labour Dispute',
+  'Labour – Non-Compete / Employment Agreement',
+  // Family Law
+  'Family – Divorce (Hindu / Christian / Parsi)','Family – Muslim Divorce (Talaq / Khula)',
+  'Family – Maintenance / Alimony','Family – Child Custody & Visitation',
+  'Family – Domestic Violence (DV Act)','Family – Guardianship & Adoption',
+  'Family – Matrimonial Property Settlement',
+  // Estate, Succession and Trust Law
+  'Succession – Will Drafting & Probate','Succession – Hindu Succession Act',
+  'Succession – Muslim Inheritance (Sharia)','Succession – Intestate Succession',
+  'Succession – Trust Formation & Management','Succession – Executor / Administrator Duties',
+  'Succession – Gift Deed / Settlement Deed',
+  // Cyber Crime Law
+  'Cyber – Online Fraud / Financial Scam','Cyber – Cyberstalking / Harassment',
+  'Cyber – Data Theft / Hacking','Cyber – Ransomware / Malware Attack',
+  'Cyber – Social Media Crimes','Cyber – Identity Theft',
+  'Cyber – IT Act / BNSS Offences',
+  // Intellectual Property Law
+  'IP – Trademark Registration & Dispute','IP – Copyright Infringement',
+  'IP – Patent Filing & Enforcement','IP – Design Registration',
+  'IP – Trade Secret Protection','IP – Passing Off / Brand Dispute',
+  'IP – IP Licensing & Commercialisation',
+  // Consumer Dispute Law
+  'Consumer – Product Defect / Recall','Consumer – Service Deficiency',
+  'Consumer – Medical Negligence','Consumer – Insurance Claim Dispute',
+  'Consumer – E-commerce / Online Fraud','Consumer – Banking / UPI / Credit Card Fraud',
+  'Consumer – Real Estate Consumer Dispute',
+  // Data and Privacy Law
+  'Privacy – DPDP Act Compliance','Privacy – Data Breach Response',
+  'Privacy – Privacy Policy & Notices Drafting','Privacy – GDPR / Cross-border Compliance',
+  'Privacy – Data Localisation Advisory','Privacy – Employee Data Privacy',
+  'Privacy – AI / Algorithmic Accountability'
 ];
 const specGrid = document.getElementById('specGrid');
 SPECIALIZATIONS.forEach(s => {
   specGrid.innerHTML += `<label class="spec-item"><input type="checkbox" value="${s}" class="spec-check"> ${s}</label>`;
 });
+
+// ── Multi-office location manager ───────────────────────────────────────────
+const STATES = ['Andhra Pradesh','Assam','Bihar','Chhattisgarh','Delhi','Goa','Gujarat',
+  'Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh',
+  'Maharashtra','Odisha','Punjab','Rajasthan','Tamil Nadu','Telangana',
+  'Uttar Pradesh','Uttarakhand','West Bengal'];
+
+function stateOptions(selected) {
+  return STATES.map(s => `<option${s === selected ? ' selected' : ''}>${s}</option>`).join('');
+}
+
+function addOffice(preset) {
+  const container = document.getElementById('officesContainer');
+  const idx = container.querySelectorAll('.office-entry').length;
+  const isPrimary = idx === 0;
+  const p = preset || {};
+  const div = document.createElement('div');
+  div.className = 'office-entry';
+  div.dataset.idx = idx;
+  div.style.cssText = 'border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;background:#fafafa;position:relative';
+  div.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <strong style="font-size:13px;color:var(--gr-700)">${isPrimary ? '🏢 Primary Office' : `🏢 Office ${idx + 1}`}</strong>
+      ${!isPrimary ? `<button type="button" onclick="removeOffice(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:18px;line-height:1" title="Remove">×</button>` : ''}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div class="form-group" style="margin:0">
+        <label style="font-size:12px">City${isPrimary ? ' *' : ''}</label>
+        <input type="text" class="form-control office-city" placeholder="e.g. Mumbai"${isPrimary ? ' required' : ''} value="${p.city||''}" />
+      </div>
+      <div class="form-group" style="margin:0">
+        <label style="font-size:12px">District</label>
+        <input type="text" class="form-control office-district" placeholder="e.g. South Mumbai" value="${p.district||''}" />
+      </div>
+      <div class="form-group" style="margin:0">
+        <label style="font-size:12px">State${isPrimary ? ' *' : ''}</label>
+        <select class="form-control office-state"${isPrimary ? ' required' : ''}>
+          <option value="">Select State</option>
+          ${stateOptions(p.state||'')}
+        </select>
+      </div>
+    </div>
+    <div class="form-group" style="margin:8px 0 0">
+      <label style="font-size:12px">Street Address (optional)</label>
+      <input type="text" class="form-control office-address" placeholder="e.g. 204, Lawyer's Chamber, Saket Court Complex" value="${p.address||''}" />
+    </div>`;
+  container.appendChild(div);
+}
+
+function removeOffice(btn) {
+  const entry = btn.closest('.office-entry');
+  entry.remove();
+  // Re-number remaining offices
+  document.querySelectorAll('.office-entry').forEach((el, i) => {
+    el.dataset.idx = i;
+    el.querySelector('strong').textContent = i === 0 ? '🏢 Primary Office' : `🏢 Office ${i + 1}`;
+  });
+}
+
+function collectOffices() {
+  return [...document.querySelectorAll('.office-entry')].map((el, i) => ({
+    city:      el.querySelector('.office-city').value.trim(),
+    district:  el.querySelector('.office-district').value.trim(),
+    state:     el.querySelector('.office-state').value,
+    address:   el.querySelector('.office-address').value.trim(),
+    isPrimary: i === 0
+  })).filter(o => o.city && o.state);
+}
+
+// Initialise with one primary office
+addOffice();
 
 // ── Firm type toggle ───────────────────────────────────────────────────────
 document.querySelectorAll('input[name="firmType"]').forEach(r => {
@@ -1015,7 +1080,12 @@ document.getElementById('lawyerForm').addEventListener('submit', async (e) => {
   const availabilityDays = [...document.querySelectorAll('.day-btn.selected')].map(d => d.dataset.day);
   const firmType         = document.querySelector('input[name="firmType"]:checked').value;
   const practiceType     = document.querySelector('input[name="practiceType"]:checked').value;
+  const offices          = collectOffices();
 
+  if (!offices.length || !offices[0].city || !offices[0].state) {
+    alertBox.innerHTML = '<div class="alert alert-danger">Please fill in at least your primary office city and state.</div>';
+    return;
+  }
   if (!languagesSpoken.length) {
     alertBox.innerHTML = '<div class="alert alert-danger">Please select at least one language.</div>';
     return;
@@ -1039,9 +1109,10 @@ document.getElementById('lawyerForm').addEventListener('submit', async (e) => {
       barCouncilState:    document.getElementById('barCouncilState').value,
       yearsOfExperience:  document.getElementById('yearsOfExperience').value,
       highCourtJurisdiction: document.getElementById('highCourtJurisdiction').value,
-      city:               document.getElementById('city').value.trim(),
-      district:           document.getElementById('district').value.trim(),
-      state:              document.getElementById('state').value,
+      city:               offices[0].city,
+      district:           offices[0].district,
+      state:              offices[0].state,
+      offices,
       courtsOfPractice,
       practiceType,
       clientTypes,

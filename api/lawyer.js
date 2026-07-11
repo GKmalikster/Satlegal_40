@@ -219,6 +219,20 @@ module.exports = async function handler(req, res) {
       const availDays        = arr(b.availabilityDays, DAYS_ALLOWED);
       const availHours       = str(b.availabilityHours, 50) || '10 AM – 6 PM';
 
+      // ── Multi-office locations ────────────────────────────────
+      const rawOffices = Array.isArray(b.offices) ? b.offices : [];
+      const offices = rawOffices
+        .filter(o => o && typeof o === 'object')
+        .slice(0, 10) // max 10 offices
+        .map((o, i) => ({
+          city:      str(o.city, 100),
+          district:  str(o.district, 100),
+          state:     str(o.state, 100),
+          address:   str(o.address, 300),
+          isPrimary: i === 0
+        }))
+        .filter(o => o.city && o.state);
+
       const feeStructure = {
         consultationFee: num(b.consultationFee),
         hourlyRate:      num(b.hourlyRate),
@@ -247,7 +261,9 @@ module.exports = async function handler(req, res) {
 
       await LawyerProfile.create({
         userId: user._id, barCouncilNumber, barCouncilState, yearsOfExperience,
-        city, district, state, firmType, firmName, primarySpecialization,
+        city, district, state,
+        offices: offices.length ? offices : [{ city, district, state, isPrimary: true }],
+        firmType, firmName, primarySpecialization,
         specializations, courtsOfPractice, practiceType, clientTypes, languagesSpoken,
         bio, linkedinUrl, websiteUrl, feeStructure,
         availability: { days: availDays, hours: availHours },
