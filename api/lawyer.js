@@ -1,8 +1,13 @@
 /**
  * api/lawyer.js — Merged lawyer endpoint
  *
- * GET  /api/lawyer/list     → public lawyer directory (was lawyer-list.js)
- * POST /api/lawyer/register → public registration (was lawyer-register.js)
+ * GET   /api/lawyer/list     → public lawyer directory
+ * POST  /api/lawyer/register → public registration
+ * POST  /api/lawyer/match    → create CaseInquiry + auto-match top 5 lawyers
+ * GET   /api/lawyer/slots    → available 30-min slots for a lawyer on a date
+ * POST  /api/lawyer/book     → book a consultation slot
+ * GET   /api/lawyer/bookings → list appointments for authenticated lawyer
+ * PATCH /api/lawyer/bookings → update appointment status/meetingLink
  *
  * Vercel env vars required:
  *   MONGODB_URI  — MongoDB connection string
@@ -70,6 +75,105 @@ const FIRM_TYPES     = ['solo', 'firm'];
 const DAYS_ALLOWED   = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// SHARED AUTH (lawyer token verification — same logic as leads.js / me.js)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function verifyLawyer(req) {
+  const auth = (req.headers.authorization || '').trim();
+  if (!auth.startsWith('Bearer ')) return null;
+  const token = auth.slice(7).trim();
+  const dot   = token.lastIndexOf('.');
+  if (dot < 0) return null;
+  const payload64 = token.slice(0, dot);
+  const sig       = token.slice(dot + 1);
+  let payload;
+  try { payload = Buffer.from(payload64, 'base64url').toString('utf8'); } catch { return null; }
+  const parts = payload.split(':');
+  if (parts.length < 3) return null;
+  const [userId, role, tsStr] = parts;
+  if (!userId || !['lawyer', 'admin'].includes(role)) return null;
+  const ts = parseInt(tsStr, 10);
+  if (isNaN(ts) || Date.now() - ts > 30 * 24 * 60 * 60 * 1000) return null;
+  const secret = process.env.AUTH_SECRET || process.env.ADMIN_SECRET;
+  if (!secret) return null;
+  const expected = crypto.createHmac('sha256', secret).update(payload).digest('hex');
+  if (expected !== sig) return null;
+  return { userId, role };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MATCHING helpers
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Map caseTypes (from analyse.js) to primarySpecialization values
+const SPEC_MAP = {
+  'Civil Litigation':              ['Civil','Contract','SARFAESI','Arbitration','Defamation','Cheque','PIL','Constitutional','Succession','Specific Performance','Money Recovery','Partition','Mental Healthcare','MTP','MGNREGA','Senior Citizen'],
+  'Criminal Litigation':           ['Criminal','BNS','POCSO','SC/ST','Police','Medical Negligence','Rape','Corruption','Cyber','Domestic Violence'],
+  'Real Estate Law':               ['Property','RERA','Rent','Land','Boundary','Encroachment','Real Estate'],
+  'Labour & Employment Law':       ['Employment','Labour','MSME','Shops','Maternity'],
+  'Family Law':                    ['Family','Divorce','Custody','Domestic Violence','Maintenance','Adoption'],
+  'Estate, Succession and Trust Law': ['Succession','Inheritance','Will','Probate','Trust'],
+  'Cyber Crime Law':               ['Cyber','Digital','Data Privacy','DPDP','Online Fraud'],
+  'Intellectual Property Law':     ['Intellectual Property','IP','Trademark','Copyright','Patent'],
+  'Consumer Dispute Law':          ['Consumer','Motor Accident','Product Defect'],
+  'Data and Privacy Law':          ['Data','Privacy','DPDP','Aadhaar','Cyber']
+};
+
+function scoreLawyer(lawyer, caseTypes = [], userState = '', userCity = '') {
+  let score = 0;
+  const ps  = (lawyer.primarySpecialization || '').toLowerCase();
+  const sps = (lawyer.specializations || []).map(s => s.toLowerCase());
+
+  // Specialization match
+  for (const ct of caseTypes) {
+    const ctLow = ct.toLowerCase();
+    if (ps.includes(ctLow) || ctLow.includes(ps)) score += 40;
+    for (const kw of (SPEC_MAP[lawyer.primarySpecialization] || [])) {
+      if (ctLow.includes(kw.toLowerCase()) || kw.toLowerCase().includes(ctLow.split(' ')[0])) {
+        score += 30; break;
+      }
+    }
+    for (const sp of sps) {
+      if (ctLow.includes(sp) || sp.includes(ctLow.split(' ')[0])) { score += 20; break; }
+    }
+  }
+
+  // Location match
+  if (userState && lawyer.state && lawyer.state.toLowerCase() === userState.toLowerCase()) score += 15;
+  if (userCity  && lawyer.city  && lawyer.city.toLowerCase()  === userCity.toLowerCase())  score += 10;
+
+  // Experience bonus
+  const yoe = lawyer.yearsOfExperience || 0;
+  if (yoe >= 10) score += 10;
+  else if (yoe >= 5) score += 5;
+
+  // Rating bonus (0–5 → 0–10 pts)
+  score += Math.round((lawyer.stats?.rating || 0) * 2);
+
+  return score;
+}
+
+// Generate all 30-min slots between startTime and endTime (both 'HH:MM' 24h)
+function generateSlots(startTime, endTime) {
+  const slots = [];
+  const [sh, sm] = startTime.split(':').map(Number);
+  const [eh, em] = endTime.split(':').map(Number);
+  let cur = sh * 60 + sm;
+  const end = eh * 60 + em;
+  while (cur + 30 <= end) {
+    const hh = String(Math.floor(cur / 60)).padStart(2, '0');
+    const mm = String(cur % 60).padStart(2, '0');
+    slots.push(`${hh}:${mm}`);
+    cur += 30;
+  }
+  return slots;
+}
+
+function dayName(date) {
+  return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date(date).getDay()];
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // LIST helpers
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -82,9 +186,301 @@ const esc = (v) => String(v || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&').slice(
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  // Route by path
+  const path = (req.url || '').split('?')[0].replace(/\/$/, '');
+
+  // ── POST /api/lawyer/match — create inquiry + auto-match top lawyers ─────────
+  if (path === '/api/lawyer/match' && req.method === 'POST') {
+    try {
+      const b = req.body || {};
+      const { description, applicableLaws = [], documents = [], probabilityScores = [],
+              userState = '', userCity = '', userName = '', userEmail = '', userPhone = '',
+              userId } = b;
+
+      if (!description || String(description).length < 10) {
+        return res.status(400).json({ success: false, message: 'Description required.' });
+      }
+
+      await connectDB();
+      const { LawyerProfile, CaseInquiry, LawyerLead } = getModels();
+
+      // Create the CaseInquiry record
+      const inquiryId = 'INQ-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+      const inquiry = await CaseInquiry.create({
+        userId:     userId || new (require('mongoose').Types.ObjectId)(),
+        inquiryId,
+        description: String(description).slice(0, 5000),
+        applicableLaws,
+        probabilityScores,
+        documents,
+        status: 'lawyer_requested',
+        lawyerRequested: true,
+        requestedAt: new Date()
+      });
+
+      // Find approved lawyers with a weekly schedule
+      const allLawyers = await LawyerProfile.find({ status: 'approved' })
+        .select('userId primarySpecialization specializations state city yearsOfExperience stats weeklySchedule');
+
+      const caseTypes = applicableLaws.map(l => l.caseType || '').filter(Boolean);
+
+      // Score and rank
+      const ranked = allLawyers
+        .map(l => ({ lawyer: l, score: scoreLawyer(l, caseTypes, userState, userCity) }))
+        .filter(x => x.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 5);
+
+      // Create LawyerLead for each match
+      const leads = [];
+      for (const { lawyer } of ranked) {
+        const leadId = 'LD-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+        const lead = await LawyerLead.create({
+          leadId,
+          lawyerId:    lawyer._id,
+          userId:      inquiry.userId,
+          inquiryId:   inquiry._id,
+          caseTypes,
+          description: String(description).slice(0, 500),
+          urgency:     'medium',
+          userName:    userName || 'Anonymous',
+          userEmail:   userEmail || '',
+          userPhone:   userPhone || '',
+          status:      'new'
+        });
+        leads.push({ lawyerId: lawyer._id, leadId: lead.leadId });
+      }
+
+      return res.json({
+        success: true,
+        inquiryId: inquiry.inquiryId,
+        inquiryDbId: inquiry._id,
+        matchedCount: leads.length,
+        leads
+      });
+
+    } catch (err) {
+      console.error('[lawyer/match]', err.message);
+      return res.status(500).json({ success: false, message: 'Matching failed.' });
+    }
+  }
+
+  // ── GET /api/lawyer/slots — available slots for a lawyer on a date ────────────
+  if (path === '/api/lawyer/slots' && req.method === 'GET') {
+    try {
+      const { lawyerId, date } = req.query || {};
+      if (!lawyerId || !date) {
+        return res.status(400).json({ success: false, message: 'lawyerId and date required.' });
+      }
+      // Validate date format
+      const d = new Date(date);
+      if (isNaN(d.getTime())) {
+        return res.status(400).json({ success: false, message: 'Invalid date.' });
+      }
+      // Block booking today or in the past
+      const today = new Date(); today.setHours(0,0,0,0);
+      if (d < today) {
+        return res.json({ success: true, slots: [], reason: 'past' });
+      }
+
+      await connectDB();
+      const { LawyerProfile, Appointment } = getModels();
+
+      const profile = await LawyerProfile.findById(lawyerId)
+        .select('weeklySchedule blockedDates status');
+
+      if (!profile || profile.status !== 'approved') {
+        return res.json({ success: true, slots: [], reason: 'unavailable' });
+      }
+
+      const dayOfWeek = dayName(date);
+      const schedule  = (profile.weeklySchedule || []).find(s => s.day === dayOfWeek && s.isActive);
+
+      if (!schedule) {
+        return res.json({ success: true, slots: [], reason: 'not_available_on_day' });
+      }
+
+      // Check if blocked date
+      const isBlocked = (profile.blockedDates || []).some(bd => {
+        const bd2 = new Date(bd); bd2.setHours(0,0,0,0);
+        return bd2.getTime() === d.getTime();
+      });
+      if (isBlocked) {
+        return res.json({ success: true, slots: [], reason: 'blocked' });
+      }
+
+      // Get all booked slots for this lawyer on this date
+      const dateStart = new Date(date); dateStart.setHours(0,0,0,0);
+      const dateEnd   = new Date(date); dateEnd.setHours(23,59,59,999);
+      const booked = await Appointment.find({
+        lawyerId: profile._id,
+        slotDate: { $gte: dateStart, $lte: dateEnd },
+        status:   { $in: ['pending', 'confirmed'] }
+      }).select('slotTime');
+
+      const bookedTimes = new Set(booked.map(b => b.slotTime));
+      const allSlots    = generateSlots(schedule.startTime, schedule.endTime);
+      const available   = allSlots.filter(s => !bookedTimes.has(s));
+
+      return res.json({ success: true, slots: available, day: dayOfWeek, date });
+
+    } catch (err) {
+      console.error('[lawyer/slots]', err.message);
+      return res.status(500).json({ success: false, message: 'Could not fetch slots.' });
+    }
+  }
+
+  // ── POST /api/lawyer/book — book a slot ───────────────────────────────────────
+  if (path === '/api/lawyer/book' && req.method === 'POST') {
+    try {
+      const b = req.body || {};
+      const { lawyerId, date, slotTime, userName, userEmail, userPhone, userNotes, caseType, inquiryId } = b;
+
+      if (!lawyerId || !date || !slotTime || !userName || !userEmail) {
+        return res.status(400).json({ success: false, message: 'lawyerId, date, slotTime, userName and userEmail are required.' });
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) {
+        return res.status(400).json({ success: false, message: 'Invalid email.' });
+      }
+
+      const slotDate = new Date(date);
+      if (isNaN(slotDate.getTime())) {
+        return res.status(400).json({ success: false, message: 'Invalid date.' });
+      }
+      slotDate.setHours(0,0,0,0);
+
+      await connectDB();
+      const { LawyerProfile, Appointment, CaseInquiry } = getModels();
+
+      const profile = await LawyerProfile.findById(lawyerId).select('weeklySchedule blockedDates status');
+      if (!profile || profile.status !== 'approved') {
+        return res.status(404).json({ success: false, message: 'Lawyer not available.' });
+      }
+
+      // Verify slot is still available
+      const existing = await Appointment.findOne({
+        lawyerId: profile._id,
+        slotDate,
+        slotTime,
+        status: { $in: ['pending', 'confirmed'] }
+      });
+      if (existing) {
+        return res.status(409).json({ success: false, message: 'This slot is no longer available. Please choose another.' });
+      }
+
+      const appointmentId = 'APT-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+
+      // Resolve inquiryId if passed as string
+      let inquiryDbId = null;
+      if (inquiryId) {
+        const inq = await CaseInquiry.findOne({ inquiryId }).select('_id');
+        if (inq) inquiryDbId = inq._id;
+      }
+
+      const appointment = await Appointment.create({
+        appointmentId,
+        lawyerId:  profile._id,
+        inquiryId: inquiryDbId,
+        userName:  String(userName).slice(0, 100),
+        userEmail: String(userEmail).slice(0, 200).toLowerCase(),
+        userPhone: String(userPhone || '').replace(/\D/g, '').slice(0, 15),
+        slotDate,
+        slotTime,
+        duration: 30,
+        caseType: String(caseType || '').slice(0, 100),
+        userNotes: String(userNotes || '').slice(0, 1000),
+        status: 'pending'
+      });
+
+      return res.status(201).json({
+        success: true,
+        message: 'Appointment booked. The lawyer will confirm shortly.',
+        appointmentId: appointment.appointmentId,
+        slotDate: date,
+        slotTime
+      });
+
+    } catch (err) {
+      console.error('[lawyer/book]', err.message);
+      return res.status(500).json({ success: false, message: 'Booking failed. Please try again.' });
+    }
+  }
+
+  // ── GET /api/lawyer/bookings — appointments for authenticated lawyer ───────────
+  if (path === '/api/lawyer/bookings' && req.method === 'GET') {
+    const session = verifyLawyer(req);
+    if (!session) return res.status(401).json({ success: false, message: 'Authentication required.' });
+
+    try {
+      await connectDB();
+      const { LawyerProfile, Appointment } = getModels();
+
+      const profile = await LawyerProfile.findOne({ userId: session.userId }).select('_id');
+      if (!profile) return res.status(404).json({ success: false, message: 'Profile not found.' });
+
+      const q        = req.query || {};
+      const status   = q.status;
+      const upcoming = q.upcoming === '1';
+      const filter   = { lawyerId: profile._id };
+
+      if (status && ['pending','confirmed','cancelled','completed','no_show'].includes(status)) {
+        filter.status = status;
+      }
+      if (upcoming) {
+        const now = new Date(); now.setHours(0,0,0,0);
+        filter.slotDate = { $gte: now };
+        filter.status   = { $in: ['pending','confirmed'] };
+      }
+
+      const appointments = await Appointment.find(filter)
+        .sort({ slotDate: 1, slotTime: 1 })
+        .limit(100);
+
+      return res.json({ success: true, appointments });
+
+    } catch (err) {
+      console.error('[lawyer/bookings]', err.message);
+      return res.status(500).json({ success: false, message: 'Could not fetch bookings.' });
+    }
+  }
+
+  // ── PATCH /api/lawyer/bookings — update appointment status / meetingLink ──────
+  if (path === '/api/lawyer/bookings' && req.method === 'PATCH') {
+    const session = verifyLawyer(req);
+    if (!session) return res.status(401).json({ success: false, message: 'Authentication required.' });
+
+    try {
+      const b = req.body || {};
+      const { appointmentId, status, meetingLink, lawyerNotes } = b;
+      if (!appointmentId) return res.status(400).json({ success: false, message: 'appointmentId required.' });
+
+      await connectDB();
+      const { LawyerProfile, Appointment } = getModels();
+
+      const profile = await LawyerProfile.findOne({ userId: session.userId }).select('_id');
+      if (!profile) return res.status(404).json({ success: false, message: 'Profile not found.' });
+
+      const apt = await Appointment.findOne({ _id: appointmentId, lawyerId: profile._id });
+      if (!apt) return res.status(404).json({ success: false, message: 'Appointment not found.' });
+
+      const updates = { updatedAt: new Date() };
+      const VALID_APT = ['pending', 'confirmed', 'cancelled', 'completed', 'no_show'];
+      if (status && VALID_APT.includes(status)) updates.status = status;
+      if (typeof meetingLink === 'string') updates.meetingLink  = meetingLink.slice(0, 500);
+      if (typeof lawyerNotes === 'string') updates.lawyerNotes  = lawyerNotes.slice(0, 1000);
+
+      const updated = await Appointment.findByIdAndUpdate(appointmentId, updates, { new: true });
+      return res.json({ success: true, appointment: updated });
+
+    } catch (err) {
+      console.error('[lawyer/bookings PATCH]', err.message);
+      return res.status(500).json({ success: false, message: 'Update failed.' });
+    }
+  }
 
   // ── GET: List approved lawyers ──────────────────────────────────────────────
   if (req.method === 'GET') {

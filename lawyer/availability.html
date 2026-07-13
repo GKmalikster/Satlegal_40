@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Availability — SatLegal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --saffron: #FF9933; --green: #138808; --green-d: #0D3D0D; --green-l: #F0FBF0;
+  --bg: #F8FAF7; --card: #FFFFFF; --border: #E2EBE0; --text: #1A1A1A;
+  --muted: #6B7280; --radius: 8px; --shadow: 0 1px 4px rgba(0,0,0,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui,sans-serif;}
+body{background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* Nav */
+.nav{display:flex;align-items:center;gap:12px;padding:0 20px;height:54px;background:#fff;border-bottom:3px solid transparent;border-image:linear-gradient(to right,#FF9933 33%,#fff 33% 66%,#138808 66%) 1;box-shadow:var(--shadow);}
+.brand{font-size:19px;font-weight:500;}.brand-s{color:#E07000;}.brand-g{color:#138808;}
+.nav-links{display:flex;gap:2px;flex:1;}
+.nl{font-size:12px;padding:5px 10px;border-radius:var(--radius);color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:5px;}
+.nl:hover,.nl.active{color:var(--green);background:var(--green-l);}
+.nl.active{font-weight:500;}
+.nav-r{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.av-pill{display:flex;align-items:center;gap:6px;background:#F5F5F5;border:0.5px solid var(--border);border-radius:20px;padding:3px 10px 3px 5px;font-size:12px;}
+.av{width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;}
+.btn-logout{font-size:11px;padding:4px 10px;border:0.5px solid #C0392B;color:#C0392B;border-radius:var(--radius);background:transparent;cursor:pointer;}
+
+/* Layout */
+.container{max-width:960px;margin:0 auto;padding:24px 20px;}
+.page-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.page-hdr h1{font-size:20px;font-weight:600;}
+.tabs{display:flex;border-bottom:1.5px solid var(--border);margin-bottom:22px;gap:0;}
+.tab-btn{padding:9px 18px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1.5px;}
+.tab-btn.active{color:var(--green);border-bottom-color:var(--green);}
+
+/* Schedule grid */
+.sched-grid{display:grid;grid-template-columns:120px 1fr 1fr 80px;gap:1px;background:var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:18px;}
+.sg-head{background:var(--green-d);color:#fff;font-size:11px;font-weight:600;padding:10px 14px;text-transform:uppercase;letter-spacing:.5px;}
+.sg-cell{background:#fff;padding:10px 14px;display:flex;align-items:center;}
+.sg-day{font-size:13px;font-weight:500;}
+.toggle-wrap{display:flex;align-items:center;gap:8px;}
+.toggle{position:relative;width:38px;height:20px;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;cursor:pointer;inset:0;background:#ccc;border-radius:20px;transition:.2s;}
+.toggle-slider:before{content:'';position:absolute;width:16px;height:16px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:.2s;}
+.toggle input:checked + .toggle-slider{background:var(--green);}
+.toggle input:checked + .toggle-slider:before{transform:translateX(18px);}
+.time-input{width:90px;padding:6px 10px;border:0.5px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);background:#fff;cursor:pointer;}
+.time-input:disabled{background:#F5F5F5;color:var(--muted);cursor:not-allowed;}
+.day-row.inactive .sg-cell{background:#FAFAFA;}
+
+/* Blocked dates */
+.blocked-section{margin-bottom:22px;}
+.block-title{font-size:14px;font-weight:600;margin-bottom:10px;}
+.blocked-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.blocked-chip{display:flex;align-items:center;gap:5px;font-size:12px;padding:4px 10px;background:#FFF4E6;border:0.5px solid #FFD8A8;border-radius:20px;}
+.blocked-chip button{background:none;border:none;cursor:pointer;color:#B35100;font-size:11px;padding:0 2px;}
+.add-block-row{display:flex;gap:8px;}
+.date-input{padding:7px 12px;border:0.5px solid var(--border);border-radius:var(--radius);font-size:12px;}
+.btn-add-block{padding:7px 14px;background:var(--saffron);color:#fff;border:none;border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;}
+
+/* Save */
+.save-row{display:flex;gap:10px;align-items:center;margin-top:6px;}
+.btn-save{padding:10px 22px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;}
+.btn-save:hover{background:#0a5c06;}
+.save-status{font-size:12px;color:var(--muted);}
+
+/* Appointments tab */
+.apts-filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.apt-filter-btn{padding:6px 14px;border:0.5px solid var(--border);border-radius:20px;font-size:12px;background:#fff;cursor:pointer;color:var(--muted);}
+.apt-filter-btn.active{background:var(--green-d);color:#fff;border-color:var(--green-d);}
+.apts-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;}
+.apt-card{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:14px;box-shadow:var(--shadow);}
+.apt-date-block{min-width:56px;text-align:center;background:var(--green-l);border-radius:8px;padding:8px 6px;}
+.apt-date-day{font-size:20px;font-weight:700;color:var(--green-d);line-height:1;}
+.apt-date-mon{font-size:10px;font-weight:600;text-transform:uppercase;color:var(--green);margin-top:2px;}
+.apt-body{flex:1;}
+.apt-name{font-size:14px;font-weight:500;}
+.apt-meta{font-size:11px;color:var(--muted);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap;}
+.apt-case{font-size:11px;margin-top:4px;color:var(--text);}
+.apt-actions{display:flex;gap:6px;margin-top:8px;}
+.apt-btn{font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;border:0.5px solid;}
+.apt-btn-confirm{background:var(--green-l);color:var(--green);border-color:#A8E8A4;}
+.apt-btn-cancel{background:#FEE2E2;color:#991B1B;border-color:#FECACA;}
+.apt-btn-complete{background:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE;}
+.apt-link-input{font-size:11px;padding:4px 8px;border:0.5px solid var(--border);border-radius:6px;flex:1;min-width:0;}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;}
+.dot-pending{background:#FF9933;}.dot-confirmed{background:var(--green);}.dot-cancelled{background:#C0392B;}.dot-completed{background:#1D4ED8;}.dot-no_show{background:#9CA3AF;}
+.badge-status{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;}
+.badge-pending{background:#FFF4E6;color:#B35100;}.badge-confirmed{background:var(--green-l);color:var(--green);}.badge-cancelled{background:#FEE2E2;color:#991B1B;}.badge-completed{background:#EFF6FF;color:#1D4ED8;}.badge-no_show{background:#F3F4F6;color:#6B7280;}
+.toast{position:fixed;bottom:24px;right:24px;background:#1A1A1A;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand"><span class="brand-s">Sat</span><span class="brand-g">Legal</span></div>
+  <div class="nav-links">
+    <a href="/lawyer/dashboard.html" class="nl"><i class="fas fa-chart-bar"></i> Dashboard</a>
+    <a href="/lawyer/leads.html" class="nl"><i class="fas fa-list"></i> My Leads</a>
+    <a href="/lawyer/availability.html" class="nl active"><i class="fas fa-calendar"></i> Availability</a>
+    <a href="#" class="nl" id="profileLink"><i class="fas fa-user"></i> Public Profile</a>
+  </div>
+  <div class="nav-r">
+    <div class="av-pill"><div class="av" id="navInitials">?</div><span id="navName">Loading…</span></div>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-hdr">
+    <h1>Calendar & Availability</h1>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('schedule')">Weekly Schedule</button>
+    <button class="tab-btn" onclick="switchTab('appointments')">Appointments</button>
+  </div>
+
+  <!-- ── SCHEDULE TAB ─────────────────────────────────── -->
+  <div id="tab-schedule">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Set the days and hours you are available for 30-minute consultation slots. Users will see and book from these slots.</p>
+
+    <div class="sched-grid">
+      <div class="sg-head">Day</div>
+      <div class="sg-head">Start time</div>
+      <div class="sg-head">End time</div>
+      <div class="sg-head">Active</div>
+    </div>
+
+    <form id="schedForm">
+      <!-- rows injected by JS -->
+    </form>
+
+    <div class="blocked-section">
+      <div class="block-title">Block specific dates <span style="font-size:12px;font-weight:400;color:var(--muted)">(holidays, vacation days)</span></div>
+      <div class="blocked-chips" id="blockedChips"></div>
+      <div class="add-block-row">
+        <input type="date" class="date-input" id="blockDateInput">
+        <button type="button" class="btn-add-block" onclick="addBlockedDate()">+ Block date</button>
+      </div>
+    </div>
+
+    <div class="save-row">
+      <button class="btn-save" onclick="saveSchedule()">Save schedule</button>
+      <span class="save-status" id="saveStatus"></span>
+    </div>
+  </div>
+
+  <!-- ── APPOINTMENTS TAB ─────────────────────────────── -->
+  <div id="tab-appointments" style="display:none;">
+    <div class="apts-filters">
+      <button class="apt-filter-btn active" onclick="filterApts('all',this)">All</button>
+      <button class="apt-filter-btn" onclick="filterApts('pending',this)">Pending</button>
+      <button class="apt-filter-btn" onclick="filterApts('confirmed',this)">Confirmed</button>
+      <button class="apt-filter-btn" onclick="filterApts('completed',this)">Completed</button>
+      <button class="apt-filter-btn" onclick="filterApts('cancelled',this)">Cancelled</button>
+    </div>
+    <div id="aptsList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DEFAULT_START = '10:00';
+const DEFAULT_END   = '18:00';
+
+let token = '';
+let profileId = '';
+let schedule  = [];
+let blocked   = [];
+let allApts   = [];
+
+// ── Bootstrap ──────────────────────────────────────────────────────────────────
+function getSession() {
+  try {
+    const t = localStorage.getItem('sl_token');
+    const u = JSON.parse(localStorage.getItem('sl_user') || 'null');
+    if (!t || !u || u.role !== 'lawyer') { window.location = '/auth/login.html'; return null; }
+    return { token: t, user: u };
+  } catch { window.location = '/auth/login.html'; return null; }
+}
+
+function logout() {
+  localStorage.removeItem('sl_token');
+  localStorage.removeItem('sl_user');
+  window.location = '/auth/login.html';
+}
+
+async function init() {
+  const sess = getSession();
+  if (!sess) return;
+  token = sess.token;
+  const u = sess.user;
+  document.getElementById('navName').textContent = u.name || 'Lawyer';
+  document.getElementById('navInitials').textContent = (u.name || 'L').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+
+  // Load profile to get existing schedule
+  try {
+    const r = await fetch('/api/lawyer/me', { headers: { 'Authorization': 'Bearer ' + token } });
+    const d = await r.json();
+    if (d.success) {
+      schedule = d.profile.weeklySchedule || [];
+      blocked  = (d.profile.blockedDates  || []).map(s => s.slice(0,10));
+      profileId = d.profile.id;
+      if (d.user?.name) {
+        document.getElementById('navName').textContent = d.user.name;
+        document.getElementById('navInitials').textContent = d.user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      }
+    }
+  } catch(e) { console.error(e); }
+
+  renderScheduleGrid();
+  renderBlockedChips();
+}
+
+// ── Schedule grid ──────────────────────────────────────────────────────────────
+function renderScheduleGrid() {
+  const form = document.getElementById('schedForm');
+  const schedMap = {};
+  for (const s of schedule) schedMap[s.day] = s;
+
+  form.innerHTML = DAYS.map(day => {
+    const s = schedMap[day] || { day, startTime: DEFAULT_START, endTime: DEFAULT_END, isActive: false };
+    return `
+    <div class="sched-grid day-row${!s.isActive ? ' inactive' : ''}" id="row-${day}">
+      <div class="sg-cell"><div class="sg-day">${day}</div></div>
+      <div class="sg-cell">
+        <input type="time" class="time-input" id="start-${day}" value="${s.startTime || DEFAULT_START}" ${!s.isActive?'disabled':''}>
+      </div>
+      <div class="sg-cell">
+        <input type="time" class="time-input" id="end-${day}" value="${s.endTime || DEFAULT_END}" ${!s.isActive?'disabled':''}>
+      </div>
+      <div class="sg-cell toggle-wrap">
+        <label class="toggle">
+          <input type="checkbox" id="active-${day}" ${s.isActive?'checked':''} onchange="toggleDay('${day}')">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleDay(day) {
+  const active = document.getElementById('active-'+day).checked;
+  document.getElementById('start-'+day).disabled = !active;
+  document.getElementById('end-'+day).disabled   = !active;
+  const row = document.getElementById('row-'+day);
+  row.classList.toggle('inactive', !active);
+}
+
+function collectSchedule() {
+  return DAYS.map(day => ({
+    day,
+    startTime: document.getElementById('start-'+day)?.value || DEFAULT_START,
+    endTime:   document.getElementById('end-'+day)?.value   || DEFAULT_END,
+    isActive:  document.getElementById('active-'+day)?.checked || false
+  }));
+}
+
+// ── Blocked dates ──────────────────────────────────────────────────────────────
+function renderBlockedChips() {
+  document.getElementById('blockedChips').innerHTML = blocked.map(d =>
+    `<div class="blocked-chip">${formatDate(d)}<button onclick="removeBlocked('${d}')" title="Remove">✕</button></div>`
+  ).join('');
+}
+
+function addBlockedDate() {
+  const inp = document.getElementById('blockDateInput');
+  const d   = inp.value;
+  if (!d) return;
+  if (!blocked.includes(d)) { blocked.push(d); blocked.sort(); }
+  inp.value = '';
+  renderBlockedChips();
+}
+
+function removeBlocked(d) {
+  blocked = blocked.filter(x => x !== d);
+  renderBlockedChips();
+}
+
+// ── Save ───────────────────────────────────────────────────────────────────────
+async function saveSchedule() {
+  const ws = collectSchedule();
+  const st = document.getElementById('saveStatus');
+  st.textContent = 'Saving…';
+  try {
+    const r = await fetch('/api/lawyer/me', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ weeklySchedule: ws, blockedDates: blocked })
+    });
+    const d = await r.json();
+    if (d.success) {
+      st.textContent = '✓ Saved';
+      setTimeout(() => st.textContent = '', 3000);
+      showToast('Schedule saved!');
+    } else {
+      st.textContent = d.message || 'Error';
+    }
+  } catch(e) {
+    st.textContent = 'Network error';
+  }
+}
+
+// ── Tabs ───────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.getElementById('tab-schedule').style.display    = tab === 'schedule'     ? '' : 'none';
+  document.getElementById('tab-appointments').style.display = tab === 'appointments' ? '' : 'none';
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0&&tab==='schedule')||(i===1&&tab==='appointments')));
+  if (tab === 'appointments') loadAppointments();
+}
+
+// ── Appointments ───────────────────────────────────────────────────────────────
+async function loadAppointments() {
+  try {
+    const r = await fetch('/api/lawyer/bookings', { headers: { 'Authorization': 'Bearer ' + token } });
+    const d = await r.json();
+    if (d.success) { allApts = d.appointments; renderApts(allApts); }
+    else document.getElementById('aptsList').innerHTML = '<div class="apts-empty">Could not load appointments.</div>';
+  } catch(e) {
+    document.getElementById('aptsList').innerHTML = '<div class="apts-empty">Network error.</div>';
+  }
+}
+
+function filterApts(status, btn) {
+  document.querySelectorAll('.apt-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = status === 'all' ? allApts : allApts.filter(a => a.status === status);
+  renderApts(filtered);
+}
+
+function renderApts(apts) {
+  const el = document.getElementById('aptsList');
+  if (!apts.length) { el.innerHTML = '<div class="apts-empty"><i class="far fa-calendar-xmark" style="font-size:28px;margin-bottom:10px;display:block;"></i>No appointments found.</div>'; return; }
+
+  el.innerHTML = apts.map(a => {
+    const dt  = new Date(a.slotDate);
+    const day = dt.getDate();
+    const mon = dt.toLocaleString('en-IN', { month: 'short' });
+    const wday = dt.toLocaleString('en-IN', { weekday: 'short' });
+    const t12  = to12h(a.slotTime);
+
+    return `
+    <div class="apt-card" id="apt-${a._id}">
+      <div class="apt-date-block">
+        <div class="apt-date-day">${day}</div>
+        <div class="apt-date-mon">${mon}</div>
+        <div style="font-size:9px;color:var(--muted);margin-top:2px;">${wday}</div>
+      </div>
+      <div class="apt-body">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div class="apt-name">${esc(a.userName)}</div>
+          <span class="badge-status badge-${a.status}">${a.status}</span>
+        </div>
+        <div class="apt-meta">
+          <span><i class="far fa-clock"></i> ${t12} (30 min)</span>
+          <span><i class="far fa-envelope"></i> ${esc(a.userEmail)}</span>
+          ${a.userPhone ? `<span><i class="fas fa-phone"></i> ${esc(a.userPhone)}</span>` : ''}
+        </div>
+        ${a.caseType ? `<div class="apt-case"><i class="fas fa-balance-scale" style="font-size:10px;color:var(--muted);"></i> ${esc(a.caseType)}</div>` : ''}
+        ${a.userNotes ? `<div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic;">"${esc(a.userNotes)}"</div>` : ''}
+        <div class="apt-actions">
+          ${a.status === 'pending' ? `
+            <button class="apt-btn apt-btn-confirm" onclick="updateApt('${a._id}','confirmed')">✓ Confirm</button>
+            <button class="apt-btn apt-btn-cancel" onclick="updateApt('${a._id}','cancelled')">✕ Cancel</button>
+          ` : ''}
+          ${a.status === 'confirmed' ? `
+            <input class="apt-link-input" id="link-${a._id}" placeholder="Add meeting link (Zoom/Google Meet)" value="${esc(a.meetingLink || '')}">
+            <button class="apt-btn apt-btn-confirm" onclick="saveLink('${a._id}')">Save link</button>
+            <button class="apt-btn apt-btn-complete" onclick="updateApt('${a._id}','completed')">Mark complete</button>
+            <button class="apt-btn apt-btn-cancel" onclick="updateApt('${a._id}','cancelled')">Cancel</button>
+          ` : ''}
+          ${a.status === 'confirmed' && a.meetingLink ? `<a href="${esc(a.meetingLink)}" target="_blank" class="apt-btn" style="border-color:var(--border);color:var(--green);text-decoration:none;"><i class="fas fa-video"></i> Join</a>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function updateApt(id, status) {
+  try {
+    // Use leads endpoint PUT for appointment updates (reusing auth pattern)
+    // For now call the bookings PATCH — update via a minimal approach
+    const r = await fetch('/api/lawyer/bookings', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ appointmentId: id, status })
+    });
+    const d = await r.json();
+    if (d.success) {
+      showToast('Appointment updated.');
+      loadAppointments();
+    } else {
+      showToast(d.message || 'Update failed.');
+    }
+  } catch(e) { showToast('Network error.'); }
+}
+
+async function saveLink(id) {
+  const link = document.getElementById('link-'+id)?.value || '';
+  // Piggyback on the same PATCH
+  const r = await fetch('/api/lawyer/bookings', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ appointmentId: id, meetingLink: link })
+  }).catch(()=>null);
+  showToast(r ? 'Meeting link saved.' : 'Network error.');
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+function formatDate(iso) {
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+}
+function to12h(t) {
+  if (!t) return '';
+  const [h,m] = t.split(':').map(Number);
+  const ampm = h < 12 ? 'AM' : 'PM';
+  const h12  = h % 12 || 12;
+  return `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+}
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(msg, dur=2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+init();
+</script>
+</body>
+</html>

@@ -178,6 +178,24 @@ module.exports = async function handler(req, res) {
         updates.languagesSpoken = b.languagesSpoken.filter(l => LANGS.includes(l));
       }
 
+      if (Array.isArray(b.weeklySchedule)) {
+        updates.weeklySchedule = b.weeklySchedule
+          .filter(s => s && DAYS.includes(s.day))
+          .map(s => ({
+            day:       s.day,
+            startTime: /^\d{2}:\d{2}$/.test(s.startTime || '') ? s.startTime : '10:00',
+            endTime:   /^\d{2}:\d{2}$/.test(s.endTime   || '') ? s.endTime   : '18:00',
+            isActive:  s.isActive !== false
+          }));
+      }
+
+      if (Array.isArray(b.blockedDates)) {
+        updates.blockedDates = b.blockedDates
+          .map(d => new Date(d))
+          .filter(d => !isNaN(d.getTime()))
+          .slice(0, 90);
+      }
+
       if (Array.isArray(b.offices)) {
         const offices = b.offices
           .filter(o => o && typeof o === 'object')

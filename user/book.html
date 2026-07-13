@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find & Book a Lawyer — SatLegal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --saffron:#FF9933; --green:#138808; --green-d:#0D3D0D; --green-l:#F0FBF0;
+  --bg:#F8FAF7; --card:#fff; --border:#E2EBE0; --text:#1A1A1A;
+  --muted:#6B7280; --radius:8px; --shadow:0 1px 4px rgba(0,0,0,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui,sans-serif;}
+body{background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* Nav */
+.nav{display:flex;align-items:center;gap:12px;padding:0 20px;height:54px;background:#fff;border-bottom:3px solid transparent;border-image:linear-gradient(to right,#FF9933 33%,#fff 33% 66%,#138808 66%) 1;box-shadow:var(--shadow);}
+.brand{font-size:19px;font-weight:500;}.brand-s{color:#E07000;}.brand-g{color:#138808;}
+.back-btn{margin-left:auto;font-size:12px;padding:5px 12px;border:0.5px solid var(--border);border-radius:var(--radius);color:var(--muted);background:#fff;cursor:pointer;text-decoration:none;}
+
+/* Layout */
+.container{max-width:900px;margin:0 auto;padding:24px 20px;}
+.page-hdr{margin-bottom:20px;}
+.page-hdr h1{font-size:21px;font-weight:600;margin-bottom:4px;}
+.page-hdr p{font-size:13px;color:var(--muted);}
+
+/* Section headers */
+.section-hdr{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.section-hdr h2{font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--green-d);}
+.section-badge{font-size:11px;padding:2px 8px;background:var(--green-l);color:var(--green);border-radius:20px;font-weight:500;}
+
+/* Filters bar */
+.filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+.filter-label{font-size:12px;color:var(--muted);margin-right:2px;}
+.filter-select{padding:6px 10px;border:0.5px solid var(--border);border-radius:var(--radius);font-size:12px;background:#fff;color:var(--text);}
+.filter-input{padding:6px 10px;border:0.5px solid var(--border);border-radius:var(--radius);font-size:12px;background:#fff;width:140px;}
+.btn-filter{padding:6px 14px;background:var(--green-d);color:#fff;border:none;border-radius:var(--radius);font-size:12px;cursor:pointer;}
+
+/* Lawyer cards */
+.lawyer-card{background:#fff;border:0.5px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px;display:flex;gap:14px;box-shadow:var(--shadow);position:relative;}
+.lawyer-card.matched{border-left:3px solid var(--green);}
+.match-badge{position:absolute;top:12px;right:12px;font-size:10px;padding:2px 8px;background:var(--green-l);color:var(--green);border-radius:20px;font-weight:500;}
+.lawyer-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#138808,#0D3D0D);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;flex-shrink:0;}
+.lawyer-body{flex:1;min-width:0;}
+.lawyer-name{font-size:15px;font-weight:600;margin-bottom:2px;}
+.lawyer-spec{font-size:12px;color:var(--green);font-weight:500;margin-bottom:4px;}
+.lawyer-meta{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--muted);margin-bottom:6px;}
+.lawyer-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.ltag{font-size:10px;padding:2px 7px;background:#F3F4F6;border-radius:4px;color:var(--muted);}
+.lawyer-bio{font-size:12px;color:var(--text);margin-bottom:10px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.lawyer-actions{display:flex;gap:8px;align-items:center;}
+.btn-book{padding:7px 16px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;}
+.btn-book:hover{background:#0a5c06;}
+.btn-profile{padding:7px 12px;border:0.5px solid var(--border);border-radius:var(--radius);font-size:12px;color:var(--muted);background:#fff;cursor:pointer;text-decoration:none;}
+.fee-chip{font-size:11px;padding:3px 8px;border-radius:20px;background:#FFF4E6;color:#B35100;border:0.5px solid #FFD8A8;font-weight:500;}
+.rating-star{color:#F59E0B;font-size:11px;}
+
+/* Empty / loading */
+.loading{text-align:center;padding:30px;color:var(--muted);font-size:13px;}
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;}
+
+/* Modal overlay */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:12px;width:min(540px,95vw);max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.18);}
+.modal-hdr{padding:18px 20px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-hdr h3{font-size:15px;font-weight:600;}
+.modal-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);padding:4px;}
+.modal-body{padding:20px;}
+.modal-lawyer-info{display:flex;gap:12px;align-items:center;background:var(--green-l);padding:12px;border-radius:var(--radius);margin-bottom:18px;}
+.modal-lawyer-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#138808,#0D3D0D);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;flex-shrink:0;}
+.modal-lawyer-name{font-size:14px;font-weight:600;}
+.modal-lawyer-spec{font-size:11px;color:var(--muted);}
+
+/* Date picker row */
+.date-row{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;}
+.date-chip{flex-shrink:0;text-align:center;padding:8px 10px;border:0.5px solid var(--border);border-radius:8px;cursor:pointer;min-width:52px;background:#fff;}
+.date-chip:hover{border-color:var(--green);}
+.date-chip.selected{background:var(--green-d);color:#fff;border-color:var(--green-d);}
+.date-chip.selected .dc-day{color:#fff;}
+.dc-num{font-size:16px;font-weight:600;}
+.dc-day{font-size:10px;color:var(--muted);margin-top:1px;}
+
+/* Slots */
+.slots-label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.slots-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+.slot-btn{padding:6px 12px;border:0.5px solid var(--border);border-radius:6px;font-size:12px;background:#fff;cursor:pointer;}
+.slot-btn:hover{border-color:var(--green);color:var(--green);}
+.slot-btn.selected{background:var(--green);color:#fff;border-color:var(--green);}
+.no-slots{font-size:12px;color:var(--muted);padding:10px 0;}
+
+/* Form fields */
+.form-group{margin-bottom:12px;}
+.form-label{font-size:12px;font-weight:500;margin-bottom:4px;display:block;}
+.form-input{width:100%;padding:8px 12px;border:0.5px solid var(--border);border-radius:var(--radius);font-size:13px;color:var(--text);background:#fff;}
+.form-input:focus{outline:none;border-color:var(--green);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.form-textarea{width:100%;padding:8px 12px;border:0.5px solid var(--border);border-radius:var(--radius);font-size:13px;resize:vertical;min-height:70px;font-family:inherit;}
+.btn-submit{width:100%;padding:11px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;margin-top:8px;}
+.btn-submit:hover{background:#0a5c06;}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed;}
+.modal-err{color:#C0392B;font-size:12px;margin-top:6px;}
+
+/* Success state */
+.success-box{text-align:center;padding:30px 20px;}
+.success-icon{font-size:40px;color:var(--green);margin-bottom:12px;}
+.success-title{font-size:16px;font-weight:600;margin-bottom:6px;}
+.success-sub{font-size:13px;color:var(--muted);}
+.apt-ref{font-size:12px;margin-top:10px;font-family:monospace;background:#F3F4F6;padding:6px 12px;border-radius:6px;display:inline-block;}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;background:#1A1A1A;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}
+.toast.show{opacity:1;}
+
+@media(max-width:600px){
+  .form-row{grid-template-columns:1fr;}
+  .lawyer-card{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand"><span class="brand-s">Sat</span><span class="brand-g">Legal</span></div>
+  <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+</nav>
+
+<div class="container">
+  <div class="page-hdr">
+    <h1>Find & Book a Lawyer</h1>
+    <p id="caseTypeLabel">Showing lawyers matched to your case</p>
+  </div>
+
+  <!-- Auto-matched section -->
+  <div id="matchedSection" style="display:none;">
+    <div class="section-hdr">
+      <h2>Best matches for your case</h2>
+      <span class="section-badge" id="matchCount">0 lawyers</span>
+    </div>
+    <div id="matchedList"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Finding best matches…</div></div>
+    <div style="margin-bottom:24px;"></div>
+  </div>
+
+  <!-- Browse section -->
+  <div>
+    <div class="section-hdr">
+      <h2>Browse all lawyers</h2>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <span class="filter-label">Specialization</span>
+      <select class="filter-select" id="fSpec">
+        <option value="">All</option>
+        <option>Civil Litigation</option>
+        <option>Criminal Litigation</option>
+        <option>Real Estate Law</option>
+        <option>Labour &amp; Employment Law</option>
+        <option>Family Law</option>
+        <option>Estate, Succession and Trust Law</option>
+        <option>Cyber Crime Law</option>
+        <option>Intellectual Property Law</option>
+        <option>Consumer Dispute Law</option>
+        <option>Data and Privacy Law</option>
+      </select>
+      <input class="filter-input" id="fState" placeholder="State…" list="stateList">
+      <input class="filter-input" id="fCity"  placeholder="City…">
+      <select class="filter-select" id="fSort">
+        <option value="rating">Sort: Top rated</option>
+        <option value="experience">Sort: Experience</option>
+        <option value="fee">Sort: Lowest fee</option>
+      </select>
+      <button class="btn-filter" onclick="loadBrowse()"><i class="fas fa-search"></i> Search</button>
+    </div>
+
+    <div id="browseList"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading lawyers…</div></div>
+    <div id="browseMore" style="text-align:center;margin-top:12px;display:none;">
+      <button onclick="loadMore()" style="padding:8px 20px;border:0.5px solid var(--border);background:#fff;border-radius:var(--radius);font-size:13px;cursor:pointer;">Load more</button>
+    </div>
+  </div>
+</div>
+
+<!-- Booking modal -->
+<div class="modal-overlay" id="bookModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3>Book a consultation</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"><!-- filled by JS --></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<datalist id="stateList">
+  <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option>
+  <option>Bihar</option><option>Chhattisgarh</option><option>Goa</option><option>Gujarat</option>
+  <option>Haryana</option><option>Himachal Pradesh</option><option>Jharkhand</option>
+  <option>Karnataka</option><option>Kerala</option><option>Madhya Pradesh</option>
+  <option>Maharashtra</option><option>Manipur</option><option>Meghalaya</option>
+  <option>Mizoram</option><option>Nagaland</option><option>Odisha</option><option>Punjab</option>
+  <option>Rajasthan</option><option>Sikkim</option><option>Tamil Nadu</option>
+  <option>Telangana</option><option>Tripura</option><option>Uttar Pradesh</option>
+  <option>Uttarakhand</option><option>West Bengal</option><option>Delhi</option>
+</datalist>
+
+<script>
+// ── URL params ─────────────────────────────────────────────────────────────────
+const params     = new URLSearchParams(location.search);
+const inquiryId  = params.get('inquiryId')  || '';
+const caseType   = params.get('caseType')   || '';
+const userState  = params.get('state')      || '';
+const userCity   = params.get('city')       || '';
+
+// ── State ──────────────────────────────────────────────────────────────────────
+let browsePage   = 1;
+let browseTotal  = 0;
+let allBrowse    = [];
+let selectedDate = '';
+let selectedSlot = '';
+let currentLawyer = null;
+
+// ── Init ───────────────────────────────────────────────────────────────────────
+async function init() {
+  if (caseType) {
+    document.getElementById('caseTypeLabel').textContent = 'Showing lawyers for: ' + caseType;
+    document.getElementById('fSpec').value = caseType;
+  }
+
+  // Pre-fill state filter
+  if (userState) document.getElementById('fState').value = userState;
+  if (userCity)  document.getElementById('fCity').value  = userCity;
+
+  // If there's an inquiryId, show auto-matched section
+  if (inquiryId) {
+    document.getElementById('matchedSection').style.display = '';
+    loadMatched();
+  }
+
+  loadBrowse();
+}
+
+// ── Load matched lawyers (from inquiry's auto-matched leads) ──────────────────
+async function loadMatched() {
+  // We don't have a direct "get matched lawyers for inquiry" endpoint,
+  // so we use the browse endpoint filtered by spec + location as the matched set.
+  // The real matched leads were already created server-side in /api/lawyer/match.
+  try {
+    const qs = new URLSearchParams();
+    if (caseType)  qs.set('spec', caseType);
+    if (userState) qs.set('state', userState);
+    if (userCity)  qs.set('city', userCity);
+    qs.set('limit', '5');
+
+    const r = await fetch('/api/lawyer/list?' + qs);
+    const d = await r.json();
+    if (d.success) {
+      document.getElementById('matchCount').textContent = d.lawyers.length + ' lawyers';
+      document.getElementById('matchedList').innerHTML = d.lawyers.length
+        ? d.lawyers.map(l => lawyerCardHTML(l, true)).join('')
+        : '<div class="empty">No closely matched lawyers found. Browse all below.</div>';
+    }
+  } catch(e) {
+    document.getElementById('matchedList').innerHTML = '<div class="empty">Could not load matches.</div>';
+  }
+}
+
+// ── Load/browse lawyers ────────────────────────────────────────────────────────
+let browseLawyers = [];
+async function loadBrowse(reset = true) {
+  if (reset) { browsePage = 1; browseLawyers = []; }
+  const el = document.getElementById('browseList');
+  if (reset) el.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Searching…</div>';
+
+  const qs = new URLSearchParams();
+  const spec  = document.getElementById('fSpec').value;
+  const state = document.getElementById('fState').value.trim();
+  const city  = document.getElementById('fCity').value.trim();
+  const sort  = document.getElementById('fSort').value;
+
+  if (spec)  qs.set('spec',  spec);
+  if (state) qs.set('state', state);
+  if (city)  qs.set('city',  city);
+  qs.set('page',  browsePage);
+  qs.set('limit', '10');
+
+  try {
+    const r = await fetch('/api/lawyer/list?' + qs);
+    const d = await r.json();
+    if (!d.success) { el.innerHTML = '<div class="empty">Could not load lawyers.</div>'; return; }
+
+    let lawyers = d.lawyers || [];
+
+    // Client-side sort
+    if (sort === 'experience') lawyers.sort((a,b) => (b.experience||0) - (a.experience||0));
+    else if (sort === 'fee')   lawyers.sort((a,b) => (a.consultFee||0) - (b.consultFee||0));
+
+    if (reset) browseLawyers = lawyers;
+    else browseLawyers = [...browseLawyers, ...lawyers];
+
+    browseTotal = d.total;
+    el.innerHTML = browseLawyers.length
+      ? browseLawyers.map(l => lawyerCardHTML(l, false)).join('')
+      : '<div class="empty"><i class="fas fa-user-slash" style="font-size:28px;display:block;margin-bottom:10px;"></i>No lawyers found for these filters.</div>';
+
+    const moreBtn = document.getElementById('browseMore');
+    moreBtn.style.display = (browsePage < d.pages) ? '' : 'none';
+
+  } catch(e) {
+    el.innerHTML = '<div class="empty">Network error. Please try again.</div>';
+  }
+}
+
+function loadMore() {
+  browsePage++;
+  loadBrowse(false);
+}
+
+// ── Lawyer card HTML ───────────────────────────────────────────────────────────
+function lawyerCardHTML(l, isMatched) {
+  const initials = (l.name || 'L').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const rating   = l.rating ? `<span class="rating-star">★</span> ${l.rating.toFixed(1)} (${l.reviews})` : 'No reviews yet';
+  const fee      = l.consultFee ? `<span class="fee-chip">₹${l.consultFee.toLocaleString('en-IN')}/consult</span>` : '';
+  const avail    = (l.availability?.days || []).slice(0,3).join(', ') + (l.availability?.days?.length > 3 ? '…' : '');
+  const hasCalendar = (l.weeklySchedule || l.availability?.days?.length) > 0;
+
+  return `
+  <div class="lawyer-card${isMatched ? ' matched' : ''}">
+    ${isMatched ? '<div class="match-badge">✓ Best match</div>' : ''}
+    <div class="lawyer-avatar">${initials}</div>
+    <div class="lawyer-body">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="lawyer-name">${esc(l.name)}</div>
+          <div class="lawyer-spec">${esc(l.primarySpec)}</div>
+        </div>
+        <div>${fee}</div>
+      </div>
+      <div class="lawyer-meta">
+        <span><i class="fas fa-map-marker-alt"></i> ${esc(l.city)}, ${esc(l.state)}</span>
+        <span><i class="fas fa-gavel"></i> ${l.experience} yrs exp</span>
+        <span>${rating}</span>
+        ${avail ? `<span><i class="far fa-clock"></i> ${esc(avail)}</span>` : ''}
+      </div>
+      ${l.specs?.length ? `<div class="lawyer-tags">${l.specs.slice(0,4).map(s=>`<span class="ltag">${esc(s)}</span>`).join('')}</div>` : ''}
+      ${l.bio ? `<div class="lawyer-bio">${esc(l.bio)}</div>` : ''}
+      <div class="lawyer-actions">
+        <button class="btn-book" onclick="openBookModal(${JSON.stringify(l).replace(/"/g,'&quot;')})"><i class="far fa-calendar-check"></i> Book consultation</button>
+        ${l.linkedin ? `<a href="${esc(l.linkedin)}" target="_blank" class="btn-profile"><i class="fab fa-linkedin"></i></a>` : ''}
+        ${l.website  ? `<a href="${esc(l.website)}"  target="_blank" class="btn-profile"><i class="fas fa-globe"></i></a>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Booking modal ──────────────────────────────────────────────────────────────
+function openBookModal(lawyer) {
+  currentLawyer = lawyer;
+  selectedDate  = '';
+  selectedSlot  = '';
+  renderModalStep1();
+  document.getElementById('bookModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('bookModal').classList.remove('open');
+  currentLawyer = null;
+}
+
+function renderModalStep1() {
+  const l = currentLawyer;
+  const initials = (l.name||'L').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+
+  // Build next 14 days
+  const dates = [];
+  for (let i = 1; i <= 14; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    dates.push(d);
+  }
+
+  const dateChips = dates.map(d => {
+    const iso = d.toISOString().slice(0,10);
+    const num = d.getDate();
+    const day = d.toLocaleString('en-IN', { weekday:'short' });
+    return `<div class="date-chip" data-date="${iso}" onclick="selectDate(this,'${iso}','${l.id}')">
+      <div class="dc-num">${num}</div>
+      <div class="dc-day">${day}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-lawyer-info">
+      <div class="modal-lawyer-av">${initials}</div>
+      <div>
+        <div class="modal-lawyer-name">${esc(l.name)}</div>
+        <div class="modal-lawyer-spec">${esc(l.primarySpec)} · ${esc(l.city)}, ${esc(l.state)}</div>
+      </div>
+    </div>
+
+    <div class="slots-label">Select a date</div>
+    <div class="date-row">${dateChips}</div>
+
+    <div id="slotsArea"></div>
+
+    <div id="formArea" style="display:none;">
+      <div class="slots-label" style="margin-top:16px;">Your details</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Your name *</label>
+          <input type="text" class="form-input" id="bName" placeholder="Full name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input type="tel" class="form-input" id="bPhone" placeholder="10-digit mobile">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email address *</label>
+        <input type="email" class="form-input" id="bEmail" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Brief about your case</label>
+        <textarea class="form-textarea" id="bNotes" placeholder="Describe your issue briefly so the lawyer can prepare…"></textarea>
+      </div>
+      <div class="modal-err" id="bookErr"></div>
+      <button class="btn-submit" id="bookSubmitBtn" onclick="submitBooking()"><i class="fas fa-calendar-check"></i> Confirm booking</button>
+    </div>`;
+}
+
+async function selectDate(chip, iso, lawyerId) {
+  // Deselect others
+  document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('selected'));
+  chip.classList.add('selected');
+  selectedDate = iso;
+  selectedSlot = '';
+
+  const sa = document.getElementById('slotsArea');
+  sa.innerHTML = '<div class="no-slots"><i class="fas fa-spinner fa-spin"></i> Loading slots…</div>';
+  document.getElementById('formArea').style.display = 'none';
+
+  try {
+    const r = await fetch(`/api/lawyer/slots?lawyerId=${lawyerId}&date=${iso}`);
+    const d = await r.json();
+
+    if (!d.success || !d.slots?.length) {
+      const reason = d.reason === 'not_available_on_day'
+        ? 'Not available on ' + d.day
+        : d.reason === 'blocked'
+        ? 'Lawyer has blocked this date'
+        : 'No slots available on this day';
+      sa.innerHTML = `<div class="no-slots"><i class="far fa-calendar-times"></i> ${reason}. Try another date.</div>`;
+      return;
+    }
+
+    sa.innerHTML = `
+      <div class="slots-label">Available slots (30 min each)</div>
+      <div class="slots-grid">
+        ${d.slots.map(s => `
+          <button class="slot-btn" data-slot="${s}" onclick="selectSlot(this,'${s}')">${to12h(s)}</button>
+        `).join('')}
+      </div>`;
+
+  } catch(e) {
+    sa.innerHTML = '<div class="no-slots">Could not load slots. Try again.</div>';
+  }
+}
+
+function selectSlot(btn, slot) {
+  document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedSlot = slot;
+  document.getElementById('formArea').style.display = '';
+}
+
+async function submitBooking() {
+  const name  = (document.getElementById('bName')?.value  || '').trim();
+  const email = (document.getElementById('bEmail')?.value || '').trim();
+  const phone = (document.getElementById('bPhone')?.value || '').trim();
+  const notes = (document.getElementById('bNotes')?.value || '').trim();
+  const errEl = document.getElementById('bookErr');
+  errEl.textContent = '';
+
+  if (!name)  { errEl.textContent = 'Please enter your name.'; return; }
+  if (!email) { errEl.textContent = 'Please enter your email.'; return; }
+  if (!selectedDate) { errEl.textContent = 'Please select a date.'; return; }
+  if (!selectedSlot) { errEl.textContent = 'Please select a time slot.'; return; }
+
+  const btn = document.getElementById('bookSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Booking…';
+
+  try {
+    const r = await fetch('/api/lawyer/book', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        lawyerId:  currentLawyer.id,
+        date:      selectedDate,
+        slotTime:  selectedSlot,
+        userName:  name,
+        userEmail: email,
+        userPhone: phone,
+        userNotes: notes,
+        caseType,
+        inquiryId
+      })
+    });
+    const d = await r.json();
+    if (d.success) {
+      showSuccess(d);
+    } else {
+      errEl.textContent = d.message || 'Booking failed.';
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-calendar-check"></i> Confirm booking';
+    }
+  } catch(e) {
+    errEl.textContent = 'Network error. Please try again.';
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-calendar-check"></i> Confirm booking';
+  }
+}
+
+function showSuccess(d) {
+  const dt = new Date(selectedDate + 'T00:00:00');
+  const dateStr = dt.toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  document.getElementById('modalBody').innerHTML = `
+    <div class="success-box">
+      <div class="success-icon"><i class="fas fa-circle-check"></i></div>
+      <div class="success-title">Consultation booked!</div>
+      <div class="success-sub">
+        <strong>${esc(currentLawyer.name)}</strong><br>
+        ${dateStr} at ${to12h(selectedSlot)}<br>
+        The lawyer will confirm and share meeting details via email.
+      </div>
+      <div class="apt-ref">${d.appointmentId}</div>
+      <button onclick="closeModal()" style="margin-top:18px;padding:9px 22px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:13px;cursor:pointer;">Done</button>
+    </div>`;
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function to12h(t) {
+  if (!t) return '';
+  const [h,m] = t.split(':').map(Number);
+  const ampm = h < 12 ? 'AM' : 'PM';
+  return `${h%12||12}:${String(m).padStart(2,'0')} ${ampm}`;
+}
+function showToast(msg, dur=2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+// Close modal on overlay click
+document.getElementById('bookModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+init();
+</script>
+</body>
+</html>

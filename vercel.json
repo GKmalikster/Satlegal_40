@@ -52,6 +52,10 @@
     { "src": "/api/sales",                   "dest": "/api/sales.js" },
     { "src": "/api/lawyer/leads",            "dest": "/api/lawyer/leads.js" },
     { "src": "/api/lawyer/me",               "dest": "/api/lawyer/me.js" },
+    { "src": "/api/lawyer/match",            "dest": "/api/lawyer.js" },
+    { "src": "/api/lawyer/slots",            "dest": "/api/lawyer.js" },
+    { "src": "/api/lawyer/book",             "dest": "/api/lawyer.js" },
+    { "src": "/api/lawyer/bookings",         "dest": "/api/lawyer.js" },
     { "src": "/(.*)",                        "dest": "/$1" }
   ]
 }

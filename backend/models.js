@@ -125,6 +125,15 @@ const LawyerProfileSchema = new mongoose.Schema({
     hours: { type: String, default: '10 AM – 6 PM' }
   },
 
+  // ── Weekly schedule (30-min booking slots) ────────────────────
+  weeklySchedule: [{
+    day:       { type: String, enum: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'] },
+    startTime: { type: String, default: '10:00' },  // 'HH:MM' 24h
+    endTime:   { type: String, default: '18:00' },
+    isActive:  { type: Boolean, default: true }
+  }],
+  blockedDates: [{ type: Date }],  // vacation / holiday dates
+
   // ── Verification & Status ─────────────────────────────────────
   status: { type: String, enum: ['pending_review', 'approved', 'rejected', 'suspended'], default: 'pending_review' },
   isVerified: { type: Boolean, default: false },
@@ -246,6 +255,34 @@ const LawyerLeadSchema = new mongoose.Schema({
 });
 
 // ═══════════════════════════════════════════════════════════════
+// APPOINTMENT / BOOKING MODEL
+// ═══════════════════════════════════════════════════════════════
+
+const AppointmentSchema = new mongoose.Schema({
+  appointmentId: { type: String, required: true, unique: true },
+  lawyerId:      { type: mongoose.Schema.Types.ObjectId, ref: 'LawyerProfile', required: true },
+  inquiryId:     { type: mongoose.Schema.Types.ObjectId, ref: 'CaseInquiry', default: null },
+  userId:        { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  userName:      { type: String, required: true },
+  userEmail:     { type: String, required: true },
+  userPhone:     { type: String, default: '' },
+  slotDate:      { type: Date, required: true },     // date of appointment (UTC midnight)
+  slotTime:      { type: String, required: true },   // '10:00', '10:30', etc.
+  duration:      { type: Number, default: 30 },      // minutes
+  status: {
+    type: String,
+    enum: ['pending', 'confirmed', 'cancelled', 'completed', 'no_show'],
+    default: 'pending'
+  },
+  caseType:    { type: String, default: '' },
+  userNotes:   { type: String, default: '' },
+  lawyerNotes: { type: String, default: '' },
+  meetingLink: { type: String, default: '' },
+  createdAt:   { type: Date, default: Date.now },
+  updatedAt:   { type: Date, default: Date.now }
+});
+
+// ═══════════════════════════════════════════════════════════════
 // ANALYTICS EVENT MODEL
 // ═══════════════════════════════════════════════════════════════
 
@@ -290,6 +327,8 @@ LawyerProfileSchema.index({ specializations: 1, status: 1 });
 LawyerProfileSchema.index({ district: 1, state: 1 });
 CaseInquirySchema.index({ userId: 1, status: 1, createdAt: -1 });
 LawyerLeadSchema.index({ lawyerId: 1, status: 1, createdAt: -1 });
+AppointmentSchema.index({ lawyerId: 1, slotDate: 1 });
+AppointmentSchema.index({ userId: 1, createdAt: -1 });
 AnalyticsEventSchema.index({ ts: -1 });
 AnalyticsEventSchema.index({ type: 1 });
 SearchQuerySchema.index({ ts: -1 });
@@ -301,6 +340,7 @@ module.exports = {
   LawyerProfile:  mongoose.model('LawyerProfile', LawyerProfileSchema),
   CaseInquiry:    mongoose.model('CaseInquiry', CaseInquirySchema),
   LawyerLead:     mongoose.model('LawyerLead', LawyerLeadSchema),
+  Appointment:    mongoose.model('Appointment', AppointmentSchema),
   AnalyticsEvent: mongoose.model('AnalyticsEvent', AnalyticsEventSchema),
   SearchQuery:    mongoose.model('SearchQuery', SearchQuerySchema)
 };
