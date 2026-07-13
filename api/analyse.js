@@ -17,8 +17,8 @@ const DB = require('../laws-database.js');
 
 // Admin token verifier — enables debug mode in responses
 let verifyAdminToken = () => false;
-try { verifyAdminToken = require('./admin-login.js').verifyToken; }
-catch(e) { /* admin-login not available */ }
+try { verifyAdminToken = require('./_db').verifyToken; }
+catch(e) { /* _db not available */ }
 
 // ── Build the valid caseType list once at cold-start ────────────────────────
 const LAW_TYPES_TEXT = DB.map(l => l.caseType).join('\n');

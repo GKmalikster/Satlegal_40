@@ -49,7 +49,7 @@ module.exports = async function handler(req, res) {
       // Extract updatedBy from token if possible
       let updatedBy = '';
       try {
-        const { verifyToken } = require('../admin-login');
+        const { verifyToken } = require('../_db');
         const tok = (req.headers['authorization'] || '').replace('Bearer ', '').trim();
         const decoded = verifyToken(tok);
         if (decoded) updatedBy = decoded.email;

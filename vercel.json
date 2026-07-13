@@ -36,8 +36,8 @@
   },
   "routes": [
     { "src": "/api/analyse",                 "dest": "/api/analyse.js" },
-    { "src": "/api/admin-login",             "dest": "/api/admin-login.js" },
-    { "src": "/api/feedback",                "dest": "/api/feedback.js" },
+    { "src": "/api/admin-login",             "dest": "/api/admin/users.js" },
+    { "src": "/api/feedback",                "dest": "/api/track.js" },
     { "src": "/api/admin-users",             "dest": "/api/admin/users.js" },
     { "src": "/api/track",                   "dest": "/api/track.js" },
     { "src": "/api/lawyer/register",         "dest": "/api/lawyer.js" },

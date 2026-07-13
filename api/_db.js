@@ -2,25 +2,61 @@
  * api/_db.js — Shared MongoDB connection for Vercel serverless functions
  *
  * Caches the connection on `global` so warm Lambda invocations reuse it.
- * Import with: const { connectDB, User, LawyerProfile, SearchQuery, ... } = require('./_db');
+ * Import with: const { connectDB, isAdmin, verifyToken, makeToken, getModels } = require('./_db');
+ *
+ * Auth functions (makeToken, verifyToken) live here so admin-login.js can be
+ * removed as a standalone serverless function (Vercel Hobby 12-function limit).
  */
 
 const mongoose = require('mongoose');
+const crypto   = require('crypto');
+
+// ── Admin token helpers (HMAC-SHA256) ────────────────────────────────────────
+// Token format: base64url(email:role:timestamp).hex(HMAC-SHA256)
+// Tokens expire after 8 hours. ADMIN_SECRET must be set in Vercel env vars.
+
+function _getSecret() {
+  if (!process.env.ADMIN_SECRET) throw new Error('ADMIN_SECRET env var not set');
+  return process.env.ADMIN_SECRET;
+}
+
+function makeToken(email, role) {
+  const secret  = _getSecret();
+  const ts      = Date.now();
+  const payload = `${email.toLowerCase()}:${role}:${ts}`;
+  const sig     = crypto.createHmac('sha256', secret).update(payload).digest('hex');
+  return Buffer.from(payload).toString('base64url') + '.' + sig;
+}
+
+function verifyToken(token) {
+  if (!token || typeof token !== 'string') return null;
+  try {
+    const secret = _getSecret();
+    const dot = token.lastIndexOf('.');
+    if (dot === -1) return null;
+    const payloadB64 = token.slice(0, dot);
+    const sig        = token.slice(dot + 1);
+    if (sig.length !== 64) return null;
+    const payload = Buffer.from(payloadB64, 'base64url').toString();
+    const parts   = payload.split(':');
+    if (parts.length < 3) return null;
+    const role  = parts[1];
+    const ts    = parseInt(parts[parts.length - 1], 10);
+    const email = parts.slice(0, parts.length - 2).join(':');
+    if (isNaN(ts) || Date.now() - ts > 8 * 60 * 60 * 1000) return null;
+    const expected = crypto.createHmac('sha256', secret).update(payload).digest('hex');
+    const valid = crypto.timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(expected, 'hex'));
+    return valid ? { email, role } : null;
+  } catch { return null; }
+}
 
 // ── Auth helper (shared by all admin endpoints) ──────────────────────────────
-// Accepts HMAC-signed tokens issued by api/admin-login.js ONLY.
+// Accepts HMAC-signed tokens issued by /api/admin-login ONLY.
 // Legacy timestamp-only tokens ('admin-session-*') are no longer accepted.
 function isAdmin(req) {
   const auth = (req.headers['authorization'] || '').replace('Bearer ', '').trim();
-  if (!auth) return false;
-
-  // Only accept dot-separated HMAC tokens
-  if (!auth.includes('.')) return false;
-
-  try {
-    const { verifyToken } = require('./admin-login');
-    return verifyToken(auth) !== null;
-  } catch { return false; }
+  if (!auth || !auth.includes('.')) return false;
+  try { return verifyToken(auth) !== null; } catch { return false; }
 }
 
 // ── Connection singleton ──────────────────────────────────────────────────────
@@ -54,4 +90,4 @@ function getModels() {
   return _models;
 }
 
-module.exports = { connectDB, isAdmin, getModels };
+module.exports = { connectDB, isAdmin, verifyToken, makeToken, getModels };
