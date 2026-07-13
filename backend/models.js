@@ -211,12 +211,16 @@ const CaseInquirySchema = new mongoose.Schema({
   }],
   status: {
     type: String,
-    enum: ['draft', 'analyzing', 'assessed', 'lawyer_requested', 'completed', 'archived'],
+    enum: ['draft', 'analyzing', 'assessed', 'lawyer_requested', 'no_match', 'abandoned', 'completed', 'archived'],
     default: 'draft'
   },
   lawyerRequested:   { type: Boolean, default: false },
   requestedLawyerId: { type: mongoose.Schema.Types.ObjectId, ref: 'LawyerProfile' },
   requestedAt:       Date,
+  // Matching metadata
+  matchedCount:      { type: Number, default: 0 },   // how many lawyer leads were created
+  matchType:         { type: String, enum: ['exact', 'soft', 'none'], default: 'none' },
+  notifyEmail:       { type: String, default: '' },   // captured when user wants to be notified
   createdAt:         { type: Date, default: Date.now },
   updatedAt:         { type: Date, default: Date.now }
 });

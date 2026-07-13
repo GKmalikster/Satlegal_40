@@ -113,6 +113,29 @@ body{background:var(--bg);color:var(--text);min-height:100vh;}
 .toast{position:fixed;bottom:24px;right:24px;background:#1A1A1A;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}
 .toast.show{opacity:1;}
 
+/* No-match banner */
+.no-match-banner{background:#FFF8F0;border:1px solid #FFD8A8;border-radius:10px;padding:18px 20px;margin-bottom:20px;display:flex;gap:14px;align-items:flex-start;}
+.no-match-icon{font-size:26px;flex-shrink:0;margin-top:2px;}
+.no-match-body h3{font-size:14px;font-weight:600;color:#7C3A00;margin-bottom:4px;}
+.no-match-body p{font-size:13px;color:#6B3A00;line-height:1.6;}
+.notify-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.notify-input{flex:1;min-width:180px;padding:8px 12px;border:0.5px solid #FFD8A8;border-radius:var(--radius);font-size:13px;background:#fff;}
+.btn-notify{padding:8px 16px;background:#FF9933;color:#fff;border:none;border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;}
+.btn-notify:hover{background:#E07000;}
+.notify-sent{font-size:12px;color:var(--green);font-weight:500;margin-top:6px;display:none;}
+
+/* Soft-match banner */
+.soft-match-banner{background:#F0FBF0;border:1px solid #A8E8A4;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:#0D3D0D;display:flex;align-items:center;gap:8px;}
+
+/* Abandon capture strip */
+.abandon-strip{position:fixed;bottom:0;left:0;right:0;background:#1A1A1A;color:#fff;padding:14px 20px;display:flex;align-items:center;gap:14px;z-index:900;transform:translateY(100%);transition:transform .35s ease;}
+.abandon-strip.visible{transform:translateY(0);}
+.abandon-strip p{flex:1;font-size:13px;}
+.abandon-strip a{color:#FF9933;font-weight:500;cursor:pointer;text-decoration:none;}
+.abandon-strip button{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;padding:6px 14px;border-radius:var(--radius);font-size:12px;cursor:pointer;white-space:nowrap;}
+.abandon-strip button:hover{background:rgba(255,255,255,.1);}
+.abandon-strip .close-strip{background:none;border:none;color:rgba(255,255,255,.5);font-size:18px;cursor:pointer;padding:0 4px;}
+
 @media(max-width:600px){
   .form-row{grid-template-columns:1fr;}
   .lawyer-card{flex-direction:column;}
@@ -130,6 +153,24 @@ body{background:var(--bg);color:var(--text);min-height:100vh;}
   <div class="page-hdr">
     <h1>Find & Book a Lawyer</h1>
     <p id="caseTypeLabel">Showing lawyers matched to your case</p>
+  </div>
+
+  <!-- No-match / soft-match banners (shown conditionally) -->
+  <div id="noMatchBanner" style="display:none;" class="no-match-banner">
+    <div class="no-match-icon">⚠️</div>
+    <div class="no-match-body">
+      <h3>No exact specialist found for your case</h3>
+      <p id="noMatchReason">We don't have a specialist for this area yet. Leave your email and we'll notify you as soon as one joins.</p>
+      <div class="notify-row">
+        <input class="notify-input" type="email" id="notifyEmailInput" placeholder="your@email.com">
+        <button class="btn-notify" onclick="submitNotify()">Notify me</button>
+      </div>
+      <div class="notify-sent" id="notifySent">✓ We'll email you when a specialist joins!</div>
+    </div>
+  </div>
+  <div id="softMatchBanner" style="display:none;" class="soft-match-banner">
+    <i class="fas fa-info-circle" style="color:var(--green);flex-shrink:0;"></i>
+    No exact specialist found — showing available lawyers who can advise you on your situation.
   </div>
 
   <!-- Auto-matched section -->
@@ -181,6 +222,44 @@ body{background:var(--bg);color:var(--text);min-height:100vh;}
   </div>
 </div>
 
+<!-- Abandon strip — shown after 45s if no booking made -->
+<div class="abandon-strip" id="abandonStrip">
+  <p>Still looking? <a onclick="scrollToTop()">Browse all lawyers</a> or let us help you find the right one.</p>
+  <button onclick="openContactModal()">Get help finding a lawyer</button>
+  <button class="close-strip" onclick="dismissStrip()" title="Dismiss">✕</button>
+</div>
+
+<!-- Contact / help modal (shown when user clicks abandon strip CTA) -->
+<div class="modal-overlay" id="contactModal">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-hdr">
+      <h3>We'll find you the right lawyer</h3>
+      <button class="modal-close" onclick="document.getElementById('contactModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Tell us what you need and our team will personally match you with the best available lawyer.</p>
+      <div class="form-group">
+        <label class="form-label">Your name</label>
+        <input type="text" class="form-input" id="helpName" placeholder="Full name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email address *</label>
+        <input type="email" class="form-input" id="helpEmail" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone</label>
+        <input type="tel" class="form-input" id="helpPhone" placeholder="10-digit mobile">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Brief description of your legal issue</label>
+        <textarea class="form-textarea" id="helpDesc" placeholder="What is your legal problem about?" rows="3"></textarea>
+      </div>
+      <div class="modal-err" id="helpErr"></div>
+      <button class="btn-submit" onclick="submitHelpRequest()">Submit — we'll contact you within 24 hrs</button>
+    </div>
+  </div>
+</div>
+
 <!-- Booking modal -->
 <div class="modal-overlay" id="bookModal">
   <div class="modal">
@@ -207,19 +286,23 @@ body{background:var(--bg);color:var(--text);min-height:100vh;}
 
 <script>
 // ── URL params ─────────────────────────────────────────────────────────────────
-const params     = new URLSearchParams(location.search);
-const inquiryId  = params.get('inquiryId')  || '';
-const caseType   = params.get('caseType')   || '';
-const userState  = params.get('state')      || '';
-const userCity   = params.get('city')       || '';
+const params      = new URLSearchParams(location.search);
+const inquiryId   = params.get('inquiryId')  || '';
+const caseType    = params.get('caseType')   || '';
+const userState   = params.get('state')      || '';
+const userCity    = params.get('city')       || '';
+const noMatchFlag = params.get('noMatch')    === '1';   // set by caller when match API returned noMatch:true
+const matchTypeFlag = params.get('matchType') || '';    // 'soft' shows soft-match banner
 
 // ── State ──────────────────────────────────────────────────────────────────────
-let browsePage   = 1;
-let browseTotal  = 0;
-let allBrowse    = [];
-let selectedDate = '';
-let selectedSlot = '';
+let browsePage    = 1;
+let browseTotal   = 0;
+let allBrowse     = [];
+let selectedDate  = '';
+let selectedSlot  = '';
 let currentLawyer = null;
+let bookingMade   = false;   // set true on successful booking — suppresses abandon strip
+let stripTimer    = null;
 
 // ── Init ───────────────────────────────────────────────────────────────────────
 async function init() {
@@ -232,6 +315,18 @@ async function init() {
   if (userState) document.getElementById('fState').value = userState;
   if (userCity)  document.getElementById('fCity').value  = userCity;
 
+  // Show no-match or soft-match banners
+  if (noMatchFlag) {
+    document.getElementById('noMatchBanner').style.display = '';
+    if (inquiryId) {
+      // Pre-fill notify email from URL if passed
+      const ue = params.get('userEmail') || '';
+      if (ue) document.getElementById('notifyEmailInput').value = ue;
+    }
+  } else if (matchTypeFlag === 'soft') {
+    document.getElementById('softMatchBanner').style.display = '';
+  }
+
   // If there's an inquiryId, show auto-matched section
   if (inquiryId) {
     document.getElementById('matchedSection').style.display = '';
@@ -239,6 +334,22 @@ async function init() {
   }
 
   loadBrowse();
+
+  // Abandon strip — show after 45 seconds if no booking has been made
+  stripTimer = setTimeout(() => {
+    if (!bookingMade) showAbandonStrip();
+  }, 45000);
+
+  // On page unload (close/navigate away) — mark inquiry as abandoned
+  window.addEventListener('beforeunload', () => {
+    if (inquiryId && !bookingMade) {
+      // Use sendBeacon so it fires even on tab close
+      navigator.sendBeacon('/api/lawyer/match', new Blob(
+        [JSON.stringify({ inquiryId, abandon: true })],
+        { type: 'application/json' }
+      ));
+    }
+  });
 }
 
 // ── Load matched lawyers (from inquiry's auto-matched leads) ──────────────────
@@ -539,6 +650,96 @@ function showSuccess(d) {
     </div>`;
 }
 
+// ── No-match: notify me ────────────────────────────────────────────────────────
+async function submitNotify() {
+  const email = (document.getElementById('notifyEmailInput')?.value || '').trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('Please enter a valid email address.');
+    return;
+  }
+  try {
+    if (inquiryId) {
+      await fetch('/api/lawyer/match', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ inquiryId, notifyEmail: email })
+      });
+    }
+    // Also log via track endpoint
+    await fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'no_match_notify', data: { email, caseType, inquiryId } })
+    }).catch(() => {});
+    document.getElementById('notifySent').style.display = '';
+    document.querySelector('.notify-row').style.display = 'none';
+    showToast('We\'ll notify you when a specialist joins!');
+  } catch(e) {
+    showToast('Network error. Please try again.');
+  }
+}
+
+// ── Abandon strip ──────────────────────────────────────────────────────────────
+function showAbandonStrip() {
+  document.getElementById('abandonStrip').classList.add('visible');
+}
+function dismissStrip() {
+  document.getElementById('abandonStrip').classList.remove('visible');
+  clearTimeout(stripTimer);
+}
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  dismissStrip();
+}
+
+// ── Help / contact modal ───────────────────────────────────────────────────────
+function openContactModal() {
+  dismissStrip();
+  document.getElementById('contactModal').classList.add('open');
+}
+
+async function submitHelpRequest() {
+  const name  = (document.getElementById('helpName')?.value  || '').trim();
+  const email = (document.getElementById('helpEmail')?.value || '').trim();
+  const phone = (document.getElementById('helpPhone')?.value || '').trim();
+  const desc  = (document.getElementById('helpDesc')?.value  || '').trim();
+  const errEl = document.getElementById('helpErr');
+  errEl.textContent = '';
+
+  if (!email) { errEl.textContent = 'Email is required.'; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent = 'Invalid email.'; return; }
+
+  try {
+    await fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'help_request',
+        data: { name, email, phone, desc, caseType, inquiryId }
+      })
+    });
+
+    // If there's an inquiryId, save the email on the inquiry too
+    if (inquiryId) {
+      await fetch('/api/lawyer/match', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ inquiryId, notifyEmail: email })
+      }).catch(() => {});
+    }
+
+    document.getElementById('contactModal').querySelector('.modal-body').innerHTML = `
+      <div style="text-align:center;padding:30px 10px;">
+        <div style="font-size:36px;color:var(--green);margin-bottom:12px;">✓</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:6px;">Request received!</div>
+        <div style="font-size:13px;color:var(--muted);">Our team will contact you at <strong>${esc(email)}</strong> within 24 hours.</div>
+        <button onclick="document.getElementById('contactModal').classList.remove('open')" style="margin-top:16px;padding:8px 20px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:13px;cursor:pointer;">Done</button>
+      </div>`;
+  } catch(e) {
+    errEl.textContent = 'Network error. Please try again.';
+  }
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────────
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function to12h(t) {
@@ -553,10 +754,22 @@ function showToast(msg, dur=2500) {
   setTimeout(() => t.classList.remove('show'), dur);
 }
 
-// Close modal on overlay click
+// Close modals on overlay click
 document.getElementById('bookModal').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeModal();
 });
+document.getElementById('contactModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) document.getElementById('contactModal').classList.remove('open');
+});
+
+// Mark booking made on success so abandon strip doesn't fire
+const _origShowSuccess = showSuccess;
+function showSuccess(d) {
+  bookingMade = true;
+  dismissStrip();
+  clearTimeout(stripTimer);
+  _origShowSuccess(d);
+}
 
 init();
 </script>

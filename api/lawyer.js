@@ -222,22 +222,44 @@ module.exports = async function handler(req, res) {
         requestedAt: new Date()
       });
 
-      // Find approved lawyers with a weekly schedule
+      // Find all approved lawyers
       const allLawyers = await LawyerProfile.find({ status: 'approved' })
         .select('userId primarySpecialization specializations state city yearsOfExperience stats weeklySchedule');
 
       const caseTypes = applicableLaws.map(l => l.caseType || '').filter(Boolean);
 
-      // Score and rank
-      const ranked = allLawyers
+      // ── Pass 1: Exact match — score by specialization + location ─────────────
+      let scored = allLawyers
         .map(l => ({ lawyer: l, score: scoreLawyer(l, caseTypes, userState, userCity) }))
         .filter(x => x.score > 0)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 5);
+        .sort((a, b) => b.score - a.score);
 
-      // Create LawyerLead for each match
+      let matchType = 'exact';
+
+      // ── Pass 2: Soft match — if no exact hits, try any bookable approved lawyer
+      //    sorted by rating + experience (so user still sees useful options)
+      if (!scored.length) {
+        const bookable = allLawyers.filter(l => l.weeklySchedule && l.weeklySchedule.some(s => s.isActive));
+        if (bookable.length) {
+          scored = bookable
+            .map(l => ({ lawyer: l, score: (l.stats?.rating || 0) * 10 + (l.yearsOfExperience || 0) }))
+            .sort((a, b) => b.score - a.score);
+          matchType = 'soft';
+        }
+      }
+
+      // ── Pass 3: Absolute fallback — any approved lawyer at all
+      if (!scored.length && allLawyers.length) {
+        scored = allLawyers.map(l => ({ lawyer: l, score: 1 }));
+        matchType = 'soft';
+      }
+
+      const top5   = scored.slice(0, 5);
+      const noMatch = top5.length === 0;
+
+      // Create LawyerLead for each matched lawyer
       const leads = [];
-      for (const { lawyer } of ranked) {
+      for (const { lawyer } of top5) {
         const leadId = 'LD-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
         const lead = await LawyerLead.create({
           leadId,
@@ -255,17 +277,71 @@ module.exports = async function handler(req, res) {
         leads.push({ lawyerId: lawyer._id, leadId: lead.leadId });
       }
 
-      return res.json({
-        success: true,
-        inquiryId: inquiry.inquiryId,
-        inquiryDbId: inquiry._id,
+      // Update inquiry with match results
+      await CaseInquiry.findByIdAndUpdate(inquiry._id, {
+        status:       noMatch ? 'no_match' : 'lawyer_requested',
         matchedCount: leads.length,
+        matchType:    noMatch ? 'none' : matchType,
+        updatedAt:    new Date()
+      });
+
+      return res.json({
+        success:      true,
+        inquiryId:    inquiry.inquiryId,
+        inquiryDbId:  inquiry._id,
+        matchedCount: leads.length,
+        matchType:    noMatch ? 'none' : matchType,
+        noMatch,
+        // Tell the frontend what to show when noMatch=true
+        noMatchReason: noMatch
+          ? 'No lawyers are currently available for this case type. Leave your email and we\'ll notify you when a specialist joins.'
+          : matchType === 'soft'
+          ? 'No exact specialist found — showing available lawyers who can advise you.'
+          : null,
         leads
       });
 
     } catch (err) {
       console.error('[lawyer/match]', err.message);
       return res.status(500).json({ success: false, message: 'Matching failed.' });
+    }
+  }
+
+  // ── PATCH /api/lawyer/match — save notifyEmail or mark inquiry abandoned ───────
+  if (path === '/api/lawyer/match' && req.method === 'PATCH') {
+    try {
+      const b = req.body || {};
+      const { inquiryId, notifyEmail, abandon } = b;
+      if (!inquiryId) return res.status(400).json({ success: false, message: 'inquiryId required.' });
+
+      await connectDB();
+      const { CaseInquiry } = getModels();
+
+      const updates = { updatedAt: new Date() };
+
+      if (abandon) {
+        // Mark as abandoned only if still in a pending state (not already matched/completed)
+        updates['$set'] = {};
+        const existing = await CaseInquiry.findOne({ inquiryId }).select('status');
+        if (existing && ['lawyer_requested', 'no_match'].includes(existing.status)) {
+          updates.status = 'abandoned';
+        }
+      }
+
+      if (notifyEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(notifyEmail)) {
+        updates.notifyEmail = String(notifyEmail).toLowerCase().slice(0, 200);
+      }
+
+      const updated = await CaseInquiry.findOneAndUpdate({ inquiryId }, updates, { new: true })
+        .select('inquiryId status matchedCount matchType notifyEmail');
+
+      if (!updated) return res.status(404).json({ success: false, message: 'Inquiry not found.' });
+
+      return res.json({ success: true, inquiry: updated });
+
+    } catch (err) {
+      console.error('[lawyer/match PATCH]', err.message);
+      return res.status(500).json({ success: false, message: 'Update failed.' });
     }
   }
 
