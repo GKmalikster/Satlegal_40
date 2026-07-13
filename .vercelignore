@@ -1,3 +1,5 @@
+api/admin-login.js
+api/feedback.js
 api/admin-users.js
 api/lawyer-list.js
 api/lawyer-register.js
