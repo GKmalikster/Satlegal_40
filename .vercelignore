@@ -1,3 +1,5 @@
+# Exclude from Vercel serverless compilation (Hobby plan limit: 12 functions)
+# These files are dead code or have been merged into the 12 active functions.
 api/admin-login.js
 api/feedback.js
 api/admin-users.js
