@@ -112,7 +112,11 @@ STRICT OVER-MAPPING RULES — each rule prevents a specific hallucination:
 16. TRADEMARK / COPYRIGHT / PATENT / IP / LOGO COPIED / PLAGIARISM / COPIED APP / COPIED DESIGN → "Intellectual Property – Trademark / Copyright / Patent Dispute" ONLY. Not Cyber, not Consumer.
 17. NRI / OCI / PERSON ABROAD / NON-RESIDENT INDIAN legal issue (property, marriage, divorce, family) → "NRI – Property / Family / Legal Issues (Non-Resident Indian)". Add a second family/property law only if the specific dispute is described.
 18. CASTE DISCRIMINATION / SC ST ATROCITY / DALIT ATTACKED / UNTOUCHABILITY / MANUAL SCAVENGING → "Criminal – SC/ST Atrocities / Caste Discrimination" ONLY.
-19. DATA BREACH / AADHAR MISUSED / PERSONAL DATA SHARED / DPDP ACT / PRIVACY VIOLATION (non-financial) → "Digital Privacy – DPDP Act / Data Breach / Aadhaar Misuse". Not Cyber (Cyber is for financial fraud, hacking, and online harassment).
+19. DIGITAL PRIVACY RULE — two distinct categories, do not confuse them:
+    (a) HACKING INTO COMPUTER / UNAUTHORIZED ACCESS / RANSOMWARE ATTACK / TRADE SECRETS STOLEN BY EMPLOYEE / EMPLOYEE COPIED DATA TO USB / CORPORATE ESPIONAGE / IT ACT Section 66 → "Cyber – Data Theft / Hacking / Corporate Espionage". This is about UNAUTHORIZED INTRUSION or THEFT by a person/hacker.
+    (b) DPDP ACT COMPLIANCE / COMPANY NOT DELETING PERSONAL DATA / PERSONAL DATA SHARED BY APP WITHOUT CONSENT / AADHAAR MISUSED BY THIRD PARTY / DATA LOCALISATION / DATA PROTECTION OFFICER / CONSENT VIOLATION / PRIVACY POLICY BREACH → "Digital Privacy – DPDP Act / Data Breach / Aadhaar Misuse". This is about REGULATORY DATA PROTECTION violations, NOT active hacking.
+    When a COMPANY DATABASE IS HACKED and customer data is leaked → use "Cyber – Data Theft / Hacking / Corporate Espionage" (hacking is primary).
+    When a COMPANY SHARES/SELLS personal data without consent → use "Digital Privacy – DPDP Act / Data Breach / Aadhaar Misuse".
 20. MSME / DELAYED PAYMENT TO SUPPLIER / MSME SAMADHAN / PARTNERSHIP DUES UNPAID → "MSME – Delayed Payment / MSME Samadhan / Partnership Dues". Not Consumer, not Civil.
 21. SENIOR CITIZEN MAINTENANCE / ELDERLY PARENT EVICTED BY CHILDREN / ABANDONED ELDERLY → "Senior Citizen – Maintenance / Protection / Eviction Prevention". Not DV, not Succession.
 22. MATERNITY LEAVE DENIED / PREGNANCY RIGHTS AT WORK / MATERNITY BENEFIT ACT → "Employment – Maternity Benefits / Pregnancy Rights". Not Consumer.
@@ -139,7 +143,7 @@ STRICT OVER-MAPPING RULES — each rule prevents a specific hallucination:
 43. RIGHTS OF PERSONS WITH MENTAL ILLNESS / MENTAL ILLNESS RIGHT TO VOTE / MENTAL HEALTH RIGHTS / PERSON WITH MENTAL ILLNESS → "Civil – Mental Healthcare Act / Psychiatric Rights / Disability". NOT PIL unless seeking writ against state.
 44. EX-BOYFRIEND / EX-GIRLFRIEND POSTING PRIVATE PHOTOS / INTIMATE IMAGES SHARED WITHOUT CONSENT / REVENGE PORN → "Cyber – Online Harassment / Cyberstalking / Defamation" ONLY. NOT Criminal BNS Assault.
 45. HUSBAND NOT ALLOWING / NOT LETTING ME MEET / SEE MY CHILDREN AFTER DIVORCE → "Family – Child Custody / Guardianship" ONLY. This is about access/visitation. NOT Divorce, NOT Domestic Violence unless abuse is separately described.
-46. CORRUPT POLICE OFFICER / COMPLAINT AGAINST CORRUPT POLICE / POLICE OFFICER DEMANDING BRIBE → "Criminal – Corruption / Bribery / Prevention of Corruption Act". NOT Police Excess (police excess is about brutality/illegal detention, not bribery).
+46. CORRUPT POLICE OFFICER / GOVERNMENT OFFICIAL DEMANDING BRIBE / ANY PUBLIC SERVANT TAKING KICKBACKS → "Criminal – Corruption / Bribery / Prevention of Corruption Act". Applies to: police officer taking bribe, RTI officer demanding bribe, income tax officer demanding money, patwari/village official taking bribe, municipality official demanding bribe for permissions, panchayat pradhan taking money, sub-registrar demanding bribe, school admission officer demanding donation, RERA officer taking bribe, judge accused of corruption, hospital staff in government hospital demanding money, contractor bribing for tender, PWD officer demanding bribe, CBI/ACB/lokayukta complaint against any official. NOT Police Excess (Police Excess is for brutality/illegal arrest/custody torture, NOT bribery). The rule is: BRIBERY = Corruption; BEATING/ILLEGAL ARREST = Police Excess.
 47. BOMB THREAT / BOMB HOAX / HOAX CALL POLICE NOT ACTING → "Criminal – Police Excess / Human Rights Violation" (for police inaction) or "Criminal – BNS (Murder / Culpable Homicide)" for the threat itself.
 48. FORCED RELIGIOUS CONVERSION / CONVERTING RELIGION UNDER COERCION / HIJAB BANNED / RELIGIOUS DISCRIMINATION → "Constitutional – PIL / Writ Petition / Fundamental Rights" (Art 25 religious freedom) + may add "Criminal – BNS (Assault)" if violence involved.
 49. PASSPORT IMPOUNDED / PASSPORT SEIZED BY GOVERNMENT / PASSPORT CANCELLED / CHALLENGING PASSPORT REVOCATION → "Constitutional – PIL / Writ Petition / Fundamental Rights". This is an Art 21 / Art 19 issue, not Tax or Consumer.
@@ -177,6 +181,34 @@ STRICT OVER-MAPPING RULES — each rule prevents a specific hallucination:
 81. ADVERSE POSSESSION CLAIM / EJECTMENT SUIT AGAINST ENCROACHER / LAND GRABBED BY LOCAL POLITICIAN / PROPERTY GRABBED BY GOON → "Property – Boundary Dispute / Encroachment".
 82. BOTH WANT TO SEPARATE PEACEFULLY / SECTION 13B HINDU MARRIAGE ACT / HOW TO FILE FAMILY COURT → "Family – Mutual Consent Divorce" if both parties agree; "Family – Divorce (Contested)" if only one party wants divorce.
 83. BROTHER HIT ME / RELATIVE ATTACKED ME / FAMILY MEMBER ASSAULTED ME (not spouse/in-law) → "Criminal – BNS (Assault / Hurt / Grievous Hurt)". NOT Domestic Violence (DV only applies to spouse, in-law, or live-in partner).
+84. GST NOTICE / GST RAID / GST DEMAND / GST REFUND / INPUT TAX CREDIT / INCOME TAX NOTICE / INCOME TAX APPEAL / TDS DISPUTE / ADVANCE TAX / TAX ASSESSMENT / INCOME TAX OFFICER QUERY (non-bribery) → "Tax – GST / Income Tax / Tax Dispute". ONLY use Corruption if the tax officer is explicitly demanding a bribe. A legitimate GST audit, raid, or demand notice is TAX law, NOT Criminal, NOT Corruption.
+85. COMPANY INSOLVENCY / BANKRUPTCY / NCLT PETITION / RESOLUTION PLAN / OPERATIONAL CREDITOR / FINANCIAL CREDITOR / PERSONAL GUARANTOR INSOLVENCY / LIQUIDATION → "IBC – Insolvency / Bankruptcy / NCLT Proceedings". NOT "Civil – Money Recovery" (IBC is a specific statutory process). NOT just "Corporate" (IBC applies to both individuals and companies).
+86. MINORITY SHAREHOLDER / OPPRESSION AND MISMANAGEMENT / AGM NOT CALLED / BOARD RESOLUTION DISPUTE / DIRECTOR REMOVED ILLEGALLY / COMPANY WINDING UP PETITION / COMPANY STRIKE OFF / NCLT PETITION COMPANY → "Corporate – Companies Act / NCLT / Shareholder Disputes". NOT Civil.
+87. MSME VENDOR PAYMENT DUES / MSME SAMADHAN / DELAYED PAYMENT FROM LARGE COMPANY / PARTNERSHIP DUES UNPAID / FACILITATION COUNCIL MSME → "MSME – Delayed Payment / MSME Samadhan / Partnership Dues". NOT "Civil – Money Recovery". MSME is a specific statutory remedy under the MSMED Act.
+88. TRADEMARK / COPYRIGHT / PATENT / TRADE SECRET / LOGO COPIED / DESIGN COPIED / APP CODE COPIED / BOOK PLAGIARISED / YOUTUBE CONTENT STOLEN / DOMAIN NAME SAME AS TRADEMARK → "Intellectual Property – Trademark / Copyright / Patent Dispute". NOT Cyber (Cyber is for financial fraud and hacking). NOT Consumer (IP is about creator rights, not buyer-seller).
+89. VERY SHORT / CASUAL QUERIES — classify by the most salient keyword:
+    "cheque bounced" / "my cheque bounced" → Cheque Bounce
+    "wife left me" / "husband left" → Divorce
+    "boss fired me" / "terminated from job" → Wrongful Termination
+    "money not returned" / "friend owes me money" → Money Recovery
+    "property dispute brothers/siblings" → Partition Suit
+    "accident claim" → Motor Accident
+    "police beating" → Police Excess
+    "online fraud money gone" → Cyber Online Fraud
+    "builder not giving flat" → RERA
+    "insurance rejected" → Insurance (Consumer)
+    "salary not given" → Salary Dues
+    "tenant not vacating" → Rent Dispute
+    "dowry demanded" → Dowry
+    "child custody after divorce" → Child Custody
+    "election complaint" → PIL / Constitutional
+    "medical negligence hospital" → Medical Negligence (Criminal BNS 106)
+    "trademark copied" → Intellectual Property
+    "will dispute family" → Will / Succession
+    "habeas corpus" → PIL / Constitutional or Bail
+    "aadhaar data leaked" → Digital Privacy
+    "company shares dispute" → Corporate
+    "plantation worker" → Employment / Labour
 
 BNS SUBCATEGORY SELECTION RULES — choose the most specific BNS category:
 - Criminal – Medical Negligence / Death by Negligence (BNS 106): A PATIENT DIED during or after medical treatment. Doctor/hospital is accused OR is seeking legal advice. Keywords: died on operation table, died after surgery, patient died in hospital, family blaming doctor, accused of medical negligence, operation went wrong. → USE THIS for all hospital/medical deaths. This overrides the generic murder/death rule below.
@@ -296,21 +328,37 @@ const DOMAIN_MAP = [
   { re: /^Education/,                   domain: 'education'   },
   { re: /^Corporate/,                   domain: 'corporate'   },
   { re: /^Motor/,                       domain: 'consumer'    }, // motor claims are consumer-adjacent
-  { re: /^IP|^Intellectual/,            domain: 'civil'       },
+  { re: /^IP|^Intellectual/,            domain: 'ip'          },
+  { re: /^Digital Privacy/,             domain: 'privacy'     },
   { re: /^NRI/,                         domain: 'nri'         },
+  { re: /^MSME/,                        domain: 'msme'        },
+  { re: /^IBC/,                         domain: 'corporate'   },
+  { re: /^Senior/,                      domain: 'civil'       },
+  { re: /^Agriculture/,                 domain: 'civil'       },
+  { re: /^Livelihood/,                  domain: 'civil'       },
+  { re: /^Municipal/,                   domain: 'civil'       },
+  { re: /^Shops/,                       domain: 'employment'  },
+  { re: /^Evidence/,                    domain: 'civil'       },
 ];
 
 // Which domain pairs are INCOMPATIBLE — secondary is stripped if primary owns it
 // Read as: if primary domain is KEY, strip any result whose domain is in VALUE array.
 // Omitting a pair means co-occurrence is allowed (e.g. criminal + property for fraud).
+//
+// KEY DESIGN DECISIONS:
+//   - 'tax' removed from criminal exclusions: Tax + Criminal co-occur in PMLA, GST fraud, tax evasion
+//   - 'corporate' removed from criminal exclusions: Corporate + Criminal co-occur in company fraud
+//   - 'ip' never excluded: IP can co-occur with criminal (trade secret theft) or civil (contract + IP)
+//   - 'privacy' never excluded: DPDP + criminal or cyber co-occur in data breach cases
 const DOMAIN_EXCLUSIONS = {
   family:      ['criminal', 'consumer', 'employment', 'tax', 'cyber', 'corporate'],
   consumer:    ['family', 'employment', 'criminal', 'tax', 'public'],
   employment:  ['family', 'consumer', 'criminal', 'tax', 'cyber'],
-  tax:         ['family', 'consumer', 'criminal', 'employment', 'cyber'],
+  tax:         ['family', 'consumer', 'employment', 'cyber'],
   education:   ['family', 'consumer', 'criminal', 'employment', 'tax', 'cyber'],
   environment: ['family', 'consumer', 'employment', 'tax', 'cyber'],
-  criminal:    ['family', 'consumer', 'employment', 'tax', 'education', 'environment'],
+  criminal:    ['family', 'consumer', 'employment', 'education', 'environment'],
+  // tax, corporate, property, civil intentionally NOT excluded from criminal
 };
 
 // Known ALLOWED exceptions: pairs that genuinely co-occur.
@@ -328,6 +376,25 @@ const ALLOWED_PAIRS = new Set([
   'public|criminal',
   'cyber|criminal',     // cyber crime + BNS
   'criminal|cyber',
+  'criminal|tax',       // GST fraud, tax evasion, PMLA
+  'tax|criminal',
+  'criminal|corporate', // company fraud, IBC criminal proceedings
+  'corporate|criminal',
+  'criminal|civil',     // cheque bounce, money recovery + criminal fraud
+  'civil|criminal',
+  'criminal|ip',        // trade secret theft + criminal
+  'ip|criminal',
+  'cyber|privacy',      // data breach: both cyber and DPDP
+  'privacy|cyber',
+  'criminal|privacy',   // data theft by person
+  'privacy|criminal',
+  'property|ip',        // copyright in property context
+  'ip|civil',           // IP disputes are civil
+  'civil|ip',
+  'corporate|civil',    // company disputes often civil
+  'civil|corporate',
+  'corporate|tax',      // company tax disputes
+  'tax|corporate',
 ]);
 
 function getDomain(law) {
