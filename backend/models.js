@@ -338,13 +338,13 @@ AnalyticsEventSchema.index({ type: 1 });
 SearchQuerySchema.index({ ts: -1 });
 SearchQuerySchema.index({ detectedLaws: 1 });
 
-// ── Export ───────────────────────────────────────────────────────────────────
+// ── Export (safe pattern — avoids OverwriteModelError on warm Lambda restarts) ──
 module.exports = {
-  User:           mongoose.model('User', UserSchema),
-  LawyerProfile:  mongoose.model('LawyerProfile', LawyerProfileSchema),
-  CaseInquiry:    mongoose.model('CaseInquiry', CaseInquirySchema),
-  LawyerLead:     mongoose.model('LawyerLead', LawyerLeadSchema),
-  Appointment:    mongoose.model('Appointment', AppointmentSchema),
-  AnalyticsEvent: mongoose.model('AnalyticsEvent', AnalyticsEventSchema),
-  SearchQuery:    mongoose.model('SearchQuery', SearchQuerySchema)
+  User:           mongoose.models.User           || mongoose.model('User', UserSchema),
+  LawyerProfile:  mongoose.models.LawyerProfile  || mongoose.model('LawyerProfile', LawyerProfileSchema),
+  CaseInquiry:    mongoose.models.CaseInquiry    || mongoose.model('CaseInquiry', CaseInquirySchema),
+  LawyerLead:     mongoose.models.LawyerLead     || mongoose.model('LawyerLead', LawyerLeadSchema),
+  Appointment:    mongoose.models.Appointment    || mongoose.model('Appointment', AppointmentSchema),
+  AnalyticsEvent: mongoose.models.AnalyticsEvent || mongoose.model('AnalyticsEvent', AnalyticsEventSchema),
+  SearchQuery:    mongoose.models.SearchQuery    || mongoose.model('SearchQuery', SearchQuerySchema)
 };

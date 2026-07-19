@@ -742,7 +742,14 @@ module.exports = async function handler(req, res) {
         status: 'pending_review'
       });
 
-      const token = makeToken(user._id.toString(), 'lawyer');
+      // Token generation is best-effort — registration succeeds even if it fails
+      let token = null;
+      try {
+        token = makeToken(user._id.toString(), 'lawyer');
+      } catch (tokenErr) {
+        console.error('[lawyer/register] token generation failed (check AUTH_SECRET/ADMIN_SECRET env var):', tokenErr.message);
+      }
+
       console.log('[lawyer/register] new registration:', email.slice(0, 3) + '***');
 
       return res.status(201).json({
@@ -753,10 +760,17 @@ module.exports = async function handler(req, res) {
       });
 
     } catch (err) {
-      console.error('[lawyer/register]', err.message);
+      console.error('[lawyer/register] ERROR name=%s code=%s message=%s', err.name, err.code, err.message);
       if (err.code === 11000) {
         const field = Object.keys(err.keyPattern || {})[0] || 'field';
         return res.status(409).json({ success: false, message: `Duplicate ${field}. This value is already registered.` });
+      }
+      if (err.message && err.message.includes('MONGODB_URI')) {
+        return res.status(500).json({ success: false, message: 'Service temporarily unavailable. Please try again later.' });
+      }
+      if (err.name === 'ValidationError') {
+        const fields = Object.keys(err.errors || {}).join(', ');
+        return res.status(400).json({ success: false, message: `Validation error: ${fields}` });
       }
       return res.status(500).json({ success: false, message: 'Registration failed. Please try again.' });
     }

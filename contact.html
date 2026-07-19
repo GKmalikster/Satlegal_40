@@ -10,12 +10,7 @@
 body{font-family:var(--font);color:var(--text);background:#fff;line-height:1.6}
 a{text-decoration:none;color:inherit}
 .tribar{height:5px;background:linear-gradient(90deg,var(--sf-500) 33.33%,#fff 33.33%,#fff 66.66%,var(--gr-500) 66.66%)}
-.nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:900;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-.nav-brand img{height:38px}
-.nav-links{display:flex;gap:1px}
-.nav-links a{font-size:13px;color:var(--gr-800);font-weight:500;padding:5px 9px;border-radius:6px;transition:.2s}
-.nav-links a:hover,.nav-links a.active{background:var(--gr-50);color:var(--gr-700)}
-.nav-actions{display:flex;gap:8px;align-items:center}
+.nav{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:900;box-shadow:0 2px 8px rgba(0,0,0,.05)}
 /* Hero */
 .hero{background:linear-gradient(135deg,#E07000 0%,#FF9933 18%,#FFB347 30%,#FFD699 40%,#fff 50%,#A8E8A4 60%,#5CC852 72%,#138808 85%,#0D6B05 100%);padding:56px 24px 48px;text-align:center;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(255,255,255,.14) 0%,transparent 70%);pointer-events:none}
@@ -136,8 +131,8 @@ footer a:hover{color:#fff}
 <div class="tribar"></div>
 <nav class="nav" id="mainNav">
   <div class="nav-inner" style="display:flex;align-items:center;justify-content:space-between;height:64px;max-width:1160px;margin:0 auto;padding:0 20px;box-sizing:border-box;">
-    <a href="index.html" class="brand" style="display:flex;align-items:center;gap:8px;text-decoration:none">
-      <img src="assets/logo.png" alt="" onerror="this.style.display='none'" style="height:38px"/>
+    <a href="index.html" class="brand">
+      <img src="assets/logo.png" alt="SatLegal – Legalities Simplified" onerror="this.style.display='none'"/>
     </a>
     <div class="nav-links">
       <a href="legal-topics.html">Legal Topics</a>
