@@ -1228,15 +1228,21 @@ function scrollToWizard(){
 }
 function resumeWizard(){
   const rb=document.getElementById('resumeBanner');if(rb)rb.remove();
-  scrollToWizard();
+  // Hide the hero query card so only the wizard card is visible
+  const hqc=document.getElementById('heroQueryCard');
+  if(hqc)hqc.style.display='none';
   // Re-populate the textarea with saved input
   const ta=document.getElementById('issueTa');
   if(ta&&W.input){ta.value=W.input;updCC();}
   showStep(W.step||2);
+  // If resuming at questions step, re-render saved questions with saved answers
+  if(W.step>=2&&W.questions&&W.questions.length)renderQs();
 }
 function dismissResume(){
   localStorage.removeItem('sl_wizard_session');
   const rb=document.getElementById('resumeBanner');if(rb)rb.remove();
+  // Clear any restored state so stale answers don't contaminate a fresh query
+  resetW();
 }
 function openWizard(){resetW();const hqc=document.getElementById('heroQueryCard');if(hqc)hqc.style.display='none';scrollToWizard();showStep(1)}
 function closeWizard(){resetW();showStep(1)}
@@ -1269,6 +1275,7 @@ function saveWizardSession(){
   try{
     const snap={step:W.step,input:W.input,answers:W.answers,areas:W.areas,
       laws:W.laws.slice(0,10),selected:W.selected.slice(0,5),
+      questions:W.questions,
       assessmentAnswers:W.assessmentAnswers,name:W.name,email:W.email,phone:W.phone,
       savedAt:Date.now()};
     localStorage.setItem('sl_wizard_session',JSON.stringify(snap));
@@ -1282,8 +1289,9 @@ function restoreWizardSession(){
     // Only restore sessions saved within the last 24 hours
     if(!snap.savedAt||Date.now()-snap.savedAt>86400000){localStorage.removeItem('sl_wizard_session');return false;}
     if(!snap.input||snap.step<2)return false;
-    Object.assign(W,{input:snap.input,answers:snap.answers||{},areas:snap.areas||[],
+    Object.assign(W,{step:snap.step||1,input:snap.input,answers:snap.answers||{},areas:snap.areas||[],
       laws:snap.laws||[],selected:snap.selected||[],
+      questions:snap.questions||[],
       assessmentAnswers:snap.assessmentAnswers||{},
       name:snap.name||'',email:snap.email||'',phone:snap.phone||''});
     return snap.step||1;
