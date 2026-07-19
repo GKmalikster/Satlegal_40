@@ -4071,16 +4071,22 @@ function updateFCPreview() {
 function saveFlowConfig() {
   const cfg = getFCValues();
   localStorage.setItem(FC_KEY, JSON.stringify(cfg));
-  showToast('Flow configuration saved! Frontend pages will read new settings on next load.');
   updateFCPreview();
 
-  // Persist to MongoDB
+  // Persist to MongoDB — toast only after confirming server write succeeded
   const tok = _getToken();
   fetch(_apiUrl('/api/admin/config'), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok },
     body: JSON.stringify(cfg)
-  }).catch(() => {});
+  })
+  .then(r => r.ok ? r.json() : Promise.reject(r.status))
+  .then(() => {
+    showToast('Flow configuration saved & synced to cloud!');
+  })
+  .catch(() => {
+    showToast('⚠️ Saved locally but failed to sync to server — changes may not apply to users. Check login and try again.', 'error');
+  });
 }
 
 function resetFlowConfig() {

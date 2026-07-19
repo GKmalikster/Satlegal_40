@@ -2618,13 +2618,9 @@ function s4(){
 
 /* ══ STEP 5 → Report ══ */
 function s5(){
-  // Check for documents that are checked (user says they have it) but not uploaded
-  const checkedBoxes = document.querySelectorAll('.doc-checkbox:checked');
-  const notUploaded = Array.from(checkedBoxes).filter(cb => {
-    const did = cb.id.replace('chk_', '');
-    const btn = document.getElementById('btn_' + did);
-    return btn && !btn.classList.contains('done');
-  });
+  // Show dialog if ANY documents in the checklist haven't been uploaded yet
+  const allUploadBtns = document.querySelectorAll('.btn-doc-upload');
+  const notUploaded = Array.from(allUploadBtns).filter(btn => !btn.classList.contains('done'));
   if(notUploaded.length > 0){
     showUploadConfirmDialog(notUploaded.length, function(proceed){
       if(proceed) showActionChoicePopup();
@@ -2650,7 +2646,7 @@ function showUploadConfirmDialog(count, callback){
       <div style="font-size:40px;margin-bottom:12px">📂</div>
       <h3 style="font-size:18px;font-weight:700;color:#1a2332;margin-bottom:10px">Documents Not Uploaded</h3>
       <p style="font-size:14px;color:#4b5563;line-height:1.6;margin-bottom:24px">
-        You've marked <strong>${count} ${docWord}</strong> as available but haven't uploaded ${count === 1 ? 'it' : 'them'} yet.<br><br>
+        You have <strong>${count} ${docWord}</strong> that ${count === 1 ? 'has' : 'have'} not been uploaded yet.<br><br>
         Uploading documents significantly boosts your win score and strengthens your legal position.<br><br>
         <strong>Do you wish to continue without uploading?</strong>
       </p>
@@ -3179,13 +3175,21 @@ function renderPlanCards(){
   }).join('');
 }
 
-function showActionChoicePopup(){
+async function showActionChoicePopup(){
   const qe=document.getElementById('quick-email');
   const qp=document.getElementById('quick-phone');
   if(qe&&qe.value.trim())W.email=qe.value.trim();
   if(qp&&qp.value.trim())W.phone=qp.value.trim();
-  // If free access is configured, skip plan selection and go straight to auth
-  const _fc=JSON.parse(localStorage.getItem('sl_flow_config')||'{}');
+  // Always re-fetch config fresh at this critical payment/free decision point
+  let _fc=JSON.parse(localStorage.getItem('sl_flow_config')||'{}');
+  try{
+    const r=await fetch('/api/admin/config');
+    const data=await r.json();
+    if(data.success&&data.config&&Object.keys(data.config).length){
+      _fc=data.config;
+      localStorage.setItem('sl_flow_config',JSON.stringify(_fc));
+    }
+  }catch(e){}
   const _isFree=!((_fc.paymentRequired!==undefined?_fc.paymentRequired:true)&&!_fc.freeReportAccess);
   if(_isFree){
     W.selectedPlan={type:'report',name:'Free Legal Report',icon:'📋',price:0,description:'Complimentary access — full report included'};
