@@ -1247,8 +1247,19 @@ function dismissResume(){
 function openWizard(){resetW();const hqc=document.getElementById('heroQueryCard');if(hqc)hqc.style.display='none';scrollToWizard();showStep(1)}
 function closeWizard(){resetW();showStep(1)}
 
+// Fire-and-forget analytics event → /api/track (never blocks user flow)
+function slTrack(type, data){
+  try{
+    fetch('/api/track',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(Object.assign({type,sessionId:W.sid||'anon'},data||{}))
+    }).catch(()=>{});
+  }catch(e){}
+}
+
 function resetW(){
-  Object.assign(W,{step:1,input:'',questions:[],answers:{},areas:[],laws:[],selected:[],files:{},assessmentAnswers:{},name:'',email:'',phone:'',otp:'',otpSent:false,selectedPlan:null,selectedPlanAmt:0});
+  Object.assign(W,{step:1,input:'',questions:[],answers:{},areas:[],laws:[],selected:[],files:{},assessmentAnswers:{},name:'',email:'',phone:'',otp:'',otpSent:false,selectedPlan:null,selectedPlanAmt:0,sid:'sid_'+Math.random().toString(36).slice(2,9)});
   document.getElementById('issueTa').value='';
   document.getElementById('cc').textContent='0';
   const ur=document.getElementById('uid-register');const uo=document.getElementById('uid-otp');
@@ -1983,6 +1994,8 @@ async function s2(){
       renderNoMatch();
       showStep(3);return;
     }
+    // Track successful search → MongoDB via /api/track
+    slTrack('search',{query:W.input,laws:W.laws.slice(0,5).map(l=>l.name||l.caseType),source:'wizard'});
     renderLaws();
     showStep(3);
   }finally{

@@ -3531,22 +3531,32 @@ function escHtml(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 
 function loadDashboard(){
   try{
-    const searches=JSON.parse(localStorage.getItem('sl_law_searches')||'[]');
     const sales=JSON.parse(localStorage.getItem('sl_sales')||'[]');
     const leads=JSON.parse(localStorage.getItem('sl_leads')||'[]');
-    const firms=JSON.parse(localStorage.getItem('sl_law_firms')||'[]');
     const revenue=sales.reduce((s,t)=>s+(parseInt(t.amt)||0),0);
-    const users=[...new Set(sales.map(s=>s.email).filter(Boolean))].length;
     const dtEl=document.getElementById('dash-datetime');
-    const kq=document.getElementById('dash-kpi-queries');
-    const kr=document.getElementById('dash-kpi-revenue');
-    const ku=document.getElementById('dash-kpi-users');
-    const kf=document.getElementById('dash-kpi-firms');
     if(dtEl)dtEl.textContent=new Date().toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'});
-    if(kq)kq.textContent=searches.length||0;
-    if(kr)kr.textContent=fmt(revenue);
-    if(ku)ku.textContent=users;
-    if(kf)kf.textContent=Array.isArray(firms)?firms.length:0;
+
+    // Pull live stats from MongoDB via api/admin/stats
+    const tok=_getToken();
+    if(tok){
+      fetch(_apiUrl('/api/admin/stats'),{headers:{'Authorization':'Bearer '+tok}})
+        .then(r=>r.ok?r.json():null)
+        .then(data=>{
+          if(data&&data.success&&data.stats){
+            const s=data.stats;
+            const kq=document.getElementById('dash-kpi-queries');
+            const kr=document.getElementById('dash-kpi-revenue');
+            const ku=document.getElementById('dash-kpi-users');
+            const kf=document.getElementById('dash-kpi-firms');
+            if(kq)kq.textContent=s.totalSearches||0;
+            if(kr)kr.textContent=fmt(revenue); // Revenue once Razorpay is live
+            if(ku)ku.textContent=s.totalUsers||0;
+            if(kf)kf.textContent=s.approvedLawyers||s.totalLawyers||0;
+          }
+        })
+        .catch(()=>{});
+    }
     // Funnel
     const stageOrder=['query','analysis','signup','payment','consultation'];
     const stageColors={query:'#9CA3AF',analysis:'#F59E0B',signup:'#3B82F6',payment:'#10B981',consultation:'#8B5CF6'};
@@ -3556,12 +3566,19 @@ function loadDashboard(){
     const total=leads.length||1;
     const fEl=document.getElementById('dash-funnel');
     if(fEl)fEl.innerHTML=stageOrder.map(s=>`<div style="flex:1;text-align:center;padding:12px 6px;border-right:1px solid var(--border)"><div style="font-size:22px;font-weight:900;color:${stageColors[s]}">${stageCounts[s]}</div><div style="font-size:10px;color:var(--text-light);text-transform:uppercase;margin-top:3px">${stageLabels[s]}</div><div style="height:4px;background:${stageColors[s]};border-radius:2px;margin-top:6px;width:${Math.max(8,Math.round(stageCounts[s]/total*100))}%;margin-left:auto;margin-right:auto"></div></div>`).join('');
-    // Top laws
-    const freq=JSON.parse(localStorage.getItem('sl_law_freq')||'{}');
-    const topLaws=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8);
-    const maxFreq=topLaws[0]?topLaws[0][1]:1;
+    // Top laws — fetch from MongoDB analytics
     const tlEl=document.getElementById('dash-top-laws');
-    if(tlEl)tlEl.innerHTML=topLaws.length?topLaws.map(([name,cnt],i)=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-size:11px;color:var(--text-light);width:18px;text-align:right">${i+1}</span><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--gr-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(name)}</div><div style="height:4px;background:var(--gr-200);border-radius:2px;margin-top:3px"><div style="height:100%;background:var(--gr-500);border-radius:2px;width:${Math.round(cnt/maxFreq*100)}%"></div></div></div><span style="font-size:12px;font-weight:700;color:var(--sf-600)">${cnt}</span></div>`).join(''):'<div style="text-align:center;color:var(--text-light);font-size:13px;padding:20px">No data yet. Law frequency populates as users query the platform.</div>';
+    if(tlEl&&tok){
+      fetch(_apiUrl('/api/admin/stats?action=analytics'),{headers:{'Authorization':'Bearer '+tok}})
+        .then(r=>r.ok?r.json():null)
+        .then(data=>{
+          if(data&&data.success&&data.topLaws&&data.topLaws.length){
+            const maxFreq=data.topLaws[0].count||1;
+            tlEl.innerHTML=data.topLaws.slice(0,8).map(({name,count},i)=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-size:11px;color:var(--text-light);width:18px;text-align:right">${i+1}</span><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--gr-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(name)}</div><div style="height:4px;background:var(--gr-200);border-radius:2px;margin-top:3px"><div style="height:100%;background:var(--gr-500);border-radius:2px;width:${Math.round(count/maxFreq*100)}%"></div></div></div><span style="font-size:12px;font-weight:700;color:var(--sf-600)">${count}</span></div>`).join('');
+          }
+        })
+        .catch(()=>{});
+    }
     // Recent activity
     const sChip=(s)=>{const c={query:'#9CA3AF',analysis:'#F59E0B',signup:'#3B82F6',payment:'#10B981',consultation:'#8B5CF6'};const cl={query:'Query',analysis:'Analysis',signup:'Signed Up',payment:'Paid',consultation:'Consultation'};return`<span style="background:${c[s]||'#9CA3AF'}22;color:${c[s]||'#9CA3AF'};font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px;border:1px solid ${c[s]||'#9CA3AF'}44">${cl[s]||s}</span>`;};
     const ab=document.getElementById('dash-activity-body');
