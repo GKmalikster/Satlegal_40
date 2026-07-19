@@ -845,7 +845,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
               <div class="pr-card">
                 <div class="pr-icon">🧑‍⚖️</div>
                 <div class="pr-name">Expert Consultation</div>
-                <div class="pr-price"><sup>₹</sup>2500</div>
+                <div class="pr-price"><sup>₹</sup>2499</div>
                 <div class="pr-price-note">Per session · 30 minutes</div>
                 <ul class="pr-features">
                   <li>Everything in Report</li>
@@ -854,7 +854,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
                   <li>Drafted legal notice</li>
                   <li>Follow-up Q&amp;A included</li>
                 </ul>
-                <button class="btn-pr-secondary" onclick="selectPlan('consult',2500)">Book Consultation →</button>
+                <button class="btn-pr-secondary" onclick="selectPlan('consult',2499)">Book Consultation →</button>
               </div>
             </div>
             <div style="text-align:center;font-size:11px;color:var(--text-lt)">🔒 Secured by Razorpay · 100% confidential · GST invoice provided</div>
@@ -1378,8 +1378,8 @@ function selectPlan(plan,amt){
     } else {
       const discount=getReportDiscount();
       badge.innerHTML=discount
-        ?`🧑‍⚖️ Expert Consultation — <s style="opacity:.5">₹2500</s> ₹${amt} <span style="font-size:10px;background:#FFF3CD;color:#856404;border:1px solid #FFEAA7;border-radius:8px;padding:1px 7px;margin-left:4px">₹${discount.amount} discount applied</span>`
-        :'🧑‍⚖️ Expert Consultation — ₹2500';
+        ?`🧑‍⚖️ Expert Consultation — <s style="opacity:.5">₹2499</s> ₹${amt} <span style="font-size:10px;background:#FFF3CD;color:#856404;border:1px solid #FFEAA7;border-radius:8px;padding:1px 7px;margin-left:4px">₹${discount.amount} discount applied</span>`
+        :'🧑‍⚖️ Expert Consultation — ₹2499';
     }
   }
   showRegForm();
@@ -2989,7 +2989,7 @@ const DEFAULT_PLANS=[
    description:'One-time · Instant delivery · PDF',
    features:['Law mapping + sections','Case readiness score','Action plan & next steps','Document checklist'],
    badge:null,active:true,featured:false,startDate:null,endDate:null,couponCode:null},
-  {id:'plan_consult_std',name:'Expert Consultation',type:'consult',icon:'🧑‍⚖️',price:2500,originalPrice:null,
+  {id:'plan_consult_std',name:'Expert Consultation',type:'consult',icon:'🧑‍⚖️',price:2499,originalPrice:null,
    description:'30 min · Verified lawyer · Call/Chat',
    features:['Everything in Report','1:1 with a verified lawyer','Case strategy + legal notice','Follow-up Q&A included'],
    badge:null,active:true,featured:false,startDate:null,endDate:null,couponCode:null}

@@ -286,7 +286,7 @@ button{cursor:pointer;font-family:var(--font)}
 
       <div class="fgroup fspan2">
         <label>Consultation Fee (₹)</label>
-        <input class="finput" id="f-fee" type="number" value="2500" placeholder="2500"/>
+        <input class="finput" id="f-fee" type="number" value="2499" placeholder="2500"/>
       </div>
     </div>
 
@@ -344,7 +344,7 @@ function renderFirms(){
       <div class="fc-body">
         <div class="fc-name">${f.name} <span class="fc-status ${f.status||'active'}">${f.status||'active'}</span></div>
         <div class="fc-spec">${(f.specs||[]).join(' · ')||'No specializations'}</div>
-        <div class="fc-meta">📍 ${f.city||''}${f.state?', '+f.state:''} &nbsp;|&nbsp; 📞 ${f.phone||'—'} &nbsp;|&nbsp; 💰 ₹${f.fee||2500}/session${f.barno?' &nbsp;|&nbsp; Bar: '+f.barno:''}</div>
+        <div class="fc-meta">📍 ${f.city||''}${f.state?', '+f.state:''} &nbsp;|&nbsp; 📞 ${f.phone||'—'} &nbsp;|&nbsp; 💰 ₹${f.fee||2499}/session${f.barno?' &nbsp;|&nbsp; Bar: '+f.barno:''}</div>
         ${f.bio?`<div style="font-size:11px;color:var(--text-lt);margin-top:5px;line-height:1.5">${f.bio.slice(0,100)}${f.bio.length>100?'...':''}</div>`:''}
       </div>
       <div class="fc-actions">
@@ -393,7 +393,7 @@ function editFirm(i){
   document.getElementById('f-bio').value=f.bio||'';
   document.getElementById('f-icon').value=f.icon||'⚖️';
   document.getElementById('f-status').value=f.status||'active';
-  document.getElementById('f-fee').value=f.fee||2500;
+  document.getElementById('f-fee').value=f.fee||2499;
   document.querySelectorAll('#specTags .ftag').forEach(t=>{
     t.classList.toggle('sel',(f.specs||[]).includes(t.textContent));
   });
@@ -459,9 +459,9 @@ function toast(msg,type){
 function seedDemoFirms(){
   if(firms.length) return;
   const demos=[
-    {name:'Sharma & Associates',barno:'BCI/MH/2012/1234',year:'2012',specs:['Family Law','Divorce & Matrimonial','Succession & Inheritance'],specialty:'Family Law · Divorce & Matrimonial · Succession & Inheritance',city:'Mumbai',state:'Maharashtra',location:'Mumbai, Maharashtra',phone:'+91 98201 45678',email:'info@sharmaassociates.in',bio:'15+ years experience in family law, divorce proceedings, and succession matters across Mumbai High Court.',icon:'⚖️',status:'active',fee:2500,registeredAt:new Date().toISOString()},
-    {name:'Kapoor Legal Consultants',barno:'BCI/DL/2015/5678',year:'2015',specs:['Property & Real Estate','Civil Litigation','Land Acquisition'],specialty:'Property & Real Estate · Civil Litigation',city:'New Delhi',state:'Delhi',location:'New Delhi, Delhi',phone:'+91 98110 23456',email:'info@kaporlegal.in',bio:'Specialising in property disputes, RERA complaints, and land acquisition matters.',icon:'🏛️',status:'active',fee:2500,registeredAt:new Date().toISOString()},
-    {name:'R. Krishnamurthy & Co.',barno:'BCI/KA/2010/9012',year:'2010',specs:['Criminal Law','Cyber Law','IP & Trademark'],specialty:'Criminal Law · Cyber Law · IP & Trademark',city:'Bengaluru',state:'Karnataka',location:'Bengaluru, Karnataka',phone:'+91 98440 34567',email:'info@rklaw.in',bio:'Expert criminal defence lawyers with specialisation in cyber crimes and intellectual property disputes.',icon:'👨‍⚖️',status:'active',fee:2500,registeredAt:new Date().toISOString()},
+    {name:'Sharma & Associates',barno:'BCI/MH/2012/1234',year:'2012',specs:['Family Law','Divorce & Matrimonial','Succession & Inheritance'],specialty:'Family Law · Divorce & Matrimonial · Succession & Inheritance',city:'Mumbai',state:'Maharashtra',location:'Mumbai, Maharashtra',phone:'+91 98201 45678',email:'info@sharmaassociates.in',bio:'15+ years experience in family law, divorce proceedings, and succession matters across Mumbai High Court.',icon:'⚖️',status:'active',fee:2499,registeredAt:new Date().toISOString()},
+    {name:'Kapoor Legal Consultants',barno:'BCI/DL/2015/5678',year:'2015',specs:['Property & Real Estate','Civil Litigation','Land Acquisition'],specialty:'Property & Real Estate · Civil Litigation',city:'New Delhi',state:'Delhi',location:'New Delhi, Delhi',phone:'+91 98110 23456',email:'info@kaporlegal.in',bio:'Specialising in property disputes, RERA complaints, and land acquisition matters.',icon:'🏛️',status:'active',fee:2499,registeredAt:new Date().toISOString()},
+    {name:'R. Krishnamurthy & Co.',barno:'BCI/KA/2010/9012',year:'2010',specs:['Criminal Law','Cyber Law','IP & Trademark'],specialty:'Criminal Law · Cyber Law · IP & Trademark',city:'Bengaluru',state:'Karnataka',location:'Bengaluru, Karnataka',phone:'+91 98440 34567',email:'info@rklaw.in',bio:'Expert criminal defence lawyers with specialisation in cyber crimes and intellectual property disputes.',icon:'👨‍⚖️',status:'active',fee:2499,registeredAt:new Date().toISOString()},
   ];
   firms=demos;
   try{localStorage.setItem('sl_law_firms',JSON.stringify(firms))}catch(e){}

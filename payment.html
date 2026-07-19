@@ -126,7 +126,7 @@ main{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:4
           <div class="pill-name">Expert Consultation</div>
           <div class="pill-desc">30-min call + report + legal notice drafted</div>
         </div>
-        <div class="pill-price">₹2500</div>
+        <div class="pill-price">₹2499</div>
       </div>
 
       <div class="pm-icons">
@@ -169,7 +169,7 @@ main{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:4
           </div>
         </div>
         <div class="lrc-cta">
-          <button class="btn-lrc btn-lrc-book" onclick="bookConsultation()">Book ₹2500 Consultation</button>
+          <button class="btn-lrc btn-lrc-book" onclick="bookConsultation()">Book ₹2499 Consultation</button>
           <button class="btn-lrc btn-lrc-more" onclick="viewMore()">View Profile</button>
           <span class="lrc-price-tag">30-min session</span>
         </div>
@@ -240,7 +240,7 @@ function updateOrderSummary(){
 
 function switchPlan(p){
   plan=p;
-  amt=p==='consult'?2500:499;
+  amt=p==='consult'?2499:499;
   document.getElementById('pillReport').classList.toggle('active',p==='report');
   document.getElementById('pillConsult').classList.toggle('active',p==='consult');
   updateOrderSummary();
@@ -392,7 +392,7 @@ function viewReport(){
   window.location.replace('report.html');
 }
 function bookConsultation(){
-  window.location.href='payment.html?plan=consult&amt=2500&uid='+uid;
+  window.location.href='payment.html?plan=consult&amt=2499&uid='+uid;
 }
 function viewMore(){
   window.location.replace('pricing.html');

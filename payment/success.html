@@ -79,14 +79,14 @@ const amt=payment.amt||new URLSearchParams(location.search).get('amt')||499;
 const payId=payment.paymentId||'—';
 
 document.getElementById('orderId').textContent=payId;
-document.getElementById('planName').textContent=plan==='consult'?'Expert Consultation (₹2,500)':'Digital Legal Report (₹499)';
+document.getElementById('planName').textContent=plan==='consult'?'Expert Consultation (₹2,499)':'Digital Legal Report (₹499)';
 document.getElementById('payDate').textContent=payment.paidAt?new Date(payment.paidAt).toLocaleString('en-IN',{dateStyle:'long',timeStyle:'short'}):new Date().toLocaleString('en-IN',{dateStyle:'long',timeStyle:'short'});
 document.getElementById('amtPaid').textContent='₹'+amt+' (incl. GST)';
 document.getElementById('invoiceLink').href='invoice.html?id='+payId;
 
 if(plan==='consult'){
   document.getElementById('successTitle').textContent='Payment Received!';
-  document.getElementById('successSub').textContent='Your ₹2,500 expert consultation has been confirmed. Please book your time slot now.';
+  document.getElementById('successSub').textContent='Your ₹2,499 expert consultation has been confirmed. Please book your time slot now.';
   document.getElementById('actionBtns').innerHTML=`
     <a class="btn-sf" href="../consultation/book.html">📅 Book Consultation Slot</a>
     <a class="btn-outline" href="../report.html">📄 View Report</a>
@@ -95,7 +95,7 @@ if(plan==='consult'){
 } else {
   document.getElementById('actionBtns').innerHTML=`
     <a class="btn-green" href="../report.html">📄 View My Report</a>
-    <a class="btn-sf" href="../consultation/book.html">🧑‍⚖️ Book ₹2,500 Consultation</a>
+    <a class="btn-sf" href="../consultation/book.html">🧑‍⚖️ Book ₹2,499 Consultation</a>
     <a class="btn-outline" href="../index.html">🔍 Analyze Another Case</a>
   `;
 }
