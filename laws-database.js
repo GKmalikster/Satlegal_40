@@ -4902,6 +4902,133 @@ const LAWS_DATABASE = [
     ]
   },
   {
+    "caseType": "Criminal – BNS (Mischief / Property Damage / Vandalism)",
+    "lawCategory": "Criminal",
+    "actName": "Bharatiya Nyaya Sanhita 2023 Sec 324–330 – Mischief / Intentional Property Damage",
+    "keywords": {
+      "exact": [
+        "my car was damaged by my neighbour",
+        "neighbour damaged my car",
+        "my car was scratched by neighbour",
+        "someone broke my car windshield",
+        "neighbour broke my car glass",
+        "my vehicle was damaged intentionally",
+        "neighbour vandalized my car",
+        "someone keyed my car",
+        "my bike was damaged by neighbour",
+        "my scooter was damaged",
+        "neighbour threw stone on my car",
+        "neighbour hit my car with rod",
+        "someone damaged my property intentionally",
+        "my property was vandalized",
+        "neighbour broke my window",
+        "my door was broken by neighbour",
+        "neighbour damaged my gate",
+        "mischief complaint",
+        "mischief case file karna hai",
+        "padosi ne meri gaadi tod di",
+        "padosi ne mera kaan tod diya",
+        "mere padosi ne meri gaadi ko nuksan pahunchaya",
+        "meri gaadi ko stone maara",
+        "mera car ka sheesha tod diya",
+        "gaadi scratch kar di padosi ne",
+        "car damage by neighbour",
+        "vehicle damage by someone",
+        "car damaged on purpose"
+      ],
+      "strong": [
+        "car damaged by neighbour",
+        "vehicle damaged intentionally",
+        "property damaged by neighbour",
+        "mischief property damage",
+        "vandalism complaint",
+        "car window broken",
+        "car windshield broken",
+        "car scratched intentionally",
+        "property destruction neighbour",
+        "neighbour damaged vehicle",
+        "two wheeler damaged",
+        "bike damaged by someone",
+        "damaged my belongings",
+        "someone broke my property",
+        "deliberately damaged",
+        "intentional damage",
+        "threw stone at car",
+        "hit car with stick",
+        "smashed car window",
+        "broke my car mirror",
+        "gaadi tod di",
+        "gaadi ko nuksan pahunchaya",
+        "property barbad kar di",
+        "mischief under bns",
+        "section 324 bns",
+        "padosi ne tod phod ki",
+        "car damage complaint",
+        "property damage complaint police",
+        "neighbour broke gate",
+        "neighbour damaged door",
+        "property destruction complaint"
+      ],
+      "weak": [
+        "car damaged",
+        "vehicle damaged",
+        "property damage",
+        "neighbour dispute",
+        "broken window",
+        "vandalism",
+        "damage",
+        "mischief",
+        "destruction",
+        "neighbour",
+        "gaadi",
+        "tod diya",
+        "nuksan"
+      ]
+    },
+    "sections": [
+      "BNS Sec 324 (Mischief – intentional damage to property)",
+      "BNS Sec 325 (Mischief causing damage of ₹20,000+)",
+      "BNS Sec 326 (Mischief by fire or explosive substance)",
+      "BNS Sec 329 (Mischief causing damage to property by flooding)",
+      "Civil Tort – Negligence / Trespass to Property (for civil damages)"
+    ],
+    "documents": [
+      { "name": "FIR / Written Complaint to Police", "critical": true },
+      { "name": "Photographs / Videos of Damage", "critical": true },
+      { "name": "Vehicle RC / Property Ownership Proof", "critical": true },
+      { "name": "Repair Estimate / Bill from Mechanic or Contractor", "critical": true },
+      { "name": "CCTV Footage (if available)", "critical": false },
+      { "name": "Witness Statements", "critical": false },
+      { "name": "Medical Reports (if physical altercation also occurred)", "critical": false }
+    ],
+    "probingQuestions": [
+      {
+        "q": "What exactly was damaged — your car, bike, gate, window, or other property? What is the estimated cost of damage?",
+        "tip": "If damage exceeds ₹20,000 the offence becomes aggravated mischief under BNS Sec 325."
+      },
+      {
+        "q": "Was this intentional or could it have been accidental? Do you have any evidence (CCTV, witnesses)?",
+        "tip": "Intentional damage is BNS Mischief (criminal). Accidental damage is a civil tort claim."
+      },
+      {
+        "q": "Was a police complaint or FIR already filed? Did police respond?",
+        "tip": "Mischief is a cognizable offence — police must register FIR. If refused, approach Magistrate under BNSS Sec 175."
+      },
+      {
+        "q": "Is this an ongoing dispute with the neighbour, or a one-time incident?",
+        "tip": "Repeated incidents may warrant a restraining order / injunction from civil court in addition to FIR."
+      }
+    ],
+    "contextualQuestions": ["criminal", "civil"],
+    "limitation": "3 years from date of incident",
+    "urgency": "medium",
+    "multiLawCompatible": [
+      "Property – Boundary Dispute / Encroachment",
+      "Criminal – BNS (Assault / Hurt / Grievous Hurt)",
+      "Consumer – Insurance Claim Dispute"
+    ]
+  },
+  {
     "caseType": "Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)",
     "lawCategory": "Criminal",
     "actName": "Bharatiya Nagarik Suraksha Sanhita, 2023 – replaces CrPC",
@@ -7058,15 +7185,14 @@ const LAWS_DATABASE = [
       "weak": [
         "accident",
         "injured",
-        "vehicle",
-        "car",
-        "bus",
-        "truck",
-        "bike",
+        "road accident",
+        "bus accident",
+        "truck accident",
+        "bike accident",
         "road",
-        "hit",
-        "insurance",
-        "compensation"
+        "hit by vehicle",
+        "insurance claim accident",
+        "compensation accident"
       ]
     },
     "sections": [
