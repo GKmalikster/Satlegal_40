@@ -765,12 +765,20 @@ module.exports = async function handler(req, res) {
         const field = Object.keys(err.keyPattern || {})[0] || 'field';
         return res.status(409).json({ success: false, message: `Duplicate ${field}. This value is already registered.` });
       }
-      if (err.message && err.message.includes('MONGODB_URI')) {
-        return res.status(500).json({ success: false, message: 'Service temporarily unavailable. Please try again later.' });
-      }
       if (err.name === 'ValidationError') {
         const fields = Object.keys(err.errors || {}).join(', ');
-        return res.status(400).json({ success: false, message: `Validation error: ${fields}` });
+        return res.status(400).json({ success: false, message: `Please check these fields: ${fields}` });
+      }
+      // Any MongoDB/connection error → service unavailable
+      const isDbErr = err.name && (
+        err.name.startsWith('Mongo') ||
+        err.name === 'MongoServerError' ||
+        err.name === 'MongoNetworkError' ||
+        err.name === 'MongoTimeoutError' ||
+        (err.message && (err.message.includes('MONGODB_URI') || err.message.includes('buffering timed out') || err.message.includes('connect')))
+      );
+      if (isDbErr) {
+        return res.status(503).json({ success: false, message: 'Database unavailable. Please try again in a moment.' });
       }
       return res.status(500).json({ success: false, message: 'Registration failed. Please try again.' });
     }

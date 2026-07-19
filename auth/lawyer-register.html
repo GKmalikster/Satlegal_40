@@ -278,13 +278,16 @@ body{background:linear-gradient(135deg,var(--gr-900) 0%,var(--gr-800) 60%,#0a301
             <label>Bar Council State *</label>
             <select id="barCouncilState" class="form-control">
               <option value="">Select State…</option>
-              <option>Andhra Pradesh</option><option>Assam</option><option>Bihar</option>
-              <option>Chhattisgarh</option><option>Delhi</option><option>Goa</option>
-              <option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option>
-              <option>Jharkhand</option><option>Karnataka</option><option>Kerala</option>
-              <option>Madhya Pradesh</option><option>Maharashtra</option><option>Odisha</option>
-              <option>Punjab &amp; Haryana</option><option>Rajasthan</option><option>Tamil Nadu</option>
-              <option>Telangana</option><option>Uttar Pradesh</option><option>Uttarakhand</option>
+              <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option>
+              <option>Bihar</option><option>Chhattisgarh</option><option>Delhi</option>
+              <option>Goa</option><option>Gujarat</option><option>Haryana</option>
+              <option>Himachal Pradesh</option><option>Jammu &amp; Kashmir</option><option>Jharkhand</option>
+              <option>Karnataka</option><option>Kerala</option><option>Madhya Pradesh</option>
+              <option>Maharashtra</option><option>Manipur</option><option>Meghalaya</option>
+              <option>Mizoram</option><option>Nagaland</option><option>Odisha</option>
+              <option>Puducherry</option><option>Punjab &amp; Haryana</option><option>Rajasthan</option>
+              <option>Sikkim</option><option>Tamil Nadu</option><option>Telangana</option>
+              <option>Tripura</option><option>Uttar Pradesh</option><option>Uttarakhand</option>
               <option>West Bengal</option>
             </select>
           </div>
@@ -663,11 +666,12 @@ document.querySelectorAll('input[name="firmType"]').forEach(r =>
 
 // ── Office management ───────────────────────────────────────────────────────
 const STATES = [
-  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat',
-  'Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh',
-  'Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan',
-  'Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal',
-  'Delhi','Jammu & Kashmir','Ladakh','Puducherry'
+  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh',
+  'Delhi','Goa','Gujarat','Haryana','Himachal Pradesh',
+  'Jammu & Kashmir','Jharkhand','Karnataka','Kerala','Ladakh',
+  'Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram',
+  'Nagaland','Odisha','Puducherry','Punjab','Rajasthan',
+  'Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal'
 ];
 const stateOpts = (sel='') =>
   `<option value="">Select State *</option>` +
@@ -789,14 +793,22 @@ document.getElementById('lawyerForm').addEventListener('submit', async function(
         localStorage.setItem('sl_token', data.token);
         localStorage.setItem('sl_user', JSON.stringify(data.user));
       }
-      showAlert('success', '✅ Registration successful! Redirecting to your dashboard…');
-      setTimeout(() => { window.location.href = '/lawyer/dashboard.html'; }, 2200);
+      showAlert('success', '✅ Registration successful! Your profile is under review. Redirecting to your dashboard…');
+      setTimeout(() => { window.location.href = '/lawyer/dashboard.html'; }, 2500);
     } else {
-      showAlert('danger', data.message || 'Registration failed. Please try again.');
+      // Show the server's specific message; fall back to a helpful generic one
+      const msg = data.message || 'Registration failed. Please try again.';
+      if (res.status === 409) {
+        showAlert('warning', '⚠️ ' + msg);
+      } else if (res.status === 400) {
+        showAlert('warning', '⚠️ Please check your details: ' + msg);
+      } else {
+        showAlert('danger', '❌ ' + msg + ' If this keeps happening, please contact us at support@satlegal.in');
+      }
       document.getElementById('regBtn').disabled = false;
     }
   } catch (err) {
-    showAlert('danger', 'Network error. Please check your connection and try again.');
+    showAlert('danger', '❌ Network error. Please check your connection and try again.');
     document.getElementById('regBtn').disabled = false;
   } finally {
     document.getElementById('loading-overlay').classList.remove('show');
