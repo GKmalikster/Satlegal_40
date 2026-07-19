@@ -1645,11 +1645,11 @@ function s1(){
     // Query is vague OR no keyword match — use targeted context questions
     const ctxQs=[
       {id:'ctx_nature',question:'What best describes the nature of your issue?',type:'radio',
-       options:['Criminal — someone committed a crime against me or my family','I am being accused / blamed for something (I need to defend myself)','Financial fraud — money taken by deception or false promises','Employment — salary, termination, workplace rights','Property / Land / Builder dispute','Family — divorce, custody, maintenance, domestic violence','Medical — hospital or doctor treatment gone wrong','Consumer — defective product or poor service','Cyber crime / Online fraud']},
+       options:['Criminal — someone committed a crime against me or my family','I am being accused / blamed for something (I need to defend myself)','Financial fraud — money taken by deception or false promises','Employment — salary, termination, workplace rights','Property / Land / Builder dispute','Family — divorce, custody, maintenance, domestic violence','Medical — hospital or doctor treatment gone wrong','Consumer — defective product or poor service','Cyber crime / Online fraud','Others — my situation does not fit any of the above']},
       {id:'ctx_party',question:'Who is the other party or what happened?',type:'radio',
-       options:['A stranger or unknown person committed a crime against me / my family','A family member or relative (domestic)','My employer or company','A hospital, doctor, or medical professional','A government authority or police','A builder, landlord, or property developer','A bank, lender, or financial institution','An online seller or platform']},
+       options:['A stranger or unknown person committed a crime against me / my family','A family member or relative (domestic)','My employer or company','A hospital, doctor, or medical professional','A government authority or police','A builder, landlord, or property developer','A bank, lender, or financial institution','An online seller or platform','Others — none of the above']},
       {id:'ctx_harm',question:'What specifically happened?',type:'radio',
-       options:['Someone died / was killed (not in hospital — suspicious / violent death)','A patient died in hospital — doctor / family blaming each other','Sexual assault, rape, or sexual violence occurred','Physical violence or assault occurred (victim is alive)','Money was taken by fraud, deception, or false promise','I was fired, not paid, or my workplace rights were violated','A family dispute — divorce, custody, dowry, domestic violence','Property or inheritance dispute after someone\'s death']},
+       options:['Someone died / was killed (not in hospital — suspicious / violent death)','A patient died in hospital — doctor / family blaming each other','Sexual assault, rape, or sexual violence occurred','Physical violence or assault occurred (victim is alive)','Money was taken by fraud, deception, or false promise','I was fired, not paid, or my workplace rights were violated','A family dispute — divorce, custody, dowry, domestic violence','Property or inheritance dispute after someone\'s death','Others — something else happened']},
     ];
     qs = qs.length ? [...ctxQs, ...qs] : ctxQs;
   } else if(!qs.length){
@@ -1684,10 +1684,10 @@ function s1(){
 function getProbingQs(){
   return [
     {id:'other_party',question:'Who is the other party in your matter?',type:'radio',section:'Basic Facts',
-     options:['My employer or company','A family member (spouse/parent/sibling)','A builder or property developer','A bank or financial institution','An online platform or seller','A landlord or tenant','A government authority','Another individual'],
+     options:['My employer or company','A family member (spouse/parent/sibling)','A builder or property developer','A bank or financial institution','An online platform or seller','A landlord or tenant','A government authority','Another individual','Others'],
      tip:'Identifies whether civil, criminal, consumer, or employment law applies — narrows the applicable legal framework.'},
     {id:'incident_type',question:'What is the primary nature of the harm or dispute?',type:'radio',section:'Basic Facts',
-     options:['Financial loss or fraud','Harassment, threats, or physical harm','A property or land being disputed','Breach of agreement or contract','Marriage, divorce, or custody issue','Wrongful termination or unpaid employment dues','Consumer/product defect or medical negligence','A government notice or official action'],
+     options:['Financial loss or fraud','Harassment, threats, or physical harm','A property or land being disputed','Breach of agreement or contract','Marriage, divorce, or custody issue','Wrongful termination or unpaid employment dues','Consumer/product defect or medical negligence','A government notice or official action','Others'],
      tip:'Determines which area of law and which court or authority provides the most effective remedy.'},
     {id:'incident_when',question:'When did the incident or dispute begin?',type:'radio',section:'Timeline',
      options:['Within the last 30 days','1–6 months ago','6 months to 1 year ago','1–3 years ago','More than 3 years ago'],
@@ -1696,10 +1696,10 @@ function getProbingQs(){
      options:['No — this is my first step','Yes — sent a notice via lawyer','Yes — filed a police complaint (FIR)','Yes — filed with a government authority','Yes — sent multiple notices with no response'],
      tip:'Prior formal notice strengthens your legal position and is mandatory before certain proceedings like Labour Court.'},
     {id:'evidence_level',question:'What kind of evidence or documentation do you have?',type:'radio',section:'Evidence',
-     options:['Strong paper trail — agreements, receipts, emails, screenshots','Some documents but missing key ones','Mainly digital evidence — chats, emails, transaction records','Witness statements or testimony available','Very little documented evidence at this point'],
+     options:['Strong paper trail — agreements, receipts, emails, screenshots','Some documents but missing key ones','Mainly digital evidence — chats, emails, transaction records','Witness statements or testimony available','Very little documented evidence at this point','Others'],
      tip:'Evidence quality is the biggest factor in case readiness score. We\'ll guide you on exactly what\'s needed.'},
     {id:'desired_outcome',question:'What is your primary goal in this matter?',type:'radio',section:'Your Goal',
-     options:['Recover money or property','Get criminal action taken against the other party','Get a court order/injunction for protection','Resolve the matter through settlement','Formal legal notice to establish rights','I mainly want to understand my rights first'],
+     options:['Recover money or property','Get criminal action taken against the other party','Get a court order/injunction for protection','Resolve the matter through settlement','Formal legal notice to establish rights','I mainly want to understand my rights first','Others'],
      tip:'Your goal determines the best legal route — criminal complaint vs. civil suit vs. consumer forum vs. negotiation.'}
   ];
 }
@@ -1876,11 +1876,22 @@ function renderQs(){
     } else {
       h+=`<div class="qopts" role="radiogroup" aria-labelledby="qt_${q.id}">`;
       (q.options||[]).forEach((o,oi)=>{
+        const isOthers = o==='Others' || o.startsWith('Others');
         h+=`<label class="qopt" id="qo_${q.id}_${oi}">
           <input type="radio" name="q_${q.id}" value="${esc(o)}" aria-label="${esc(o)}"
             onchange="selOpt('${q.id}',${oi},'${esc(o)}')"/>
           <span>${esc(o)}</span>
         </label>`;
+        if(isOthers){
+          h+=`<div id="others_box_${q.id}" style="display:none;margin:6px 0 4px 0">
+            <input type="text" id="others_txt_${q.id}" maxlength="200"
+              placeholder="Please briefly describe your situation…"
+              style="width:100%;padding:9px 12px;border:1.5px solid var(--sf-300);border-radius:8px;font-size:13px;color:var(--text);outline:none;transition:.2s"
+              onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--sf-300)'"
+              oninput="saveOthersText('${q.id}',this.value)"
+              aria-label="Describe your situation"/>
+          </div>`;
+        }
       });
       h+=`</div>`;
     }
@@ -1905,11 +1916,38 @@ function selOpt(qId,oi,val){
     const r=el.querySelector('input[type=radio]');
     if(r)r.checked=true;
   }
+  // Show/hide Others text box
+  const othersBox=document.getElementById(`others_box_${qId}`);
+  if(othersBox){
+    const isOthers = val==='Others' || val.startsWith('Others');
+    othersBox.style.display = isOthers ? 'block' : 'none';
+    if(!isOthers){
+      const txt=document.getElementById(`others_txt_${qId}`);
+      if(txt)txt.value='';
+    }
+  }
+  updateQProgress();
+}
+
+function saveOthersText(qId, text){
+  W.answers[qId] = text.trim() ? 'Others — ' + text.trim() : 'Others';
   updateQProgress();
 }
 
 /* ══ STEP 2 ══ */
 async function s2(){
+  // Enforce all questions answered before proceeding
+  if(W.questions && W.questions.length){
+    const unanswered = W.questions.filter(q => !W.answers[q.id]);
+    if(unanswered.length){
+      toast('Please answer all questions before proceeding.','err');
+      // Scroll to first unanswered question
+      const firstQ = document.getElementById('qt_' + unanswered[0].id);
+      if(firstQ) firstQ.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+  }
+
   // Show analysing state while Claude API runs
   const btn=document.querySelector('.wiz-next-btn');
   if(btn){btn.disabled=true;btn.textContent='Analysing…';}
