@@ -15146,6 +15146,12 @@ const LAWS_DATABASE = [
     "actName": "BNS Sec 356 (Criminal Defamation) + Civil Suit for Damages + IT Act Sec 67 – Defamation and Reputation",
     "keywords": {
       "exact": [
+        "i was defamed by my neighbour",
+        "my neighbour defamed me",
+        "neighbour is spreading lies about me",
+        "neighbour spreading false rumours about me",
+        "defamed by my neighbor",
+        "my neighbor defamed me",
         "someone posted defamatory statements about me on facebook",
         "a local newspaper published false allegations about my business",
         "someone created a fake account with my name and is posting false things",
@@ -15164,6 +15170,9 @@ const LAWS_DATABASE = [
         "lie spread on whatsapp group about my business"
       ],
       "strong": [
+        "defamed",
+        "defame",
+        "defaming",
         "defamation",
         "defamatory",
         "libel",

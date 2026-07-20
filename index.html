@@ -632,8 +632,11 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
 
 /* Responsive wizard improvements */
 @media(max-width:640px){
-  .wiz-body{padding:16px 14px}
-  .wiz-foot-bar{padding:12px 14px;flex-wrap:wrap;gap:8px}
+  /* Pin tabs + footer; only the body area scrolls */
+  #wizCard{display:flex !important;flex-direction:column;max-height:calc(100vh - 80px)}
+  .wiz-tabs-row{flex-shrink:0}
+  .wiz-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 14px}
+  .wiz-foot-bar{flex-shrink:0;padding:12px 14px;flex-wrap:wrap;gap:8px}
   .wiz-title{font-size:16px}.wiz-sub{font-size:12px}
   #btnNext{font-size:12px;padding:9px 14px}
   .law-card{gap:10px}
@@ -2016,9 +2019,9 @@ function renderNoMatch(){
   c.innerHTML=`
     <div style="background:#fff;border:1.5px solid #e2e6ea;border-radius:14px;padding:24px 22px;text-align:center;max-width:620px;margin:0 auto">
       <div style="font-size:40px;margin-bottom:10px">🔍</div>
-      <div style="font-size:17px;font-weight:800;color:#0D3D0D;margin-bottom:8px">Your query is outside our current coverage of laws</div>
+      <div style="font-size:17px;font-weight:800;color:#0D3D0D;margin-bottom:8px">Thank you for your query</div>
       <p style="font-size:13.5px;color:#5c5c7a;line-height:1.7;margin-bottom:18px">
-        Your issue falls outside the current scope of SatLegal's law coverage. This may require an interaction with a lawyer — you may reach out to the SatLegal Lawyer community for answers.
+        This matter is not covered in our current law database. Please write to us at <a href="mailto:legal@satlegal.in" style="color:#138808;font-weight:700">legal@satlegal.in</a> and our team will guide you to the right expert.
       </p>
 
       <div style="background:#f8f9fa;border-radius:10px;padding:14px 16px;margin-bottom:18px;text-align:left">
