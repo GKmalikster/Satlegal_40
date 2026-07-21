@@ -479,19 +479,19 @@ document.addEventListener('DOMContentLoaded',function(){
       <!-- KPI Row -->
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px" id="dash-kpi-row">
         <div class="card" style="padding:18px;text-align:center">
-          <div style="font-size:30px;font-weight:900;color:var(--gr-800)" id="dash-kpi-queries">—</div>
+          <div style="font-size:30px;font-weight:900;color:var(--gr-800)" id="dash-kpi-queries">…</div>
           <div style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin-top:5px">Total Queries</div>
         </div>
         <div class="card" style="padding:18px;text-align:center">
-          <div style="font-size:30px;font-weight:900;color:var(--sf-600)" id="dash-kpi-revenue">—</div>
+          <div style="font-size:30px;font-weight:900;color:var(--sf-600)" id="dash-kpi-revenue">…</div>
           <div style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin-top:5px">Total Revenue</div>
         </div>
         <div class="card" style="padding:18px;text-align:center">
-          <div style="font-size:30px;font-weight:900;color:var(--gr-600)" id="dash-kpi-users">—</div>
+          <div style="font-size:30px;font-weight:900;color:var(--gr-600)" id="dash-kpi-users">…</div>
           <div style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin-top:5px">Registered Users</div>
         </div>
         <div class="card" style="padding:18px;text-align:center">
-          <div style="font-size:30px;font-weight:900;color:var(--gr-700)" id="dash-kpi-firms">—</div>
+          <div style="font-size:30px;font-weight:900;color:var(--gr-700)" id="dash-kpi-firms">…</div>
           <div style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin-top:5px">Law Firms</div>
         </div>
       </div>
@@ -3539,9 +3539,21 @@ function loadDashboard(){
 
     // Pull live stats from MongoDB via api/admin/stats
     const tok=_getToken();
+    const _kpiZero=()=>{
+      ['dash-kpi-queries','dash-kpi-revenue','dash-kpi-users','dash-kpi-firms'].forEach(id=>{
+        const el=document.getElementById(id);if(el&&el.textContent==='…')el.textContent='0';
+      });
+    };
     if(tok){
       fetch(_apiUrl('/api/admin/stats'),{headers:{'Authorization':'Bearer '+tok}})
-        .then(r=>r.ok?r.json():null)
+        .then(r=>{
+          if(r.status===401){
+            _kpiZero();
+            showToast('⚠️ Admin session expired — please log out and log in again','error');
+            return null;
+          }
+          return r.ok?r.json():null;
+        })
         .then(data=>{
           if(data&&data.success&&data.stats){
             const s=data.stats;
@@ -3553,10 +3565,10 @@ function loadDashboard(){
             if(kr)kr.textContent=fmt(revenue); // Revenue once Razorpay is live
             if(ku)ku.textContent=s.totalUsers||0;
             if(kf)kf.textContent=s.approvedLawyers||s.totalLawyers||0;
-          }
+          } else if(data===null){ /* already handled */ } else { _kpiZero(); }
         })
-        .catch(()=>{});
-    }
+        .catch(()=>{ _kpiZero(); });
+    } else { _kpiZero(); }
     // Funnel
     const stageOrder=['query','analysis','signup','payment','consultation'];
     const stageColors={query:'#9CA3AF',analysis:'#F59E0B',signup:'#3B82F6',payment:'#10B981',consultation:'#8B5CF6'};
@@ -3575,10 +3587,12 @@ function loadDashboard(){
           if(data&&data.success&&data.topLaws&&data.topLaws.length){
             const maxFreq=data.topLaws[0].count||1;
             tlEl.innerHTML=data.topLaws.slice(0,8).map(({name,count},i)=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-size:11px;color:var(--text-light);width:18px;text-align:right">${i+1}</span><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--gr-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(name)}</div><div style="height:4px;background:var(--gr-200);border-radius:2px;margin-top:3px"><div style="height:100%;background:var(--gr-500);border-radius:2px;width:${Math.round(count/maxFreq*100)}%"></div></div></div><span style="font-size:12px;font-weight:700;color:var(--sf-600)">${count}</span></div>`).join('');
+          } else {
+            tlEl.innerHTML='<div style="padding:20px;text-align:center;color:var(--text-light);font-size:12px">No data yet — queries will appear here after users interact with the site.</div>';
           }
         })
-        .catch(()=>{});
-    }
+        .catch(()=>{ tlEl.innerHTML='<div style="padding:20px;text-align:center;color:var(--text-light);font-size:12px">Could not load data.</div>'; });
+    } else if(tlEl){ tlEl.innerHTML='<div style="padding:20px;text-align:center;color:var(--text-light);font-size:12px">No session — please log in.</div>'; }
     // Recent activity
     const sChip=(s)=>{const c={query:'#9CA3AF',analysis:'#F59E0B',signup:'#3B82F6',payment:'#10B981',consultation:'#8B5CF6'};const cl={query:'Query',analysis:'Analysis',signup:'Signed Up',payment:'Paid',consultation:'Consultation'};return`<span style="background:${c[s]||'#9CA3AF'}22;color:${c[s]||'#9CA3AF'};font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px;border:1px solid ${c[s]||'#9CA3AF'}44">${cl[s]||s}</span>`;};
     const ab=document.getElementById('dash-activity-body');
