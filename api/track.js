@@ -76,6 +76,24 @@ module.exports = async function handler(req, res) {
         ts:        new Date()
       });
     }
+
+    // ── Unmapped form submission — user submitted callback request for coverage gap ──
+    if (type === 'unmapped_form') {
+      const { name: nm, phone, detail, answers } = req.body || {};
+      await AnalyticsEvent.create({
+        event:     'unmapped_form',
+        sessionId: sessionId || 'anon',
+        query:     String(query || '').substring(0, 300),
+        data: {
+          name:   nm  ? String(nm).substring(0, 100)     : undefined,
+          phone:  phone ? String(phone).substring(0, 20)  : undefined,
+          email:  email ? String(email).substring(0, 100) : undefined,
+          detail: detail ? String(detail).substring(0, 600) : undefined,
+          answers: answers || {}
+        },
+        ts: new Date()
+      });
+    }
   } catch (err) {
     // Log but don't crash — response already sent
     console.error('[track]', err.message);

@@ -17,6 +17,23 @@ module.exports = async function handler(req, res) {
 
   if (!isAdmin(req)) return res.status(401).json({ success: false, message: 'Unauthorized' });
 
+  // Route: ?action=unmapped → coverage-gap form submissions
+  if (req.query.action === 'unmapped') {
+    try {
+      await connectDB();
+      const { AnalyticsEvent } = getModels();
+      const [total, recent] = await Promise.all([
+        AnalyticsEvent.countDocuments({ event: 'unmapped_form' }),
+        AnalyticsEvent.find({ event: 'unmapped_form' })
+          .sort({ ts: -1 }).limit(50)
+          .select('query data sessionId ts')
+      ]);
+      return res.json({ success: true, total, items: recent });
+    } catch (err) {
+      return res.status(500).json({ success: false, message: err.message });
+    }
+  }
+
   // Route: ?action=analytics → analytics summary (was admin/analytics/summary.js)
   if (req.query.action === 'analytics') {
     try {

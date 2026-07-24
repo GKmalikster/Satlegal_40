@@ -455,6 +455,9 @@ document.addEventListener('DOMContentLoaded',function(){
     <div class="sb-link" onclick="switchPanel('analytics',this)" data-panel="analytics">
       <span class="icon">📊</span> Analytics & Leads
     </div>
+    <div class="sb-link" onclick="switchPanel('coverage-gaps',this)" data-panel="coverage-gaps">
+      <span class="icon">🔍</span> Coverage Gaps
+    </div>
 
     <div class="sb-section">Integrations</div>
     <div class="sb-link" onclick="switchPanel('plans',this)" data-panel="plans">
@@ -531,6 +534,56 @@ document.addEventListener('DOMContentLoaded',function(){
             </thead>
             <tbody id="dash-activity-body">
               <tr><td colspan="5" style="padding:32px;text-align:center;color:var(--text-light)">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── COVERAGE GAPS ─── -->
+    <section class="panel" id="panel-coverage-gaps">
+      <div class="breadcrumb">CMS <span>›</span> <span>Coverage Gaps</span></div>
+      <div class="panel-header">
+        <div class="panel-title"><span class="icon">🔍</span> Coverage Gaps — Unmapped Query Submissions</div>
+        <button class="btn btn-outline btn-sm" onclick="loadCoverageGaps()">↺ Refresh</button>
+      </div>
+
+      <!-- KPI row -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px">
+        <div class="card" style="padding:16px;text-align:center">
+          <div style="font-size:26px;font-weight:900;color:var(--gr-800)" id="cg-kpi-total">…</div>
+          <div style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin-top:4px">Total Submissions</div>
+        </div>
+        <div class="card" style="padding:16px;text-align:center">
+          <div style="font-size:26px;font-weight:900;color:var(--sf-600)" id="cg-kpi-this-week">…</div>
+          <div style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin-top:4px">This Week</div>
+        </div>
+        <div class="card" style="padding:16px;text-align:center">
+          <div style="font-size:26px;font-weight:900;color:var(--gr-600)" id="cg-kpi-today">…</div>
+          <div style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin-top:4px">Today</div>
+        </div>
+      </div>
+
+      <!-- Submissions table -->
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:13px;font-weight:700;color:var(--text)">Recent Submissions</div>
+          <div style="font-size:12px;color:var(--text-light)">Users who submitted the callback form when their query wasn't matched</div>
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="background:var(--bg-light)">
+                <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap">Time</th>
+                <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px">User Query</th>
+                <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px">Name</th>
+                <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px">Phone</th>
+                <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px">Email</th>
+                <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px">Detail</th>
+              </tr>
+            </thead>
+            <tbody id="cg-table-body">
+              <tr><td colspan="6" style="padding:32px;text-align:center;color:var(--text-light)">Loading…</td></tr>
             </tbody>
           </table>
         </div>
@@ -2389,6 +2442,7 @@ function switchPanel(id, el) {
   if (id === 'pricing') loadPricingPanel();
   if (id === 'users') loadUsers();
   if (id === 'lawyers') loadLawyers();
+  if (id === 'coverage-gaps') loadCoverageGaps();
   if (id === 'cases') loadCases();
   if (id === 'team') loadTeam();
   if (id === 'custom-sections') loadCustomSections();
@@ -3601,6 +3655,62 @@ function loadDashboard(){
 }
 
 // ══════════════════════════════════════════════════════════════
+// COVERAGE GAPS PANEL
+// ══════════════════════════════════════════════════════════════
+async function loadCoverageGaps(){
+  const tok=_getToken();
+  if(!tok){showToast('Please log in first','error');return;}
+  const tbody=document.getElementById('cg-table-body');
+  if(tbody)tbody.innerHTML='<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--text-light)">Loading…</td></tr>';
+  try{
+    const r=await fetch(_apiUrl('/api/admin/stats?action=unmapped'),{headers:{'Authorization':'Bearer '+tok}});
+    if(r.status===401){showToast('⚠️ Session expired — please log in again','error');return;}
+    const data=await r.json();
+    if(!data.success){showToast('Failed to load coverage gaps','error');return;}
+    const items=data.items||[];
+    const now=Date.now();
+    const weekAgo=now-7*24*3600*1000;
+    const todayStart=new Date();todayStart.setHours(0,0,0,0);
+    const thisWeek=items.filter(i=>new Date(i.ts)>=weekAgo).length;
+    const today=items.filter(i=>new Date(i.ts)>=todayStart).length;
+    const kt=document.getElementById('cg-kpi-total'),kw=document.getElementById('cg-kpi-this-week'),kd=document.getElementById('cg-kpi-today');
+    if(kt)kt.textContent=data.total||0;
+    if(kw)kw.textContent=thisWeek;
+    if(kd)kd.textContent=today;
+    if(tbody){
+      if(!items.length){
+        tbody.innerHTML='<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--text-light)">No submissions yet — coverage gap forms will appear here once users submit them.</td></tr>';
+      } else {
+        tbody.innerHTML=items.map(item=>{
+          const d=item.data||{};
+          const ts=new Date(item.ts);
+          const timeStr=ts.toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+          return `<tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:10px 14px;font-size:12px;color:var(--text-light);white-space:nowrap">${escHtml(timeStr)}</td>
+            <td style="padding:10px 14px;font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(item.query||'')}">
+              ${escHtml((item.query||'—').substring(0,80))}
+            </td>
+            <td style="padding:10px 14px;font-size:12px;font-weight:600">${escHtml(d.name||'—')}</td>
+            <td style="padding:10px 14px;font-size:12px">
+              ${d.phone?`<a href="tel:${escHtml(d.phone)}" style="color:var(--gr-600);font-weight:700">${escHtml(d.phone)}</a>`:'—'}
+            </td>
+            <td style="padding:10px 14px;font-size:12px">
+              ${d.email?`<a href="mailto:${escHtml(d.email)}" style="color:var(--sf-600)">${escHtml(d.email)}</a>`:'—'}
+            </td>
+            <td style="padding:10px 14px;font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis" title="${escHtml(d.detail||'')}">
+              ${escHtml((d.detail||'—').substring(0,60))}
+            </td>
+          </tr>`;
+        }).join('');
+      }
+    }
+  }catch(e){
+    console.error('[loadCoverageGaps]',e);
+    if(tbody)tbody.innerHTML='<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--text-light)">Could not load data.</td></tr>';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
 // SALES PANEL
 // ══════════════════════════════════════════════════════════════
 function _applySalesData(sales, kpi) {
@@ -4252,6 +4362,7 @@ function seedDemoData() {
     else if (pid==='cases') loadCases();
     else if (pid==='sales') loadSales();
     else if (pid==='dashboard') loadDashboard();
+    else if (pid==='coverage-gaps') loadCoverageGaps();
   }
 }
 

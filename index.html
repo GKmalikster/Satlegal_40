@@ -1653,7 +1653,7 @@ function s1(){
   }
 
   // ── Context clarification: if query is vague, replace generic Qs with targeted context Qs ──
-  const domainSignals=/employer|salary|fired|terminate|property|rent|tenant|landlord|police|fir|arrest|fraud|cheat|scam|upi|divorce|husband|wife|maintenance|custody|dowry|assault|threat|harass|money|loan|bank|builder|rera|consumer|defect|negligence|cyber|hack|job|court|notice|legal|murder|kill|dead|died|death|poison|attack|stab|shoot|accident|injury|injur|hospital|stolen|theft|robbery|rape|molest|crimin|bribe|corrupt|blackmail|extort|kidnap|missing|disappear/i;
+  const domainSignals=/employer|salary|fired|terminate|property|rent|tenant|landlord|police|fir|arrest|fraud|cheat|scam|upi|divorce|husband|wife|maintenance|custody|dowry|assault|threat|harass|money|loan|bank|builder|rera|consumer|defect|negligence|cyber|hack|job|court|notice|legal|murder|kill|dead|died|death|poison|attack|stab|shoot|accident|injury|injur|hospital|stolen|theft|robbery|rape|molest|crimin|bribe|corrupt|blackmail|extort|kidnap|missing|disappear|car|vehicle|bike|motorcycle|scooter|gaadi|damage|damaged|window|windshield|scratch|dent|vandal|mcd|bmc|bbmp|municipal|demolish|demolition|bulldoze|nagar|panchayat|sealed|sealing/i;
   const isVague=txt.length<70||!domainSignals.test(txt);
 
   // ── No initial match: domain signal present but keyword engine found nothing ──
@@ -1667,11 +1667,11 @@ function s1(){
     // Query is vague OR no keyword match — use targeted context questions
     const ctxQs=[
       {id:'ctx_nature',question:'What best describes the nature of your issue?',type:'radio',
-       options:['Criminal — someone committed a crime against me or my family','I am being accused / blamed for something (I need to defend myself)','Financial fraud — money taken by deception or false promises','Employment — salary, termination, workplace rights','Property / Land / Builder dispute','Family — divorce, custody, maintenance, domestic violence','Medical — hospital or doctor treatment gone wrong','Consumer — defective product or poor service','Cyber crime / Online fraud','Others — my situation does not fit any of the above']},
+       options:['Criminal — someone committed a crime against me or my family','I am being accused / blamed for something (I need to defend myself)','Financial fraud — money taken by deception or false promises','Employment — salary, termination, workplace rights','Vehicle / car / bike — damaged, stolen, or accident','Property / Land / Builder / RERA dispute','Government authority action — MCD / BMC / Municipal / Sealing / Demolition','Family — divorce, custody, maintenance, domestic violence','Consumer — defective product, poor service, or medical negligence','Cyber crime / Online fraud / UPI fraud','Others — my situation does not fit any of the above']},
       {id:'ctx_party',question:'Who is the other party or what happened?',type:'radio',
-       options:['A stranger or unknown person committed a crime against me / my family','A family member or relative (domestic)','My employer or company','A hospital, doctor, or medical professional','A government authority or police','A builder, landlord, or property developer','A bank, lender, or financial institution','An online seller or platform','Others — none of the above']},
+       options:['A stranger / unknown person committed a crime against me','A neighbour, known person, or acquaintance damaged my property/vehicle','A family member or relative (domestic matter)','My employer or company','A hospital, doctor, or medical professional','A government authority, MCD, BMC, or police','A builder, landlord, or property developer','A bank, lender, or financial institution','An online seller, platform, or unknown caller (cyber)','Others — none of the above']},
       {id:'ctx_harm',question:'What specifically happened?',type:'radio',
-       options:['Someone died / was killed (not in hospital — suspicious / violent death)','A patient died in hospital — doctor / family blaming each other','Sexual assault, rape, or sexual violence occurred','Physical violence or assault occurred (victim is alive)','Money was taken by fraud, deception, or false promise','I was fired, not paid, or my workplace rights were violated','A family dispute — divorce, custody, dowry, domestic violence','Property or inheritance dispute after someone\'s death','Others — something else happened']},
+       options:['Someone died / was killed (suspicious / violent death)','A patient died in hospital — negligence suspected','Sexual assault, rape, or sexual violence occurred','Physical violence or assault occurred (victim is alive)','My car / vehicle / bike was damaged, scratched, or vandalized','Government / MCD / Municipal demolished or sealed my property without proper notice','Money was taken by fraud, deception, or false promise','I was fired, not paid, or my workplace rights were violated','A family dispute — divorce, custody, dowry, domestic violence','Others — something else happened']},
     ];
     qs = qs.length ? [...ctxQs, ...qs] : ctxQs;
   } else if(!qs.length){
@@ -1891,10 +1891,18 @@ function renderQs(){
       <div class="qtitle" id="qt_${q.id}">${i+1}. ${esc(q.question)}</div>`;
     if(q.tip)h+=`<div class="qtip" role="note" aria-label="Tip: ${esc(q.tip)}">${esc(q.tip)}</div>`;
     if(q.type==='select'){
-      h+=`<select class="qsel" id="q_${q.id}" aria-labelledby="qt_${q.id}" onchange="W.answers['${q.id}']=this.value;updateQProgress()">
+      h+=`<select class="qsel" id="q_${q.id}" aria-labelledby="qt_${q.id}" onchange="W.answers['${q.id}']=this.value;updateQProgress();_chkSelOther('${q.id}',this.value)">
         <option value="">-- Select an option --</option>`;
       (q.options||[]).forEach(o=>h+=`<option value="${esc(o)}">${esc(o)}</option>`);
-      h+=`</select>`;
+      h+=`</select>
+      <div id="sel_other_box_${q.id}" style="display:none;margin-top:8px">
+        <input type="text" id="sel_other_txt_${q.id}" maxlength="200"
+          placeholder="Please briefly describe your specific situation…"
+          style="width:100%;padding:9px 12px;border:1.5px solid var(--sf-300);border-radius:8px;font-size:13px;color:var(--text);outline:none;box-sizing:border-box"
+          onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--sf-300)'"
+          oninput="W.answers['${q.id}']='Other — '+this.value;updateQProgress()"
+          aria-label="Describe your situation"/>
+      </div>`;
     } else {
       h+=`<div class="qopts" role="radiogroup" aria-labelledby="qt_${q.id}">`;
       (q.options||[]).forEach((o,oi)=>{
@@ -1954,6 +1962,17 @@ function selOpt(qId,oi,val){
 function saveOthersText(qId, text){
   W.answers[qId] = text.trim() ? 'Others — ' + text.trim() : 'Others';
   updateQProgress();
+}
+function _chkSelOther(qId, val){
+  const box=document.getElementById('sel_other_box_'+qId);
+  if(!box)return;
+  const isOther = val==='Other'||val.startsWith('Other');
+  box.style.display = isOther ? 'block' : 'none';
+  if(!isOther){
+    const txt=document.getElementById('sel_other_txt_'+qId);
+    if(txt)txt.value='';
+    W.answers[qId]=val;
+  }
 }
 
 /* ══ STEP 2 ══ */
@@ -2017,40 +2036,96 @@ function renderNoMatch(){
 
   const c=document.getElementById('lawCont');
   c.innerHTML=`
-    <div style="background:#fff;border:1.5px solid #e2e6ea;border-radius:14px;padding:24px 22px;text-align:center;max-width:620px;margin:0 auto">
-      <div style="font-size:40px;margin-bottom:10px">🔍</div>
-      <div style="font-size:17px;font-weight:800;color:#0D3D0D;margin-bottom:8px">Thank you for your query</div>
-      <p style="font-size:13.5px;color:#5c5c7a;line-height:1.7;margin-bottom:18px">
-        This matter is not covered in our current law database. Please write to us at <a href="mailto:legal@satlegal.in" style="color:#138808;font-weight:700">legal@satlegal.in</a> and our team will guide you to the right expert.
-      </p>
+    <div style="background:#fff;border:1.5px solid #e2e6ea;border-radius:14px;padding:24px 22px;max-width:620px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:18px">
+        <div style="font-size:36px;margin-bottom:8px">🔍</div>
+        <div style="font-size:17px;font-weight:800;color:#0D3D0D;margin-bottom:6px">Thank you for your query</div>
+        <p style="font-size:13px;color:#5c5c7a;line-height:1.6;margin:0">
+          This matter is not covered in our current law database. Please fill in your details below and our legal team will review and respond within <strong>24 hours</strong>.
+        </p>
+      </div>
 
-      <div style="background:#f8f9fa;border-radius:10px;padding:14px 16px;margin-bottom:18px;text-align:left">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#138808;margin-bottom:8px">What SatLegal covers</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px">
-          ${['Criminal / BNS 2023','Family & Divorce','Property & RERA','Employment & Labour','Consumer Rights','Cyber Crime','Civil Suits','Constitutional / PIL','Tax & GST','NRI Matters','Corporate / IBC','Motor Accident','Medical Negligence','Evidence / BSA 2023'].map(t=>`<span style="background:#F0F9F0;border:1px solid #99DD99;border-radius:6px;padding:3px 9px;font-size:11px;font-weight:600;color:#0A5204">${t}</span>`).join('')}
+      <!-- Callback / submission form -->
+      <div id="nm-form-wrap" style="background:#F0F9F0;border:1.5px solid #b8e0b8;border-radius:10px;padding:16px;margin-bottom:16px">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#138808;margin-bottom:12px">Submit your query for expert review</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <input id="nm-name" type="text" placeholder="Your full name *" maxlength="100"
+            style="padding:10px 13px;border:1.5px solid #cce8cc;border-radius:8px;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box"
+            onfocus="this.style.borderColor='#138808'" onblur="this.style.borderColor='#cce8cc'"/>
+          <input id="nm-phone" type="tel" placeholder="Mobile number *" maxlength="15"
+            style="padding:10px 13px;border:1.5px solid #cce8cc;border-radius:8px;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box"
+            onfocus="this.style.borderColor='#138808'" onblur="this.style.borderColor='#cce8cc'"/>
+          <input id="nm-email" type="email" placeholder="Email address (optional)" maxlength="100"
+            style="padding:10px 13px;border:1.5px solid #cce8cc;border-radius:8px;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box"
+            onfocus="this.style.borderColor='#138808'" onblur="this.style.borderColor='#cce8cc'"/>
+          <textarea id="nm-detail" placeholder="Describe your issue in more detail (optional — helps us find the right expert faster)" maxlength="600" rows="3"
+            style="padding:10px 13px;border:1.5px solid #cce8cc;border-radius:8px;font-size:13px;font-family:inherit;outline:none;resize:vertical;width:100%;box-sizing:border-box"
+            onfocus="this.style.borderColor='#138808'" onblur="this.style.borderColor='#cce8cc'"></textarea>
+          <button onclick="submitUnmappedForm()"
+            style="background:#0D3D0D;color:#fff;border:none;border-radius:9px;padding:12px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">
+            Submit — Request Expert Callback
+          </button>
+        </div>
+        <div style="font-size:11px;color:#5c5c7a;margin-top:10px;text-align:center">
+          Or write directly to <a href="mailto:legal@satlegal.in" style="color:#138808;font-weight:700">legal@satlegal.in</a>
         </div>
       </div>
 
-      <div style="margin-bottom:14px">
-        <div style="font-size:13px;color:#5c5c7a;margin-bottom:12px">
-          <strong style="color:#0D3D0D">Recommended next steps:</strong>
+      <div style="background:#f8f9fa;border-radius:10px;padding:12px 14px;margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#138808;margin-bottom:8px">What SatLegal covers</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          ${['Criminal / BNS 2023','Family & Divorce','Property & RERA','Employment & Labour','Consumer Rights','Cyber Crime','Civil Suits','Constitutional / PIL','Tax & GST','NRI Matters','Corporate / IBC','Motor Accident','Medical Negligence','Vehicle Damage'].map(t=>`<span style="background:#F0F9F0;border:1px solid #99DD99;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;color:#0A5204">${t}</span>`).join('')}
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <a href="contact.html" style="display:flex;align-items:center;gap:10px;background:#0D3D0D;color:#fff;border-radius:9px;padding:11px 16px;text-decoration:none;font-size:13px;font-weight:700">
-            <span style="font-size:16px">📞</span>
-            <span>Speak to a SatLegal lawyer — we'll find the right expert for your matter</span>
-          </a>
-          <a href="lawyers.html" style="display:flex;align-items:center;gap:10px;background:#FF9933;color:#fff;border-radius:9px;padding:11px 16px;text-decoration:none;font-size:13px;font-weight:700">
-            <span style="font-size:16px">⚖️</span>
-            <span>Browse verified lawyers by specialisation</span>
-          </a>
-        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+        <a href="lawyers.html" style="display:flex;align-items:center;gap:10px;background:#FF9933;color:#fff;border-radius:9px;padding:10px 14px;text-decoration:none;font-size:13px;font-weight:700">
+          <span>⚖️</span><span>Browse verified lawyers by specialisation</span>
+        </a>
       </div>
 
       <button onclick="resetW();showStep(1);document.getElementById('btnNext').style.display='';document.getElementById('issueTa').focus()"
-        style="background:transparent;border:1.5px solid #e2e6ea;border-radius:8px;padding:9px 20px;font-size:13px;color:#5c5c7a;cursor:pointer;font-family:inherit;margin-top:4px">
+        style="background:transparent;border:1.5px solid #e2e6ea;border-radius:8px;padding:9px 20px;font-size:13px;color:#5c5c7a;cursor:pointer;font-family:inherit;width:100%">
         ← Try a different description
       </button>
+    </div>`;
+}
+
+async function submitUnmappedForm(){
+  const name=(document.getElementById('nm-name')||{}).value||'';
+  const phone=(document.getElementById('nm-phone')||{}).value||'';
+  const email=(document.getElementById('nm-email')||{}).value||'';
+  const detail=(document.getElementById('nm-detail')||{}).value||'';
+  if(!name.trim()||!phone.trim()){toast('Please enter your name and mobile number.','err');return;}
+  const btn=document.querySelector('#nm-form-wrap button');
+  if(btn){btn.disabled=true;btn.textContent='Submitting…';}
+  try{
+    await fetch('/api/track',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        type:'unmapped_form',
+        sessionId:W.sid||'anon',
+        query:(W.input||'').substring(0,300),
+        answers:W.answers,
+        name:name.trim(),
+        phone:phone.trim(),
+        email:email.trim(),
+        detail:detail.trim().substring(0,600)
+      })
+    });
+  }catch(e){}
+  // Replace form with confirmation
+  const wrap=document.getElementById('nm-form-wrap');
+  if(wrap)wrap.innerHTML=`
+    <div style="text-align:center;padding:16px 0">
+      <div style="font-size:32px;margin-bottom:8px">✅</div>
+      <div style="font-size:15px;font-weight:800;color:#0D3D0D;margin-bottom:6px">Query Submitted!</div>
+      <p style="font-size:13px;color:#5c5c7a;line-height:1.6;margin:0">
+        Thank you, <strong>${esc(name.trim())}</strong>. Our legal team will review your query and contact you on <strong>${esc(phone.trim())}</strong> within 24 hours.
+      </p>
+      <div style="margin-top:10px;font-size:12px;color:#5c5c7a">
+        Reference: <strong style="color:#138808">${(W.sid||'anon').toUpperCase()}</strong>
+      </div>
     </div>`;
 }
 
@@ -2614,6 +2689,26 @@ function getAssessmentQs(law){
       {q:'Do you have documented evidence of the public harm?',opts:['Yes — reports, photos, scientific data','Media reports and public complaints','Personal observation — no formal documentation','NGO or group supporting with data']},
       {q:'Is the violation ongoing or has it caused irreversible damage?',opts:['Ongoing — immediate relief needed','Past damage — seeking compensation','Project approved — preventive action needed','Policy challenge — no immediate harm']},
       {q:'Are you filing individually or as part of a group / NGO?',opts:['Individual petition','NGO or registered body filing','Group of affected residents','Public-spirited citizen (no personal interest)']},
+    ];
+  }
+
+  // ── Municipal / Local Body / Demolition ───────────────────────────────────
+  if(ct.includes('municipal')||ct.includes('shop sealing')||ct.includes('demolition')||ct.includes('local body')){
+    return [
+      {q:'Did you receive a formal written notice before the demolition or sealing action?',opts:['No — action taken without any prior notice','Yes — received notice but disagree with the reason','Notice was issued but served very recently (no time to respond)','Received notice — time to respond has not expired yet']},
+      {q:'Is the construction / floor in question approved in your sanctioned building plan?',opts:['Yes — fully approved in sanctioned plan','Partially approved — some unauthorised additions','No formal approval — built without plan sanction','Plan approval applied for — still pending']},
+      {q:'Has a lawyer reviewed the demolition / sealing order yet?',opts:['No — seeking legal advice urgently','Yes — filed a stay application in High Court','Yes — sent reply to notice but no response','Filed complaint at local authority / ward office']},
+      {q:'What government body issued the action?',opts:['MCD (Municipal Corporation of Delhi)','BMC / MCGM (Mumbai)','BBMP (Bengaluru)','Nagar Nigam / Nagar Panchayat (other state)','State Housing Board or Development Authority']},
+    ];
+  }
+
+  // ── Vehicle / Car / Bike Damage / Vandalism ────────────────────────────────
+  if(ct.includes('mischief')||ct.includes('vandalism')||ct.includes('property damage')){
+    return [
+      {q:'What was damaged or vandalized?',opts:['Car / four-wheeler','Bike / motorcycle / scooter','Both car and property (home gate, window, etc.)','Property (house gate, door, window, boundary wall)','Other personal belonging']},
+      {q:'Who caused the damage?',opts:['A neighbour (identified person)','An unknown person / stranger','Someone I know but not a neighbour','It appears accidental — no intention confirmed','Caused by a third party vehicle / accident']},
+      {q:'Was the incident captured on CCTV or witnessed by someone?',opts:['Yes — CCTV footage available','Yes — eyewitnesses present','Both CCTV and witnesses','No footage or witnesses — my word only','Partial evidence — not fully clear']},
+      {q:'Has a police complaint or FIR been filed?',opts:['FIR already registered — police are investigating','Complaint given — police asking for more evidence','Police refused to register FIR','No complaint filed yet — seeking advice','Sent legal notice to the person instead']},
     ];
   }
 
