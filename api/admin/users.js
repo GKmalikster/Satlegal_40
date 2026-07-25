@@ -25,15 +25,28 @@ function _rlCheck(ip) {
   e.n++; _rl.set(ip, e); return true;
 }
 
-// ── Load admin users from ADMIN_USERS env var ─────────────────────────────────
+// ── Load admin users from env vars — NO hardcoded fallbacks ──────────────────
+// Set ADMIN_USERS (JSON array) for multiple admins, or ADMIN_EMAIL + ADMIN_PASSWORD for one.
+// If neither is configured the login endpoint returns 503.
 function _getAdmins() {
-  try { if (process.env.ADMIN_USERS) return JSON.parse(process.env.ADMIN_USERS); } catch {}
-  return [{
-    email:    process.env.ADMIN_EMAIL    || 'tester@satlegal.in',
-    password: process.env.ADMIN_PASSWORD || 'SL@QA#8847',
-    name:     'SatLegal Admin',
-    role:     'superadmin'
-  }];
+  if (process.env.ADMIN_USERS) {
+    try { return JSON.parse(process.env.ADMIN_USERS); } catch { return []; }
+  }
+  const email    = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+  if (!email || !password) return [];           // no credentials configured → login will 503
+  return [{ email, password, name: 'SatLegal Admin', role: 'superadmin' }];
+}
+
+// ── Timing-safe string comparison (prevents timing-based credential leakage) ──
+function _safeEqual(a, b) {
+  const ba = Buffer.from(String(a)), bb = Buffer.from(String(b));
+  // Always run timingSafeEqual on equal-length buffers to prevent length leakage
+  const safe = Buffer.alloc(Math.max(ba.length, bb.length));
+  ba.copy(safe); // fill with a, compare with padded b
+  const bb2 = Buffer.alloc(safe.length); bb.copy(bb2);
+  const match = crypto.timingSafeEqual(safe, bb2);
+  return match && ba.length === bb.length;
 }
 
 function hashPassword(password) {
@@ -58,13 +71,18 @@ module.exports = async function handler(req, res) {
     if (!process.env.ADMIN_SECRET) {
       return res.status(503).json({ success: false, message: 'Server configuration error.' });
     }
+    const admins = _getAdmins();
+    if (!admins.length) {
+      return res.status(503).json({ success: false, message: 'Server configuration error.' });
+    }
     const ip = ((req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0]).trim();
     if (!_rlCheck(ip)) {
       return res.status(429).json({ success: false, message: 'Too many login attempts. Wait 15 minutes.' });
     }
     const { email = '', password = '' } = req.body || {};
     if (!email || !password) return res.status(400).json({ success: false, message: 'email and password required' });
-    const user = _getAdmins().find(u => u.email.toLowerCase() === email.toLowerCase().trim() && u.password === password);
+    const emailNorm = email.toLowerCase().trim();
+    const user = admins.find(u => u.email.toLowerCase() === emailNorm && _safeEqual(u.password, password));
     if (!user) return res.status(401).json({ success: false, message: 'Invalid email or password' });
     const token = makeToken(user.email, user.role);
     return res.json({ success: true, token, user: { email: user.email, name: user.name, role: user.role } });
