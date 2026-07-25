@@ -1653,7 +1653,7 @@ function s1(){
   }
 
   // ── Context clarification: if query is vague, replace generic Qs with targeted context Qs ──
-  const domainSignals=/employer|salary|fired|terminate|property|rent|tenant|landlord|police|fir|arrest|fraud|cheat|scam|upi|divorce|husband|wife|maintenance|custody|dowry|assault|threat|harass|money|loan|bank|builder|rera|consumer|defect|negligence|cyber|hack|job|court|notice|legal|murder|kill|dead|died|death|poison|attack|stab|shoot|accident|injury|injur|hospital|stolen|theft|robbery|rape|molest|crimin|bribe|corrupt|blackmail|extort|kidnap|missing|disappear|car|vehicle|bike|motorcycle|scooter|gaadi|damage|damaged|window|windshield|scratch|dent|vandal|mcd|bmc|bbmp|municipal|demolish|demolition|bulldoze|nagar|panchayat|sealed|sealing/i;
+  const domainSignals=/employer|salary|fired|terminate|property|rent|tenant|landlord|police|fir|arrest|fraud|cheat|scam|upi|divorce|husband|wife|maintenance|custody|dowry|assault|threat|harass|money|loan|bank|builder|rera|consumer|defect|negligence|cyber|hack|job|court|notice|legal|murder|kill|dead|died|death|poison|attack|stab|shoot|accident|injury|injur|hospital|stolen|theft|robbery|rape|molest|crimin|bribe|corrupt|blackmail|extort|kidnap|missing|disappear|car|vehicle|bike|motorcycle|scooter|gaadi|damage|damaged|window|windshield|scratch|dent|vandal|mcd|bmc|bbmp|municipal|demolish|demolition|bulldoze|nagar|panchayat|sealed|sealing|defam|slander|libel|reputation|insult|humiliat|character assassin|false allegation|false accusation|spread rumour|spread rumor|badnaam|badnam/i;
   const isVague=txt.length<70||!domainSignals.test(txt);
 
   // ── No initial match: domain signal present but keyword engine found nothing ──
@@ -2641,6 +2641,16 @@ function getAssessmentQs(law){
       {q:'Were your personal documents used fraudulently?',opts:['Yes — Aadhaar/PAN misused','Bank account opened in my name','Loan taken using my identity','Social media impersonation']},
       {q:'Have you filed a complaint with CERT-In or cybercrime portal?',opts:['Yes — CERT-In notified','Cybercrime portal complaint filed','Police complaint only','Not yet filed']},
       {q:'Have you immediately secured all affected accounts?',opts:['Yes — passwords changed, accounts secured','Partially secured','Bank accounts frozen by bank','Not yet — unsure what to secure']},
+    ];
+  }
+
+  // ── Defamation / Reputation / False Statements ────────────────────────────
+  if(ct.includes('defamation')||ct.includes('reputation')||ct.includes('false statement')||ct.includes('slander')||ct.includes('libel')){
+    return [
+      {q:'In what form was the defamatory statement made?',opts:['Spoken / verbal — in front of others','Written message or letter (WhatsApp, email, letter)','Posted on social media (Facebook, Instagram, YouTube, etc.)','Published in a newspaper, magazine, or online article']},
+      {q:'Who made the defamatory statement about you?',opts:['A neighbour or known person in the locality','A colleague, employer, or business associate','An unknown person or anonymous online account','A public figure, media outlet, or organisation']},
+      {q:'Do you have evidence of the defamatory statement?',opts:['Yes — screenshot or recording saved','Yes — witnesses who heard or saw the statement','Yes — printed copy or published link','No evidence yet — it was verbal with no recording']},
+      {q:'What specific harm has the statement caused you?',opts:['Damaged social or family reputation in the community','Lost a job, business, or professional opportunity','Severe mental distress, anxiety, or social withdrawal','Financial loss directly linked to the reputation damage']},
     ];
   }
 
