@@ -39,14 +39,17 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  // Always respond 200 immediately — this must never slow the user down
-  res.status(200).json({ ok: true });
-
+  // ── Save to MongoDB BEFORE responding ─────────────────────────────────────────
+  // Vercel freezes/terminates Lambda after res.end() — any await after the response
+  // is silently dropped. We save first (with a 4s timeout guard), then respond.
   try {
     const { type, query, laws = [], sessionId, source, stage, email, name } = req.body || {};
-    if (!type) return;
+    if (!type) return res.status(200).json({ ok: true });
 
-    await connectDB();
+    await Promise.race([
+      connectDB(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('db_timeout')), 4000))
+    ]);
     const { SearchQuery, AnalyticsEvent } = getModels();
 
     if (type === 'search' && query) {
@@ -95,7 +98,9 @@ module.exports = async function handler(req, res) {
       });
     }
   } catch (err) {
-    // Log but don't crash — response already sent
     console.error('[track]', err.message);
   }
+
+  // Respond after all saves complete (or after timeout/error — never leave client hanging)
+  return res.status(200).json({ ok: true });
 };
