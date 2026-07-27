@@ -3417,16 +3417,45 @@ if (typeof showToast === 'undefined') {
 // ══════════════════════════════════════════════════════════════
 let _firms = [];
 
-function loadFirmsPanel() {
-  try { _firms = JSON.parse(localStorage.getItem('sl_law_firms') || '[]'); } catch(e) { _firms = []; }
-  if (!_firms.length) {
-    _firms = [
-      {name:'Sharma & Associates',barno:'BCI/MH/2012/1234',specs:['Family Law','Divorce & Matrimonial','Succession & Inheritance'],city:'Mumbai',state:'Maharashtra',phone:'+91 98201 45678',email:'info@sharmaassociates.in',bio:'15+ years in family law and succession matters.',icon:'⚖️',status:'active',fee:2500,registeredAt:new Date().toISOString()},
-      {name:'Kapoor Legal Consultants',barno:'BCI/DL/2015/5678',specs:['Property & Real Estate','Civil Litigation','Land Acquisition'],city:'New Delhi',state:'Delhi',phone:'+91 98110 23456',email:'info@kaporlegal.in',bio:'Specialists in property disputes and RERA complaints.',icon:'🏛️',status:'active',fee:2500,registeredAt:new Date().toISOString()},
-      {name:'R. Krishnamurthy & Co.',barno:'BCI/KA/2010/9012',specs:['Criminal Law','Cyber Law','IP & Trademark'],city:'Bengaluru',state:'Karnataka',phone:'+91 98440 34567',email:'info@rklaw.in',bio:'Expert criminal defence and cyber crime lawyers.',icon:'👨‍⚖️',status:'active',fee:2500,registeredAt:new Date().toISOString()},
-    ];
-    _saveFirms();
+async function loadFirmsPanel() {
+  // ── Clear dummy localStorage data on first run ──────────────────────────────
+  localStorage.removeItem('sl_law_firms');
+  _firms = [];
+
+  const el = document.getElementById('lf-firms-list');
+  if (el) el.innerHTML = '<div style="text-align:center;padding:28px;color:var(--text-light);font-size:13px">Loading…</div>';
+
+  try {
+    const tok = _getToken();
+    if (!tok) { if(el) el.innerHTML='<div style="text-align:center;padding:28px;color:var(--text-light)">Please log in to view registrations.</div>'; return; }
+
+    const r = await fetch(_apiUrl('/api/admin/lawyers'), { headers: { 'Authorization': 'Bearer ' + tok } });
+    if (!r.ok) throw new Error('API ' + r.status);
+    const data = await r.json();
+
+    // Map MongoDB LawyerProfile fields → _firms format
+    _firms = (data.lawyers || []).map(l => ({
+      _id:    l._id,
+      name:   l.name || '—',
+      barno:  l.barCouncilNumber || '',
+      specs:  l.specializations || [],
+      city:   l.city || '',
+      state:  l.state || '',
+      phone:  l.phone || '',
+      email:  l.email || '',
+      bio:    '',
+      icon:   '⚖️',
+      status: l.status === 'approved' ? 'active' : (l.status || 'pending'),
+      fee:    (l.feeStructure && l.feeStructure.consultationFee) || l.feeStructure || 2500,
+      registeredAt: l.createdAt,
+      _mongoId: l._id   // keep for PUT calls
+    }));
+  } catch(e) {
+    console.error('[loadFirmsPanel]', e);
+    if(el) el.innerHTML='<div style="text-align:center;padding:28px;color:var(--danger)">Could not load lawyer registrations.</div>';
+    return;
   }
+
   _updateFirmStats();
   renderFirmsList();
 }
@@ -3561,18 +3590,47 @@ function saveFirmEntry() {
   renderFirmsList();
 }
 
-function toggleFirmStatus(i) {
-  _firms[i].status = _firms[i].status === 'active' ? 'inactive' : 'active';
-  _saveFirms();
-  showToast('Firm ' + (_firms[i].status==='active'?'activated':'paused') + '.', 'success');
-  _updateFirmStats(); renderFirmsList();
+async function toggleFirmStatus(i) {
+  const f = _firms[i];
+  if (!f) return;
+  const mongoId = f._mongoId || f._id;
+  if (!mongoId) { showToast('Cannot update — no database ID.', 'error'); return; }
+  // active → suspended, anything else → approved
+  const newStatus = f.status === 'active' ? 'suspended' : 'approved';
+  try {
+    const tok = _getToken();
+    const r = await fetch(_apiUrl('/api/admin/lawyers'), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok },
+      body: JSON.stringify({ lawyerId: mongoId, status: newStatus })
+    });
+    if (!r.ok) throw new Error('API ' + r.status);
+    showToast('Lawyer ' + (newStatus==='approved'?'activated':'suspended') + '.', 'success');
+    await loadFirmsPanel();
+  } catch(e) {
+    showToast('Update failed: ' + e.message, 'error');
+  }
 }
 
-function deleteFirmEntry(i) {
-  if (!confirm('Delete "' + _firms[i].name + '"? This cannot be undone.')) return;
-  _firms.splice(i, 1);
-  _saveFirms();
-  showToast('Firm deleted.', 'error');
+async function deleteFirmEntry(i) {
+  const f = _firms[i];
+  if (!f || !confirm('Reject "' + f.name + '"? This will mark them as rejected in MongoDB.')) return;
+  const mongoId = f._mongoId || f._id;
+  if (!mongoId) { showToast('Cannot update — no database ID.', 'error'); return; }
+  try {
+    const tok = _getToken();
+    const r = await fetch(_apiUrl('/api/admin/lawyers'), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok },
+      body: JSON.stringify({ lawyerId: mongoId, status: 'rejected' })
+    });
+    if (!r.ok) throw new Error('API ' + r.status);
+    showToast('Lawyer rejected.', 'error');
+    await loadFirmsPanel();
+  } catch(e) {
+    showToast('Reject failed: ' + e.message, 'error');
+  }
+  // legacy fallback for localStorage-only entries:
   _updateFirmStats(); renderFirmsList();
 }
 
