@@ -2037,7 +2037,7 @@ const LAWS_DATABASE = [
       "Industrial Employment Standing Orders Act",
       "Specific performance of employment contract (contract breach)",
       "Service law violation (government and public sector employees)",
-      "Minimum wages violation (Payment of Wages Act)",
+      "Minimum wages violation (Code on Wages 2019)",
       "Shops and establishments act violation",
       "PF gratuity ESIC non-payment remedy",
       "POSH wrongful termination after harassment complaint",
@@ -2109,7 +2109,7 @@ const LAWS_DATABASE = [
   {
     "caseType": "Employment – Salary Dues / PF / Gratuity",
     "lawCategory": "Labour & Employment",
-    "actName": "Payment of Wages Act, 1936 + EPF Act, 1952 + Gratuity Act, 1972",
+    "actName": "Code on Wages, 2019 + Code on Social Security, 2020 (EPF & Gratuity)",
     "keywords": {
       "exact": [
         "employer not paying salary",
@@ -2334,11 +2334,10 @@ const LAWS_DATABASE = [
       ]
     },
     "sections": [
-      "Payment of Wages Act Sec 3, 15",
-      "Minimum Wages Act Sec 22",
-      "EPF & MP Act Sec 7A",
-      "Payment of Gratuity Act Sec 7, 8, 9",
-      "Labour Codes 2020",
+      "Code on Wages 2019 – Sec 12 (payment of wages), Sec 13 (deductions)",
+      "Code on Wages 2019 – Sec 6, 7, 8 (minimum wages)",
+      "Code on Social Security 2020 – Sec 15, 17 (EPF / provident fund)",
+      "Code on Social Security 2020 – Sec 53, 54 (gratuity — 5 years service)",
       "Wrongful termination remedy (Labour Court)",
       "Minimum wages violation redressal",
       "Shops and establishments compliance",
@@ -2385,7 +2384,7 @@ const LAWS_DATABASE = [
       },
       {
         "q": "Have you completed 5 years of continuous service? (for gratuity)",
-        "tip": "Gratuity is payable after 5 years. Formula: 15 days x basic salary x completed years."
+        "tip": "Gratuity is payable after 5 years under Code on Social Security 2020. Formula: 15 days x basic salary x completed years."
       },
       {
         "q": "Is your employer depositing PF as shown in salary slip?",
@@ -2679,8 +2678,8 @@ const LAWS_DATABASE = [
       "Shops & Establishments Act (State-specific)",
       "Labour Code on Occupational Safety 2020",
       "Labour Code on Wages 2019",
-      "EPF Act 1952",
-      "ESI Act 1948",
+      "Code on Social Security 2020 (EPF / Gratuity)",
+      "ESI Act 1948 / Code on Social Security 2020",
       "Minimum wages protection (daily wage workers)",
       "Wrongful termination remedy for shop workers",
       "Industrial dispute contractor worker benefits (wrongful termination industrial dispute)"

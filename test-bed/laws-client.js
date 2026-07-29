@@ -2120,7 +2120,7 @@ const LAWS_DATABASE = [
   {
     caseType: 'Employment – Minimum Wages / Payment of Wages Act',
     lawCategory: 'Employment',
-    actName: 'Minimum Wages Act, 1948 / Payment of Wages Act, 1936 / Code on Wages, 2019',
+    actName: 'Code on Wages, 2019',
     quickTip: 'File a complaint with the Labour Commissioner of your state or approach the Minimum Wages Authority.',
     keywords: {
       exact: ['minimum wages complaint','below minimum wage','minimum wage violation','payment of wages act','salary not paid','wages withheld','wages delayed','employer not paying salary','salary held','salary delayed three months','labour commissioner complaint','minimum wage authority','unpaid wages','salary arrears','wage theft','contract labour wages','wages less than minimum','daily wage dispute','unskilled worker wages','construction worker wages','domestic worker wages','factory worker wages not paid','minimum wage notification'],
