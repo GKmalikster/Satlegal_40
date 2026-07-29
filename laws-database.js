@@ -1730,7 +1730,7 @@ const LAWS_DATABASE = [
   {
     "caseType": "Employment – Wrongful Termination / Illegal Dismissal",
     "lawCategory": "Labour & Employment",
-    "actName": "Industrial Disputes Act, 1947 + Labour Codes 2020",
+    "actName": "Industrial Relations Code, 2020 (replaces Industrial Disputes Act 1947)",
     "keywords": {
       "exact": [
         "employer fraud",
@@ -9065,7 +9065,7 @@ const LAWS_DATABASE = [
   {
     "caseType": "Consumer – Medical Negligence / Hospital Deficiency",
     "lawCategory": "Consumer",
-    "actName": "Consumer Protection Act 2019 (Medical Services) + Indian Medical Council Act / COPRA Medical Negligence",
+    "actName": "Consumer Protection Act 2019 (Medical Services) + National Medical Commission Act 2020 / COPRA Medical Negligence",
     "keywords": {
       "exact": [
         "doctor negligence",
@@ -9258,9 +9258,9 @@ const LAWS_DATABASE = [
     },
     "sections": [
       "Consumer Protection Act 2019 Sec 2 (Service deficiency)",
-      "Indian Medical Council (Professional Conduct) Regulations 2002",
+      "NMC Act 2020 – National Medical Commission (Professional Conduct Regulations)",
       "CrPC/BNS (Criminal negligence – causing death)",
-      "NMC Act 2020 (Doctor registration complaints)",
+      "NMC Act 2020 (Doctor registration / deregistration complaints)",
       "MTP drug trial without informed consent reproductive rights (mtp)"
     ],
     "documents": [
@@ -9320,7 +9320,7 @@ const LAWS_DATABASE = [
   {
     "caseType": "Criminal – Medical Negligence / Death by Negligence (BNS 106)",
     "lawCategory": "Criminal",
-    "actName": "Bharatiya Nyaya Sanhita, 2023 – Sec 106 (Death by Negligence) + Indian Medical Council Act",
+    "actName": "Bharatiya Nyaya Sanhita, 2023 – Sec 106 (Death by Negligence) + National Medical Commission Act, 2020",
     "keywords": {
       "exact": [
         "patient died due to doctor negligence",
@@ -9497,7 +9497,7 @@ const LAWS_DATABASE = [
       "BNS Sec 106 (Causing death by rash or negligent act – 2 to 7 years)",
       "BNS Sec 106(2) (Medical negligence causing death – specifically)",
       "NMC Act 2020 – National Medical Commission (Doctor deregistration)",
-      "Indian Medical Council (Professional Conduct) Regulations 2002",
+      "NMC Act 2020 – Professional Conduct Regulations (replaces IMC Regulations 2002)",
       "Consumer Protection Act 2019 (civil compensation simultaneously)",
       "BNSS Sec 174 (Mandatory inquest for death in hospital / custody)"
     ],
@@ -14929,7 +14929,7 @@ const LAWS_DATABASE = [
   {
     "caseType": "Employment – Maternity Benefits / Pregnancy Rights",
     "lawCategory": "Employment",
-    "actName": "Maternity Benefit Act 1961 (Amended 2017) – Maternity and Pregnancy Rights at Workplace",
+    "actName": "Code on Social Security, 2020 – Chapter VI (Maternity Benefit, replaces Maternity Benefit Act 1961)",
     "keywords": {
       "exact": [
         "fired while pregnant",
@@ -15036,10 +15036,10 @@ const LAWS_DATABASE = [
       ]
     },
     "sections": [
-      "Maternity Benefit Act 1961 Sec 5 (26 weeks maternity leave)",
-      "Sec 6 (Notice for maternity benefit)",
-      "Sec 12 (Dismissal during maternity – prohibited)",
-      "Sec 27 (Employer penalty)",
+      "Code on Social Security 2020 – Sec 60 (26 weeks maternity leave)",
+      "Code on Social Security 2020 – Sec 61 (Notice for maternity benefit)",
+      "Code on Social Security 2020 – Sec 63 (Dismissal during maternity – prohibited)",
+      "Code on Social Security 2020 – Sec 66 (Penalty for employer violation)",
       "Wrongful termination pregnancy maternity leave (wrongful termination)"
     ],
     "documents": [

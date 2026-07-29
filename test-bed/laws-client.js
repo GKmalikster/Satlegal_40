@@ -991,7 +991,7 @@ const LAWS_DATABASE = [
   {
     caseType: 'Employment – Wrongful Termination / Industrial Dispute',
     lawCategory: 'Employment',
-    actName: 'Industrial Disputes Act, 1947 + Shops & Establishments Act + BNS',
+    actName: 'Industrial Relations Code, 2020 + Shops & Establishments Act + BNS',
     quickTip: 'An employee dismissed without proper notice or inquiry can challenge it before the Labour Court. The employer must prove valid cause. Reinstatement + back wages is the most common remedy.',
     keywords: {
       exact: ['retrenchment without compensation','retrenchment compensation not paid','bonus not paid by employer for 3 years despite profitability','laid off without notice pay','id act retrenchment','industrial disputes act retrenchment','mujhe kaam se nikala gaya','bina karan naukri se nikala','job se hataya gaya','fired without notice','terminated without reason','wrongful termination','illegal dismissal','unfair dismissal','employer fired me','removed from job','terminated from job','notice period not given','full and final settlement not paid','forced resignation','laid off without pay','employment termination dispute','labour court complaint','industrial dispute','workman dismissed','employer not paying salary','salary not credited','salary pending','salary withheld','month salary not paid','dues not paid by employer','employment dues','relieving letter not given','experience letter refused','final settlement not given','provident fund not given',
@@ -1009,7 +1009,7 @@ const LAWS_DATABASE = [
       strong: ['terminated','dismissal','wrongful termination','unfair dismissal','employer','notice period','full and final','retrenchment','labour court','industrial dispute act','workman','employee rights','salary unpaid','wages not paid','unpaid wages','pending salary','back wages','overtime not paid','bonus not paid','provident fund','service record','appointment letter','offer letter','resignation accepted','employment contract','contract labour','contractor employee','relieving letter','experience letter','no-dues certificate','gig worker','platform deactivated','app worker','delivery worker','employee performance','terminate employee'],
       weak: ['fired','dismissed','job','employer','employee','salary','wages','hr department','boss fired','termination letter','notice period','last working day','full and final settlement','dues unpaid','arrears','increment denied','appraisal dispute','job loss','unemployed wrongfully']
     },
-    sections: ['Industrial Disputes Act Sec 25-F (Retrenchment compensation)','Sec 25-N (Prior permission for retrenchment)','Sec 10 (Reference to Labour Court)','Payment of Wages Act Sec 5 (Wages timely payment)','Minimum Wages Act','Shops & Establishments Act (state-specific)','EPF Act Sec 14B (Penalty for non-deposit)','Gratuity Act Sec 4 (Payment of gratuity)'],
+    sections: ['Industrial Relations Code 2020 – Sec 77 (Retrenchment compensation, replaces ID Act Sec 25-F)','Industrial Relations Code 2020 – Sec 79 (Prior permission for retrenchment)','Industrial Relations Code 2020 – Sec 53 (Reference to Labour Court)','Code on Wages 2019 – Sec 12 (Timely payment of wages)','Code on Wages 2019 – Sec 6 (Minimum wages)','Shops & Establishments Act (state-specific)','Code on Social Security 2020 – Sec 15 (EPF non-deposit penalty)','Code on Social Security 2020 – Sec 53 (Gratuity payment)'],
     documents: [
       { name: 'Appointment / Offer Letter', critical: true },
       { name: 'Termination / Dismissal Letter', critical: true },
@@ -1032,7 +1032,7 @@ const LAWS_DATABASE = [
   {
     caseType: 'Employment – PF / Gratuity / ESI (Unpaid Dues)',
     lawCategory: 'Employment',
-    actName: 'Employees Provident Fund Act 1952 + Payment of Gratuity Act 1972 + ESI Act 1948',
+    actName: 'Code on Social Security, 2020 (replaces EPF Act 1952 + Gratuity Act 1972 + ESI Act 1948)',
     quickTip: 'Gratuity is payable after 5 years of continuous service. PF withdrawal takes 3–7 working days online via UAN. Employer non-deposit of PF is a criminal offence.',
     keywords: {
       exact: ['gratuity not paid even after','gratuity not paid after completing','gratuity not paid','gratuity withheld','gratuity payment denied','employer deducting esi','esi deducted not deposited','esic deducted not deposited','employer deducting pf not depositing','pf account is not credited','my pf account not credited','pf not being credited','pf account not showing','employer not depositing esic contribution','esic contribution not depositing','employer deducting esi contribution','esi contribution not deposited with esic','esic benefit not provided employer did not register','gratuity dues not paid employer closed','company not registered under esic','contractor employees pf not paid','pf account not credited for years','employer deducting esi not depositing','employer showing salary below esic threshold','death of employee esic not paying','pf not transferred','pf withdrawal not processed','uan not activated','epf withdrawal stuck','gratuity not paid after 5 years','gratuity claim rejected','esic card not given','esic treatment denied','provident fund dispute','pf balance not showing','previous employer not transferring pf','pf form 15g','epf composite claim form','gratuity form i','gratuity denied','employer deducting pf not depositing','epf passbook not updated','maternity benefit act','maternity leave benefit denied','maternity benefit denied','maternity leave rejected by employer','maternity benefit act violation','maternity leave not given by employer'],
@@ -1794,7 +1794,7 @@ const LAWS_DATABASE = [
   {
     caseType: 'Healthcare – Medical Negligence / Clinical Establishments',
     lawCategory: 'Healthcare',
-    actName: 'Indian Medical Council Act / Consumer Protection Act / BNS Sec 106',
+    actName: 'National Medical Commission Act, 2020 / Consumer Protection Act 2019 / BNS Sec 106',
     quickTip: 'File a consumer complaint at the District Commission AND a complaint to the State Medical Council. Criminal case under BNS Sec 106 (death by negligence) if death occurred.',
     keywords: {
       exact: ['medical negligence','doctor negligence','hospital negligence','wrong treatment by doctor','wrong surgery','operated on wrong body part','surgical error','anesthesia error','death during surgery','misdiagnosis by doctor','delayed diagnosis','wrong medicine prescribed','wrong blood transfusion','wrong blood group','medical malpractice','clinical negligence','doctor malpractice','hospital malpractice','negligent doctor','negligent hospital','patient died due to negligence','false medical report','wrong pathology','lab error','birth injury negligence','forceps injury delivery','premature discharge negligence','hospital refused treatment','hospital refused emergency','hospital refused to treat accident victim demanding advance payment','refused to treat accident victim advance payment patient died','duty to treat accident victim violated advance payment','no informed consent taken before surgery patient rights','hospital not maintaining records no informed consent surgery','private hospital no informed consent patient rights violation','baby born disability negligence during delivery cerebral palsy','cerebral palsy birth injury negligence delivery compensation','delivery negligence birth injury disability cerebral palsy','birth injury compensation','baby born with disability due to negligence during delivery','baby born with disability due to negligence','negligence during delivery birth injury compensation cerebral palsy',
@@ -1802,7 +1802,7 @@ const LAWS_DATABASE = [
       strong: ['medical negligence','doctor negligent','hospital error','surgical mistake','wrong operation','misdiagnosis','delayed treatment','treatment error','medication error','prescription error','anesthesia complication','complications post-surgery','patient harmed','doctor mistake','medical council','clinical establishment','negligence compensation','medical malpractice','MCI complaint','death by negligence','wrong diagnosis','lab report wrong','pathology error','blood transfusion wrong','cerebral palsy','birth injury','negligence during delivery','born with disability due to negligence'],
       weak: ['doctor','hospital','surgery','operation','treatment','medicine','patient','medical','health','clinic','nursing home','specialist','diagnosis','report','test','prescription','discharge','admission']
     },
-    sections: ['BNS Sec 106 (Death by Negligence)','Consumer Protection Act 2019 (Medical Service Deficiency)','Indian Medical Council Act (Professional Misconduct)','Clinical Establishments Act 2010','Sec 304A IPC (now BNS Sec 106) (Culpable Homicide – Negligence)'],
+    sections: ['BNS Sec 106 (Death by Negligence)','Consumer Protection Act 2019 (Medical Service Deficiency)','NMC Act 2020 – Professional Conduct Regulations (Professional Misconduct)','Clinical Establishments Act 2010','Sec 304A IPC (now BNS Sec 106) (Culpable Homicide – Negligence)'],
     documents: [
       { name: 'Hospital Records / Discharge Summary', critical: true },
       { name: 'Treatment Notes / Prescription Records', critical: true },
@@ -2148,16 +2148,16 @@ const LAWS_DATABASE = [
 
   // ── EMPLOYMENT – MATERNITY BENEFIT ACT ─────────────────────────────────────
   {
-    caseType: 'Employment – Maternity Benefit Act',
+    caseType: 'Employment – Maternity Benefits (Code on Social Security)',
     lawCategory: 'Employment',
-    actName: 'Maternity Benefit Act, 1961 (Amended 2017)',
-    quickTip: 'File a complaint with the Inspector under Maternity Benefit Act in your state. Also file before Labour Commissioner.',
+    actName: 'Code on Social Security, 2020 – Chapter VI (Maternity Benefit, replaces Maternity Benefit Act 1961)',
+    quickTip: 'File a complaint with the Inspector under Code on Social Security 2020 in your state. Also file before Labour Commissioner.',
     keywords: {
       exact: ['maternity leave denied','maternity benefit act','26 weeks maternity leave','maternity pay denied','pregnant employee fired','terminated after pregnancy','dismissed while pregnant','maternity benefit complaint','maternity leave refused','maternity leave not given','12 weeks maternity leave problem','creche facility not provided','maternity benefit entitlement','pregnant employee rights','pregnancy discrimination workplace','maternity leave claim','maternity benefit not paid','pregnancy fired','terminated me after i disclosed my pregnancy maternity benefit act','employer terminated after pregnancy maternity act violation reinstatement','maternity benefit denied because employer says i am a contract worker','maternity benefit denied contract worker not permanent employer','maternity benefit act applies to contract workers not just permanent'],
       strong: ['maternity','maternity leave','maternity benefit','pregnancy','pregnant','maternity pay','motherhood','nursing mother','maternity entitlement','maternity rights','new mother leave','post delivery leave','pre-delivery leave','lactation break','crèche facility','miscarriage leave','adoption maternity','surrogacy maternity','maternity inspector','labour maternity'],
       weak: ['pregnancy','pregnant','mother','baby','delivery','maternity','leave','nursing','baby care','child birth','newborn']
     },
-    sections: ['Maternity Benefit Act 1961 Sec 5 (26 weeks leave)','Sec 6 (Notice for Maternity Benefit)','Sec 9 (Nursing Breaks)','Sec 11A (Crèche)','Sec 12 (Prohibition of Dismissal)','Sec 21 (Penalty for Violation)'],
+    sections: ['Code on Social Security 2020 – Sec 60 (26 weeks maternity leave)','Code on Social Security 2020 – Sec 61 (Notice for Maternity Benefit)','Code on Social Security 2020 – Sec 62 (Nursing Breaks)','Code on Social Security 2020 – Sec 65 (Crèche)','Code on Social Security 2020 – Sec 63 (Prohibition of Dismissal during maternity)','Code on Social Security 2020 – Sec 66 (Penalty for Violation)'],
     documents: [
       { name: 'Pregnancy Medical Certificate', critical: true },
       { name: 'Appointment Letter / Employment Proof', critical: true },
@@ -2178,16 +2178,16 @@ const LAWS_DATABASE = [
 
   // ── EMPLOYMENT – PAYMENT OF BONUS ACT ──────────────────────────────────────
   {
-    caseType: 'Employment – Payment of Bonus Act',
+    caseType: 'Employment – Statutory Bonus (Code on Wages)',
     lawCategory: 'Employment',
-    actName: 'Payment of Bonus Act, 1965',
+    actName: 'Code on Wages, 2019 – Chapter VIII (Bonus, replaces Payment of Bonus Act 1965)',
     quickTip: 'File complaint before the Labour Commissioner. Minimum bonus is 8.33% of annual salary (up to ₹7000/month wage ceiling); maximum 20%.',
     keywords: {
       exact: ['bonus not paid','annual bonus withheld','Payment of Bonus Act','bonus entitlement','employer not giving bonus','festival bonus not given','bonus dispute','bonus complaint','minimum bonus','statutory bonus','bonus claim','company refuses bonus','profit bonus','performance bonus statutory','Bonus Act violation','8.33 percent bonus','20 percent bonus','bonus arrears','bonus calculation dispute'],
       strong: ['bonus','annual bonus','statutory bonus','minimum bonus','bonus act','bonus entitlement','festival bonus','Diwali bonus','bonus payment','bonus withheld','bonus denied','bonus dispute','labour bonus','worker bonus','employee bonus','bonus calculation','bonus ceiling','profit sharing','allocable surplus','gross profit bonus'],
       weak: ['bonus','incentive','reward','annual bonus','festival bonus','profit share']
     },
-    sections: ['Payment of Bonus Act 1965 Sec 8 (Eligibility)','Sec 10 (Minimum Bonus – 8.33%)','Sec 11 (Maximum Bonus – 20%)','Sec 22 (Reference to Labour Court)','Sec 28 (Penalty)'],
+    sections: ['Code on Wages 2019 – Sec 26 (Bonus eligibility)','Code on Wages 2019 – Sec 28 (Minimum Bonus – 8.33%)','Code on Wages 2019 – Sec 29 (Maximum Bonus – 20%)','Code on Wages 2019 – Sec 45 (Reference to Labour Court)','Code on Wages 2019 – Sec 54 (Penalty for non-payment of bonus)'],
     documents: [
       { name: 'Appointment Letter / Salary Slip', critical: true },
       { name: 'Proof of Wages / Bank Statements', critical: true },
