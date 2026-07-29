@@ -150,43 +150,22 @@ footer a:hover{color:#fff}
   <p>Browse Bar Council–verified lawyers matched by your case type, city, and language. Book a 30-minute consultation online.</p>
 </div>
 
-<!-- Filters -->
-<div class="filters">
-  <div class="filters-inner">
-    <input class="filter-search" type="text" id="srchName" placeholder="🔍 Search by name or specialisation…" oninput="applyFilters()"/>
-    <select class="filter-select" id="fCity" onchange="applyFilters()">
-      <option value="">All Cities</option>
-      <option>Mumbai</option><option>Delhi</option><option>Bengaluru</option>
-      <option>Chennai</option><option>Hyderabad</option><option>Pune</option>
-      <option>Ahmedabad</option><option>Kolkata</option><option>Jaipur</option><option>Lucknow</option>
-    </select>
-    <select class="filter-select" id="fSpec" onchange="applyFilters()">
-      <option value="">All Specialisations</option>
-      <option>Family Law</option><option>Criminal Law</option><option>Property &amp; RERA</option>
-      <option>Consumer Rights</option><option>Employment Law</option><option>Cyber Law</option>
-      <option>Civil Law</option><option>Corporate Law</option><option>Taxation</option>
-    </select>
-    <select class="filter-select" id="fLang" onchange="applyFilters()">
-      <option value="">All Languages</option>
-      <option>Hindi</option><option>English</option><option>Tamil</option><option>Kannada</option>
-      <option>Telugu</option><option>Marathi</option><option>Bengali</option><option>Gujarati</option>
-    </select>
-    <span class="filter-count" id="resultCount"></span>
-  </div>
-</div>
-
 <div class="main">
-  <div class="lawyer-grid" id="lawyerGrid"></div>
-  <div class="no-results" id="noResults" style="display:none">
-    <div class="no-results-icon">🔍</div>
-    <h3>No lawyers found matching your filters</h3>
-    <p style="margin-top:8px">Try adjusting your city or specialisation filters.</p>
+  <!-- Coming Soon -->
+  <div style="text-align:center;padding:60px 20px 40px">
+    <div style="font-size:56px;margin-bottom:20px">⚖️</div>
+    <h2 style="font-size:clamp(20px,4vw,28px);font-weight:900;color:#0D3D0D;margin-bottom:12px">Lawyer Directory Coming Soon</h2>
+    <p style="font-size:15px;color:#5c5c7a;max-width:480px;margin:0 auto 28px;line-height:1.7">We are in the process of onboarding and verifying advocates across India. The directory will be live shortly.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="index.html" style="display:inline-block;background:#0D3D0D;color:#fff;border-radius:9px;padding:13px 28px;text-decoration:none;font-size:14px;font-weight:800">🔍 Analyse My Case →</a>
+      <a href="auth/lawyer-register.html" style="display:inline-block;background:#FF9933;color:#fff;border-radius:9px;padding:13px 28px;text-decoration:none;font-size:14px;font-weight:800">🏛️ Register as a Lawyer →</a>
+    </div>
   </div>
 
   <div class="bottom-cta">
-    <h3>Looking for legal help?</h3>
-    <p>SatLegal will match you with a qualified, verified lawyer suited to your case. Complete your legal analysis first, then proceed to consultation booking.</p>
-    <a class="btn-register" href="index.html">Analyse My Case →</a>
+    <h3>Are you a lawyer?</h3>
+    <p>Join the SatLegal network. Get matched with clients who need your expertise — verified, city-wise, and by specialisation.</p>
+    <a class="btn-register" href="auth/lawyer-register.html">Register Your Practice →</a>
   </div>
 
   <!-- For Lawyers CTA -->

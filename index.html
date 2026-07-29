@@ -633,7 +633,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
 /* Responsive wizard improvements */
 @media(max-width:640px){
   /* Pin tabs + footer; only the body area scrolls */
-  #wizCard{display:flex !important;flex-direction:column;max-height:calc(100vh - 80px)}
+  #wizCard.wiz-active{display:flex !important;flex-direction:column;max-height:calc(100vh - 80px)}
   .wiz-tabs-row{flex-shrink:0}
   .wiz-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 14px}
   .wiz-foot-bar{flex-shrink:0;padding:12px 14px;flex-wrap:wrap;gap:8px}
@@ -992,7 +992,6 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
       <p style="color:rgba(255,255,255,.7);font-size:14px;line-height:1.7;margin-bottom:20px">Receive pre-qualified leads from clients who already have an AI-assessed understanding of their case — filtered by your city, district, specialisation and courts of practice.</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <a href="auth/lawyer-register.html" style="display:inline-block;background:var(--sf-500,#FF9933);color:#fff;font-size:14px;font-weight:800;padding:12px 24px;border-radius:9px;text-decoration:none">Register Your Practice →</a>
-        <a href="lawyers.html" style="display:inline-block;background:transparent;border:2px solid rgba(255,255,255,.35);color:rgba(255,255,255,.85);font-size:14px;font-weight:700;padding:12px 22px;border-radius:9px;text-decoration:none">View Lawyer Directory</a>
       </div>
       <p style="font-size:12px;color:rgba(255,255,255,.4);margin-top:10px">Free to list · Reviewed within 24–48 hours · Bar Council verification required</p>
     </div>
@@ -1315,7 +1314,7 @@ function showStep(n){
   W.step=n;
   saveWizardSession();
   const wc=document.getElementById('wizCard');
-  if(wc)wc.style.display='';
+  if(wc){wc.style.display='';wc.classList.add('wiz-active');}
   document.querySelectorAll('.wiz-pane').forEach(p=>p.classList.remove('active'));
   const pane=document.getElementById(`p${n}`);
   if(pane)pane.classList.add('active');
@@ -2079,8 +2078,8 @@ function renderNoMatch(){
       </div>
 
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
-        <a href="lawyers.html" style="display:flex;align-items:center;gap:10px;background:#FF9933;color:#fff;border-radius:9px;padding:10px 14px;text-decoration:none;font-size:13px;font-weight:700">
-          <span>⚖️</span><span>Browse verified lawyers by specialisation</span>
+        <a href="auth/lawyer-register.html" style="display:flex;align-items:center;gap:10px;background:#138808;color:#fff;border-radius:9px;padding:10px 14px;text-decoration:none;font-size:13px;font-weight:700">
+          <span>🏛️</span><span>Connect with a lawyer — Register your case</span>
         </a>
       </div>
 
@@ -3140,8 +3139,8 @@ const LDB=[]; // Populated as lawyers register — no dummy data
 function buildLawyers(){
   if(!LDB.length){
     return `<div style="text-align:center;padding:20px 0;color:var(--text-lt);font-size:13px">
-      <p style="margin-bottom:12px">Our verified lawyer network is being set up.</p>
-      <a href="lawyers.html" style="background:#138808;color:#fff;border-radius:8px;padding:9px 18px;text-decoration:none;font-size:13px;font-weight:700">Browse Lawyers →</a>
+      <p style="margin-bottom:12px">Our verified lawyer network is being set up. Register your interest below.</p>
+      <a href="auth/lawyer-register.html" style="background:#138808;color:#fff;border-radius:8px;padding:9px 18px;text-decoration:none;font-size:13px;font-weight:700">For Lawyers – Register →</a>
     </div>`;
   }
   const ar=W.areas.length?W.areas:['civil'];
