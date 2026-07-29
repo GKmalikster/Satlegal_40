@@ -10479,13 +10479,11 @@ const LAWS_DATABASE = [
         "tip": "Paying under protest preserves your right to claim refund after winning the appeal."
       }
     ],
-    "contextualQuestions": [
-      "civil"
-    ],
+    "contextualQuestions": [],
     "limitation": "Varies: IT appeal within 30 days of order; GST appeal within 3 months",
     "urgency": "high",
     "multiLawCompatible": [
-      "Constitutional – PIL / Writ Petition / Fundamental Rights"
+      "Criminal – PMLA / Money Laundering / Financial Fraud"
     ]
   },
   {

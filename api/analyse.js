@@ -354,7 +354,7 @@ const DOMAIN_EXCLUSIONS = {
   family:      ['criminal', 'consumer', 'employment', 'tax', 'cyber', 'corporate'],
   consumer:    ['family', 'employment', 'criminal', 'tax', 'public'],
   employment:  ['family', 'consumer', 'criminal', 'tax', 'cyber'],
-  tax:         ['family', 'consumer', 'employment', 'cyber'],
+  tax:         ['family', 'consumer', 'employment', 'cyber', 'public'],  // PIL/Writ not applicable for routine tax notices
   education:   ['family', 'consumer', 'criminal', 'employment', 'tax', 'cyber'],
   environment: ['family', 'consumer', 'employment', 'tax', 'cyber'],
   criminal:    ['family', 'consumer', 'employment', 'education', 'environment'],
