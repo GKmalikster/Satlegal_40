@@ -10430,14 +10430,14 @@ const LAWS_DATABASE = [
       ]
     },
     "sections": [
-      "Income Tax Act 1961 Sec 143, 144, 148 (Assessment)",
-      "Income Tax Act Sec 246A (Appeal to CIT)",
+      "IT Act 1961 Sec 143 (Assessment) + Sec 144B (Faceless Assessment – mandatory since 2021)",
+      "IT Act Sec 147/148 (Reassessment – amended Finance Act 2021)",
+      "IT Act Sec 246A (Appeal to CIT(A)) + Sec 253 (Appeal to ITAT)",
+      "IT Act Sec 271(1)(c) (Penalty for Concealment) + Sec 132 (Search & Seizure)",
+      "IT Act Sec 115BAC (New Tax Regime – default from AY 2024-25)",
       "GST Act 2017 Sec 73, 74 (Demand and recovery)",
-      "GST Act Sec 107 (Appeals)",
-      "ITAT / GST Appellate Authority",
-      "Income tax GST professional tax wrongful demand (income tax gst)",
-      "State stamp duty property registration wrongful demand (gst)",
-      "Online fraud PAN misuse fake income tax returns (online fraud cyber income tax)"
+      "GST Act Sec 107 (Appeals to GST Appellate Authority)",
+      "Benami Transactions (Prohibition) Act 2016"
     ],
     "documents": [
       {
