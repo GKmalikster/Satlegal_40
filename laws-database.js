@@ -2034,7 +2034,7 @@ const LAWS_DATABASE = [
       "Sec 25N (Prior permission for retrenchment >100 workers)",
       "Sec 25G (Procedure)",
       "IDA Sec 10 (Labour Court reference)",
-      "Industrial Employment Standing Orders Act",
+      "Industrial Relations Code 2020 (Standing Orders – replaces Industrial Employment Standing Orders Act 1946)",
       "Specific performance of employment contract (contract breach)",
       "Service law violation (government and public sector employees)",
       "Minimum wages violation (Code on Wages 2019)",
@@ -7465,7 +7465,7 @@ const LAWS_DATABASE = [
   {
     "caseType": "Criminal – Dowry Prohibition / 498A IPC (BNS Sec 85)",
     "lawCategory": "Criminal",
-    "actName": "Dowry Prohibition Act, 1961 + BNS Sec 85 / IPC Sec 498A – Dowry Harassment / Cruelty by Husband",
+    "actName": "Dowry Prohibition Act, 1961 + BNS Sec 85 (formerly IPC 498A) + BNS Sec 80 (Dowry Death) – Dowry Harassment / Cruelty by Husband",
     "keywords": {
       "exact": [
         "498a complaint",
@@ -7585,10 +7585,10 @@ const LAWS_DATABASE = [
       ]
     },
     "sections": [
-      "BNS Sec 85 / IPC Sec 498A (Cruelty by husband / relatives)",
+      "BNS Sec 85 (Cruelty by husband / relatives for dowry – formerly IPC 498A)",
       "Dowry Prohibition Act Sec 3 (Giving/taking dowry)",
       "Dowry Prohibition Act Sec 4 (Demand for dowry)",
-      "BNS Sec 80 / IPC Sec 304B (Dowry Death)",
+      "BNS Sec 80 (Dowry Death – formerly IPC 304B)",
       "DV Act Sec 18 (Protection Order)",
       "Bail anticipatory bail 498A NRI husband (bail nri)",
       "Muslim mehr dowry nicht paid (dowry)",
@@ -15490,8 +15490,7 @@ const LAWS_DATABASE = [
       ]
     },
     "sections": [
-      "BNS Sec 356 (Criminal Defamation)",
-      "IPC Sec 499/500 (Defamation)",
+      "BNS Sec 356 (Criminal Defamation – replaces IPC 499/500)",
       "IT Act Sec 67 (Online defamation)",
       "CPC (Civil suit for damages)",
       "Online harassment WhatsApp group defamatory messages (online harassment)",
@@ -16586,8 +16585,8 @@ const LAWS_DATABASE = [
       "FSS Act 2006 Sec 51 (Penalty for sub-standard food)",
       "FSS Act Sec 59 (Penalty for misleading advertisement)",
       "Consumer Protection Act 2019 (Consumer rights)",
-      "Prevention of Food Adulteration Act",
-      "IPC Sec 272/273 (Adulteration of food or drink)",
+      "Prevention of Food Adulteration Act (subsumed under FSS Act 2006)",
+      "BNS Sec 272/273 (Adulteration of food or drink – same numbering as IPC)",
       "Food safety consumer complaint district commission"
     ],
     "documents": [

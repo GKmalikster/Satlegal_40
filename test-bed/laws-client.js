@@ -798,7 +798,7 @@ const LAWS_DATABASE = [
       weak: ['muslim','islam','islamic','nikah','talaq','mosque','maulana','qazi','masjid','mehr','mahr','nikahnama','iddat','shariat']
     },
     // NOTE: Remove generic 'divorce','marriage','separation' from weak to prevent false positives on Hindu/civil cases
-    sections: ['Muslim Women (Protection of Rights on Marriage) Act 2019 Sec 3, 4, 5','Muslim Personal Law (Shariat) Application Act 1937','Muslim Women (Protection of Rights on Divorce) Act 1986','BNSS Sec 144 (Maintenance – applicable to Muslim women)','CrPC Sec 125 (Maintenance)'],
+    sections: ['Muslim Women (Protection of Rights on Marriage) Act 2019 Sec 3, 4, 5','Muslim Personal Law (Shariat) Application Act 1937','Muslim Women (Protection of Rights on Divorce) Act 1986','BNSS Sec 144 (Maintenance – replaces CrPC Sec 125)'],
     documents: [
       { name: 'Nikahnama (Marriage Certificate)', critical: true },
       { name: 'Proof of Triple Talaq (written/electronic message)', critical: true },
@@ -1020,8 +1020,8 @@ const LAWS_DATABASE = [
     ],
     probingQuestions: [
       { q: 'Was a written termination letter given?', tip: 'No written order = procedural violation; strengthens your case.' },
-      { q: 'How many months of salary / dues are pending?', tip: 'Under the Payment of Wages Act, wages must be paid by 7th of following month; delay attracts penalty.' },
-      { q: 'Is your company registered under EPF/ESI?', tip: 'Employers with 20+ employees must enroll in EPF. Non-deposit is a criminal offence under EPF Act Sec 14.' }
+      { q: 'How many months of salary / dues are pending?', tip: 'Under Code on Wages 2019, wages must be paid by 7th of following month; delay attracts penalty.' },
+      { q: 'Is your company registered under EPF/ESI?', tip: 'Employers with 20+ employees must enroll in EPF. Non-deposit is a criminal offence under Code on Social Security 2020.' }
     ],
     contextualQuestions: ['employment'],
     limitation: '3 years (Labour Court); 1 year for retrenchment reference; wages: 3 years',
@@ -1039,7 +1039,7 @@ const LAWS_DATABASE = [
       strong: ['provident fund','pf ','epf ','uan','gratuity','pf accumulated','pf contribution','epf contribution','pf not paid','contractor pf','pf pension','pf withdrawal amount','epf pension','esic','employer contribution','pf withdrawal','gratuity claim','5 years service','pf transfer','form 19','form 10c','pf commissioner','epfo','labour commissioner','pf not deposited','gratuity calculation','continuous service','gratuity eligibility','esic dispensary','esic maternity','maternity benefit','maternity leave benefit','maternity act violation'],
       weak: ['pf ','epf ','uan','gratuity','pf account','pf balance','esic','fund','provident','contribution','deduction','insurance','medical','maternity']
     },
-    sections: ['EPF Act Sec 14B (Penalty for non-deposit)','Sec 7A (Enquiry for dues)','Gratuity Act Sec 4 (Payment within 30 days)','Sec 8 (Recovery of gratuity)','ESI Act Sec 45 (Employer default)','EPF Sec 7Q (Interest on arrears)'],
+    sections: ['Code on Social Security 2020 – Sec 15 (EPF non-deposit penalty, replaces EPF Act Sec 14B)','Code on Social Security 2020 – Sec 53 (Gratuity payment within 30 days, replaces Gratuity Act Sec 4)','Code on Social Security 2020 – Sec 54 (Recovery of gratuity, replaces Gratuity Act Sec 8)','Code on Social Security 2020 – Sec 89 (ESI employer default, replaces ESI Act Sec 45)','Code on Social Security 2020 – Sec 16 (Interest on arrears, replaces EPF Sec 7Q)'],
     documents: [
       { name: 'UAN / EPF Passbook Screenshot', critical: true },
       { name: 'Salary Slips showing PF deduction', critical: true },
@@ -1204,7 +1204,7 @@ const LAWS_DATABASE = [
     probingQuestions: [
       { q: 'What is the alleged drug and quantity? (Small / Intermediate / Commercial)', tip: 'Punishment scales sharply with quantity; commercial quantity triggers Sec 37 bail bar.' },
       { q: 'Was Sec 50 NDPS procedure followed (option to be searched before gazetted officer/Magistrate)?', tip: 'Non-compliance = acquittal grounds (Vijaysinh Chandubha Jadeja).' },
-      { q: 'Is there independent witness / panch witness at seizure?', tip: 'Sec 100(4) CrPC equivalent; absence creates serious doubt.' },
+      { q: 'Is there independent witness / panch witness at seizure?', tip: 'BNSS Sec 185 (formerly CrPC Sec 100(4)); absence creates serious doubt.' },
       { q: 'Was the seizure memo prepared on the spot?', tip: 'Contemporaneous documentation is critical evidence.' },
       { q: 'Is there an FSL chemical analysis report confirming the substance?', tip: 'Without FSL report, prosecution cannot succeed.' },
     ],
@@ -1534,7 +1534,7 @@ const LAWS_DATABASE = [
       { name: 'Bribery demand recording (call / SMS / WhatsApp)', critical: true },
       { name: 'Trap money seizure memo + chemical test', critical: true },
       { name: 'Panch witness statements', critical: true },
-      { name: 'Sanction order (Sec 19 PCA / Sec 197 CrPC)', critical: true },
+      { name: 'Sanction order (Sec 19 PCA / BNSS Sec 218, formerly CrPC Sec 197)', critical: true },
       { name: 'Earlier complaints to higher authority', critical: false },
       { name: 'Income statements of public servant (DA case)', critical: false },
       { name: 'Property records (for DA case)', critical: false },
@@ -1544,7 +1544,7 @@ const LAWS_DATABASE = [
       { q: 'Was bribe demanded or given? (Sec 7 demand / Sec 8 giving — now criminalised)', tip: '2018 Amendment criminalised bribe-giving + introduced corporate liability (Sec 9).' },
       { q: 'Has an ACB / CBI / Lokpal / Lokayukta complaint been filed?', tip: 'Different forums based on level of public servant.' },
       { q: 'Was a trap conducted? Bribe money marked?', tip: 'Phenolphthalein test + panch witness — gold standard.' },
-      { q: 'Is prior sanction under Sec 19 PCA / Sec 197 CrPC required?', tip: 'Required for cognizance against public servant in official capacity.' },
+      { q: 'Is prior sanction under Sec 19 PCA / BNSS Sec 218 required?', tip: 'Required for cognizance against public servant in official capacity (BNSS Sec 218 replaces CrPC Sec 197).' },
     ],
     contextualQuestions: ['civil'],
     limitation: 'FIR/ACB complaint immediate; trial within 2 yrs target; CrPC Sec 197 / PCA Sec 19 prior sanction',
@@ -1802,7 +1802,7 @@ const LAWS_DATABASE = [
       strong: ['medical negligence','doctor negligent','hospital error','surgical mistake','wrong operation','misdiagnosis','delayed treatment','treatment error','medication error','prescription error','anesthesia complication','complications post-surgery','patient harmed','doctor mistake','medical council','clinical establishment','negligence compensation','medical malpractice','MCI complaint','death by negligence','wrong diagnosis','lab report wrong','pathology error','blood transfusion wrong','cerebral palsy','birth injury','negligence during delivery','born with disability due to negligence'],
       weak: ['doctor','hospital','surgery','operation','treatment','medicine','patient','medical','health','clinic','nursing home','specialist','diagnosis','report','test','prescription','discharge','admission']
     },
-    sections: ['BNS Sec 106 (Death by Negligence)','Consumer Protection Act 2019 (Medical Service Deficiency)','NMC Act 2020 – Professional Conduct Regulations (Professional Misconduct)','Clinical Establishments Act 2010','Sec 304A IPC (now BNS Sec 106) (Culpable Homicide – Negligence)'],
+    sections: ['BNS Sec 106 (Death by Negligence / Rash Act)','Consumer Protection Act 2019 (Medical Service Deficiency)','NMC Act 2020 – Professional Conduct Regulations (Professional Misconduct)','Clinical Establishments Act 2010','BNS Sec 106(2) (Medical negligence causing death – specifically)'],
     documents: [
       { name: 'Hospital Records / Discharge Summary', critical: true },
       { name: 'Treatment Notes / Prescription Records', critical: true },
@@ -2086,7 +2086,7 @@ const LAWS_DATABASE = [
 
   // ── CRIMINAL / CIVIL – DEFAMATION ───────────────────────────────────────────
   {
-    caseType: 'Criminal / Civil – Defamation (IPC / BNS)',
+    caseType: 'Criminal / Civil – Defamation (BNS Sec 356)',
     lawCategory: 'Criminal',
     actName: 'Bharatiya Nyaya Sanhita Sec 356 (Criminal Defamation) / Civil Suit for Damages',
     quickTip: 'For criminal defamation file a complaint before Magistrate under BNS Sec 356. For civil damages file a civil suit. Both can run simultaneously.',
@@ -2118,16 +2118,16 @@ const LAWS_DATABASE = [
 
   // ── EMPLOYMENT – MINIMUM WAGES ──────────────────────────────────────────────
   {
-    caseType: 'Employment – Minimum Wages / Payment of Wages Act',
+    caseType: 'Employment – Minimum Wages / Code on Wages 2019',
     lawCategory: 'Employment',
-    actName: 'Code on Wages, 2019',
+    actName: 'Code on Wages, 2019 (replaces Minimum Wages Act 1948 + Payment of Wages Act 1936)',
     quickTip: 'File a complaint with the Labour Commissioner of your state or approach the Minimum Wages Authority.',
     keywords: {
       exact: ['minimum wages complaint','below minimum wage','minimum wage violation','payment of wages act','salary not paid','wages withheld','wages delayed','employer not paying salary','salary held','salary delayed three months','labour commissioner complaint','minimum wage authority','unpaid wages','salary arrears','wage theft','contract labour wages','wages less than minimum','daily wage dispute','unskilled worker wages','construction worker wages','domestic worker wages','factory worker wages not paid','minimum wage notification'],
       strong: ['minimum wages','payment of wages','salary unpaid','wages held','salary withheld','labour commissioner','wage complaint','below minimum','underpaid wages','wage arrears','wage theft','worker unpaid','labourer unpaid','wages delayed','salary dispute','wage claim','labour authority','minimum wage act','code on wages','labour law wages','daily wages','weekly wages','piece rate wages','contract labour wages','migrant worker wages'],
       weak: ['salary','wages','pay','payment','work','labour','worker','employee','earning','income','money','employer','underpaid','cheated','deducted']
     },
-    sections: ['Minimum Wages Act 1948 Sec 12 (Payment at minimum wage)','Sec 20 (Claims Authority)','Payment of Wages Act 1936 Sec 15 (Claims)','Code on Wages 2019','Labour Commissioner Jurisdiction'],
+    sections: ['Code on Wages 2019 – Sec 6 (Minimum wages fixation)','Code on Wages 2019 – Sec 12 (Payment at minimum rate of wages)','Code on Wages 2019 – Sec 13 (Permissible deductions only)','Code on Wages 2019 – Sec 45 (Claims before Authority)','Labour Commissioner / Minimum Wages Authority Jurisdiction'],
     documents: [
       { name: 'Salary Slips / Wage Register (if provided)', critical: true },
       { name: 'Bank Account Statement showing salary credited', critical: true },
@@ -2202,7 +2202,7 @@ const LAWS_DATABASE = [
     contextualQuestions: ['employment'],
     limitation: '1 year from date bonus fell due',
     urgency: 'medium',
-    multiLawCompatible: ['Employment – Minimum Wages / Payment of Wages Act','Employment – Wrongful Termination / Industrial Dispute']
+    multiLawCompatible: ['Employment – Minimum Wages / Code on Wages 2019','Employment – Wrongful Termination / Industrial Dispute']
   },
 
   // ── EMPLOYMENT – SHOPS & ESTABLISHMENTS ACT ─────────────────────────────────
@@ -2216,7 +2216,7 @@ const LAWS_DATABASE = [
       strong: ['shops establishments','shop employee','establishment employee','working hours','overtime','weekly off','annual leave','privilege leave','earned leave','rest interval','appointment letter','dismissal shop','shop worker rights','commercial employee','retail employee','hotel employee','office employee','establishment rules','labour inspector','overtime pay','night shift'],
       weak: ['shop','store','office','establishment','employee','worker','hours','leave','overtime','notice','salary','duty','shift','work','rights']
     },
-    sections: ['State Shops and Establishments Act (State-specific)','Code on Wages 2019','Industrial Employment Standing Orders Act','Code on Social Security 2020'],
+    sections: ['State Shops and Establishments Act (State-specific)','Code on Wages 2019 (Payment of wages, working hours)','Industrial Relations Code 2020 (Standing Orders – replaces Industrial Employment Standing Orders Act 1946)','Code on Social Security 2020 (ESI / PF for eligible shops)'],
     documents: [
       { name: 'Appointment Letter (or absence thereof)', critical: true },
       { name: 'Salary Slips / Payment Records', critical: true },
@@ -2231,7 +2231,7 @@ const LAWS_DATABASE = [
     contextualQuestions: ['employment'],
     limitation: 'File complaint within 1 year of violation',
     urgency: 'medium',
-    multiLawCompatible: ['Employment – Minimum Wages / Payment of Wages Act','Employment – Wrongful Termination / Industrial Dispute']
+    multiLawCompatible: ['Employment – Minimum Wages / Code on Wages 2019','Employment – Wrongful Termination / Industrial Dispute']
   },
 
   // ── FAMILY – DOWRY / 498A / STREEDHAN ───────────────────────────────────────
@@ -2245,7 +2245,7 @@ const LAWS_DATABASE = [
       strong: ['dowry','dahej','498A','streedhan','stridhan','cruelty for dowry','dowry demand','harassment for dowry','in-laws dowry','jewellery return','marriage gifts','dowry death','bride death suspicious','suicide dowry','dowry prohibition','BNS 85','dowry FIR','anti-dowry','false dowry case','defend 498A','dowry extortion','domestic violence dowry'],
       weak: ['marriage','in-laws','sasural','husband','wife','jewelry','gold','gift','demand','money','property','harassment','torture','family pressure']
     },
-    sections: ['Dowry Prohibition Act 1961 Sec 3 & 4','BNS Sec 85 (Cruelty by Husband/Relatives for Dowry – formerly IPC 498A)','BNS Sec 80 (Dowry Death – formerly IPC 304B)','Protection of Women from Domestic Violence Act 2005','Indian Evidence Act / BSA (Presumption in Dowry Death cases)'],
+    sections: ['Dowry Prohibition Act 1961 Sec 3 & 4','BNS Sec 85 (Cruelty by Husband/Relatives for Dowry – formerly IPC 498A)','BNS Sec 80 (Dowry Death – formerly IPC 304B)','Protection of Women from Domestic Violence Act 2005','BSA 2023 Sec 118 (Presumption in Dowry Death cases)'],
     documents: [
       { name: 'List of Dowry Items Given (with estimates)', critical: true },
       { name: 'Marriage Photos and Invitation', critical: true },
