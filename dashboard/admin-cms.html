@@ -2147,12 +2147,10 @@ document.addEventListener('DOMContentLoaded',function(){
             </div>
 
             <div class="form-group" style="margin-bottom:16px">
-              <label class="form-label" for="ps-key-secret">Razorpay Key Secret <span style="color:var(--danger)">*</span></label>
-              <div style="position:relative">
-                <input type="password" id="ps-key-secret" class="form-input" placeholder="Your Key Secret (stored encrypted locally)" autocomplete="new-password" style="padding-right:48px">
-                <button onclick="toggleSecretVisibility()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--text-light)" id="secretToggle" title="Show/hide">👁️</button>
+              <label class="form-label">Razorpay Key Secret</label>
+              <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:12px 16px;font-size:12px;color:#991B1B">
+                🔒 <strong>Never enter your Key Secret here.</strong> The secret must be stored in <strong>Vercel Environment Variables</strong> only (as <code>RAZORPAY_SECRET</code>). Add it at: Vercel Dashboard → Your Project → Settings → Environment Variables. The secret is used server-side only for signature verification and never enters the browser.
               </div>
-              <div style="font-size:11px;color:var(--text-light);margin-top:4px">⚠️ Never share this. Used server-side only for payment verification (store on your backend, not here in production).</div>
             </div>
 
             <div class="form-group" style="margin-bottom:20px">
@@ -4683,8 +4681,10 @@ const PS_MODE_KEY = 'sl_razorpay_mode';
 const PS_PRICES   = 'sl_payment_prices';
 
 function loadPaymentSettings() {
+  // Purge any Key Secret previously stored in localStorage (security fix — secret belongs in Vercel env vars only)
+  localStorage.removeItem(PS_KEY_SEC);
   const keyId  = localStorage.getItem(PS_KEY_ID)  || '';
-  const keySec = localStorage.getItem(PS_KEY_SEC)  || '';
+  const keySec = '';
   const mode   = localStorage.getItem(PS_MODE_KEY) || 'test';
   const prices = JSON.parse(localStorage.getItem(PS_PRICES) || '{}');
 
@@ -4760,8 +4760,8 @@ function renderPaymentStatusDetail(keyId, mode, prices) {
         <div style="font-size:13px;font-weight:700;color:var(--dark)">₹${prices.consult||2500}</div>
       </div>
     </div>
-    <div style="margin-top:12px;font-size:12px;color:var(--text-light)">
-      Key Secret: ${localStorage.getItem(PS_KEY_SEC)?'✅ Saved (masked)':'❌ Not saved'}
+    <div style="margin-top:12px;font-size:12px;color:var(--text-light);background:#FEF2F2;border-radius:6px;padding:8px 10px;color:#991B1B">
+      🔒 Key Secret: Store as <code>RAZORPAY_SECRET</code> in Vercel Environment Variables only.
     </div>`;
 }
 
@@ -4780,7 +4780,8 @@ function savePaymentSettings() {
   }
 
   localStorage.setItem(PS_KEY_ID, keyId.trim());
-  if (keySecRaw && !keySecRaw.includes('•')) localStorage.setItem(PS_KEY_SEC, keySecRaw.trim());
+  // Key Secret must NOT be stored in localStorage — set RAZORPAY_SECRET in Vercel env vars only
+  localStorage.removeItem(PS_KEY_SEC);
   localStorage.setItem(PS_MODE_KEY, mode);
   localStorage.setItem(PS_PRICES, JSON.stringify({report:amtR, consult:amtC}));
 
