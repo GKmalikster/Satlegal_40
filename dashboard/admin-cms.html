@@ -3119,10 +3119,11 @@ function renderLawyersTable(lawyers) {
       </td>
       <td style="padding:12px 16px">
         <div style="display:flex;gap:6px;flex-wrap:wrap">
-          ${l.status === 'pending' ? `
+          <button class="btn btn-outline btn-sm" onclick="viewLawyer('${esc(l.email||'')}')">View Profile</button>
+          ${!['approved','rejected'].includes(l.status) ? `
             <button class="btn btn-success btn-sm" onclick="approveLawyer('${esc(l.email||'')}')">✓ Approve</button>
             <button class="btn btn-danger btn-sm" onclick="rejectLawyer('${esc(l.email||'')}')">✕ Reject</button>
-          ` : `<button class="btn btn-outline btn-sm" onclick="viewLawyer('${esc(l.email||'')}')">View Profile</button>`}
+          ` : ''}
         </div>
       </td>
     </tr>`
@@ -3145,7 +3146,80 @@ function rejectLawyer(email) {
   renderLawyersTable(allLawyers);
   showToast('Lawyer rejected', 'error');
 }
-function viewLawyer(email) { showToast('Opening profile: ' + email, 'info'); }
+function _profileField(label, value) {
+  if (value === null || value === undefined || value === '') return '';
+  return `<div style="background:#f9fafb;border-radius:8px;padding:12px">
+    <div style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">${label}</div>
+    <div style="font-size:13px;font-weight:600;color:#111827;word-break:break-word">${esc(String(value))}</div>
+  </div>`;
+}
+function closeLawyerModal() {
+  const m = document.getElementById('lawyerProfileModal');
+  if (m) m.remove();
+}
+function viewLawyer(email) {
+  const l = allLawyers.find(x => x.email === email);
+  if (!l) { showToast('Lawyer not found', 'error'); return; }
+  const isPending = !['approved','rejected'].includes(l.status||'');
+  const statusColor = l.status==='approved' ? ['#065F46','#D1FAE5','✅ Approved']
+                    : l.status==='rejected'  ? ['#C0392B','#FDECEA','❌ Rejected']
+                    :                          ['#92400E','#FFF4E6','⏳ Pending Review'];
+  const langs = Array.isArray(l.languages) ? l.languages.join(', ') : (l.languages||'');
+  const specs = Array.isArray(l.specializations) ? l.specializations.join(', ') : (l.specialisation||l.specializations||'');
+  const fee   = l.consultFee ? '₹' + l.consultFee : (l.fee ? '₹' + l.fee : '');
+  const date  = l.createdAt  ? new Date(l.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '';
+
+  const html = `
+  <div id="lawyerProfileModal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding:32px 16px;overflow-y:auto" onclick="if(event.target===this)closeLawyerModal()">
+    <div style="background:#fff;border-radius:14px;max-width:640px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+
+      <!-- Header -->
+      <div style="background:#0D3D0D;color:#fff;padding:20px 24px;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div>
+          <div style="font-size:18px;font-weight:800">⚖️ ${esc(l.name||'Lawyer Profile')}</div>
+          <div style="font-size:12px;opacity:.65;margin-top:3px">${esc(l.email||'')}</div>
+        </div>
+        <button onclick="closeLawyerModal()" style="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:13px;white-space:nowrap;flex-shrink:0">✕ Close</button>
+      </div>
+
+      <!-- Status + Actions -->
+      <div style="padding:16px 24px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="color:${statusColor[0]};background:${statusColor[1]};padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700">${statusColor[2]}</span>
+        ${isPending ? `
+          <button onclick="approveLawyer('${esc(l.email||'')}');closeLawyerModal()" style="background:#138808;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer">✓ Approve</button>
+          <button onclick="rejectLawyer('${esc(l.email||'')}');closeLawyerModal()" style="background:#C0392B;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer">✕ Reject</button>
+        ` : ''}
+      </div>
+
+      <!-- Details grid -->
+      <div style="padding:20px 24px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        ${_profileField('Full Name', l.name)}
+        ${_profileField('Phone', l.phone)}
+        ${_profileField('Bar Council No.', l.barNumber||l.barCouncilNumber)}
+        ${_profileField('Specialisation', specs)}
+        ${_profileField('City', l.city)}
+        ${_profileField('State', l.state)}
+        ${_profileField('Experience', l.yearsOfExperience ? l.yearsOfExperience+' years' : '')}
+        ${_profileField('Languages', langs)}
+        ${_profileField('Consultation Fee', fee)}
+        ${_profileField('Registered On', date)}
+        ${_profileField('Enrollment No.', l.enrollmentNumber)}
+        ${_profileField('Court', l.primaryCourt||l.court)}
+      </div>
+
+      ${l.bio ? `<div style="padding:0 24px 20px"><div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Bio / About</div><div style="font-size:13px;color:#374151;line-height:1.7;background:#f9fafb;border-radius:8px;padding:12px">${esc(l.bio)}</div></div>` : ''}
+
+      <!-- Footer close -->
+      <div style="padding:16px 24px;border-top:1px solid #e5e7eb;text-align:right">
+        <button onclick="closeLawyerModal()" style="background:#f3f4f6;border:1px solid #d1d5db;border-radius:8px;padding:8px 20px;font-size:13px;cursor:pointer;color:#374151">Close</button>
+      </div>
+    </div>
+  </div>`;
+
+  const old = document.getElementById('lawyerProfileModal');
+  if (old) old.remove();
+  document.body.insertAdjacentHTML('beforeend', html);
+}
 
 /* ═══════════════════════════════════════════════════════════════
    ANALYTICS PANEL
