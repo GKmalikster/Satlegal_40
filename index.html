@@ -388,6 +388,7 @@ footer{background:var(--gr-900);color:rgba(255,255,255,.5);padding:40px 20px;tex
 .rpt-head{background:linear-gradient(135deg,var(--gr-800),var(--gr-700));padding:26px 34px}
 .rpt-head h1{color:#fff;font-size:22px;font-weight:900;margin-bottom:4px}
 .rpt-head p{color:rgba(255,255,255,.6);font-size:13px}
+.rpt-filing-warn{background:#B91C1C;color:#fff;font-size:11.5px;font-weight:800;text-align:center;letter-spacing:.6px;padding:7px 20px}
 .rpt-acts{display:flex;gap:9px;margin-top:18px;flex-wrap:wrap}
 .btn-rpt{padding:8px 18px;border-radius:7px;font-size:12px;font-weight:700;border:none;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
 .btn-rpt.print{background:var(--sf-500);color:#fff}.btn-rpt.print:hover{background:var(--sf-600)}
@@ -1080,6 +1081,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
         <button class="btn-rpt close-r" onclick="closeRpt()">✕ Close</button>
       </div>
     </div>
+    <div class="rpt-filing-warn">⚠️ NOT FOR FILING WITHOUT REVIEW BY A QUALIFIED ADVOCATE</div>
     <div class="rpt-body" id="rptBody"></div>
   </div>
 </div>
@@ -1204,7 +1206,7 @@ function heroAnalyze(){
   if(hqc)hqc.style.display='none';
   // Show & scroll to wiz-card
   const wc=document.getElementById('wizCard');
-  if(wc)wc.style.display='';
+  if(wc){wc.style.display='';wc.classList.add('wiz-active');}
   // Run s1 analysis
   s1();
   // After s1 fires showStep(2), scroll to wiz-card
