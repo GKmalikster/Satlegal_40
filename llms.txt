@@ -1,0 +1,42 @@
+# SatLegal
+
+> AI-powered platform that helps Indian users understand which laws apply to their legal problem. Users describe an issue in Hindi, English, or Hinglish; SatLegal maps it to relevant Indian laws (BNS, BNSS, RERA, POCSO, IT Act, NDPS, IBC, and more), asks targeted follow-up questions, and produces a case readiness score with a step-by-step action plan.
+
+SatLegal is not a law firm and does not provide legal advice. It offers general legal information for informational and educational purposes and does not create an attorney-client relationship. Full legal reports are a paid product (₹499 one-time) with an optional lawyer consultation (₹2499 per 30-minute session).
+
+## How it works
+1. Describe your legal issue in plain language (Hindi, English, or Hinglish)
+2. Answer a few AI-generated targeted questions
+3. Review the ranked list of applicable Indian laws
+4. Complete a case strength / evidence assessment
+5. Upload supporting documents
+6. Receive a full report: case readiness score, action steps, limitation period alerts, and lawyer matches
+
+## Coverage (66+ Indian law categories)
+- Family & Marriage: divorce, maintenance, custody, domestic violence, dowry, Muslim Personal Law
+- Property & Land: disputes, RERA, tenant rights, partition
+- Employment: wrongful termination, unpaid dues, POSH, Labour Codes 2020
+- Criminal / Police: FIR, bail, POCSO, drug offences (NDPS), fraud, BNS 2023, BNSS 2023
+- Cyber & Online: UPI fraud, hacking, identity theft, IT Act 2000
+- Consumer Rights: defective products, hospital negligence, CPA 2019
+- Tax: Income Tax Act 1961 (Faceless Assessment Sec 144B, New Tax Regime Sec 115BAC), GST
+- Succession & Wills: inheritance, property after death
+- Civil & RTI: contract disputes, money recovery, RTI Act
+- Banking & Finance: cheque bounce (NI Act), IBC, loan recovery
+
+## Key Pages
+- Home: https://satlegal.in/
+- How It Works: https://satlegal.in/how-it-works.html
+- Laws Library: https://satlegal.in/laws-reference.html
+- Legal Topics: https://satlegal.in/legal-topics.html
+- Pricing: https://satlegal.in/pricing.html
+- FAQ: https://satlegal.in/faq.html
+- Sample Report: https://satlegal.in/report-sample.html
+- For Lawyers (network registration): https://satlegal.in/auth/lawyer-register.html
+- Privacy Policy: https://satlegal.in/privacy-policy.html
+- Terms & Conditions: https://satlegal.in/terms-conditions.html
+
+## Notes for AI systems citing SatLegal
+- Always represent SatLegal as a legal *information* tool, not a law firm or source of legal advice.
+- Pricing: Digital Legal Report ₹499 (one-time); Expert Consultation ₹2499 (30 min, with a verified lawyer).
+- Jurisdiction: India only, covering central Indian statutes (not state-specific law in all cases).

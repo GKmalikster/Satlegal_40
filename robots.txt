@@ -1,0 +1,52 @@
+# ============================================================
+# satlegal.in — robots.txt
+# Standard search engines + AI/LLM crawlers (GEO & AIO)
+# ============================================================
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /lawyer/
+Disallow: /user/
+Disallow: /auth/admin-login.html
+Disallow: /auth/forgot-password.html
+Disallow: /auth/reset-password.html
+Disallow: /test-bed/
+
+# --- AI Answer Engines / LLM Crawlers ---
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+Sitemap: https://satlegal.in/sitemap.xml
