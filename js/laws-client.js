@@ -2650,7 +2650,7 @@ const CONTEXTUAL_QUESTION_SETS = {
   ],
   employment: [
     { id: 'emp_type', question: 'Are you an employee or employer in this matter?', type: 'radio', options: ['Employee (I am affected)', 'Employer (my employee is affected)'], tip: 'Rights and remedies are different for employees vs employers.' },
-    { id: 'company_size', question: 'How many employees does the organisation have?', type: 'select', options: ['Less than 10', '10–50', '50–100', 'More than 100', 'Government/PSU'], tip: 'EPF, ESI, POSH, and Industrial Disputes Act applicability depends on company size.' },
+    { id: 'company_size', question: 'How many employees does the organisation have?', type: 'select', options: ['Less than 10', '10–50', '50–100', 'More than 100', 'Government/PSU'], tip: 'EPF, ESI, POSH, and Industrial Relations Code 2020 applicability depends on company size.' },
     { id: 'issue_type', question: 'What is the primary employment issue?', type: 'select', options: ['Unfair termination/dismissal', 'Unpaid salary/PF/gratuity', 'Workplace harassment', 'Discrimination', 'Work conditions / hours', 'Other'], tip: 'Different laws apply to different types of employment grievances.' }
   ],
   criminal: [
