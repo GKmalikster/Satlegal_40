@@ -50,17 +50,28 @@
       }
 
       if(loggedIn){
+        // Resolve correct dashboard by role
+        const role = (user.role || '').toLowerCase();
+        const dashUrl = role === 'lawyer'
+          ? authPath('dashboard/lawyer-dashboard.html')
+          : authPath('dashboard/user-dashboard.html');
+        const isLawyer = role === 'lawyer';
+
         // My Account dropdown
         html += `
           <div class="nav-acct-wrap" id="navAcctWrap">
             <button class="btn-nav-acct" id="navAcctBtn" onclick="toggleNavAcct(event)">
-              👤 ${(user.name||'My Account').split(' ')[0]} ▾
+              ${isLawyer ? '⚖️' : '👤'} ${(user.name||'My Account').split(' ')[0]} ▾
             </button>
             <div class="nav-acct-menu" id="navAcctMenu">
-              <a href="${authPath('dashboard/user-dashboard.html')}">📋 My Dashboard</a>
-              <a href="${authPath('dashboard/user-dashboard.html')}#inquiries">📁 My Cases</a>
-              <a href="${authPath('dashboard/user-dashboard.html')}#transactions">💳 Transactions</a>
-              <a href="${authPath('dashboard/user-dashboard.html')}#profile">⚙️ Profile</a>
+              <a href="${dashUrl}">📋 My Dashboard</a>
+              ${isLawyer
+                ? `<a href="${authPath('lawyer/leads.html')}">📥 My Leads</a>
+                   <a href="${authPath('lawyer/availability.html')}">📅 Availability</a>`
+                : `<a href="${dashUrl}#inquiries">📁 My Cases</a>
+                   <a href="${dashUrl}#transactions">💳 Transactions</a>
+                   <a href="${dashUrl}#profile">⚙️ Profile</a>`
+              }
               <div class="nav-acct-divider"></div>
               <a href="#" onclick="slLogout();return false" style="color:#C0392B">🚪 Logout</a>
             </div>
@@ -98,11 +109,14 @@
     });
   }
 
-  // Logout
+  // Logout — clear ALL session keys, then go to login
   window.slLogout = function(){
-    localStorage.removeItem('sl_auth_token');
-    localStorage.removeItem('sl_user');
-    location.href = authPath('index.html');
+    localStorage.removeItem('sl_token');         // JWT (main auth key)
+    localStorage.removeItem('sl_auth_token');    // legacy alias
+    localStorage.removeItem('sl_user');          // user object
+    localStorage.removeItem('sl_user_session');  // OTP/wizard session
+    localStorage.removeItem('sl_pending_report');
+    location.href = authPath('auth/login.html');
   };
 
   // Account dropdown toggle

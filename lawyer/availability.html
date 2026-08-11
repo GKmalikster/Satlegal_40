@@ -195,7 +195,10 @@ function getSession() {
 
 function logout() {
   localStorage.removeItem('sl_token');
+  localStorage.removeItem('sl_auth_token');
   localStorage.removeItem('sl_user');
+  localStorage.removeItem('sl_user_session');
+  localStorage.removeItem('sl_pending_report');
   window.location = '/auth/login.html';
 }
 

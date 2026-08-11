@@ -12,8 +12,11 @@ const Auth = (() => {
   };
 
   const clearSession = () => {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(TOKEN_KEY);            // sl_token
+    localStorage.removeItem(USER_KEY);             // sl_user
+    localStorage.removeItem('sl_user_session');    // OTP/wizard session
+    localStorage.removeItem('sl_auth_token');      // legacy alias
+    localStorage.removeItem('sl_pending_report');  // in-progress wizard
   };
 
   const getToken = () => localStorage.getItem(TOKEN_KEY);
