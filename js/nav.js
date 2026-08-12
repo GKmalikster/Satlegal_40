@@ -119,15 +119,27 @@
     location.href = authPath('auth/login.html');
   };
 
+  // Mobile hamburger toggle — defined here so it works on ALL pages
+  window.toggleMob = function(){
+    const m = document.getElementById('mobMenu');
+    if(m) m.classList.toggle('open');
+  };
+
   // Account dropdown toggle
   window.toggleNavAcct = function(e){
     e.stopPropagation();
     const menu = document.getElementById('navAcctMenu');
     if(menu) menu.classList.toggle('open');
   };
-  document.addEventListener('click', function(){
+  document.addEventListener('click', function(e){
+    // Close account dropdown
     const menu = document.getElementById('navAcctMenu');
     if(menu) menu.classList.remove('open');
+    // Close mobile menu when clicking outside nav
+    const nav = document.querySelector('nav, .nav, #mainNav');
+    const mob = document.getElementById('mobMenu');
+    if(mob && mob.classList.contains('open') && nav && !nav.contains(e.target))
+      mob.classList.remove('open');
   });
 
   // Run on DOM ready
