@@ -280,19 +280,19 @@ a{text-decoration:none;color:inherit}button{cursor:pointer;font-family:var(--fon
   #E07000 0%,#FF9933 18%,#FFB347 30%,#FFD699 40%,
   #ffffff 50%,
   #A8E8A4 60%,#5CC852 72%,#138808 85%,#0D6B05 100%);
-  padding:48px 20px 56px;position:relative;overflow:hidden}
+  padding:24px 20px 32px;position:relative;overflow:hidden}
 .hero::after{content:'';position:absolute;inset:0;
   background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(255,255,255,.18) 0%,transparent 70%);
   pointer-events:none}
 .hero-inner{max-width:900px;margin:0 auto;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center}
 
 /* Hero headline section */
-.hero-left{width:100%;margin-bottom:28px}
+.hero-left{width:100%;margin-bottom:14px}
 .hero-tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(4px);color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;margin-bottom:16px;text-shadow:none;letter-spacing:.2px}
 .hero h1{font-size:clamp(28px,5vw,54px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:10px;
   text-shadow:0 2px 12px rgba(0,0,0,.28);letter-spacing:-.5px}
 .hero h1 em{font-style:normal;color:rgba(255,255,255,.92)}
-.hero-sub{font-size:clamp(14px,1.7vw,17px);color:rgba(255,255,255,.88);max-width:600px;margin:0 auto 20px;line-height:1.75;text-shadow:0 1px 4px rgba(0,0,0,.18)}
+.hero-sub{font-size:clamp(14px,1.7vw,16px);color:rgba(255,255,255,.88);max-width:600px;margin:0 auto 10px;line-height:1.6;text-shadow:0 1px 4px rgba(0,0,0,.18)}
 
 /* Stats */
 .hero-stats{display:flex;justify-content:center;gap:0;flex-wrap:wrap;margin-bottom:16px}
@@ -315,7 +315,7 @@ a{text-decoration:none;color:inherit}button{cursor:pointer;font-family:var(--fon
 
 /* Big textarea */
 .query-ta-wrap{position:relative;margin-bottom:10px}
-.issue-ta{width:100%;min-height:148px;border:2px solid var(--border);border-radius:12px;padding:14px 16px;
+.issue-ta{width:100%;min-height:110px;border:2px solid var(--border);border-radius:12px;padding:12px 16px;
   font-size:14px;font-family:var(--font);line-height:1.7;resize:none;transition:.2s;
   background:#FAFCFF;color:var(--text)}
 .issue-ta:focus{outline:none;border-color:var(--gr-500);background:#fff;box-shadow:0 0 0 3px rgba(19,136,8,.08)}
@@ -944,25 +944,14 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
 <section class="hero" id="heroSection">
   <div class="hero-inner">
 
-    <!-- LEFT: headline + stats -->
+    <!-- Headline -->
     <div class="hero-left">
       <div class="hero-tag-pill">🇮🇳 India's AI Legal Assistant</div>
       <h1>Know Your Rights.<br><em>Be Legally Ready Before Visiting a Lawyer.</em></h1>
       <p class="hero-sub">Describe your legal problem in Hindi, English, or Hinglish. Our AI maps it to the right Indian laws and gives you a complete action plan — in minutes.</p>
-      <div class="hero-stats">
-        <div class="h-stat"><strong>50+</strong><span>Indian Laws</span></div>
-        <div class="h-stat"><strong>BNS</strong><span>&amp; BNSS 2023</span></div>
-        <div class="h-stat"><strong>6-Step</strong><span>Guided Flow</span></div>
-        <div class="h-stat"><strong>AI</strong><span>Win Score</span></div>
-      </div>
-      <div class="hero-trust-row">
-        <span class="hero-trust-badge">🔒 100% Confidential</span>
-        <span class="hero-trust-badge">⚡ Instant Analysis</span>
-      </div>
-      <p class="hero-note">Trusted by 10,000+ Indians to understand their rights before spending on legal fees</p>
     </div>
 
-    <!-- RIGHT: inline query card -->
+    <!-- Query card -->
     <div class="hero-query-card" id="heroQueryCard">
       <div class="hqc-head">
         <span class="hqc-head-icon">⚖️</span>
@@ -975,7 +964,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
         <div class="query-ta-wrap">
           <textarea class="issue-ta" id="heroTa"
             placeholder="E.g. My employer fired me without notice and is refusing to pay my 3 months salary and PF. I worked there for 5 years..."
-            oninput="heroTaInput(this)" maxlength="2000" rows="6"></textarea>
+            oninput="heroTaInput(this)" maxlength="2000" rows="5"></textarea>
           <span class="ta-char-badge" id="heroCC">0/2000</span>
         </div>
         <div class="ex-chips-label">Try an example →</div>
@@ -995,9 +984,22 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
       </div>
     </div>
 
+    <!-- Stats + trust — below query card, hidden on mobile (mobile trust strip shown instead) -->
+    <div class="hero-stats" style="margin-top:20px">
+      <div class="h-stat"><strong>50+</strong><span>Indian Laws</span></div>
+      <div class="h-stat"><strong>BNS</strong><span>&amp; BNSS 2023</span></div>
+      <div class="h-stat"><strong>6-Step</strong><span>Guided Flow</span></div>
+      <div class="h-stat"><strong>AI</strong><span>Win Score</span></div>
+    </div>
+    <div class="hero-trust-row" style="margin-top:8px">
+      <span class="hero-trust-badge">🔒 100% Confidential</span>
+      <span class="hero-trust-badge">⚡ Instant Analysis</span>
+    </div>
+    <p class="hero-note" style="margin-top:8px">Trusted by 10,000+ Indians to understand their rights before spending on legal fees</p>
+
   </div><!-- /hero-inner -->
 
-  <!-- Mobile-only trust strip — stats are hidden above query card on mobile, shown here -->
+  <!-- Mobile-only trust strip — stats are hidden on mobile via CSS, shown here instead -->
   <div class="hero-mobile-trust">
     <div class="h-stat"><strong>50+</strong><span>Indian Laws</span></div>
     <div class="h-stat"><strong>BNS</strong><span>&amp; BNSS 2023</span></div>
