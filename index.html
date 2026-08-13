@@ -336,18 +336,7 @@ a{text-decoration:none;color:inherit}button{cursor:pointer;font-family:var(--fon
 .btn-analyze-main:hover{background:linear-gradient(135deg,var(--sf-700),var(--sf-600));transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,153,51,.35)}
 .query-mini-disclaimer{font-size:10.5px;color:var(--text-lt);text-align:center;line-height:1.5;padding:0 4px}
 .query-mini-disclaimer a{color:var(--gr-600);font-weight:600}
-/* ── Hero layout optimisation — engagement ── */
-/* Desktop ≥768px: two-column (text left, query card right) */
-@media(min-width:768px){
-  .hero-inner{flex-direction:row;align-items:flex-start;gap:48px}
-  .hero-left{flex:1;margin-bottom:0;text-align:left}
-  .hero-query-card{flex:0 0 460px;max-width:460px}
-  .hero h1{text-align:left}
-  .hero-sub{text-align:left;margin-left:0;margin-right:0}
-  .hero-stats{justify-content:flex-start}
-  .hero-trust-row{justify-content:flex-start}
-  .hero-tag-pill,.hero-note{text-align:left;display:inline-block}
-}
+/* ── Hero mobile optimisations ── */
 /* Mobile <768px: hide above-fold bloat, bring query card up */
 @media(max-width:767px){
   .hero-stats,.hero-trust-row,.hero-note{display:none!important}
