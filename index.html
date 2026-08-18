@@ -3333,6 +3333,11 @@ function genReport(uid,user){
     <p style="font-size:11px;color:var(--text-lt);text-align:center;margin-top:12px">⚠️ Verify credentials independently before engaging any lawyer.</p>
   </div>`;
 
+  // Footer warning
+  h+=`<div style="background:#B91C1C;color:#fff;font-size:12px;font-weight:800;text-align:center;letter-spacing:.6px;padding:10px 20px;margin-top:8px;border-radius:0 0 8px 8px">
+    ⚠️ [NOT FOR FILING WITHOUT REVIEW BY A QUALIFIED ADVOCATE]
+  </div>`;
+
   document.getElementById('rptBody').innerHTML=h;
   document.getElementById('rptOv').classList.add('open');
   document.body.style.overflow='hidden';
