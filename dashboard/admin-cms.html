@@ -280,6 +280,8 @@ async function adminDoLogin(){
     const el=document.getElementById('adminLabel');if(el)el.textContent=data.user.name;
     const roleEl=document.getElementById('adminRole');if(roleEl)roleEl.textContent=data.user.role;
     if(typeof init==='function')init();
+    // Reload dashboard KPIs now that we have a valid token
+    if(typeof loadDashboard==='function')setTimeout(loadDashboard,200);
   }catch(e){
     if(err){err.style.display='block';err.textContent='Network error. Please check your connection.';}
   }finally{
@@ -2977,9 +2979,10 @@ document.addEventListener('keydown', e => {
 
 // ── Boot ──────────────────────────────────────────────────────
 init();
-// Load dashboard data on startup
+// Load dashboard data on startup — only if already authenticated (returning session)
+// First-login case: loadDashboard is called from adminDoLogin() after token is set
 document.addEventListener('DOMContentLoaded', function(){
-  setTimeout(loadDashboard, 100);
+  if(_checkAuth()) setTimeout(loadDashboard, 100);
 });
 
 /* ═══════════════════════════════════════════════════════════════
