@@ -35,6 +35,7 @@
     "api/lawyer/me.js":       { "maxDuration": 10 }
   },
   "routes": [
+    { "src": "/",                            "dest": "/index.html" },
     { "src": "/api/analyse",                 "dest": "/api/analyse.js" },
     { "src": "/api/admin-login",             "dest": "/api/admin/users.js" },
     { "src": "/api/feedback",                "dest": "/api/track.js" },
