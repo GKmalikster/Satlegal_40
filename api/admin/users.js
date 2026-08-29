@@ -11,7 +11,7 @@
  */
 
 const crypto = require('crypto');
-const { connectDB, isAdmin, makeToken, getModels } = require('../_db');
+const { connectDB, isAdmin, verifyToken, makeToken, getModels } = require('../_db');
 
 const VALID_ROLES = ['end_user', 'tester', 'lawyer', 'admin'];
 
@@ -55,6 +55,14 @@ function hashPassword(password) {
   return `${salt}:${hash}`;
 }
 
+function verifyPassword(password, stored) {
+  try {
+    const [salt, hash] = stored.split(':');
+    const attempt = crypto.scryptSync(String(password), salt, 64).toString('hex');
+    return crypto.timingSafeEqual(Buffer.from(hash, 'hex'), Buffer.from(attempt, 'hex'));
+  } catch { return false; }
+}
+
 module.exports = async function handler(req, res) {
   const ALLOWED = ['https://satlegal.in','https://www.satlegal.in','https://satlegal-40.vercel.app'];
   const origin  = req.headers['origin'] || '';
@@ -86,6 +94,113 @@ module.exports = async function handler(req, res) {
     if (!user) return res.status(401).json({ success: false, message: 'Invalid email or password' });
     const token = makeToken(user.email, user.role);
     return res.json({ success: true, token, user: { email: user.email, name: user.name, role: user.role } });
+  }
+
+  // ── POST /api/auth/signup — public user registration ────────────────────────
+  if (reqPath === '/api/auth/signup') {
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+    try {
+      await connectDB();
+      const { User } = getModels();
+      const { name, email, phone, password, gender, userType, state, city } = req.body || {};
+      if (!name || !email || !password) {
+        return res.status(400).json({ success: false, message: 'Name, email and password are required' });
+      }
+      if (!phone) {
+        return res.status(400).json({ success: false, message: 'Phone number is required' });
+      }
+      if (password.length < 6) {
+        return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+      }
+      const existing = await User.findOne({ email: String(email).toLowerCase() });
+      if (existing) {
+        return res.status(409).json({ success: false, message: 'Email already registered. Please login.' });
+      }
+      const VALID_UTYPES = ['individual', 'business', 'ngo', 'student', 'other'];
+      const user = await User.create({
+        name: String(name).slice(0, 100),
+        email: String(email).toLowerCase().slice(0, 200),
+        phone: String(phone).slice(0, 20),
+        password: hashPassword(String(password)),
+        role: 'user',
+        gender: ['male','female','other','prefer_not_to_say'].includes(gender) ? gender : 'prefer_not_to_say',
+        userType: VALID_UTYPES.includes(userType) ? userType : 'individual',
+        state: String(state || '').slice(0, 50),
+        city: String(city || '').slice(0, 100),
+        status: 'active',
+        isVerified: false
+      });
+      const token = makeToken(user.email, user.role);
+      console.log('[auth/signup] new user:', user.email.slice(0,3) + '***');
+      return res.status(201).json({
+        success: true,
+        message: 'Account created successfully',
+        token,
+        user: { id: user._id, name: user.name, email: user.email, role: user.role }
+      });
+    } catch (err) {
+      console.error('[auth/signup]', err.message);
+      if (err.code === 11000) return res.status(409).json({ success: false, message: 'Email already registered.' });
+      return res.status(500).json({ success: false, message: 'Registration failed. Please try again.' });
+    }
+  }
+
+  // ── POST /api/auth/login — public user login ─────────────────────────────────
+  if (reqPath === '/api/auth/login') {
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+    const ip = ((req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0]).trim();
+    if (!_rlCheck(ip)) {
+      return res.status(429).json({ success: false, message: 'Too many login attempts. Wait 15 minutes.' });
+    }
+    try {
+      await connectDB();
+      const { User } = getModels();
+      const { email, password } = req.body || {};
+      if (!email || !password) {
+        return res.status(400).json({ success: false, message: 'Email and password required' });
+      }
+      const user = await User.findOne({ email: String(email).toLowerCase() });
+      if (!user || !verifyPassword(password, user.password)) {
+        return res.status(401).json({ success: false, message: 'Invalid email or password' });
+      }
+      if (user.status === 'suspended') {
+        return res.status(403).json({ success: false, message: 'Account suspended. Contact support.' });
+      }
+      await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
+      const token = makeToken(user.email, user.role);
+      return res.json({
+        success: true,
+        token,
+        user: { id: user._id, name: user.name, email: user.email, role: user.role }
+      });
+    } catch (err) {
+      console.error('[auth/login]', err.message);
+      return res.status(500).json({ success: false, message: 'Login failed. Please try again.' });
+    }
+  }
+
+  // ── GET /api/auth/me — return authenticated user's profile ───────────────────
+  if (reqPath === '/api/auth/me') {
+    if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+    const auth = (req.headers['authorization'] || '').replace('Bearer ', '').trim();
+    const decoded = verifyToken(auth);
+    if (!decoded) return res.status(401).json({ success: false, message: 'Not authenticated' });
+    try {
+      await connectDB();
+      const { User } = getModels();
+      const user = await User.findOne({ email: decoded.email })
+        .select('-password -resetPasswordToken -verificationToken');
+      if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+      return res.json({ success: true, user });
+    } catch (err) {
+      console.error('[auth/me]', err.message);
+      return res.status(500).json({ success: false, message: 'Server error' });
+    }
+  }
+
+  // ── /api/auth/logout — token is client-side; just acknowledge ────────────────
+  if (reqPath === '/api/auth/logout') {
+    return res.json({ success: true });
   }
 
   if (!isAdmin(req)) return res.status(401).json({ success: false, message: 'Unauthorized' });

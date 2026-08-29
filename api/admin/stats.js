@@ -58,7 +58,7 @@ module.exports = async function handler(req, res) {
           }},
           { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } }
         ]),
-        User.countDocuments({ role: { $in: ['user', 'end_user'] } }),
+        User.countDocuments({ role: { $in: ['user', 'end_user', 'tester'] } }),
         SearchQuery.find().sort({ ts: -1 }).limit(10).select('query detectedLaws source ts')
       ]);
 
@@ -82,14 +82,14 @@ module.exports = async function handler(req, res) {
 
     const [totalUsers, totalLawyers, pendingLawyers, approvedLawyers,
            totalInquiries, totalLeads, totalSearches, recentUsers] = await Promise.all([
-      User.countDocuments({ role: { $in: ['user', 'end_user'] } }),
+      User.countDocuments({ role: { $in: ['user', 'end_user', 'tester'] } }),
       User.countDocuments({ role: 'lawyer' }),
       LawyerProfile.countDocuments({ status: 'pending' }),
       LawyerProfile.countDocuments({ status: 'approved' }),
       CaseInquiry.countDocuments(),
       LawyerLead.countDocuments(),
       SearchQuery.countDocuments(),
-      User.find({ role: { $in: ['user', 'end_user'] } })
+      User.find({ role: { $in: ['user', 'end_user', 'tester'] } })
         .sort({ createdAt: -1 }).limit(5)
         .select('name email createdAt state gender userType')
     ]);
