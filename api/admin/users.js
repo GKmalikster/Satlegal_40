@@ -83,12 +83,13 @@ module.exports = async function handler(req, res) {
     if (!admins.length) {
       return res.status(503).json({ success: false, message: 'Server configuration error.' });
     }
+    // Check credentials BEFORE rate limiting — blank-body probes should not consume rate limit slots
+    const { email = '', password = '' } = req.body || {};
+    if (!email || !password) return res.status(400).json({ success: false, message: 'email and password required' });
     const ip = ((req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0]).trim();
     if (!_rlCheck(ip)) {
       return res.status(429).json({ success: false, message: 'Too many login attempts. Wait 15 minutes.' });
     }
-    const { email = '', password = '' } = req.body || {};
-    if (!email || !password) return res.status(400).json({ success: false, message: 'email and password required' });
     const emailNorm = email.toLowerCase().trim();
     const user = admins.find(u => u.email.toLowerCase() === emailNorm && _safeEqual(u.password, password));
     if (!user) return res.status(401).json({ success: false, message: 'Invalid email or password' });
@@ -148,6 +149,11 @@ module.exports = async function handler(req, res) {
   // ── POST /api/auth/login — public user login ─────────────────────────────────
   if (reqPath === '/api/auth/login') {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+    // Check credentials BEFORE rate limiting — blank-body probes should not consume rate limit slots
+    const { email, password } = req.body || {};
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Email and password required' });
+    }
     const ip = ((req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0]).trim();
     if (!_rlCheck(ip)) {
       return res.status(429).json({ success: false, message: 'Too many login attempts. Wait 15 minutes.' });
@@ -155,10 +161,6 @@ module.exports = async function handler(req, res) {
     try {
       await connectDB();
       const { User } = getModels();
-      const { email, password } = req.body || {};
-      if (!email || !password) {
-        return res.status(400).json({ success: false, message: 'Email and password required' });
-      }
       const user = await User.findOne({ email: String(email).toLowerCase() });
       if (!user || !verifyPassword(password, user.password)) {
         return res.status(401).json({ success: false, message: 'Invalid email or password' });

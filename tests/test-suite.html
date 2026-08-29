@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SatLegal — Comprehensive Test Suite</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh}
+  .header{background:#1a1f2e;border-bottom:1px solid #2d3748;padding:16px 24px;display:flex;align-items:center;gap:16px}
+  .header h1{font-size:18px;font-weight:700;color:#fff}
+  .header .badge{background:#2d3748;color:#94a3b8;font-size:11px;padding:3px 8px;border-radius:4px}
+  .main{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - 57px)}
+  .sidebar{background:#141821;border-right:1px solid #2d3748;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+  .config-section{background:#1e2433;border:1px solid #2d3748;border-radius:8px;padding:14px}
+  .config-section h3{font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+  .config-section label{display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;margin-top:8px}
+  .config-section input{width:100%;background:#0f1117;border:1px solid #2d3748;border-radius:6px;padding:7px 10px;color:#e2e8f0;font-size:13px}
+  .config-section input:focus{outline:none;border-color:#4f46e5}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
+  .btn-primary{background:#4f46e5;color:#fff}
+  .btn-primary:hover{background:#4338ca}
+  .btn-secondary{background:#1e2433;color:#94a3b8;border:1px solid #2d3748}
+  .btn-secondary:hover{background:#2d3748;color:#e2e8f0}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-sm{padding:5px 10px;font-size:12px}
+  .summary-bar{background:#1e2433;border:1px solid #2d3748;border-radius:8px;padding:12px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;text-align:center}
+  .summary-stat .num{font-size:22px;font-weight:700}
+  .summary-stat .lbl{font-size:11px;color:#64748b;margin-top:2px}
+  .num-total{color:#94a3b8}
+  .num-pass{color:#22c55e}
+  .num-fail{color:#ef4444}
+  .num-skip{color:#f59e0b}
+  .cat-list{display:flex;flex-direction:column;gap:4px}
+  .cat-item{background:#1e2433;border:1px solid #2d3748;border-radius:6px;padding:9px 12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:.15s}
+  .cat-item:hover{border-color:#4f46e5;background:#252d42}
+  .cat-item.active{border-color:#4f46e5;background:#252d42}
+  .cat-name{font-size:13px;font-weight:500}
+  .cat-count{font-size:11px;color:#64748b}
+  .cat-badge{font-size:10px;padding:2px 6px;border-radius:3px;font-weight:700}
+  .badge-pass{background:#14532d;color:#22c55e}
+  .badge-fail{background:#450a0a;color:#ef4444}
+  .badge-run{background:#1e1b4b;color:#818cf8}
+  .badge-pending{background:#1c1917;color:#64748b}
+  .content{padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:16px}
+  .test-card{background:#1e2433;border:1px solid #2d3748;border-radius:10px;overflow:hidden}
+  .test-card-header{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+  .test-card-header h2{font-size:14px;font-weight:600}
+  .test-card-header .meta{display:flex;align-items:center;gap:8px}
+  .test-table{width:100%;border-collapse:collapse}
+  .test-table th{text-align:left;font-size:11px;color:#64748b;font-weight:600;padding:8px 16px;border-bottom:1px solid #2d3748;text-transform:uppercase;letter-spacing:.6px}
+  .test-table td{padding:9px 16px;font-size:13px;border-bottom:1px solid #1a1f2e;vertical-align:top}
+  .test-table tr:last-child td{border-bottom:none}
+  .test-table tr:hover td{background:#252d42}
+  .status-icon{font-size:14px;width:20px}
+  .test-name{font-weight:500}
+  .test-detail{font-size:11px;color:#64748b;margin-top:2px}
+  .test-expected{color:#64748b;font-size:12px}
+  .test-actual{font-size:12px}
+  .actual-pass{color:#22c55e}
+  .actual-fail{color:#ef4444}
+  .actual-warn{color:#f59e0b}
+  .actual-skip{color:#94a3b8}
+  .timing{color:#64748b;font-size:11px;text-align:right}
+  .progress-bar{height:3px;background:#2d3748}
+  .progress-fill{height:100%;background:#4f46e5;transition:width .3s;width:0%}
+  .empty-state{text-align:center;padding:60px 20px;color:#4b5563}
+  .empty-icon{font-size:48px;margin-bottom:12px}
+  .run-btn-row{display:flex;gap:8px;margin-top:4px}
+  .log-panel{background:#0f1117;border:1px solid #2d3748;border-radius:6px;padding:12px;font-size:11px;font-family:monospace;color:#64748b;max-height:120px;overflow-y:auto;margin:0 16px 12px}
+  .log-line{margin-bottom:2px}
+  .log-pass{color:#22c55e}
+  .log-fail{color:#ef4444}
+  .log-info{color:#818cf8}
+  .export-row{display:flex;justify-content:flex-end;gap:8px;padding:8px 16px 12px}
+  select.config-select{width:100%;background:#0f1117;border:1px solid #2d3748;border-radius:6px;padding:7px 10px;color:#e2e8f0;font-size:13px}
+  .section-note{font-size:11px;color:#64748b;padding:6px 16px 8px;border-top:1px solid #1a1f2e}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⚡ SatLegal Test Suite</h1>
+  <span class="badge">v2.0 — 89 Tests · 13 Categories</span>
+  <span class="badge" id="envBadge">env: production</span>
+</div>
+
+<div class="main">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="config-section">
+      <h3>Configuration</h3>
+      <label>Base URL</label>
+      <input id="cfgBase" value="https://satlegal.in" placeholder="https://satlegal.in"/>
+      <label>Admin Email</label>
+      <input id="cfgAdminEmail" placeholder="admin@satlegal.in"/>
+      <label>Admin Password</label>
+      <input id="cfgAdminPass" type="password" placeholder="••••••••"/>
+      <label>Test User Email (auto-generated)</label>
+      <input id="cfgTestEmail" readonly style="opacity:.5"/>
+    </div>
+
+    <div class="run-btn-row">
+      <button class="btn btn-primary" id="btnRunAll" onclick="runAll()" style="flex:1">▶ Run All Tests</button>
+      <button class="btn btn-secondary" id="btnStop" onclick="stopRun()" disabled>■</button>
+    </div>
+
+    <div class="summary-bar">
+      <div class="summary-stat"><div class="num num-total" id="cntTotal">89</div><div class="lbl">Total</div></div>
+      <div class="summary-stat"><div class="num num-pass" id="cntPass">—</div><div class="lbl">Passed</div></div>
+      <div class="summary-stat"><div class="num num-fail" id="cntFail">—</div><div class="lbl">Failed</div></div>
+      <div class="summary-stat"><div class="num num-skip" id="cntSkip">—</div><div class="lbl">Skipped</div></div>
+    </div>
+
+    <div class="config-section" style="padding:10px 12px">
+      <h3>Categories</h3>
+    </div>
+    <div class="cat-list" id="catList"></div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content" id="content">
+    <div class="empty-state">
+      <div class="empty-icon">🧪</div>
+      <div style="font-size:16px;font-weight:600;color:#94a3b8;margin-bottom:6px">Ready to run</div>
+      <div style="font-size:13px">Enter admin credentials and click <strong>Run All Tests</strong></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+const S = {
+  userToken: null,
+  userEmail: null,
+  adminToken: null,
+  stopped: false,
+  results: []   // { cat, name, status, actual, timing }
+};
+
+// Generate unique test email once per page load
+const TS = Date.now();
+const TEST_EMAIL = `testuser_${TS}@satlegal-tester.dev`;
+document.getElementById('cfgTestEmail').value = TEST_EMAIL;
+S.userEmail = TEST_EMAIL;
+
+const BASE = () => document.getElementById('cfgBase').value.replace(/\/$/, '');
+
+// ═══════════════════════════════════════════════════════════════
+// HTTP HELPER
+// ═══════════════════════════════════════════════════════════════
+async function req(method, path, body, extraHeaders = {}) {
+  const t0 = Date.now();
+  try {
+    const opts = {
+      method,
+      headers: { 'Content-Type': 'application/json', ...extraHeaders }
+    };
+    if (body) opts.body = JSON.stringify(body);
+    const res = await fetch(BASE() + path, opts);
+    let data = null;
+    try { data = await res.json(); } catch { data = null; }
+    return { status: res.status, data, ms: Date.now() - t0, ok: res.ok };
+  } catch (e) {
+    return { status: 0, data: null, ms: Date.now() - t0, ok: false, error: e.message };
+  }
+}
+
+function authHdr(token) {
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TEST DEFINITIONS
+// ═══════════════════════════════════════════════════════════════
+const CATEGORIES = [
+
+// ── 1. ROUTE SMOKE ──────────────────────────────────────────────
+{
+  id: 'smoke', name: 'Route Smoke Tests', desc: 'Every vercel.json route returns non-404',
+  tests: [
+    { name: 'GET /', detail: 'Homepage loads',
+      run: async () => { const r = await req('GET', '/'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/auth/signup', detail: 'Auth signup endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/auth/signup'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/auth/login', detail: 'Auth login endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/auth/login'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/auth/me', detail: 'Auth me endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/auth/me'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/auth/logout', detail: 'Auth logout endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/auth/logout'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/analyse', detail: 'Analysis endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/analyse'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/track', detail: 'Track endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/track'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/sales', detail: 'Sales endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/sales'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/admin-login', detail: 'Admin login endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/admin-login'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/admin/stats', detail: 'Admin stats endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/admin/stats'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/admin/users', detail: 'Admin users endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/admin/users'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/admin/lawyers', detail: 'Admin lawyers endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/admin/lawyers'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/admin/inquiries', detail: 'Admin inquiries endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/admin/inquiries'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/admin/content', detail: 'CMS content endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/admin/content'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/admin/config', detail: 'CMS config endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/admin/config'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/lawyer/list', detail: 'Public lawyer list exists',
+      run: async () => { const r = await req('OPTIONS', '/api/lawyer/list'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/lawyer/register', detail: 'Lawyer register endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/lawyer/register'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/lawyer/match', detail: 'Lawyer match endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/lawyer/match'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/lawyer/leads', detail: 'Lawyer leads endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/lawyer/leads'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'OPTIONS /api/lawyer/me', detail: 'Lawyer me endpoint exists',
+      run: async () => { const r = await req('OPTIONS', '/api/lawyer/me'); return chk(r.status !== 404, r.status, 'non-404'); }},
+    { name: 'GET /api/lawyer/list', detail: 'Lawyer list returns JSON',
+      run: async () => { const r = await req('GET', '/api/lawyer/list'); return chk(r.status === 200 && Array.isArray(r.data?.lawyers), r.status, '200 + array'); }},
+    { name: 'GET /404-page', detail: 'Non-existent page returns 404',
+      run: async () => { const r = await req('GET', '/this-page-does-not-exist-xyz'); return chk(r.status === 404, r.status, '404'); }},
+  ]
+},
+
+// ── 2. AUTH: SIGNUP ──────────────────────────────────────────────
+{
+  id: 'signup', name: 'Auth: Signup', desc: 'User registration endpoint',
+  tests: [
+    { name: 'Valid signup creates user', detail: 'POST /api/auth/signup with full valid body → 201 + token',
+      run: async () => {
+        const r = await req('POST', '/api/auth/signup', {
+          name: 'Test User', email: S.userEmail,
+          phone: '9876543210', password: 'TestPass@123',
+          gender: 'prefer_not_to_say', userType: 'individual', state: 'Maharashtra', city: 'Mumbai'
+        });
+        if (r.status === 201 && r.data?.token) { S.userToken = r.data.token; }
+        return chk(r.status === 201 && !!r.data?.token && !!r.data?.user, r.status, '201 + token + user');
+      }},
+    { name: 'Duplicate email rejected', detail: 'POST /api/auth/signup with same email → 409',
+      run: async () => {
+        const r = await req('POST', '/api/auth/signup', { name: 'Dup', email: S.userEmail, phone: '9000000000', password: 'TestPass@123' });
+        return chk(r.status === 409, r.status, '409 Conflict');
+      }},
+    { name: 'Missing name → 400', detail: 'Name field required',
+      run: async () => {
+        const r = await req('POST', '/api/auth/signup', { email: 'x@test.com', phone: '9000000001', password: 'TestPass@123' });
+        return chk(r.status === 400, r.status, '400');
+      }},
+    { name: 'Missing email → 400', detail: 'Email field required',
+      run: async () => {
+        const r = await req('POST', '/api/auth/signup', { name: 'X', phone: '9000000002', password: 'TestPass@123' });
+        return chk(r.status === 400, r.status, '400');
+      }},
+    { name: 'Short password → 400', detail: 'Password < 6 chars rejected',
+      run: async () => {
+        const r = await req('POST', '/api/auth/signup', { name: 'X', email: `short_${TS}@t.com`, phone: '9000000003', password: '123' });
+        return chk(r.status === 400, r.status, '400');
+      }},
+  ]
+},
+
+// ── 3. AUTH: LOGIN ───────────────────────────────────────────────
+{
+  id: 'login', name: 'Auth: Login', desc: 'User login endpoint',
+  tests: [
+    { name: 'Valid login → 200 + token', detail: 'POST /api/auth/login with correct credentials',
+      run: async () => {
+        const r = await req('POST', '/api/auth/login', { email: S.userEmail, password: 'TestPass@123' });
+        if (r.status === 200 && r.data?.token) S.userToken = r.data.token;
+        return chk(r.status === 200 && !!r.data?.token && !!r.data?.user, r.status, '200 + token + user');
+      }},
+    { name: 'Wrong password → 401', detail: 'Incorrect password rejected',
+      run: async () => {
+        const r = await req('POST', '/api/auth/login', { email: S.userEmail, password: 'WrongPassword!' });
+        return chk(r.status === 401, r.status, '401');
+      }},
+    { name: 'Non-existent email → 401', detail: 'Unknown email rejected',
+      run: async () => {
+        const r = await req('POST', '/api/auth/login', { email: `nobody_${TS}@nowhere.com`, password: 'TestPass@123' });
+        return chk(r.status === 401, r.status, '401');
+      }},
+    { name: 'Missing email → 400', detail: 'Email field required',
+      run: async () => {
+        const r = await req('POST', '/api/auth/login', { password: 'TestPass@123' });
+        return chk(r.status === 400, r.status, '400');
+      }},
+    { name: 'Missing password → 400', detail: 'Password field required',
+      run: async () => {
+        const r = await req('POST', '/api/auth/login', { email: S.userEmail });
+        return chk(r.status === 400, r.status, '400');
+      }},
+  ]
+},
+
+// ── 4. AUTH: SESSION ─────────────────────────────────────────────
+{
+  id: 'session', name: 'Auth: Session / Me', desc: 'Token validation and profile retrieval',
+  tests: [
+    { name: 'GET /me with valid token → 200', detail: 'Returns current user profile',
+      run: async () => {
+        if (!S.userToken) return skip('No user token (signup/login failed)');
+        const r = await req('GET', '/api/auth/me', null, authHdr(S.userToken));
+        return chk(r.status === 200 && !!r.data?.user?.email, r.status, '200 + user object');
+      }},
+    { name: 'GET /me without token → 401', detail: 'Unauthenticated request rejected',
+      run: async () => {
+        const r = await req('GET', '/api/auth/me');
+        return chk(r.status === 401, r.status, '401');
+      }},
+    { name: 'GET /me with garbage token → 401', detail: 'Invalid token rejected',
+      run: async () => {
+        const r = await req('GET', '/api/auth/me', null, { Authorization: 'Bearer this.is.garbage' });
+        return chk(r.status === 401, r.status, '401');
+      }},
+    { name: 'POST /logout → 200', detail: 'Logout acknowledged',
+      run: async () => {
+        const r = await req('POST', '/api/auth/logout', {}, authHdr(S.userToken));
+        return chk(r.status === 200 && r.data?.success, r.status, '200 success');
+      }},
+  ]
+},
+
+// ── 5. ADMIN: AUTH ───────────────────────────────────────────────
+{
+  id: 'adminauth', name: 'Admin: Authentication', desc: 'Admin login and token issuance',
+  tests: [
+    { name: 'Valid admin login → 200 + token', detail: 'POST /api/admin-login with configured credentials',
+      run: async () => {
+        const email = document.getElementById('cfgAdminEmail').value.trim();
+        const pass  = document.getElementById('cfgAdminPass').value;
+        if (!email || !pass) return skip('Admin credentials not set in config');
+        const r = await req('POST', '/api/admin-login', { email, password: pass });
+        if (r.status === 200 && r.data?.token) S.adminToken = r.data.token;
+        return chk(r.status === 200 && !!r.data?.token, r.status, '200 + token');
+      }},
+    { name: 'Wrong admin password → 401', detail: 'Invalid credentials rejected (429 if rate-limited from repeated runs)',
+      run: async () => {
+        const email = document.getElementById('cfgAdminEmail').value.trim() || 'admin@satlegal.in';
+        const r = await req('POST', '/api/admin-login', { email, password: 'definitely_wrong_' + TS });
+        return chk(r.status === 401 || r.status === 429, r.status, '401 (or 429 if rate-limited)');
+      }},
+    { name: 'Missing credentials → 400', detail: 'Empty body rejected (503 if admin not configured)',
+      run: async () => {
+        const r = await req('POST', '/api/admin-login', {});
+        return chk(r.status === 400 || r.status === 503, r.status, '400 (or 503 if not configured)');
+      }},
+    { name: 'Admin token has correct structure', detail: 'Token is base64url.hex format',
+      run: async () => {
+        if (!S.adminToken) return skip('No admin token (login failed)');
+        const valid = S.adminToken.includes('.') && S.adminToken.split('.').length === 2;
+        return chk(valid, valid ? 'valid' : 'malformed', 'base64url.hex');
+      }},
+  ]
+},
+
+// ── 6. ADMIN: STATS ──────────────────────────────────────────────
+{
+  id: 'adminstats', name: 'Admin: Dashboard Stats', desc: 'Stats endpoint data integrity',
+  tests: [
+    { name: 'GET /admin/stats with token → 200', detail: 'Returns stats object',
+      run: async () => {
+        if (!S.adminToken) return skip('No admin token');
+        const r = await req('GET', '/api/admin/stats', null, authHdr(S.adminToken));
+        return chk(r.status === 200 && r.data?.success, r.status, '200 + success');
+      }},
+    { name: 'Stats has expected fields', detail: 'totalUsers, totalSearches, totalLawyers all present',
+      run: async () => {
+        if (!S.adminToken) return skip('No admin token');
+        const r = await req('GET', '/api/admin/stats', null, authHdr(S.adminToken));
+        const s = r.data?.stats;
+        const ok = s && 'totalUsers' in s && 'totalSearches' in s && 'totalLawyers' in s;
+        return chk(ok, ok ? JSON.stringify(s).slice(0,80) : 'missing fields', 'stats shape valid');
+      }},
+    { name: 'GET /admin/stats without token → 401', detail: 'Unauthorized access blocked',
+      run: async () => {
+        const r = await req('GET', '/api/admin/stats');
+        return chk(r.status === 401, r.status, '401');
+      }},
+  ]
+},
+
+// ── 7. ADMIN: USER MANAGEMENT ────────────────────────────────────
+{
+  id: 'adminusers', name: 'Admin: User Management', desc: 'User listing and filtering',
+  tests: [
+    { name: 'GET /admin/users with token → 200', detail: 'Returns users array',
+      run: async () => {
+        if (!S.adminToken) return skip('No admin token');
+        const r = await req('GET', '/api/admin/users', null, authHdr(S.adminToken));
+        return chk(r.status === 200 && Array.isArray(r.data?.users), r.status, '200 + array');
+      }},
+    { name: 'GET /admin/users without token → 401', detail: 'Unauthorized access blocked',
+      run: async () => {
+        const r = await req('GET', '/api/admin/users');
+        return chk(r.status === 401, r.status, '401');
+      }},
+    { name: 'User list does not expose passwords', detail: 'password field absent from results',
+      run: async () => {
+        if (!S.adminToken) return skip('No admin token');
+        const r = await req('GET', '/api/admin/users', null, authHdr(S.adminToken));
+        const users = r.data?.users || [];
+        const exposed = users.some(u => 'password' in u);
+        return chk(!exposed && r.status === 200, exposed ? 'PASSWORD EXPOSED!' : 'clean', 'no password field');
+      }},
+  ]
+},
+
+// ── 8. ANALYSIS: CORE LAW CATEGORIES ─────────────────────────────
+{
+  id: 'analysis', name: 'Analysis: Core Law Mapping', desc: '20 real-world queries mapped to correct laws',
+  tests: [
+    { name: 'Police arrest without warrant', detail: 'Expected: Criminal – Police Excess / Human Rights Violation',
+      run: async () => law('Police arrested me at home without any warrant or reason at midnight', 'Criminal') },
+    { name: 'Wrongful termination', detail: 'Expected: Employment – Wrongful Termination',
+      run: async () => law('My employer fired me suddenly without giving any notice or reason after 4 years of service', 'Employment') },
+    { name: 'Online fraud / cyber crime', detail: 'Expected: Cyber – Online Fraud',
+      run: async () => law('Someone called me pretending to be from bank and stole 50000 rupees from my account through OTP', 'Cyber') },
+    { name: 'Landlord deposit dispute', detail: 'Expected: Property / Tenancy (or Consumer – both valid)',
+      run: async () => {
+        const r = await req('POST', '/api/analyse', { description: 'My landlord is refusing to return security deposit of 60000 rupees after I vacated the flat' });
+        if (r.status !== 200) return fail(`HTTP ${r.status}`, '200');
+        const laws = r.data?.laws || r.data?.detectedLaws || [];
+        const s = JSON.stringify(laws).toLowerCase();
+        const hit = s.includes('property') || s.includes('consumer') || s.includes('tenant') || s.includes('rent');
+        return chk(hit, hit ? laws[0]?.caseType || 'matched' : s.slice(0,80), 'Property or Consumer or Tenant');
+      }},
+    { name: 'Consumer product defective', detail: 'Expected: Consumer Protection',
+      run: async () => law('I bought a refrigerator that stopped working in 2 months. Company is refusing repair or replacement', 'Consumer') },
+    { name: 'Domestic violence', detail: 'Expected: Family – Domestic Violence',
+      run: async () => law('My husband beats me regularly and I want to know how to get a protection order', 'Family') },
+    { name: 'Cheque bounce', detail: 'Expected: Criminal – Cheque Bounce / NI Act',
+      run: async () => law('I gave a cheque to my business partner for 2 lakhs and it bounced. What legal action can I take', 'Criminal') },
+    { name: 'Medical negligence', detail: 'Expected: Medical Negligence / Consumer',
+      run: async () => law('Doctor performed wrong surgery on my father who is now permanently disabled. Hospital refusing responsibility', 'Medical') },
+    { name: 'Motor accident claim', detail: 'Expected: Motor Accident Claims',
+      run: async () => law('I was hit by a car while crossing the road. I have fractures and medical bills. Driver ran away', 'Motor') },
+    { name: 'Property encroachment', detail: 'Expected: Property / Real Estate',
+      run: async () => law('My neighbour has built a wall on my property without permission and is refusing to remove it', 'Property') },
+    { name: 'PF not deposited by employer', detail: 'Expected: Employment – PF / Gratuity',
+      run: async () => law('My employer has been deducting PF from my salary for 3 years but never depositing it. My UAN shows no balance', 'Employment') },
+    { name: 'Divorce petition', detail: 'Expected: Family – Divorce',
+      run: async () => law('I want to file for divorce from my husband due to cruelty and mental harassment over 5 years', 'Family') },
+    { name: 'RTI application', detail: 'Expected: Constitutional – PIL / Writ Petition (RTI is under PIL in DB)',
+      run: async () => law('I filed an RTI application 40 days ago but the government office has not replied. What can I do', 'Constitutional') },
+    { name: 'GST tax notice', detail: 'Expected: Tax – GST / Income Tax',
+      run: async () => law('I received a GST notice demanding 3 lakh rupees in back taxes for my small business. Is it valid', 'Tax') },
+    { name: 'SC/ST discrimination', detail: 'Expected: SC/ST – Atrocities / Discrimination',
+      run: async () => law('My upper caste neighbour publicly abused me using caste slurs and prevented my child from drinking water from the common tap', 'SC') },
+    { name: 'Sexual harassment at workplace', detail: 'Expected: Employment – POSH / SHRC',
+      run: async () => law('My manager repeatedly makes sexual comments about me at work and touched me inappropriately. HR is ignoring my complaint', 'Employment') },
+    { name: 'Will and inheritance dispute', detail: 'Expected: Succession – Will Dispute / Probate (not under Family in DB)',
+      run: async () => law('My father died and my brother is claiming the entire property saying father gave him a will that excludes me. I suspect it is forged', 'Succession') },
+    { name: 'PIL / Writ petition', detail: 'Expected: Constitutional – PIL',
+      run: async () => law('The municipality is dumping garbage next to our residential colony causing health hazards. Can I file a PIL in High Court', 'Constitutional') },
+    { name: 'Notice of Appearance – police phone call', detail: 'Expected: Criminal – Police Excess (41A CrPC / BNSS Sec 35)',
+      run: async () => law('Police officer called me on phone and asked me to come to the station. I did not commit any crime. Do I have to go', 'Criminal') },
+    { name: 'Salary dues unpaid', detail: 'Expected: Employment – Wrongful Termination / Wages',
+      run: async () => law('My company has not paid my salary for the last 3 months. They keep saying next week but nothing happens', 'Employment') },
+  ]
+},
+
+// ── 9. ANALYSIS: HINGLISH ────────────────────────────────────────
+{
+  id: 'hinglish', name: 'Analysis: Hinglish Queries', desc: 'Hindi + English mixed queries correctly identified',
+  tests: [
+    { name: 'Naukri se nikala gaya', detail: 'Job termination in Hindi',
+      run: async () => law('Mujhe bina kisi karan naukri se nikala gaya hai aur notice period bhi nahi diya', 'Employment') },
+    { name: 'Police ne pakad liya', detail: 'Police arrest in Hindi – Criminal – Police Excess',
+      run: async () => law('Police ne mere bhai ko raat ko ghar se pakad liya bina koi FIR ya warrant ke', 'Criminal') },
+    { name: 'Zameen par kabza', detail: 'Land encroachment in Hindi',
+      run: async () => law('Meri zameen par padosi ne kabza kar liya hai aur court ka darwaza kholna chahta hoon', 'Property') },
+    { name: 'Bank fraud Hindi', detail: 'Bank fraud in Hindi',
+      run: async () => law('Mere bank account se kisi ne 80000 rupees nikal liye phoney se. Bank keh raha hai inki zimmedari nahi', 'Cyber') },
+    { name: 'Pati ne mara pita', detail: 'Domestic violence in Hindi',
+      run: async () => law('Mere pati ne aaj raat phir se mujhe bahut mara. Mujhe apne bacho ke saath ghar se bhaagna padega', 'Family') },
+  ]
+},
+
+// ── 10. ANALYSIS: EDGE CASES ─────────────────────────────────────
+{
+  id: 'edgecases', name: 'Analysis: Edge Cases', desc: 'Malformed and unusual inputs handled gracefully',
+  tests: [
+    { name: 'Empty query handled', detail: 'POST /api/analyse with empty string',
+      run: async () => {
+        const r = await req('POST', '/api/analyse', { description: '' });
+        return chk(r.status !== 500 && r.status !== 0, r.status, 'non-500 graceful');
+      }},
+    { name: 'Very short query handled', detail: 'Single word query',
+      run: async () => {
+        const r = await req('POST', '/api/analyse', { description: 'help' });
+        return chk(r.status !== 500, r.status, 'non-500');
+      }},
+    { name: 'Special characters handled', detail: 'Query with only symbols',
+      run: async () => {
+        const r = await req('POST', '/api/analyse', { description: '!!! ??? ###' });
+        return chk(r.status !== 500, r.status, 'non-500');
+      }},
+    { name: 'Very long query handled', detail: '1000+ character query',
+      run: async () => {
+        const longQ = 'I was wrongfully terminated from my job. '.repeat(30);
+        const r = await req('POST', '/api/analyse', { description: longQ });
+        return chk(r.status === 200 || r.status === 400, r.status, '200 or 400');
+      }},
+    { name: 'Missing description field', detail: 'POST without description key',
+      run: async () => {
+        const r = await req('POST', '/api/analyse', { query: 'test' });
+        return chk(r.status !== 500 && r.status !== 0, r.status, 'non-500');
+      }},
+  ]
+},
+
+// ── 11. TRACKING ─────────────────────────────────────────────────
+{
+  id: 'tracking', name: 'Tracking & Events', desc: 'Analytics event logging',
+  tests: [
+    { name: 'POST /api/track valid event → 200', detail: 'Search tracking event accepted',
+      run: async () => {
+        const r = await req('POST', '/api/track', {
+          event: 'search_complete', query: 'test query', detectedLaws: ['Employment'],
+          sessionId: 'test_' + TS
+        });
+        return chk(r.status === 200, r.status, '200');
+      }},
+    { name: 'POST /api/track unmapped form → 200', detail: 'Coverage gap event accepted',
+      run: async () => {
+        const r = await req('POST', '/api/track', {
+          event: 'unmapped_form', query: 'no law found test', sessionId: 'test_' + TS
+        });
+        return chk(r.status === 200, r.status, '200');
+      }},
+    { name: 'POST /api/track empty body → handled', detail: 'Missing fields handled gracefully',
+      run: async () => {
+        const r = await req('POST', '/api/track', {});
+        return chk(r.status !== 500 && r.status !== 0, r.status, 'non-500');
+      }},
+  ]
+},
+
+// ── 12. SECURITY ─────────────────────────────────────────────────
+{
+  id: 'security', name: 'Security: Unauthorized Access', desc: 'All admin endpoints return 401 without valid token',
+  tests: [
+    { name: 'GET /admin/stats — no token → 401',
+      run: async () => { const r = await req('GET', '/api/admin/stats'); return chk(r.status === 401, r.status, '401'); }},
+    { name: 'GET /admin/users — no token → 401',
+      run: async () => { const r = await req('GET', '/api/admin/users'); return chk(r.status === 401, r.status, '401'); }},
+    { name: 'GET /admin/lawyers — no token → 401',
+      run: async () => { const r = await req('GET', '/api/admin/lawyers'); return chk(r.status === 401, r.status, '401'); }},
+    { name: 'GET /admin/inquiries — no token → 401',
+      run: async () => { const r = await req('GET', '/api/admin/inquiries'); return chk(r.status === 401, r.status, '401'); }},
+    { name: 'GET /admin/content — no token → 401',
+      run: async () => { const r = await req('GET', '/api/admin/content'); return chk(r.status === 401, r.status, '401'); }},
+    { name: 'GET /admin/analytics/summary — no token → 401',
+      run: async () => { const r = await req('GET', '/api/admin/analytics/summary'); return chk(r.status === 401, r.status, '401'); }},
+    { name: 'User token cannot access admin stats', detail: 'Cross-privilege escalation blocked',
+      run: async () => {
+        if (!S.userToken) return skip('No user token');
+        const r = await req('GET', '/api/admin/stats', null, authHdr(S.userToken));
+        return chk(r.status === 401, r.status, '401 (user cannot access admin)');
+      }},
+  ]
+},
+
+// ── 13. LAWYER DIRECTORY ─────────────────────────────────────────
+{
+  id: 'lawyers', name: 'Lawyer: Public Directory', desc: 'Public lawyer listing and filtering',
+  tests: [
+    { name: 'GET /lawyer/list → 200 + array', detail: 'Returns lawyers array (may be empty)',
+      run: async () => {
+        const r = await req('GET', '/api/lawyer/list');
+        return chk(r.status === 200 && Array.isArray(r.data?.lawyers), r.status, '200 + lawyers[]');
+      }},
+    { name: 'GET /lawyer/list?specialization=civil → 200', detail: 'Filter by specialization works',
+      run: async () => {
+        const r = await req('GET', '/api/lawyer/list?specialization=civil');
+        return chk(r.status === 200, r.status, '200');
+      }},
+    { name: 'GET /lawyer/list?state=Maharashtra → 200', detail: 'Filter by state works',
+      run: async () => {
+        const r = await req('GET', '/api/lawyer/list?state=Maharashtra');
+        return chk(r.status === 200, r.status, '200');
+      }},
+  ]
+},
+
+]; // end CATEGORIES
+
+// ═══════════════════════════════════════════════════════════════
+// ANALYSIS HELPER
+// ═══════════════════════════════════════════════════════════════
+async function law(description, expectedKeyword) {
+  const r = await req('POST', '/api/analyse', { description });
+  if (r.status !== 200) return fail(`HTTP ${r.status}`, `200 + law containing "${expectedKeyword}"`);
+  const laws = r.data?.laws || r.data?.detectedLaws || [];
+  const lawStr = JSON.stringify(laws).toLowerCase();
+  const hit = lawStr.includes(expectedKeyword.toLowerCase());
+  return chk(hit, hit ? laws[0]?.caseType || 'matched' : lawStr.slice(0,80), `contains "${expectedKeyword}"`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RESULT HELPERS
+// ═══════════════════════════════════════════════════════════════
+function chk(condition, actual, expected) {
+  return condition
+    ? { status: 'pass', actual: String(actual).slice(0,120), expected }
+    : { status: 'fail', actual: String(actual).slice(0,120), expected };
+}
+function fail(actual, expected) { return { status: 'fail', actual, expected }; }
+function skip(reason) { return { status: 'skip', actual: reason, expected: 'n/a' }; }
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER SIDEBAR CATEGORIES
+// ═══════════════════════════════════════════════════════════════
+function renderSidebar() {
+  const list = document.getElementById('catList');
+  list.innerHTML = CATEGORIES.map(cat => `
+    <div class="cat-item" id="side-${cat.id}" onclick="scrollTo('card-${cat.id}')">
+      <div>
+        <div class="cat-name">${cat.name}</div>
+        <div class="cat-count">${cat.tests.length} tests</div>
+      </div>
+      <span class="cat-badge badge-pending" id="badge-${cat.id}">—</span>
+    </div>
+  `).join('');
+}
+
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER CONTENT AREA
+// ═══════════════════════════════════════════════════════════════
+function renderContent() {
+  const content = document.getElementById('content');
+  content.innerHTML = CATEGORIES.map(cat => `
+    <div class="test-card" id="card-${cat.id}">
+      <div class="test-card-header" onclick="toggleCard('body-${cat.id}')">
+        <div>
+          <h2>${cat.name}</h2>
+          <div style="font-size:12px;color:#64748b;margin-top:2px">${cat.desc} · ${cat.tests.length} tests</div>
+        </div>
+        <div class="meta">
+          <span class="cat-badge badge-pending" id="card-badge-${cat.id}">pending</span>
+          <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation();runCategory('${cat.id}')">Run</button>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-${cat.id}"></div></div>
+      <div id="body-${cat.id}">
+        <table class="test-table">
+          <thead><tr>
+            <th style="width:30px"></th>
+            <th style="width:40%">Test</th>
+            <th>Expected</th>
+            <th>Actual</th>
+            <th style="width:70px">Time</th>
+          </tr></thead>
+          <tbody id="tbody-${cat.id}">
+            ${cat.tests.map((t, i) => `
+              <tr id="row-${cat.id}-${i}">
+                <td class="status-icon"><span id="icon-${cat.id}-${i}">·</span></td>
+                <td>
+                  <div class="test-name">${t.name}</div>
+                  ${t.detail ? `<div class="test-detail">${t.detail}</div>` : ''}
+                </td>
+                <td class="test-expected" id="exp-${cat.id}-${i}">—</td>
+                <td class="test-actual" id="act-${cat.id}-${i}">—</td>
+                <td class="timing" id="time-${cat.id}-${i}">—</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <div class="log-panel" id="log-${cat.id}" style="display:none"></div>
+      </div>
+      <div class="section-note" id="note-${cat.id}"></div>
+    </div>
+  `).join('');
+}
+
+function toggleCard(bodyId) {
+  const el = document.getElementById(bodyId);
+  if (el) el.style.display = el.style.display === 'none' ? '' : 'none';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UPDATE ROW
+// ═══════════════════════════════════════════════════════════════
+function updateRow(catId, idx, result, ms) {
+  const icons = { pass: '✅', fail: '❌', skip: '⏭', running: '⏳' };
+  const classes = { pass: 'actual-pass', fail: 'actual-fail', skip: 'actual-skip' };
+  document.getElementById(`icon-${catId}-${idx}`).textContent = icons[result.status] || '?';
+  document.getElementById(`exp-${catId}-${idx}`).textContent = result.expected || '—';
+  const actEl = document.getElementById(`act-${catId}-${idx}`);
+  actEl.textContent = result.actual || '—';
+  actEl.className = `test-actual ${classes[result.status] || ''}`;
+  document.getElementById(`time-${catId}-${idx}`).textContent = ms != null ? ms + 'ms' : '—';
+}
+
+function setRowRunning(catId, idx) {
+  document.getElementById(`icon-${catId}-${idx}`).textContent = '⏳';
+}
+
+function updateCatBadge(catId, pass, fail, total) {
+  const pct = Math.round((pass + fail) / total * 100);
+  ['side', 'card'].forEach(prefix => {
+    const el = document.getElementById(`${prefix === 'side' ? 'badge' : 'card-badge'}-${catId}`);
+    if (!el) return;
+    if (fail > 0) { el.className = 'cat-badge badge-fail'; el.textContent = `${fail} fail`; }
+    else if (pass === total) { el.className = 'cat-badge badge-pass'; el.textContent = '✓ pass'; }
+    else { el.className = 'cat-badge badge-run'; el.textContent = `${pct}%`; }
+  });
+  document.getElementById(`prog-${catId}`).style.width = pct + '%';
+}
+
+function updateSummary() {
+  const all = S.results;
+  document.getElementById('cntTotal').textContent = all.length || 89;
+  document.getElementById('cntPass').textContent  = all.filter(r => r.status === 'pass').length || '—';
+  document.getElementById('cntFail').textContent  = all.filter(r => r.status === 'fail').length || '—';
+  document.getElementById('cntSkip').textContent  = all.filter(r => r.status === 'skip').length || '—';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RUN CATEGORY
+// ═══════════════════════════════════════════════════════════════
+async function runCategory(catId) {
+  if (S.stopped) return;
+  const cat = CATEGORIES.find(c => c.id === catId);
+  if (!cat) return;
+  let pass = 0, fail = 0;
+  for (let i = 0; i < cat.tests.length; i++) {
+    if (S.stopped) break;
+    const test = cat.tests[i];
+    setRowRunning(catId, i);
+    const t0 = Date.now();
+    let result;
+    try { result = await test.run(); } catch (e) { result = fail(`Error: ${e.message}`, 'no error'); }
+    const ms = Date.now() - t0;
+    updateRow(catId, i, result, ms);
+    S.results.push({ cat: cat.name, name: test.name, ...result, ms });
+    if (result.status === 'pass') pass++;
+    else if (result.status === 'fail') fail++;
+    updateCatBadge(catId, pass, fail, cat.tests.length);
+    updateSummary();
+    await delay(80); // small gap to avoid rate-limiting
+  }
+  const note = document.getElementById(`note-${catId}`);
+  note.textContent = `Completed: ${pass} passed · ${fail} failed · ${cat.tests.length - pass - fail} skipped`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RUN ALL
+// ═══════════════════════════════════════════════════════════════
+async function runAll() {
+  S.stopped = false;
+  S.results = [];
+  S.userToken = null;
+  S.adminToken = null;
+  document.getElementById('btnRunAll').disabled = true;
+  document.getElementById('btnStop').disabled = false;
+  document.getElementById('cfgTestEmail').value = TEST_EMAIL;
+  S.userEmail = TEST_EMAIL;
+  updateSummary();
+  for (const cat of CATEGORIES) {
+    if (S.stopped) break;
+    await runCategory(cat.id);
+    await delay(200);
+  }
+  document.getElementById('btnRunAll').disabled = false;
+  document.getElementById('btnStop').disabled = true;
+  exportBar();
+}
+
+function stopRun() {
+  S.stopped = true;
+  document.getElementById('btnStop').disabled = true;
+  document.getElementById('btnRunAll').disabled = false;
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════════════════
+function exportBar() {
+  const content = document.getElementById('content');
+  const existing = document.getElementById('export-bar');
+  if (existing) existing.remove();
+  const div = document.createElement('div');
+  div.id = 'export-bar';
+  div.className = 'export-row';
+  div.innerHTML = `
+    <button class="btn btn-secondary btn-sm" onclick="copyCSV()">📋 Copy CSV</button>
+    <button class="btn btn-secondary btn-sm" onclick="downloadJSON()">⬇ Download JSON</button>
+  `;
+  content.appendChild(div);
+}
+
+function copyCSV() {
+  const header = 'Category,Test,Status,Expected,Actual,Time(ms)';
+  const rows = S.results.map(r =>
+    `"${r.cat}","${r.name}","${r.status}","${r.expected}","${r.actual}",${r.ms}`
+  );
+  navigator.clipboard.writeText([header, ...rows].join('\n'))
+    .then(() => alert('CSV copied to clipboard'));
+}
+
+function downloadJSON() {
+  const blob = new Blob([JSON.stringify({ run: new Date().toISOString(), results: S.results }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `satlegal-test-${Date.now()}.json`;
+  a.click();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+renderSidebar();
+renderContent();
+document.getElementById('cfgBase').addEventListener('change', () => {
+  document.getElementById('envBadge').textContent = `env: ${document.getElementById('cfgBase').value.includes('localhost') ? 'local' : 'production'}`;
+});
+</script>
+</body>
+</html>

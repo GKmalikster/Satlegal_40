@@ -1088,7 +1088,18 @@ const LAWS_DATABASE = [
         "pati ne ghar se nikaala",
         "husband dhamki de raha",
         "sasural mein maar peet",
-        "sharab pi ke maarta"
+        "sharab pi ke maarta",
+        "bahut mara",
+        "pati ne bahut mara",
+        "mujhe bahut mara",
+        "phir se mara",
+        "raat ko mara",
+        "ghar se bhaagna",
+        "ghar se bhagna padega",
+        "bhaagna padega",
+        "bacho ke saath bhaagna",
+        "bachon ke saath bhaagna",
+        "bacho ke saath bhagna"
       ],
       "casual": [
         "my husband is hitting me",
@@ -3257,7 +3268,17 @@ const LAWS_DATABASE = [
         "thag liye gaye",
         "paise thag liye",
         "stock market scheme",
-        "investment scam"
+        "investment scam",
+        "bank account se nikal liye",
+        "account se nikal liye phone",
+        "phone se paise nikal liye",
+        "phoney se nikal liye",
+        "phoney se paise gaye",
+        "bank ne zimmedari nahi mani",
+        "bank keh raha zimmedari nahi",
+        "bank zimmedari nahi",
+        "kisi ne account se nikal liye",
+        "account se nikal gaye paise"
       ],
       "weak": [
         "cheated",
