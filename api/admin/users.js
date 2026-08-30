@@ -66,7 +66,7 @@ function verifyPassword(password, stored) {
 module.exports = async function handler(req, res) {
   const ALLOWED = ['https://satlegal.in','https://www.satlegal.in','https://satlegal-40.vercel.app'];
   const origin  = req.headers['origin'] || '';
-  res.setHeader('Access-Control-Allow-Origin',  ALLOWED.includes(origin) ? origin : ALLOWED[0]);
+  res.setHeader('Access-Control-Allow-Origin',  ALLOWED.includes(origin) ? origin : '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
   res.setHeader('Vary', 'Origin');
