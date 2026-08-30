@@ -58,7 +58,7 @@ module.exports = async function handler(req, res) {
           }},
           { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } }
         ]),
-        User.countDocuments({ role: { $in: ['user', 'end_user', 'tester'] } }),
+        User.countDocuments(),
         SearchQuery.find().sort({ ts: -1 }).limit(10).select('query detectedLaws source ts')
       ]);
 
@@ -82,7 +82,7 @@ module.exports = async function handler(req, res) {
 
     const [totalUsers, totalLawyers, pendingLawyers, approvedLawyers,
            totalInquiries, totalLeads, totalSearches, recentUsers] = await Promise.all([
-      User.countDocuments({ role: { $in: ['user', 'end_user', 'tester'] } }),
+      User.countDocuments(),
       User.countDocuments({ role: 'lawyer' }),
       LawyerProfile.countDocuments({ status: 'pending' }),
       LawyerProfile.countDocuments({ status: 'approved' }),
