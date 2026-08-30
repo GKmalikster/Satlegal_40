@@ -50,6 +50,7 @@
     { "src": "/api/admin/stats",             "dest": "/api/admin/stats.js" },
     { "src": "/api/admin/users",             "dest": "/api/admin/users.js" },
     { "src": "/api/admin/lawyers",           "dest": "/api/admin/lawyers.js" },
+    { "src": "/api/inquiry/contact",          "dest": "/api/admin/inquiries.js" },
     { "src": "/api/admin/inquiries",         "dest": "/api/admin/inquiries.js" },
     { "src": "/api/admin/analytics/summary", "dest": "/api/admin/stats.js?action=analytics" },
     { "src": "/api/admin/content",           "dest": "/api/admin/content.js" },

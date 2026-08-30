@@ -16,6 +16,49 @@ module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  // ── POST /api/inquiry/contact — public contact form (no auth) ────────────────
+  const reqPath = (req.url || '').split('?')[0];
+  if (reqPath === '/api/inquiry/contact') {
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+    const { name, email, phone, subject, message } = req.body || {};
+    if (!name || !email || !message || message.length < 5) {
+      return res.status(400).json({ success: false, message: 'Name, email and message are required.' });
+    }
+
+    // Fire email via Resend (non-blocking — respond immediately)
+    res.status(200).json({ success: true });
+
+    const apiKey = process.env.RESEND_API_KEY;
+    if (apiKey) {
+      const subj = subject ? `[Contact] ${subject} — ${name}` : `[Contact] New enquiry from ${name}`;
+      const html = `
+        <h2 style="color:#1a3a1a;font-family:sans-serif">New Contact Form Submission</h2>
+        <table style="font-family:sans-serif;font-size:14px;border-collapse:collapse;width:100%">
+          <tr><td style="padding:6px 12px;font-weight:700;width:120px">Name</td><td style="padding:6px 12px">${String(name).replace(/</g,'&lt;')}</td></tr>
+          <tr style="background:#f5f5f5"><td style="padding:6px 12px;font-weight:700">Email</td><td style="padding:6px 12px">${String(email).replace(/</g,'&lt;')}</td></tr>
+          <tr><td style="padding:6px 12px;font-weight:700">Phone</td><td style="padding:6px 12px">${phone ? String(phone).replace(/</g,'&lt;') : 'Not provided'}</td></tr>
+          <tr style="background:#f5f5f5"><td style="padding:6px 12px;font-weight:700">Subject</td><td style="padding:6px 12px">${subject ? String(subject).replace(/</g,'&lt;') : 'General Inquiry'}</td></tr>
+          <tr><td style="padding:6px 12px;font-weight:700;vertical-align:top">Message</td><td style="padding:6px 12px">${String(message).replace(/</g,'&lt;').replace(/\n/g,'<br>')}</td></tr>
+        </table>
+        <p style="font-family:sans-serif;font-size:12px;color:#888;margin-top:24px">Sent from satlegal.in contact form · ${new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}</p>
+      `;
+      fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: 'SatLegal Contact <noreply@satlegal.in>',
+          to: ['contactus@satlegal.in'],
+          reply_to: String(email),
+          subject: subj,
+          html
+        })
+      }).catch(err => console.error('[contact email]', err.message));
+    } else {
+      console.warn('[contact] RESEND_API_KEY not set — email not sent');
+    }
+    return; // response already sent
+  }
+
   if (!isAdmin(req)) return res.status(401).json({ success: false, message: 'Unauthorized' });
 
   // ── POST: manually assign a lawyer to a no_match / abandoned inquiry ──────────

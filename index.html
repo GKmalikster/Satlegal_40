@@ -3813,15 +3813,36 @@ async function authLogin(){
 }
 
 /* ── Sign Up ── */
+/* ── Signup field-level error helper ── */
+function _sfErr(inputId,hintId,msg){
+  const inp=document.getElementById(inputId);
+  const hint=document.getElementById(hintId);
+  if(!msg){
+    if(inp)inp.style.borderColor='';
+    if(hint&&hint.dataset.sfErr){hint.textContent='';delete hint.dataset.sfErr;hint.style.color='var(--text-lt)';}
+    return;
+  }
+  if(inp){inp.style.borderColor='#f87171';inp.focus();inp.scrollIntoView({block:'center',behavior:'smooth'});}
+  if(hint){hint.textContent=msg;hint.style.color='#f87171';hint.dataset.sfErr='1';}
+}
+function _sfClearAll(){
+  [['signupName','signupNameErr'],['signupUserId','signupUserIdHint'],['signupPassword','signupPwHint'],['signupConfirm','signupConfirmErr']].forEach(([i,h])=>_sfErr(i,h,''));
+}
 async function authSignup(){
+  _sfClearAll();
   const name=(document.getElementById('signupName')||{}).value||'';
   const userId=(document.getElementById('signupUserId')||{}).value||'';
   const pw=(document.getElementById('signupPassword')||{}).value||'';
   const pw2=(document.getElementById('signupConfirm')||{}).value||'';
-  if(!name.trim()){toast('Please enter your full name','err');return;}
-  if(!userId.trim()){toast('Enter your email or mobile number','err');return;}
-  if(pw.length<6){toast('Password must be at least 6 characters','err');return;}
-  if(pw!==pw2){toast('Passwords do not match','err');return;}
+  if(!name.trim()){_sfErr('signupName','signupNameErr','Please enter your full name');return;}
+  if(!userId.trim()){_sfErr('signupUserId','signupUserIdHint','Please enter your email address or 10-digit mobile number');return;}
+  const isEmail=userId.includes('@');
+  if(isEmail&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(userId.trim())){_sfErr('signupUserId','signupUserIdHint','Please enter a valid email address (e.g. name@example.com)');return;}
+  if(!isEmail&&userId.replace(/\D/g,'').length<10){_sfErr('signupUserId','signupUserIdHint','Please enter a valid 10-digit mobile number');return;}
+  if(!pw){_sfErr('signupPassword','signupPwHint','Please create a password');return;}
+  if(pw.length<6){_sfErr('signupPassword','signupPwHint','Password must be at least 6 characters');return;}
+  if(!pw2){_sfErr('signupConfirm','signupConfirmErr','Please repeat your password');return;}
+  if(pw!==pw2){_sfErr('signupConfirm','signupConfirmErr','Passwords do not match — please re-enter');return;}
   const termsEl=document.getElementById('signupTerms');
   if(termsEl&&!termsEl.checked){toast('Please accept the Terms & Conditions to proceed','err');return;}
   const dpdpEl=document.getElementById('signupDpdp');
@@ -3831,12 +3852,22 @@ async function authSignup(){
   try{
     const resp=await fetch(_API+'/auth/signup',{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name:name.trim(),email:userId.includes('@')?userId.trim():'',phone:userId.includes('@')?'':userId.replace(/\D/g,''),password:pw})
+      body:JSON.stringify({name:name.trim(),email:isEmail?userId.trim():'',phone:isEmail?'':userId.replace(/\D/g,''),password:pw})
     });
     const data=await resp.json();
     if(!resp.ok||!data.success){
       const msg=(data.errors&&data.errors[0])?data.errors[0].msg:data.message||'Sign-up failed.';
-      toast(msg,'err');return;
+      // Show inline under the relevant field where possible
+      if(/email.*registered|already.*registered/i.test(msg)){
+        _sfErr('signupUserId','signupUserIdHint','This email is already registered — try logging in instead');
+      } else if(/name/i.test(msg)){
+        _sfErr('signupName','signupNameErr',msg);
+      } else if(/password/i.test(msg)){
+        _sfErr('signupPassword','signupPwHint',msg);
+      } else {
+        toast(msg,'err');
+      }
+      return;
     }
     toast('✅ Account created!');
     W.name=name.trim();W.email=data.user.email||'';W.phone=data.user.phone||'';
@@ -4112,17 +4143,18 @@ document.addEventListener('DOMContentLoaded',function(){
       <div class="auth-screen" id="authScreen-signup">
         <div class="auth-form-group">
           <label for="signupName">👤 Full Name</label>
-          <input class="auth-input" id="signupName" type="text" placeholder="Your full name" autocomplete="name" onkeydown="if(event.key==='Enter')document.getElementById('signupUserId').focus()">
+          <input class="auth-input" id="signupName" type="text" placeholder="Your full name" autocomplete="name" onkeydown="if(event.key==='Enter')document.getElementById('signupUserId').focus()" oninput="_sfErr('signupName','signupNameErr','')">
+          <div id="signupNameErr" style="font-size:11px;color:#f87171;margin-top:4px;min-height:16px"></div>
         </div>
         <div class="auth-form-group">
           <label for="signupUserId">📧 Email or 📱 Mobile Number <span style="font-weight:400;color:var(--text-lt)">(used as your User ID)</span></label>
-          <input class="auth-input" id="signupUserId" type="text" placeholder="Email address or 10-digit mobile" autocomplete="username" oninput="authCheckUserIdType(this)" onkeydown="if(event.key==='Enter')document.getElementById('signupPassword').focus()">
+          <input class="auth-input" id="signupUserId" type="text" placeholder="Email address or 10-digit mobile" autocomplete="username" oninput="authCheckUserIdType(this);this.style.borderColor=''" onkeydown="if(event.key==='Enter')document.getElementById('signupPassword').focus()">
           <div id="signupUserIdHint" style="font-size:11px;color:var(--text-lt);margin-top:4px"></div>
         </div>
         <div class="auth-form-group">
           <label for="signupPassword">🔑 Create Password <span style="font-weight:400;color:var(--text-lt)">(min 6 characters)</span></label>
           <div class="auth-pw-wrap">
-            <input class="auth-input" id="signupPassword" type="password" placeholder="Choose a strong password" autocomplete="new-password" oninput="authPwStrength(this)" onkeydown="if(event.key==='Enter')document.getElementById('signupConfirm').focus()">
+            <input class="auth-input" id="signupPassword" type="password" placeholder="Choose a strong password" autocomplete="new-password" oninput="authPwStrength(this);this.style.borderColor=''" onkeydown="if(event.key==='Enter')document.getElementById('signupConfirm').focus()">
             <button class="auth-pw-toggle" type="button" onclick="authTogglePwd('signupPassword',this)" title="Show/hide password">👁</button>
           </div>
           <div class="auth-pw-strength" id="signupPwStrength"></div>
@@ -4131,9 +4163,10 @@ document.addEventListener('DOMContentLoaded',function(){
         <div class="auth-form-group">
           <label for="signupConfirm">🔑 Confirm Password</label>
           <div class="auth-pw-wrap">
-            <input class="auth-input" id="signupConfirm" type="password" placeholder="Repeat your password" autocomplete="new-password" onkeydown="if(event.key==='Enter')authSignup()">
+            <input class="auth-input" id="signupConfirm" type="password" placeholder="Repeat your password" autocomplete="new-password" onkeydown="if(event.key==='Enter')authSignup()" oninput="_sfErr('signupConfirm','signupConfirmErr','')">
             <button class="auth-pw-toggle" type="button" onclick="authTogglePwd('signupConfirm',this)" title="Show/hide">👁</button>
           </div>
+          <div id="signupConfirmErr" style="font-size:11px;color:#f87171;margin-top:4px;min-height:16px"></div>
         </div>
         <div class="auth-form-group" style="margin-bottom:10px">
           <label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;cursor:pointer;font-size:12px;color:var(--text-lt);line-height:1.5">
