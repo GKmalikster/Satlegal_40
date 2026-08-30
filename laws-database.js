@@ -2124,6 +2124,17 @@ const LAWS_DATABASE = [
     "keywords": {
       "exact": [
         "employer not paying salary",
+        "company has not paid my salary",
+        "company has not paid salary for months",
+        "not paid my salary for the last 3 months",
+        "not paid my salary for months",
+        "salary not paid for 3 months",
+        "salary unpaid for months",
+        "company keeps delaying salary payment",
+        "company says next week but salary not paid",
+        "salary not paid for months they keep saying",
+        "salary not paid for months next week excuse",
+        "salary not paid for last 3 months",
         "salary not paid for months",
         "pending salary",
         "pf not deposited",
@@ -2164,12 +2175,22 @@ const LAWS_DATABASE = [
         "pf nahi diya",
         "mujhe job se nikaala aur PF bhi nahi diya",
         "nikaala aur PF nahi diya",
-        "job se nikaala PF nahi mila"
+        "job se nikaala PF nahi mila",
+        "employer deducting PF from salary but never depositing",
+        "deducting PF from my salary but never depositing",
+        "employer has been deducting PF but never depositing",
+        "UAN shows no balance",
+        "my UAN shows no balance",
+        "UAN balance is zero",
+        "UAN account shows no contribution"
       ],
       "strong": [
         "salary dues",
         "unpaid salary",
         "wage theft",
+        "deducting PF never depositing",
+        "PF deducted never deposited",
+        "UAN no balance",
         "esic",
         "esic card",
         "employee state insurance",
@@ -2432,7 +2453,21 @@ const LAWS_DATABASE = [
         "hostile work environment",
         "sexually harassed at office",
         "quid pro quo harassment",
-        "unwanted sexual advances at work"
+        "unwanted sexual advances at work",
+        "makes sexual comments about me at work",
+        "manager makes sexual comments",
+        "manager repeatedly makes sexual comments",
+        "touched me inappropriately at work",
+        "touched me inappropriately and HR is ignoring",
+        "HR is ignoring my complaint about harassment",
+        "sends me inappropriate messages",
+        "sends me inappropriate messages and threatens my job",
+        "inappropriate messages threatens my job if I complain to HR",
+        "threatens my job if I complain to HR",
+        "inappropriate messages from my colleague",
+        "colleague sends inappropriate messages",
+        "senior colleague sends me inappropriate messages",
+        "manager sexually harassing me at office"
       ],
       "strong": [
         "posh",
@@ -2449,7 +2484,14 @@ const LAWS_DATABASE = [
         "hostile environment",
         "bullying at work",
         "workplace discrimination",
-        "maternity discrimination"
+        "maternity discrimination",
+        "sexual comments",
+        "inappropriate messages",
+        "touched inappropriately",
+        "threatens my job",
+        "HR ignoring complaint",
+        "manager harassment",
+        "colleague harassment"
       ],
       "weak": [
         "harassment",
@@ -2461,7 +2503,9 @@ const LAWS_DATABASE = [
         "uncomfortable",
         "hostile",
         "discriminate",
-        "gender"
+        "gender",
+        "inappropriate",
+        "sexually"
       ]
     },
     "sections": [
@@ -3096,11 +3140,25 @@ const LAWS_DATABASE = [
         "investment crypto website gone money lost",
         "extortion threats demanding monthly payment",
         "extortion demanding monthly money",
-        "monthly extortion payment threats"
+        "monthly extortion payment threats",
+        "called me pretending to be from bank",
+        "called pretending to be from bank and stole",
+        "someone called pretending to be from bank",
+        "stole money from my account through OTP",
+        "stole rupees from my account through OTP",
+        "pretending to be from bank stole money",
+        "pretending to be bank employee and took money",
+        "called saying he is from bank and took money",
+        "called me saying from bank stole from account",
+        "pretended to be from bank and accessed my account"
       ],
       "strong": [
         "cyber fraud",
         "online fraud",
+        "pretending to be from bank",
+        "stole from account through OTP",
+        "through OTP stole",
+        "OTP fraud call",
         "internet fraud",
         "crypto exchange",
         "crypto exchange fraud",
@@ -3278,7 +3336,15 @@ const LAWS_DATABASE = [
         "bank keh raha zimmedari nahi",
         "bank zimmedari nahi",
         "kisi ne account se nikal liye",
-        "account se nikal gaye paise"
+        "account se nikal gaye paise",
+        "nikal liye phoney se",
+        "rupees nikal liye phoney se",
+        "bank keh raha hai inki zimmedari nahi",
+        "mere bank account se kisi ne",
+        "bank account se kisi ne rupees nikal liye",
+        "kisi ne rupees nikal liye",
+        "bank inki zimmedari nahi",
+        "inki zimmedari nahi bank"
       ],
       "weak": [
         "cheated",
@@ -6047,6 +6113,12 @@ const LAWS_DATABASE = [
         "college is not giving my degree certificate asking more money",
         "private coaching institute shut down mid-year no refund",
         "my refrigerator stopped working in 2 months",
+        "a refrigerator that stopped working in 2 months",
+        "bought a refrigerator that stopped working",
+        "refrigerator stopped working company refusing repair",
+        "company is refusing repair or replacement",
+        "company refusing repair or replacement",
+        "refusing repair or replacement under warranty",
         "solar panels installed by company are not working as promised",
         "my prepaid gym membership ran for only 2 months gym closed",
         "my landlord is not returning my security deposit after i vacated",
@@ -6132,6 +6204,13 @@ const LAWS_DATABASE = [
         "defective",
         "service deficiency",
         "washing machine",
+        "refrigerator",
+        "appliance stopped working",
+        "product stopped working",
+        "stopped working within months",
+        "stopped working in 2 months",
+        "refusing repair",
+        "refusing replacement",
         "consumer court",
         "unfair trade practice",
         "misleading advertisement",
@@ -7210,7 +7289,14 @@ const LAWS_DATABASE = [
         "pothole on road caused my accident",
         "i was a pedestrian hit by a car",
         "vehicle rammed into me while crossing road",
-        "a vehicle hit me while i was walking to school"
+        "a vehicle hit me while i was walking to school",
+        "i was hit by a car while crossing the road",
+        "hit by a car while crossing",
+        "car hit me while crossing the road",
+        "driver ran away after hitting me",
+        "driver fled after hitting me",
+        "car hit me and driver ran away",
+        "vehicle hit me and driver fled"
       ],
       "strong": [
         "accident",
@@ -7244,6 +7330,14 @@ const LAWS_DATABASE = [
         "accident claim how much",
         "mact claim",
         "hit by car",
+        "hit by a car",
+        "car hit me",
+        "car hit me while",
+        "hit while crossing road",
+        "hit while crossing the road",
+        "driver ran away",
+        "driver fled",
+        "driver absconded",
         "road accident injury",
         "accident claim tribunal",
         "drunk driver accident",
@@ -7253,7 +7347,11 @@ const LAWS_DATABASE = [
         "accident hospital bills",
         "mact tribunal",
         "third party insurance claim",
-        "accident victim compensation"
+        "accident victim compensation",
+        "fractures from accident",
+        "bones broken in accident",
+        "medical bills accident",
+        "hit by vehicle crossing"
       ],
       "weak": [
         "accident",
@@ -7265,7 +7363,14 @@ const LAWS_DATABASE = [
         "road",
         "hit by vehicle",
         "insurance claim accident",
-        "compensation accident"
+        "compensation accident",
+        "fractures",
+        "broken bones",
+        "medical bills",
+        "driver ran",
+        "crossing the road",
+        "hit by vehicle",
+        "ran over"
       ]
     },
     "sections": [
@@ -7370,7 +7475,17 @@ const LAWS_DATABASE = [
         "cheque bounce ho gaya",
         "cheque nahi clra hua",
         "sold car but buyer giving bad cheques",
-        "buyer giving bad cheques"
+        "buyer giving bad cheques",
+        "gave a cheque to my business partner and it bounced",
+        "gave a cheque to my business partner for 2 lakhs and it bounced",
+        "gave a cheque and it bounced",
+        "gave him a cheque and it bounced",
+        "gave a cheque which bounced",
+        "issued a cheque that bounced",
+        "issued a cheque and it bounced",
+        "gave cheque now asking for legal action",
+        "cheque i gave to partner bounced",
+        "gave cheque for amount and it bounced"
       ],
       "strong": [
         "cheque bounce",

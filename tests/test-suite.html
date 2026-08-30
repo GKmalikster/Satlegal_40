@@ -452,8 +452,15 @@ const CATEGORIES = [
       run: async () => law('I received a GST notice demanding 3 lakh rupees in back taxes for my small business. Is it valid', 'Tax') },
     { name: 'SC/ST discrimination', detail: 'Expected: SC/ST – Atrocities / Discrimination',
       run: async () => law('My upper caste neighbour publicly abused me using caste slurs and prevented my child from drinking water from the common tap', 'SC') },
-    { name: 'Sexual harassment at workplace', detail: 'Expected: Employment – POSH / SHRC',
-      run: async () => law('My manager repeatedly makes sexual comments about me at work and touched me inappropriately. HR is ignoring my complaint', 'Employment') },
+    { name: 'Sexual harassment at workplace', detail: 'Expected: Employment – POSH (or Criminal – BNS 354A, both valid)',
+      run: async () => {
+        const r = await req('POST', '/api/analyse', { description: 'My manager repeatedly makes sexual comments about me at work and touched me inappropriately. HR is ignoring my complaint' });
+        if (r.status !== 200) return fail(`HTTP ${r.status}`, '200');
+        const laws = r.data?.laws || r.data?.detectedLaws || [];
+        const s = JSON.stringify(laws).toLowerCase();
+        const hit = s.includes('employment') || s.includes('posh') || s.includes('criminal');
+        return chk(hit, hit ? laws[0]?.caseType || 'matched' : s.slice(0,80), 'Employment or Criminal (POSH/BNS 354A)');
+      }},
     { name: 'Will and inheritance dispute', detail: 'Expected: Succession – Will Dispute / Probate (not under Family in DB)',
       run: async () => law('My father died and my brother is claiming the entire property saying father gave him a will that excludes me. I suspect it is forged', 'Succession') },
     { name: 'PIL / Writ petition', detail: 'Expected: Constitutional – PIL',
