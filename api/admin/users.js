@@ -103,12 +103,12 @@ module.exports = async function handler(req, res) {
     try {
       await connectDB();
       const { User } = getModels();
-      const { name, email, phone, password, gender, userType, state, city } = req.body || {};
+      const { name, email: emailRaw, phone: phoneRaw, password, userId: rawUserId, gender, userType, state, city } = req.body || {};
+      // Accept userId as fallback (sent by some frontend versions)
+      const email = emailRaw || (rawUserId && rawUserId.includes('@') ? rawUserId : '') || '';
+      const phone = phoneRaw || (rawUserId && !rawUserId.includes('@') ? rawUserId.replace(/\D/g,'') : '') || '';
       if (!name || !email || !password) {
         return res.status(400).json({ success: false, message: 'Name, email and password are required' });
-      }
-      if (!phone) {
-        return res.status(400).json({ success: false, message: 'Phone number is required' });
       }
       if (password.length < 6) {
         return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });

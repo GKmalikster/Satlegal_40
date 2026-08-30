@@ -3831,7 +3831,7 @@ async function authSignup(){
   try{
     const resp=await fetch(_API+'/auth/signup',{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name:name.trim(),userId:userId.trim(),password:pw})
+      body:JSON.stringify({name:name.trim(),email:userId.includes('@')?userId.trim():'',phone:userId.includes('@')?'':userId.replace(/\D/g,''),password:pw})
     });
     const data=await resp.json();
     if(!resp.ok||!data.success){
