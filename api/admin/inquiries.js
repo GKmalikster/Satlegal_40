@@ -46,8 +46,8 @@ module.exports = async function handler(req, res) {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          from: 'SatLegal Contact <noreply@satlegal.in>',
-          to: ['contactus@satlegal.in'],
+          from: 'SatLegal <contact@satlegal.in>',
+          to: ['contact@satlegal.in'],
           reply_to: String(email),
           subject: subj,
           html
