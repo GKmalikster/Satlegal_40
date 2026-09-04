@@ -133,6 +133,32 @@ module.exports = async function handler(req, res) {
       });
       const token = makeToken(user.email, user.role);
       console.log('[auth/signup] new user:', user.email.slice(0,3) + '***');
+
+      // Welcome email — fire-and-forget
+      const _rk = process.env.RESEND_API_KEY;
+      if (_rk) {
+        fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${_rk}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from: 'SatLegal Support <support@satlegal.in>',
+            to: [user.email],
+            subject: 'Welcome to SatLegal — Your account is ready',
+            html: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto">
+              <h2 style="color:#1a3a1a">Welcome to SatLegal, ${String(user.name).split(' ')[0]}!</h2>
+              <p>Your account has been created successfully. You can now:</p>
+              <ul>
+                <li>Analyse your legal situation using our AI-powered tool</li>
+                <li>Save and revisit your legal reports</li>
+                <li>Connect with verified lawyers across India</li>
+              </ul>
+              <p><a href="https://satlegal.in" style="background:#2d6a2d;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:8px">Get Started</a></p>
+              <p style="color:#888;font-size:12px;margin-top:24px">If you didn't create this account, please contact us at <a href="mailto:support@satlegal.in">support@satlegal.in</a>.<br>SatLegal · Legal information, not legal advice.</p>
+            </div>`
+          })
+        }).catch(e => console.error('[welcome email]', e.message));
+      }
+
       return res.status(201).json({
         success: true,
         message: 'Account created successfully',
