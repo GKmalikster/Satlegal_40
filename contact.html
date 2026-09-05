@@ -336,6 +336,12 @@ function submitContact(){
     body:JSON.stringify({name,email,phone:document.getElementById('ctPhone').value,subject,message:msg})
   }).catch(()=>{}); // non-blocking — show success regardless
 
+  // Clear all fields
+  document.getElementById('ctName').value='';
+  document.getElementById('ctEmail').value='';
+  document.getElementById('ctPhone').value='';
+  document.getElementById('ctSubject').value='General Enquiry';
+  document.getElementById('ctMsg').value='';
   document.querySelector('.btn-submit').style.display='none';
   document.getElementById('successMsg').style.display='block';
 }

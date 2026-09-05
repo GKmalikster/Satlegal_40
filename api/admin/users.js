@@ -231,6 +231,70 @@ module.exports = async function handler(req, res) {
     return res.json({ success: true });
   }
 
+  // ── /api/user/profile — authenticated user's own profile ─────────────────────
+  if (reqPath === '/api/user/profile') {
+    const auth = (req.headers['authorization'] || '').replace('Bearer ', '').trim();
+    const decoded = verifyToken(auth);
+    if (!decoded) return res.status(401).json({ success: false, message: 'Not authenticated' });
+    try {
+      await connectDB();
+      const { User } = getModels();
+      if (req.method === 'GET') {
+        const user = await User.findOne({ email: decoded.email }).select('-password -resetPasswordToken -verificationToken');
+        if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+        return res.json({ success: true, user });
+      }
+      if (req.method === 'PUT') {
+        const { name, phone, gender, userType, state, city } = req.body || {};
+        const update = {};
+        if (name) update.name = String(name).slice(0, 100);
+        if (phone !== undefined) update.phone = String(phone).slice(0, 20);
+        if (['male','female','other','prefer_not_to_say'].includes(gender)) update.gender = gender;
+        if (['individual','business','ngo','student','other'].includes(userType)) update.userType = userType;
+        if (state !== undefined) update.state = String(state).slice(0, 50);
+        if (city !== undefined) update.city = String(city).slice(0, 100);
+        const user = await User.findOneAndUpdate({ email: decoded.email }, { $set: update }, { new: true, select: '-password' });
+        return res.json({ success: true, user, message: 'Profile updated.' });
+      }
+      return res.status(405).json({ error: 'Method not allowed' });
+    } catch (err) {
+      console.error('[user/profile]', err.message);
+      return res.status(500).json({ success: false, message: 'Server error' });
+    }
+  }
+
+  // ── /api/user/dashboard-stats — authenticated user's dashboard ───────────────
+  if (reqPath === '/api/user/dashboard-stats') {
+    if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+    const auth = (req.headers['authorization'] || '').replace('Bearer ', '').trim();
+    const decoded = verifyToken(auth);
+    if (!decoded) return res.status(401).json({ success: false, message: 'Not authenticated' });
+    try {
+      await connectDB();
+      const { User, CaseInquiry } = getModels();
+      const user = await User.findOne({ email: decoded.email }).select('_id');
+      if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+      const [totalInquiries, assessedInquiries, lawyerRequested] = await Promise.all([
+        CaseInquiry.countDocuments({ userId: user._id }),
+        CaseInquiry.countDocuments({ userId: user._id, status: { $in: ['assessed','completed'] } }),
+        CaseInquiry.countDocuments({ userId: user._id, status: 'lawyer_requested' })
+      ]);
+      const recentInquiries = await CaseInquiry.find({ userId: user._id }).sort({ createdAt: -1 }).limit(5).lean();
+      return res.json({ success: true, stats: { totalInquiries, assessedInquiries, lawyerRequested }, recentInquiries, recentTransactions: [] });
+    } catch (err) {
+      console.error('[user/dashboard-stats]', err.message);
+      return res.status(500).json({ success: false, message: 'Server error' });
+    }
+  }
+
+  // ── /api/user/transactions — returns empty (no transaction model yet) ─────────
+  if (reqPath === '/api/user/transactions') {
+    const auth = (req.headers['authorization'] || '').replace('Bearer ', '').trim();
+    const decoded = verifyToken(auth);
+    if (!decoded) return res.status(401).json({ success: false, message: 'Not authenticated' });
+    return res.json({ success: true, transactions: [] });
+  }
+
   if (!isAdmin(req)) return res.status(401).json({ success: false, message: 'Unauthorized' });
 
   await connectDB();

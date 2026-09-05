@@ -6,7 +6,7 @@
  * Requires admin session token.
  */
 
-const { connectDB, isAdmin, getModels } = require('../_db');
+const { connectDB, isAdmin, verifyToken, getModels } = require('../_db');
 
 module.exports = async function handler(req, res) {
   const ALLOWED_ORIGINS = ['https://satlegal.in','https://www.satlegal.in','https://satlegal-40.vercel.app'];
@@ -57,6 +57,28 @@ module.exports = async function handler(req, res) {
       console.warn('[contact] RESEND_API_KEY not set — email not sent');
     }
     return; // response already sent
+  }
+
+  // ── GET /api/user/inquiries — user's own inquiries (no admin required) ────────
+  if (reqPath === '/api/user/inquiries') {
+    if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+    const auth = (req.headers['authorization'] || '').replace('Bearer ', '').trim();
+    const decoded = verifyToken(auth);
+    if (!decoded) return res.status(401).json({ success: false, message: 'Not authenticated' });
+    try {
+      await connectDB();
+      const { CaseInquiry, User } = getModels();
+      const user = await User.findOne({ email: decoded.email }).select('_id');
+      if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+      const { status = '' } = req.query || {};
+      const filter = { userId: user._id };
+      if (status) filter.status = status;
+      const inquiries = await CaseInquiry.find(filter).sort({ createdAt: -1 }).limit(100).lean();
+      return res.json({ success: true, inquiries, total: inquiries.length });
+    } catch (err) {
+      console.error('[user/inquiries]', err.message);
+      return res.status(500).json({ success: false, message: 'Server error' });
+    }
   }
 
   if (!isAdmin(req)) return res.status(401).json({ success: false, message: 'Unauthorized' });
