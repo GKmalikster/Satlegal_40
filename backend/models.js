@@ -338,6 +338,27 @@ AnalyticsEventSchema.index({ type: 1 });
 SearchQuerySchema.index({ ts: -1 });
 SearchQuerySchema.index({ detectedLaws: 1 });
 
+// ── Payment Schema ────────────────────────────────────────────────────────────
+const PaymentSchema = new mongoose.Schema({
+  orderId:      { type: String, unique: true, index: true },        // SL-RPT-XXXXXX or SL-CON-XXXXXX
+  userId:       { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  userEmail:    { type: String, index: true },
+  userName:     String,
+  userPhone:    { type: String, default: '' },
+  amount:       { type: Number, required: true },                    // 499 or 2499
+  type:         { type: String, enum: ['report','consultation'], required: true },
+  inquiryId:    { type: String, default: null },                     // linked CaseInquiry
+  lawyerId:     { type: mongoose.Schema.Types.ObjectId, ref: 'LawyerProfile', default: null },
+  lawsSelected: [String],
+  utrNumber:    { type: String, default: null, index: true },       // UPI Transaction Ref entered by user
+  status:       { type: String, enum: ['pending','verified','rejected','refunded'], default: 'pending', index: true },
+  verifiedBy:   { type: String, default: null },                    // admin email
+  verifiedAt:   { type: Date,   default: null },
+  rejectedAt:   { type: Date,   default: null },
+  adminNotes:   { type: String, default: '' },
+  metadata:     { type: mongoose.Schema.Types.Mixed, default: {} }
+}, { collection: 'payments', timestamps: true });
+
 // ── Export (safe pattern — avoids OverwriteModelError on warm Lambda restarts) ──
 module.exports = {
   User:           mongoose.models.User           || mongoose.model('User', UserSchema),
@@ -346,5 +367,6 @@ module.exports = {
   LawyerLead:     mongoose.models.LawyerLead     || mongoose.model('LawyerLead', LawyerLeadSchema),
   Appointment:    mongoose.models.Appointment    || mongoose.model('Appointment', AppointmentSchema),
   AnalyticsEvent: mongoose.models.AnalyticsEvent || mongoose.model('AnalyticsEvent', AnalyticsEventSchema),
-  SearchQuery:    mongoose.models.SearchQuery    || mongoose.model('SearchQuery', SearchQuerySchema)
+  SearchQuery:    mongoose.models.SearchQuery    || mongoose.model('SearchQuery', SearchQuerySchema),
+  Payment:        mongoose.models.Payment        || mongoose.model('Payment', PaymentSchema)
 };

@@ -1125,7 +1125,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sf-500);outline-off
                 <button class="btn-pr-secondary" onclick="selectPlan('consult',2499)">Book Consultation →</button>
               </div>
             </div>
-            <div style="text-align:center;font-size:11px;color:var(--text-lt)">🔒 Secured by Razorpay · 100% confidential · GST invoice provided</div>
+            <div style="text-align:center;font-size:11px;color:var(--text-lt)">🔒 Secured via UPI · 100% confidential · GST invoice provided</div>
           </div>
 
           <!-- Registration form (hidden until plan selected) -->
@@ -3683,7 +3683,7 @@ function showAuthModal(plan,amt){
   const _isFreeFlow=(amt===0);
   document.getElementById('authSecureNote').innerHTML=_isFreeFlow
     ?'🔒 Secured &amp; private · No payment required'
-    :'🔒 Secured by Razorpay · End-to-end encrypted · GST invoice provided';
+    :'🔒 Secured via UPI · End-to-end encrypted · GST invoice provided';
   // Default to signup for new users, login if we have their contact
   switchAuthTab((W.email||W.phone)?'login':'signup');
   mo.classList.add('open');
@@ -3972,99 +3972,42 @@ function generateSignupCaptcha(){}
 function authOtpKey(){}
 function authGetOtp(){return '';}
 
-/* ════ RAZORPAY PAYMENT ════ */
-function initiateRazorpayPayment(plan,amt){
-  const keyId=localStorage.getItem('sl_razorpay_key_id')||'';
-  // plan is a full plan object
-  const planLabel=(plan&&plan.name)?plan.name:(plan==='report'?'Digital Legal Report':'Expert Consultation');
-  const planType=(plan&&plan.type)?plan.type:(typeof plan==='string'?plan:'report');
-  if(!keyId){
-    try{sessionStorage.setItem('sl_session_paid','1');}catch(e){}
-    if(planType==='consult'){
-      toast('Redirecting to consultation booking…');
-      setTimeout(()=>{window.location.href='consultation/book.html';},600);
+/* ════ QR / UPI PAYMENT ════ */
+async function initiateRazorpayPayment(plan,amt){
+  // Map plan to API type
+  const planType=typeof plan==='object'?(plan.type||'report'):plan;
+  const apiType=(planType==='consult')?'consultation':planType; // API expects 'report' or 'consultation'
+  const amount=amt||(apiType==='consultation'?2499:499);
+
+  toast('Creating your order…');
+  try{
+    const tok=localStorage.getItem('sl_token')||'';
+    const sess=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
+    const inquiryId=sess.inquiryId||localStorage.getItem('sl_inquiry_id')||null;
+    const lawsSelected=Array.isArray(sess.applicableLaws)
+      ?sess.applicableLaws.map(l=>l.caseType||l.actName||'').filter(Boolean)
+      :[];
+    const r=await fetch('/api/payment/create',{
+      method:'POST',
+      headers:{'Content-Type':'application/json',...(tok?{'Authorization':'Bearer '+tok}:{})},
+      body:JSON.stringify({type:apiType,amount,inquiryId,lawsSelected})
+    });
+    const data=await r.json();
+    if(data.success&&data.orderId){
+      // Store pending info locally in case user navigates back
+      try{localStorage.setItem('sl_pending_payment',JSON.stringify({orderId:data.orderId,amount:data.amount,type:apiType,createdAt:Date.now()}));}catch(e){}
+      window.location.href='/payment/qr.html?orderId='+encodeURIComponent(data.orderId)+'&amount='+data.amount+'&type='+apiType;
     } else {
-      toast('Payment gateway not configured. Opening report…');
-      const _fbSess=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
-      const _fbUid='SL'+Date.now().toString(36).toUpperCase();
-      genReport(_fbUid,_fbSess);
-      showStep(6);
+      toast(data.message||'Could not create order. Please try again.','err');
     }
-    return;
-  }
-  // Load Razorpay SDK dynamically
-  if(!document.getElementById('razorpay-sdk')){
-    const s=document.createElement('script');
-    s.id='razorpay-sdk';s.src='https://checkout.razorpay.com/v1/checkout.js';
-    s.onload=()=>_openRazorpay(keyId,plan,amt,planLabel);
-    s.onerror=()=>{toast('Payment SDK failed to load. Please try again.','err');};
-    document.head.appendChild(s);
-  } else {
-    _openRazorpay(keyId,plan,amt,planLabel);
+  } catch(e){
+    toast('Network error. Please check your connection and try again.','err');
+    console.error('[QR payment]',e);
   }
 }
 
-function _openRazorpay(keyId,plan,amt,planLabel){
-  const user=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
-  const planObj=typeof plan==='object'?plan:{id:plan,type:plan,name:planLabel};
-  const notes={plan_id:planObj.id||'',plan_type:planObj.type||'',plan_name:planLabel,...(planObj.razorpayNotes||{})};
-  const options={
-    key:keyId,
-    amount:amt*100, // paise
-    currency:'INR',
-    name:'SatLegal',
-    description:planLabel,
-    image:'https://satlegal.in/favicon.ico',
-    prefill:{name:user.name||'',email:user.email||'',contact:user.phone?'+91'+user.phone:''},
-    notes,
-    theme:{color:'#138808'},
-    handler:function(response){
-      const txn={
-        plan_id:planObj.id||'',plan_type:planObj.type||'',plan_name:planLabel,
-        amt:amt,
-        razorpay_payment_id:response.razorpay_payment_id||'demo_'+Date.now(),
-        razorpay_order_id:response.razorpay_order_id||'',
-        razorpay_signature:response.razorpay_signature||'',
-        ts:new Date().toISOString()
-      };
-      localStorage.setItem('sl_last_payment',JSON.stringify(txn));
-      try{sessionStorage.setItem('sl_session_paid','1');}catch(e){}
-      // Update sales record in MongoDB with payment_completed status
-      try{
-        const _u=JSON.parse(localStorage.getItem('sl_user')||'{}');
-        const _uid=_u.uid||_u.id||('pay_'+Date.now());
-        fetch('/api/sales',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-          id:_uid,name:_u.name||'',email:_u.email||'',phone:_u.phone||'',
-          plan:planObj.type||'report',amt:amt,status:'payment_completed',
-          razorpay_payment_id:txn.razorpay_payment_id,razorpay_order_id:txn.razorpay_order_id,ts:txn.ts
-        })}).catch(function(){});
-      }catch(e){}
-      if(planObj.type==='consult'||planObj.id==='consult'){
-        // Consultation payment — save payment details and redirect to booking
-        localStorage.setItem('sl_payment',JSON.stringify(txn));
-        toast('✅ Payment successful! Redirecting to book your consultation…');
-        setTimeout(()=>{window.location.href='consultation/book.html';},800);
-      } else {
-        // Report payment — generate and show report
-        toast('✅ Payment successful! Loading your '+planLabel+'…');
-        const _paidSess=JSON.parse(localStorage.getItem('sl_user_session')||'{}');
-        const _paidUid='SL'+Date.now().toString(36).toUpperCase();
-        genReport(_paidUid,_paidSess);
-        showStep(6);
-      }
-    },
-    modal:{
-      ondismiss:function(){toast('Payment cancelled. You can try again.','err');}
-    }
-  };
-  try{
-    const rzp=new window.Razorpay(options);
-    rzp.open();
-  } catch(e){
-    toast('Could not open payment. Please try again.','err');
-    console.error('Razorpay error:',e);
-  }
-}
+/* _openRazorpay kept as no-op stub so any stale references don't throw */
+function _openRazorpay(){}
 
 /* ── CMS banner + deep-link plan handler ── */
 function _applyBanner(c){
@@ -4136,7 +4079,7 @@ document.addEventListener('DOMContentLoaded',function(){
     <p class="ac-sub">We've mapped your legal issue to the applicable Indian laws. What would you like to do next?</p>
     <!-- Plan cards injected here by renderPlanCards() -->
     <div class="ac-choices" id="acChoicesContainer"></div>
-    <div class="ac-secure">🔒 Secured by Razorpay · 100% confidential · GST invoice</div>
+    <div class="ac-secure">🔒 Secured via UPI · 100% confidential · GST invoice</div>
     <div style="margin-top:14px"><button onclick="closeActionPopup()" style="background:none;border:none;color:var(--text-lt);font-size:12px;cursor:pointer;text-decoration:underline">← Go back and review documents</button></div>
   </div>
 </div>

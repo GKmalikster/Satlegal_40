@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Complete Your Payment — SatLegal</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7f4;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px}
+  .logo-bar{width:100%;max-width:520px;text-align:left;margin-bottom:16px}
+  .logo-bar img{height:40px;width:auto}
+  .card{background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.10);max-width:520px;width:100%;overflow:hidden}
+  .card-header{background:linear-gradient(135deg,#0d3d0d,#1a6b1a);padding:24px 28px;color:#fff;text-align:center}
+  .card-header h1{font-size:20px;font-weight:700;margin-bottom:4px}
+  .card-header p{font-size:13px;color:rgba(255,255,255,.85)}
+  .amount-box{background:#fff8e8;border:2px solid #f59e0b;border-radius:10px;padding:16px 20px;margin:20px;text-align:center}
+  .amount-label{font-size:12px;color:#92400e;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .amount-value{font-size:42px;font-weight:800;color:#1a6b1a}
+  .amount-value span{font-size:28px}
+  .amount-type{font-size:12px;color:#6b7280;margin-top:4px}
+  .order-ref{background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 16px;margin:0 20px 16px;display:flex;align-items:center;justify-content:space-between;font-size:13px}
+  .order-ref strong{color:#166534;font-size:11px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:2px}
+  .order-ref code{font-size:15px;font-weight:700;color:#14532d;letter-spacing:.5px}
+  .copy-btn{background:#d1fae5;color:#065f46;border:none;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-weight:600}
+  .copy-btn:hover{background:#a7f3d0}
+  .qr-section{text-align:center;padding:8px 20px 4px}
+  .qr-section p{font-size:12px;color:#6b7280;margin-bottom:12px}
+  .qr-wrap{display:inline-block;background:#fff;border:2px solid #e5e7eb;border-radius:12px;padding:12px}
+  .qr-wrap img{width:220px;height:220px;display:block;image-rendering:pixelated}
+  .qr-caption{margin-top:8px;font-size:11px;color:#9ca3af}
+  .merchant-info{background:#1a3a6b;color:#fff;border-radius:8px;padding:10px 14px;margin:12px 20px;font-size:12px;display:flex;align-items:center;gap:10px}
+  .merchant-info .mi-label{font-size:10px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.4px}
+  .merchant-info .mi-val{font-weight:700;font-size:13px}
+  .steps{padding:12px 20px 0;font-size:13px;color:#374151}
+  .steps ol{padding-left:18px;line-height:2}
+  .steps li strong{color:#1a6b1a}
+  .utr-form{padding:16px 20px 20px}
+  .utr-form label{font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+  .utr-input{width:100%;border:2px solid #d1d5db;border-radius:8px;padding:11px 14px;font-size:15px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;outline:none;transition:border-color .2s}
+  .utr-input:focus{border-color:#1a6b1a}
+  .utr-hint{font-size:11px;color:#9ca3af;margin-top:5px}
+  .submit-btn{width:100%;background:#138808;color:#fff;border:none;border-radius:10px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;margin-top:12px;transition:background .2s}
+  .submit-btn:hover{background:#0f6606}
+  .submit-btn:disabled{background:#9ca3af;cursor:not-allowed}
+  .alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-top:12px;display:none}
+  .alert.success{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;display:block}
+  .alert.error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;display:block}
+  .divider{border:none;border-top:1px solid #f3f4f6;margin:16px 0}
+  .timer{font-size:11px;color:#9ca3af;text-align:center;padding-bottom:16px}
+  .upi-apps{display:flex;gap:8px;justify-content:center;padding:12px 20px;flex-wrap:wrap}
+  .upi-apps img{height:32px;border-radius:50%;border:1px solid #e5e7eb}
+  .upi-label{font-size:11px;color:#9ca3af;text-align:center;padding-bottom:4px}
+</style>
+</head>
+<body>
+
+<div class="logo-bar">
+  <a href="/"><img src="/assets/logo.png" alt="SatLegal" onerror="this.style.display='none'"/></a>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h1>Complete Your Payment</h1>
+    <p>Secure UPI payment via HDFC SmartHub Vyapar</p>
+  </div>
+
+  <div class="amount-box">
+    <div class="amount-label">Amount to Pay</div>
+    <div class="amount-value"><span>₹</span><span id="amountDisplay">—</span></div>
+    <div class="amount-type" id="typeDisplay"></div>
+  </div>
+
+  <div class="order-ref">
+    <div>
+      <strong>Your Order Reference</strong>
+      <code id="orderIdDisplay">—</code>
+    </div>
+    <button class="copy-btn" onclick="copyOrderId()">Copy</button>
+  </div>
+
+  <div class="merchant-info">
+    <div>
+      <div class="mi-label">Merchant</div>
+      <div class="mi-val">SATLEGAL INC</div>
+    </div>
+    <div style="width:1px;background:rgba(255,255,255,.2);align-self:stretch"></div>
+    <div>
+      <div class="mi-label">Terminal ID</div>
+      <div class="mi-val">82367262</div>
+    </div>
+    <div style="width:1px;background:rgba(255,255,255,.2);align-self:stretch"></div>
+    <div>
+      <div class="mi-label">Bank</div>
+      <div class="mi-val">HDFC Bank</div>
+    </div>
+  </div>
+
+  <div class="qr-section">
+    <p>Scan with any UPI app · Add your Order Reference in remarks</p>
+    <div class="qr-wrap">
+      <img src="/assets/payment-qr.png" alt="Scan to Pay" id="qrImg"
+           onerror="this.parentNode.innerHTML='<div style=\'width:220px;height:220px;display:flex;align-items:center;justify-content:center;background:#f9fafb;border-radius:8px;font-size:12px;color:#9ca3af;text-align:center;padding:20px\'>Save the QR code image as<br/><strong>assets/payment-qr.png</strong></div>'"/>
+    </div>
+    <div class="qr-caption">HDFC SmartHub Vyapar · TID: 82367262</div>
+  </div>
+
+  <div class="upi-label">Accepted payment methods</div>
+  <div class="upi-apps">
+    <span style="font-size:11px;background:#f3f4f6;border-radius:20px;padding:4px 10px;color:#374151">GPay</span>
+    <span style="font-size:11px;background:#5f259f;border-radius:20px;padding:4px 10px;color:#fff">PhonePe</span>
+    <span style="font-size:11px;background:#00a0e3;border-radius:20px;padding:4px 10px;color:#fff">Paytm</span>
+    <span style="font-size:11px;background:#138808;border-radius:20px;padding:4px 10px;color:#fff">UPI</span>
+    <span style="font-size:11px;background:#0060ac;border-radius:20px;padding:4px 10px;color:#fff">BHIM</span>
+    <span style="font-size:11px;background:#e4002b;border-radius:20px;padding:4px 10px;color:#fff">RuPay</span>
+    <span style="font-size:11px;background:#eb001b;border-radius:20px;padding:4px 10px;color:#fff">Mastercard</span>
+    <span style="font-size:11px;background:#1a1f71;border-radius:20px;padding:4px 10px;color:#fff">VISA</span>
+  </div>
+
+  <hr class="divider"/>
+
+  <div class="steps">
+    <ol>
+      <li><strong>Open</strong> any UPI app (GPay, PhonePe, Paytm, BHIM…)</li>
+      <li><strong>Scan</strong> the QR code above</li>
+      <li>Enter <strong>₹<span id="amountStep">—</span></strong> as the amount</li>
+      <li>Add <strong><span id="orderIdStep">your Order Reference</span></strong> in the remarks / note field</li>
+      <li>Complete payment and <strong>copy your UTR number</strong> from the payment receipt</li>
+      <li>Paste the UTR below and click <strong>Submit</strong></li>
+    </ol>
+  </div>
+
+  <div class="utr-form">
+    <label for="utrInput">UPI Transaction Reference (UTR)</label>
+    <input type="text" id="utrInput" class="utr-input" placeholder="e.g. 624521987654" maxlength="30"
+           oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')"/>
+    <div class="utr-hint">12–22 digit number from your UPI payment receipt / SMS</div>
+    <div id="alertBox" class="alert"></div>
+    <button class="submit-btn" id="submitBtn" onclick="submitUTR()">✓ I've Paid — Submit UTR</button>
+  </div>
+
+  <div class="timer" id="timerBox"></div>
+</div>
+
+<script>
+  const params  = new URLSearchParams(location.search);
+  const orderId = params.get('orderId') || '';
+  const amount  = parseInt(params.get('amount') || '0');
+  const type    = params.get('type')    || 'report';
+
+  const TYPE_LABELS = { report:'Digital Legal Report (₹499)', consultation:'Expert Consultation (₹2499)' };
+
+  document.getElementById('amountDisplay').textContent = amount ? amount.toLocaleString('en-IN') : '—';
+  document.getElementById('amountStep').textContent    = amount ? amount.toLocaleString('en-IN') : '—';
+  document.getElementById('typeDisplay').textContent   = TYPE_LABELS[type] || '';
+  document.getElementById('orderIdDisplay').textContent = orderId || 'Not found';
+  document.getElementById('orderIdStep').textContent    = orderId || 'your Order Reference';
+
+  if (!orderId) {
+    document.getElementById('alertBox').className = 'alert error';
+    document.getElementById('alertBox').textContent = 'Invalid payment link. Please go back and try again.';
+    document.getElementById('alertBox').style.display = 'block';
+    document.getElementById('submitBtn').disabled = true;
+  }
+
+  function copyOrderId() {
+    navigator.clipboard.writeText(orderId).then(()=>{
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Copied!';
+      setTimeout(()=>btn.textContent='Copy', 2000);
+    });
+  }
+
+  async function submitUTR() {
+    const utr = document.getElementById('utrInput').value.trim();
+    const box = document.getElementById('alertBox');
+    box.className = 'alert'; box.style.display = 'none';
+
+    if (!utr || utr.length < 6) {
+      box.className = 'alert error'; box.textContent = 'Please enter a valid UTR number.'; return;
+    }
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true; btn.textContent = 'Submitting…';
+
+    try {
+      const tok = localStorage.getItem('sl_token') || '';
+      const r = await fetch('/api/payment/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', ...(tok ? { 'Authorization':'Bearer '+tok } : {}) },
+        body: JSON.stringify({ orderId, utrNumber: utr })
+      });
+      const data = await r.json();
+      if (data.success) {
+        box.className = 'alert success';
+        box.textContent = '✅ UTR submitted! Your payment will be verified within 2 business hours. We'll email you once confirmed.';
+        btn.textContent = '✓ Submitted';
+        document.getElementById('utrInput').disabled = true;
+        document.getElementById('timerBox').textContent = 'You can close this page.';
+        // Store pending payment locally
+        try { localStorage.setItem('sl_pending_payment', JSON.stringify({ orderId, utr, amount, type, submittedAt: Date.now() })); } catch(e){}
+      } else {
+        box.className = 'alert error';
+        box.textContent = data.message || 'Could not submit UTR. Please try again.';
+        btn.disabled = false; btn.textContent = '✓ I\'ve Paid — Submit UTR';
+      }
+    } catch(e) {
+      box.className = 'alert error';
+      box.textContent = 'Network error. Please check your connection and try again.';
+      btn.disabled = false; btn.textContent = '✓ I\'ve Paid — Submit UTR';
+    }
+  }
+</script>
+</body>
+</html>

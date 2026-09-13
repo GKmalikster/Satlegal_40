@@ -96,6 +96,24 @@ module.exports = async function handler(req, res) {
     }
   }
 
+  // ── GET /api/user/payments — user's own payment orders ───────────────────────
+  if (reqPath === '/api/user/payments') {
+    if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+    const auth = (req.headers['authorization'] || '').replace('Bearer ', '').trim();
+    const decoded = verifyToken(auth);
+    if (!decoded) return res.status(401).json({ success: false, message: 'Not authenticated' });
+    try {
+      await connectDB();
+      const { Payment } = getModels();
+      const payments = await Payment.find({ userEmail: decoded.email })
+        .sort({ createdAt: -1 }).limit(50)
+        .select('orderId amount type status utrNumber verifiedAt createdAt').lean();
+      return res.json({ success: true, payments });
+    } catch (err) {
+      return res.status(500).json({ success: false, message: err.message });
+    }
+  }
+
   // ── GET /api/user/inquiries — user's own inquiries (no admin required) ────────
   if (reqPath === '/api/user/inquiries') {
     if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
