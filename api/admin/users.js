@@ -137,23 +137,40 @@ module.exports = async function handler(req, res) {
       // Welcome email — fire-and-forget
       const _rk = process.env.RESEND_API_KEY;
       if (_rk) {
+        const _firstName = String(user.name).split(' ')[0];
+        const _location  = [user.city, user.state].filter(Boolean).join(', ') || '—';
+        const _uType     = ({ individual:'Individual', business:'Business', ngo:'NGO / Non-Profit', student:'Student', other:'Other' })[user.userType] || 'Individual';
         fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${_rk}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
             from: 'SatLegal Support <support@satlegal.in>',
             to: [user.email],
-            subject: 'Welcome to SatLegal — Your account is ready',
-            html: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto">
-              <h2 style="color:#1a3a1a">Welcome to SatLegal, ${String(user.name).split(' ')[0]}!</h2>
-              <p>Your account has been created successfully. You can now:</p>
-              <ul>
-                <li>Analyse your legal situation using our AI-powered tool</li>
-                <li>Save and revisit your legal reports</li>
-                <li>Connect with verified lawyers across India</li>
-              </ul>
-              <p><a href="https://satlegal.in" style="background:#2d6a2d;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:8px">Get Started</a></p>
-              <p style="color:#888;font-size:12px;margin-top:24px">If you didn't create this account, please contact us at <a href="mailto:support@satlegal.in">support@satlegal.in</a>.<br>SatLegal · Legal information, not legal advice.</p>
+            subject: 'Welcome to SatLegal — India\'s AI-Powered Legal Assistant',
+            html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#1a1a1a">
+              <div style="background:linear-gradient(135deg,#0d3d0d,#1a6b1a);padding:32px 28px;border-radius:10px 10px 0 0;text-align:center">
+                <img src="https://satlegal.in/assets/logo.png" alt="SatLegal" style="height:48px;margin-bottom:12px" />
+                <h1 style="color:#fff;font-size:22px;margin:0">Welcome aboard, ${_firstName}!</h1>
+                <p style="color:rgba(255,255,255,0.85);margin:8px 0 0;font-size:14px">India's first AI-assisted legal rights platform 🇮🇳</p>
+              </div>
+              <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 10px 10px">
+                <p style="font-size:15px;line-height:1.6">Dear <strong>${_firstName}</strong>,</p>
+                <p style="font-size:14px;line-height:1.8;color:#374151">Welcome aboard! SatLegal, India's first AI assisted model for you to understand your legal rights. We at SatLegal look forward that you have a good user experience while navigating and using our website. Happy scrolling!</p>
+
+                <div style="background:#f0fbf0;border:1px solid #a8e8a4;border-radius:8px;padding:16px 20px;margin:20px 0;font-size:13px;color:#1a3a1a">
+                  <strong>📋 Your account details:</strong><br/><br/>
+                  <strong>Name:</strong> ${user.name}<br/>
+                  <strong>Email:</strong> ${user.email}<br/>
+                  ${user.phone ? `<strong>Phone:</strong> ${user.phone}<br/>` : ''}
+                  <strong>Account Type:</strong> ${_uType}<br/>
+                  ${_location !== '—' ? `<strong>Location:</strong> ${_location}<br/>` : ''}
+                </div>
+
+                <a href="https://satlegal.in" style="display:inline-block;margin-top:8px;background:#138808;color:#fff;border-radius:8px;padding:12px 24px;text-decoration:none;font-size:14px;font-weight:700">Start My Legal Analysis →</a>
+
+                <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0"/>
+                <p style="font-size:12px;color:#9ca3af;margin:0">SatLegal · Legal information made accessible · <a href="https://satlegal.in" style="color:#9ca3af">satlegal.in</a><br/>If you didn't create this account, please contact us at <a href="mailto:support@satlegal.in" style="color:#9ca3af">support@satlegal.in</a>.</p>
+              </div>
             </div>`
           })
         }).catch(e => console.error('[welcome email]', e.message));
