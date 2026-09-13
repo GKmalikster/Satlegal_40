@@ -44,6 +44,7 @@
     { "src": "/api/user/dashboard-stats",    "dest": "/api/admin/users.js" },
     { "src": "/api/user/transactions",       "dest": "/api/admin/users.js" },
     { "src": "/api/user/inquiries",          "dest": "/api/admin/inquiries.js" },
+    { "src": "/api/user/inquiry",            "dest": "/api/admin/inquiries.js" },
     { "src": "/api/analyse",                 "dest": "/api/analyse.js" },
     { "src": "/api/admin-login",             "dest": "/api/admin/users.js" },
     { "src": "/api/feedback",                "dest": "/api/track.js" },

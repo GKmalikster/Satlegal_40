@@ -59,6 +59,43 @@ module.exports = async function handler(req, res) {
     return; // response already sent
   }
 
+  // ── POST /api/user/inquiry — save wizard-completed inquiry to MongoDB ─────────
+  if (reqPath === '/api/user/inquiry') {
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+    const auth = (req.headers['authorization'] || '').replace('Bearer ', '').trim();
+    const decoded = verifyToken(auth);
+    if (!decoded) return res.status(401).json({ success: false, message: 'Not authenticated' });
+    try {
+      await connectDB();
+      const { CaseInquiry, User } = getModels();
+      const user = await User.findOne({ email: decoded.email }).select('_id');
+      if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+      const { description = '', applicableLaws = [], status = 'assessed' } = req.body || {};
+      if (!description || !applicableLaws.length) {
+        return res.status(400).json({ success: false, message: 'description and applicableLaws required' });
+      }
+      const inquiryId = 'INQ-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,5).toUpperCase();
+      const inquiry = await CaseInquiry.create({
+        inquiryId,
+        userId: user._id,
+        description: String(description).slice(0, 1000),
+        applicableLaws: applicableLaws.map(l => ({
+          caseType: l.caseType || '',
+          actName: l.actName || '',
+          confidence: Number(l.confidence) || 0
+        })),
+        status: ['draft','assessed','completed','lawyer_requested'].includes(status) ? status : 'assessed',
+        matchType: 'none',
+        matchedCount: 0
+      });
+      return res.status(201).json({ success: true, inquiryId, id: inquiry._id });
+    } catch (err) {
+      console.error('[user/inquiry POST]', err.message);
+      if (err.code === 11000) return res.status(200).json({ success: true, message: 'Already saved' });
+      return res.status(500).json({ success: false, message: 'Server error' });
+    }
+  }
+
   // ── GET /api/user/inquiries — user's own inquiries (no admin required) ────────
   if (reqPath === '/api/user/inquiries') {
     if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });

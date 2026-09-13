@@ -648,7 +648,10 @@ tbody tr:last-child td { border-bottom: none; }
 <div id="loading-overlay" class="loading-overlay"><div class="loading-box"><div class="loader"></div><p style="margin-top:10px;color:#666">Loading...</p></div></div>
 
 <nav class="navbar">
-  <a href="/" class="navbar-brand"><span class="brand-sat">Sat</span><span class="brand-legal">Legal</span><span class="brand-dot">.in</span></a>
+  <a href="/" class="navbar-brand">
+    <img src="/assets/logo.png" alt="SatLegal" style="height:40px;width:auto;display:block" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <span style="display:none;align-items:center"><span class="brand-sat">Sat</span><span class="brand-legal">Legal</span><span class="brand-dot">.in</span></span>
+  </a>
   <div class="nav-links" id="auth-links"></div>
 </nav>
 
@@ -787,8 +790,8 @@ tbody tr:last-child td { border-bottom: none; }
                 </select>
               </div>
               <div class="form-group" style="margin-bottom:0">
-                <label style="font-size:12px">State</label>
-                <select id="pState" class="form-control" style="font-size:13px">
+                <label style="font-size:12px">State <span style="color:var(--danger)">*</span></label>
+                <select id="pState" class="form-control" style="font-size:13px" required>
                   <option value="">Select State</option>
                   <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option>
                   <option>Bihar</option><option>Chhattisgarh</option><option>Goa</option>
@@ -954,13 +957,19 @@ async function loadProfile() {
 
 document.getElementById('profileForm').addEventListener('submit', async (e) => {
   e.preventDefault();
+  const stateVal = document.getElementById('pState').value;
+  if (!stateVal) {
+    document.getElementById('profileAlert').innerHTML = '<div class="alert alert-warning">⚠️ Please select your State — it is required for accurate legal analysis.</div>';
+    document.getElementById('pState').focus();
+    return;
+  }
   try {
     await API.updateProfile({
       name:     document.getElementById('pName').value.trim(),
       phone:    document.getElementById('pPhone').value.trim(),
       gender:   document.getElementById('pGender').value,
       userType: document.getElementById('pUserType').value,
-      state:    document.getElementById('pState').value,
+      state:    stateVal,
       city:     document.getElementById('pCity').value.trim()
     });
     document.getElementById('profileAlert').innerHTML = '<div class="alert alert-success">✅ Profile updated successfully!</div>';

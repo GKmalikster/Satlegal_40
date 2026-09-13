@@ -1373,7 +1373,7 @@ const LABELS = ['Describe Issue','Smart Assessment','Law Mapping','Case Deep Div
 function toggleMob(){document.getElementById('mobMenu').classList.toggle('open')}
 document.addEventListener('click',e=>{const m=document.getElementById('mobMenu');if(m.classList.contains('open')&&!document.getElementById('mainNav').contains(e.target))m.classList.remove('open')});
 function updCC(){const t=document.getElementById('issueTa');document.getElementById('cc').textContent=t.value.length}
-function fillEx(t){document.getElementById('issueTa').value=t;updCC();scrollToWizard();setTimeout(()=>s1(),80);}
+function fillEx(t){resetW();document.getElementById('issueTa').value=t;W.input=t;updCC();scrollToWizard();setTimeout(()=>s1(),80);}
 
 /* ── Hero card JS ── */
 function heroTaInput(el){
@@ -3455,7 +3455,18 @@ function toggleChat(){
   }
 }
 function chatSend(){const v=document.getElementById('chatIn').value.trim();if(!v)return;chatAsk(v);document.getElementById('chatIn').value=''}
+let _lastChatQuery='';
+function openWizardWithQuery(q){
+  resetW();
+  const ta=document.getElementById('issueTa');
+  if(ta&&q){ta.value=q;updCC();}
+  if(q)W.input=q;
+  const hqc=document.getElementById('heroQueryCard');if(hqc)hqc.style.display='none';
+  scrollToWizard();showStep(1);
+  if(q)setTimeout(()=>s1(),120);
+}
 function chatAsk(q){
+  _lastChatQuery=q;
   addUserMsg(q);
   addBotMsg('<em style="color:#999">Analysing…</em>');
   chatAnswer(q).then(ans=>{
@@ -3478,7 +3489,7 @@ async function chatAnswer(q){
   }
   const top=laws[0];
   const sections=(top.sections||[]).slice(0,3).map(s=>`• ${s}`).join('\n');
-  return `**${top.caseType}**\n*${top.actName}*\n\n💡 ${top.quickTip||''}\n\n${sections?'**Key Sections:**\n'+sections+'\n\n':''}\n👉 <a href="#" onclick="openWizard();return false" style="color:var(--gr-600);font-weight:700">Run Full Analysis →</a>`;
+  return `**${top.caseType}**\n*${top.actName}*\n\n💡 ${top.quickTip||''}\n\n${sections?'**Key Sections:**\n'+sections+'\n\n':''}\n👉 <a href="#" onclick="openWizardWithQuery(_lastChatQuery||'');return false" style="color:var(--gr-600);font-weight:700">Run Full Analysis →</a>`;
 }
 
 /* ── Toast ── */
@@ -3576,11 +3587,39 @@ function renderPlanCards(){
   }).join('');
 }
 
+function _saveWizardInquiryToServer(token){
+  if(!token||!W.selected||!W.selected.length)return;
+  try{
+    fetch('/api/user/inquiry',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({
+        description:W.input||'',
+        applicableLaws:(W.selected||[]).map(l=>({caseType:l.caseType||'',actName:l.actName||l.actShort||'',confidence:l.confidence||l.score||0})),
+        status:'assessed'
+      })
+    }).catch(e=>console.warn('[wizard inquiry save]',e.message));
+  }catch(e){}
+}
+
 async function showActionChoicePopup(){
   const qe=document.getElementById('quick-email');
   const qp=document.getElementById('quick-phone');
   if(qe&&qe.value.trim())W.email=qe.value.trim();
   if(qp&&qp.value.trim())W.phone=qp.value.trim();
+
+  // ── Already logged in? Skip auth modal entirely ────────────────────────────
+  const _existTok=localStorage.getItem('sl_token');
+  const _existUser=(()=>{try{return JSON.parse(localStorage.getItem('sl_user')||'{}');}catch(e){return{};}})();
+  if(_existTok&&!_existTok.startsWith('wizard_')&&(_existUser.email||_existUser.name)){
+    W.name=_existUser.name||W.name;W.email=_existUser.email||W.email;
+    const _uid='RPT-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase();
+    const _sess={name:W.name,email:W.email,phone:W.phone,plan:{type:'report',name:'Report',icon:'📄',price:0},loggedIn:true,token:_existTok};
+    localStorage.setItem('sl_user_session',JSON.stringify(_sess));
+    _saveWizardInquiryToServer(_existTok);
+    setTimeout(()=>{genReport(_uid,_sess);showStep(6);},300);
+    return;
+  }
   // Always re-fetch config fresh at this critical payment/free decision point
   let _fc=JSON.parse(localStorage.getItem('sl_flow_config')||'{}');
   try{
