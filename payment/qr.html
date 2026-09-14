@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JPY1DTFZQN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-JPY1DTFZQN');</script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Complete Your Payment — SatLegal</title>
@@ -95,7 +98,8 @@
     </div>
   </div>
 
-  <div class="qr-section">
+  <!-- Desktop: QR code | Mobile: UPI deep-link buttons -->
+  <div id="desktopQR" class="qr-section">
     <p>Scan with any UPI app · Add your Order Reference in remarks</p>
     <div class="qr-wrap">
       <img src="/assets/payment-qr.png" alt="Scan to Pay" id="qrImg"
@@ -104,7 +108,33 @@
     <div class="qr-caption">HDFC SmartHub Vyapar · TID: 82367262</div>
   </div>
 
-  <div class="upi-label">Accepted payment methods</div>
+  <!-- Mobile UPI intent buttons (hidden on desktop) -->
+  <div id="mobileUPI" style="display:none;width:100%;margin-bottom:8px">
+    <p style="font-size:13px;text-align:center;color:#374151;margin-bottom:14px;line-height:1.5">
+      Tap your UPI app below — amount will be pre-filled automatically.
+    </p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <a id="gpayLink" href="#" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;border:2px solid #e5e7eb;border-radius:12px;padding:14px 20px;font-size:15px;font-weight:700;color:#111827;text-decoration:none;box-shadow:0 1px 4px rgba(0,0,0,.08)">
+        <span style="font-size:22px">💳</span> Open in Google Pay
+      </a>
+      <a id="phonepeLink" href="#" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#5f259f;border:2px solid #5f259f;border-radius:12px;padding:14px 20px;font-size:15px;font-weight:700;color:#fff;text-decoration:none">
+        <span style="font-size:22px">📱</span> Open in PhonePe
+      </a>
+      <a id="paytmLink" href="#" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#00a0e3;border:2px solid #00a0e3;border-radius:12px;padding:14px 20px;font-size:15px;font-weight:700;color:#fff;text-decoration:none">
+        <span style="font-size:22px">💙</span> Open in Paytm
+      </a>
+    </div>
+    <div style="margin-top:14px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px 14px;font-size:12px;color:#166534">
+      <strong>Or pay using UPI ID:</strong><br>
+      <span style="font-family:monospace;font-size:14px;letter-spacing:.5px" id="upiIdText">SATLEGAL@hdfcbank</span>
+      &nbsp;<button onclick="copyUpiId()" style="background:#138808;color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer" id="copyUpiBtn">Copy</button>
+    </div>
+    <p style="font-size:11px;color:#9ca3af;text-align:center;margin-top:8px">
+      After paying, copy your UTR number and enter it below.
+    </p>
+  </div>
+
+  <div class="upi-label">Accepted via UPI</div>
   <div class="upi-apps">
     <span style="font-size:11px;background:#f3f4f6;border-radius:20px;padding:4px 10px;color:#374151">GPay</span>
     <span style="font-size:11px;background:#5f259f;border-radius:20px;padding:4px 10px;color:#fff">PhonePe</span>
@@ -112,8 +142,6 @@
     <span style="font-size:11px;background:#138808;border-radius:20px;padding:4px 10px;color:#fff">UPI</span>
     <span style="font-size:11px;background:#0060ac;border-radius:20px;padding:4px 10px;color:#fff">BHIM</span>
     <span style="font-size:11px;background:#e4002b;border-radius:20px;padding:4px 10px;color:#fff">RuPay</span>
-    <span style="font-size:11px;background:#eb001b;border-radius:20px;padding:4px 10px;color:#fff">Mastercard</span>
-    <span style="font-size:11px;background:#1a1f71;border-radius:20px;padding:4px 10px;color:#fff">VISA</span>
   </div>
 
   <hr class="divider"/>
@@ -132,8 +160,9 @@
   <div class="utr-form">
     <label for="utrInput">UPI Transaction Reference (UTR)</label>
     <input type="text" id="utrInput" class="utr-input" placeholder="e.g. 624521987654" maxlength="30"
-           oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')"/>
-    <div class="utr-hint">12–22 digit number from your UPI payment receipt / SMS</div>
+           inputmode="numeric" pattern="[A-Za-z0-9]+"
+           oninput="this.value=this.value.replace(/[^A-Za-z0-9]/g,'')"/>
+    <div class="utr-hint">12–22 character code from your UPI receipt / SMS (usually 12 digits for HDFC IMPS)</div>
     <div id="alertBox" class="alert"></div>
     <button class="submit-btn" id="submitBtn" onclick="submitUTR()">✓ I've Paid — Submit UTR</button>
   </div>
@@ -160,6 +189,40 @@
     document.getElementById('alertBox').textContent = 'Invalid payment link. Please go back and try again.';
     document.getElementById('alertBox').style.display = 'block';
     document.getElementById('submitBtn').disabled = true;
+  }
+
+  // ── Mobile detection: show UPI intent buttons instead of QR ──────────────
+  const isMobile = /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent) || window.innerWidth < 768;
+  if (isMobile && amount > 0) {
+    document.getElementById('desktopQR').style.display = 'none';
+    document.getElementById('mobileUPI').style.display = 'block';
+
+    const upiId = 'SATLEGAL@hdfcbank';
+    const amtStr = amount.toString();
+    const tn = encodeURIComponent('SatLegal ' + (type === 'consultation' ? 'Consultation' : 'Report') + ' ' + orderId);
+    const baseUpi = 'upi://pay?pa=' + encodeURIComponent(upiId) + '&pn=SATLEGAL%20INC&am=' + amtStr + '&tn=' + tn;
+
+    document.getElementById('gpayLink').href    = 'tez://upi/pay?pa=' + encodeURIComponent(upiId) + '&pn=SATLEGAL%20INC&am=' + amtStr + '&tn=' + tn + '&mc=5045&mode=00';
+    document.getElementById('phonepeLink').href = 'phonepe://pay?pa=' + encodeURIComponent(upiId) + '&pn=SATLEGAL%20INC&am=' + amtStr + '&tn=' + tn;
+    document.getElementById('paytmLink').href   = 'paytm://upi/pay?pa=' + encodeURIComponent(upiId) + '&pn=SATLEGAL%20INC&am=' + amtStr + '&tn=' + tn;
+  }
+
+  function copyUpiId() {
+    const upiId = document.getElementById('upiIdText').textContent;
+    navigator.clipboard.writeText(upiId).then(()=>{
+      const btn = document.getElementById('copyUpiBtn');
+      btn.textContent = 'Copied!';
+      setTimeout(()=>btn.textContent='Copy', 2000);
+    }).catch(()=>{
+      // Fallback for older mobile browsers
+      const ta = document.createElement('textarea');
+      ta.value = upiId; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+      document.body.removeChild(ta);
+      const btn = document.getElementById('copyUpiBtn');
+      btn.textContent = 'Copied!';
+      setTimeout(()=>btn.textContent='Copy', 2000);
+    });
   }
 
   function copyOrderId() {
@@ -197,6 +260,8 @@
         document.getElementById('timerBox').textContent = 'You can close this page.';
         // Store pending payment locally
         try { localStorage.setItem('sl_pending_payment', JSON.stringify({ orderId, utr, amount, type, submittedAt: Date.now() })); } catch(e){}
+        // GA4: UTR submitted
+        if(typeof gtag==='function') gtag('event','utr_submitted',{amount,type:type||'report'});
       } else {
         box.className = 'alert error';
         box.textContent = data.message || 'Could not submit UTR. Please try again.';

@@ -9,7 +9,8 @@
     gtag('js', new Date());
     gtag('config', 'G-JPY1DTFZQN');
   </script>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <link rel="canonical" href="https://satlegal.in/auth/signup.html"/><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign Up – SatLegal</title>
   <style>
 /* ── Inlined global styles (tricolor theme) ── */
@@ -688,7 +689,10 @@ tbody tr:last-child td { border-bottom: none; }
       </div>
       <div class="form-group">
         <label>Password <span style="color:var(--primary)">*</span></label>
-        <input type="password" id="password" class="form-control" placeholder="At least 6 characters" required minlength="6" />
+        <div style="position:relative">
+          <input type="password" id="password" class="form-control" placeholder="At least 6 characters" autocomplete="new-password" style="padding-right:44px" required minlength="6" />
+          <button type="button" onclick="toggleSignupPwd()" aria-label="Show/hide password" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:#6B7280;padding:4px" id="signupPwdToggle">👁️</button>
+        </div>
       </div>
 
       <!-- Demographics (help us serve you better) -->
@@ -762,6 +766,13 @@ tbody tr:last-child td { border-bottom: none; }
 <script src="/js/auth.js"></script>
 <script>
 Auth.redirectIfLoggedIn();
+
+function toggleSignupPwd(){
+  const inp = document.getElementById('password');
+  const btn = document.getElementById('signupPwdToggle');
+  if(inp.type==='password'){ inp.type='text'; btn.textContent='🙈'; }
+  else { inp.type='password'; btn.textContent='👁️'; }
+}
 
 document.getElementById('signupForm').addEventListener('submit', async (e) => {
   e.preventDefault();
