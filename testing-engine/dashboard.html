@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SatLegal Testing Engine v1.0</title>
+<style>
+:root{
+  --sf:#FF9933;--sf-dk:#E07000;--sf-lt:#FFF4E6;
+  --gr:#138808;--gr-dk:#0D3D0D;--gr-lt:#F0FBF0;
+  --pass:#16A34A;--pass-lt:#DCFCE7;
+  --fail:#DC2626;--fail-lt:#FEE2E2;
+  --warn:#D97706;--warn-lt:#FEF3C7;
+  --skip:#6B7280;--skip-lt:#F3F4F6;
+  --text:#1A1A1A;--border:#E5E7EB;--bg:#F8F9FA;
+  --font:'Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+.tribar{height:5px;background:linear-gradient(90deg,var(--sf) 33%,#fff 33%,#fff 66%,var(--gr) 66%)}
+
+/* Header */
+.header{background:#fff;border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:16px;justify-content:space-between}
+.header-left{display:flex;align-items:center;gap:12px}
+.header-logo{font-size:20px;font-weight:900;color:var(--gr-dk)}
+.header-logo span{color:var(--sf)}
+.badge{background:var(--gr-lt);color:var(--gr-dk);font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;border:1px solid var(--gr)}
+.run-all-btn{background:var(--gr);color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:8px}
+.run-all-btn:hover{background:var(--gr-dk)}
+.run-all-btn:disabled{opacity:.6;cursor:not-allowed}
+
+/* Summary bar */
+.summary-bar{background:#fff;border-bottom:1px solid var(--border);padding:12px 24px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.summary-stat{display:flex;align-items:center;gap:6px;font-size:13px}
+.stat-num{font-size:22px;font-weight:900;line-height:1}
+.stat-num.pass{color:var(--pass)}
+.stat-num.fail{color:var(--fail)}
+.stat-num.skip{color:var(--skip)}
+.stat-num.warn{color:var(--warn)}
+.summary-divider{width:1px;height:32px;background:var(--border)}
+.progress-bar{flex:1;min-width:200px;height:8px;background:#E5E7EB;border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:var(--pass);border-radius:4px;transition:.4s}
+#accuracy-pct{font-size:13px;font-weight:700;color:var(--text)}
+#run-status{font-size:12px;color:var(--skip);font-style:italic}
+
+/* Tabs */
+.tabs{background:#fff;border-bottom:2px solid var(--border);padding:0 24px;display:flex;gap:0}
+.tab{padding:14px 20px;font-size:13px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;color:var(--skip);transition:.15s;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--gr-dk);border-bottom-color:var(--gr)}
+.tab-badge{background:var(--border);color:var(--skip);font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;min-width:20px;text-align:center}
+.tab.active .tab-badge{background:var(--gr-lt);color:var(--gr-dk)}
+
+/* Content */
+.content{padding:24px;max-width:1200px;margin:0 auto}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* Section header */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:15px;font-weight:700;color:var(--gr-dk)}
+.section-desc{font-size:12px;color:var(--skip);margin-top:2px}
+.run-section-btn{background:var(--sf);color:#fff;border:none;padding:7px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:.2s}
+.run-section-btn:hover{background:var(--sf-dk)}
+.run-section-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* Test table */
+.test-table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:24px}
+.test-table th{background:var(--gr-lt);color:var(--gr-dk);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:10px 14px;text-align:left}
+.test-table td{padding:10px 14px;font-size:12.5px;border-top:1px solid var(--border);vertical-align:top}
+.test-table tr:hover td{background:#FAFAFA}
+
+/* Status chips */
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap}
+.chip.pass{background:var(--pass-lt);color:var(--pass)}
+.chip.fail{background:var(--fail-lt);color:var(--fail)}
+.chip.warn{background:var(--warn-lt);color:var(--warn)}
+.chip.skip{background:var(--skip-lt);color:var(--skip)}
+.chip.running{background:#EFF6FF;color:#2563EB;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* Law tags */
+.law-tag{display:inline-block;background:var(--gr-lt);color:var(--gr-dk);border:1px solid #A8E8A4;font-size:10px;padding:2px 7px;border-radius:10px;margin:2px 2px 0 0;line-height:1.5}
+.law-tag.match{background:var(--pass-lt);color:var(--pass);border-color:var(--pass)}
+.law-tag.mismatch{background:var(--fail-lt);color:var(--fail);border-color:var(--fail)}
+
+/* Query cell */
+.query-text{font-weight:600;color:var(--text);margin-bottom:4px}
+.expected-label{font-size:10px;color:var(--skip);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+
+/* Response cell */
+.response-laws{line-height:1.8}
+.response-time{font-size:10px;color:var(--skip);margin-top:4px}
+
+/* Regression diff */
+.diff-added{color:var(--pass);font-size:11px}
+.diff-removed{color:var(--fail);font-size:11px;text-decoration:line-through}
+.diff-same{color:var(--skip);font-size:11px}
+
+/* API test */
+.method-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:.5px}
+.method-badge.POST{background:#EFF6FF;color:#2563EB}
+.method-badge.GET{background:var(--pass-lt);color:var(--pass)}
+.method-badge.HEAD{background:var(--warn-lt);color:var(--warn)}
+.endpoint-url{font-family:monospace;font-size:11px;color:var(--gr-dk);margin-top:3px}
+.response-code{font-family:monospace;font-size:12px;font-weight:700}
+.response-code.ok{color:var(--pass)}
+.response-code.err{color:var(--fail)}
+
+/* UI flow checklist */
+.checklist-item{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px}
+.checklist-item .check{width:20px;height:20px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:12px}
+.checklist-item.pass .check{background:var(--pass);border-color:var(--pass);color:#fff}
+.checklist-item.fail .check{background:var(--fail);border-color:var(--fail);color:#fff}
+.checklist-item.skip .check{background:var(--skip-lt)}
+.page-check-url{font-size:10px;font-family:monospace;color:var(--skip);margin-top:2px}
+
+/* Export */
+.export-bar{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px;display:flex;align-items:center;gap:12px;margin-top:24px}
+.export-btn{padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:#fff;transition:.2s}
+.export-btn:hover{background:var(--bg)}
+.export-btn.primary{background:var(--gr);color:#fff;border-color:var(--gr)}
+.export-btn.primary:hover{background:var(--gr-dk)}
+.last-run{font-size:11px;color:var(--skip);margin-left:auto}
+
+/* Baseline controls */
+.baseline-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px}
+.baseline-title{font-size:13px;font-weight:700;margin-bottom:8px}
+.baseline-desc{font-size:12px;color:var(--skip);margin-bottom:12px}
+.baseline-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Empty state */
+.empty-state{text-align:center;padding:48px;color:var(--skip)}
+.empty-icon{font-size:40px;margin-bottom:12px}
+.empty-text{font-size:14px;font-weight:600}
+.empty-sub{font-size:12px;margin-top:4px}
+
+/* Spinner */
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Responsive */
+@media(max-width:768px){
+  .header{flex-direction:column;align-items:flex-start;gap:12px}
+  .tabs{overflow-x:auto}
+  .summary-bar{gap:12px}
+  .test-table th:nth-child(3),.test-table td:nth-child(3){display:none}
+}
+</style>
+</head>
+<body>
+<div class="tribar"></div>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">Sat<span>Legal</span></div>
+    <div class="badge">Testing Engine v1.0</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span id="run-status">Ready</span>
+    <button class="run-all-btn" id="runAllBtn" onclick="runAll()">
+      <span id="run-all-icon">▶</span> Run All Tests
+    </button>
+  </div>
+</div>
+
+<!-- Summary bar -->
+<div class="summary-bar">
+  <div class="summary-stat"><span class="stat-num pass" id="s-pass">0</span><span style="font-size:12px;color:#6B7280">Passed</span></div>
+  <div class="summary-stat"><span class="stat-num fail" id="s-fail">0</span><span style="font-size:12px;color:#6B7280">Failed</span></div>
+  <div class="summary-stat"><span class="stat-num warn" id="s-warn">0</span><span style="font-size:12px;color:#6B7280">Partial</span></div>
+  <div class="summary-stat"><span class="stat-num skip" id="s-skip">0</span><span style="font-size:12px;color:#6B7280">Pending</span></div>
+  <div class="summary-divider"></div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  <span id="accuracy-pct" style="min-width:50px">0%</span>
+  <div class="summary-divider"></div>
+  <span id="total-time" style="font-size:12px;color:#6B7280">—</span>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('law')">⚖️ Law Accuracy <span class="tab-badge" id="tb-law">20</span></div>
+  <div class="tab" onclick="switchTab('api')">🔌 API Tests <span class="tab-badge" id="tb-api">12</span></div>
+  <div class="tab" onclick="switchTab('ui')">📄 Page / UI Checks <span class="tab-badge" id="tb-ui">14</span></div>
+  <div class="tab" onclick="switchTab('reg')">📸 Regression <span class="tab-badge" id="tb-reg">10</span></div>
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <!-- ── TAB 1: Law Accuracy ── -->
+  <div class="tab-panel active" id="panel-law">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Law Accuracy Tests</div>
+        <div class="section-desc">Sends each query to /api/analyse and checks if the expected law category is detected</div>
+      </div>
+      <button class="run-section-btn" id="runLawBtn" onclick="runSection('law')">▶ Run Law Tests</button>
+    </div>
+    <table class="test-table" id="law-table">
+      <thead><tr>
+        <th style="width:30px">#</th>
+        <th style="width:35%">Query</th>
+        <th style="width:28%">Expected Law</th>
+        <th>Detected</th>
+        <th style="width:90px">Result</th>
+      </tr></thead>
+      <tbody id="law-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- ── TAB 2: API Tests ── -->
+  <div class="tab-panel" id="panel-api">
+    <div class="section-header">
+      <div>
+        <div class="section-title">API Endpoint Tests</div>
+        <div class="section-desc">Tests every serverless function with known inputs and validates response status + structure</div>
+      </div>
+      <button class="run-section-btn" id="runApiBtn" onclick="runSection('api')">▶ Run API Tests</button>
+    </div>
+    <table class="test-table" id="api-table">
+      <thead><tr>
+        <th style="width:30px">#</th>
+        <th style="width:32%">Endpoint</th>
+        <th style="width:28%">Expectation</th>
+        <th>Response</th>
+        <th style="width:90px">Result</th>
+      </tr></thead>
+      <tbody id="api-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- ── TAB 3: UI / Page Checks ── -->
+  <div class="tab-panel" id="panel-ui">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Page & UI Flow Checks</div>
+        <div class="section-desc">Fetches each page and verifies it loads correctly with expected content</div>
+      </div>
+      <button class="run-section-btn" id="runUiBtn" onclick="runSection('ui')">▶ Run Page Checks</button>
+    </div>
+    <div id="ui-checklist"></div>
+  </div>
+
+  <!-- ── TAB 4: Regression ── -->
+  <div class="tab-panel" id="panel-reg">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Regression Tests</div>
+        <div class="section-desc">Compares current law detections against a saved baseline to catch regressions</div>
+      </div>
+      <button class="run-section-btn" id="runRegBtn" onclick="runSection('reg')">▶ Run Regression</button>
+    </div>
+    <div class="baseline-card">
+      <div class="baseline-title">📸 Baseline Snapshot</div>
+      <div class="baseline-desc" id="baseline-info">No baseline saved yet. Run the law tests first, then save as baseline.</div>
+      <div class="baseline-actions">
+        <button class="export-btn" onclick="saveBaseline()">💾 Save Current as Baseline</button>
+        <button class="export-btn" onclick="clearBaseline()">🗑️ Clear Baseline</button>
+        <button class="export-btn" onclick="viewBaseline()">👁️ View Baseline</button>
+      </div>
+    </div>
+    <table class="test-table" id="reg-table">
+      <thead><tr>
+        <th style="width:30px">#</th>
+        <th style="width:35%">Query</th>
+        <th style="width:28%">Baseline</th>
+        <th>Current</th>
+        <th style="width:90px">Delta</th>
+      </tr></thead>
+      <tbody id="reg-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- Export bar -->
+  <div class="export-bar">
+    <button class="export-btn primary" onclick="exportJSON()">⬇ Export JSON Report</button>
+    <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
+    <button class="export-btn" onclick="copyShareLink()">🔗 Copy Link</button>
+    <span class="last-run" id="last-run-time">Not yet run</span>
+  </div>
+</div>
+
+<script>
+// ─── Configuration ────────────────────────────────────────────────────────────
+const BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:3000'
+  : 'https://satlegal.in';
+
+// ─── Test Data ────────────────────────────────────────────────────────────────
+
+const LAW_TESTS = [
+  // ── Consumer ──
+  { id:'L01', query:'22 karat jewellery turned out to be 20 karat', expected:'Consumer – Product Defect / Service Deficiency', tag:'Fix #90 – Jewellery' },
+  { id:'L02', query:'Jewellery purity fraud gold hallmark missing', expected:'Consumer – Product Defect / Service Deficiency', tag:'Fix #90' },
+  { id:'L03', query:'My refrigerator stopped working within 1 month of purchase', expected:'Consumer – Product Defect / Service Deficiency', tag:'Consumer core' },
+  { id:'L04', query:'Builder not giving flat possession after full payment 2 years ago', expected:'Property – RERA / Builder Dispute', tag:'RERA' },
+  { id:'L05', query:'My car keeps breaking down after service center repair', expected:'Consumer – Product Defect / Service Deficiency', tag:'Consumer – vehicle' },
+  // ── Criminal ──
+  { id:'L06', query:'My car window was smashed by neighbour', expected:'Criminal – BNS (Mischief / Property Damage / Vandalism)', tag:'Fix #91 – Mischief' },
+  { id:'L07', query:'Someone transferred 45000 rupees from my bank account without permission', expected:'Cyber – Online Fraud / Financial Cyber Crime', tag:'Cyber fraud' },
+  { id:'L08', query:'UPI fraud someone got my OTP and withdrew money', expected:'Cyber – Online Fraud / Financial Cyber Crime', tag:'Cyber fraud' },
+  { id:'L09', query:'My cheque bounced bank returned it', expected:'Criminal – Negotiable Instruments Act (Cheque Bounce / NI Act)', tag:'Cheque bounce' },
+  { id:'L10', query:'Police took bribe and refused to file my FIR', expected:'Criminal – Police Excess / Human Rights Violation', tag:'Police excess' },
+  // ── Employment ──
+  { id:'L11', query:'Employer not paying salary for 3 months', expected:'Employment – Salary Dues / PF / Gratuity', tag:'Employment' },
+  { id:'L12', query:'I was fired without any notice or reason', expected:'Employment – Wrongful Termination / Illegal Dismissal', tag:'Employment' },
+  // ── Family ──
+  { id:'L13', query:'Husband demanding dowry and harassing me at home', expected:'Family – Dowry / 498A / Streedhan Recovery', tag:'Dowry' },
+  { id:'L14', query:'I want to get divorced from my husband', expected:'Family – Divorce (Contested)', tag:'Divorce' },
+  { id:'L15', query:'What is triple talaq and what are my rights', expected:'Family – Muslim Personal Law (Divorce / Mehr / Maintenance)', tag:'Muslim law' },
+  // ── Property ──
+  { id:'L16', query:'Tenant not vacating my property despite notice', expected:'Property – Rent Dispute / Tenant Eviction', tag:'Property' },
+  { id:'L17', query:'Property dispute with brother over ancestral land', expected:'Civil – Partition Suit', tag:'Partition' },
+  // ── Criminal – serious ──
+  { id:'L18', query:'Patient died after surgery doctor was negligent', expected:'Criminal – Medical Negligence / Death by Negligence (BNS 106)', tag:'Medical negligence' },
+  // ── Tax & others ──
+  { id:'L19', query:'Received GST notice from income tax department', expected:'Tax – GST / Income Tax / Tax Dispute', tag:'Tax' },
+  { id:'L20', query:'Mera criminal revision high court se bail cancel ho sakti hai', expected:'Criminal – BNSS (Bail / Anticipatory Bail / Criminal Procedure)', tag:'Bail – Hinglish' },
+];
+
+const API_TESTS = [
+  { id:'A01', method:'POST', path:'/api/analyse', desc:'Valid legal query', body:{query:'employer not paying salary'}, expect:'200 + laws array', check: r => r.ok && r.data && (r.data.laws||r.data.detectedLaws) },
+  { id:'A02', method:'POST', path:'/api/analyse', desc:'Empty query (graceful error)', body:{query:''}, expect:'400 or error message', check: r => !r.ok || (r.data && r.data.error) },
+  { id:'A03', method:'POST', path:'/api/analyse', desc:'Hinglish query', body:{query:'mera cheque bounce ho gaya kya karu'}, expect:'200 + laws array', check: r => r.ok && r.data && (r.data.laws||r.data.detectedLaws) },
+  { id:'A04', method:'POST', path:'/api/analyse', desc:'Very long query (500 chars)', body:{query:'I have a situation where my employer has not been paying my salary for the past 3 months despite me sending multiple reminders via email and WhatsApp. I have been working for this company for 5 years and they suddenly stopped paying. The HR says the company is going through financial difficulty but refuses to give a date. What legal options do I have?'}, expect:'200 + laws array', check: r => r.ok },
+  { id:'A05', method:'POST', path:'/api/track', desc:'Track event (analytics)', body:{event:'page_view',page:'/',sessionId:'test-'+Date.now()}, expect:'200 OK', check: r => r.ok },
+  { id:'A06', method:'GET', path:'/api/lawyer/list', desc:'Lawyer list endpoint', body:null, expect:'200 + array', check: r => r.status < 500 },
+  { id:'A07', method:'GET', path:'/robots.txt', desc:'robots.txt accessible', body:null, expect:'200 + text content', check: r => r.ok },
+  { id:'A08', method:'GET', path:'/sitemap.xml', desc:'sitemap.xml accessible', body:null, expect:'200 + XML', check: r => r.ok },
+  { id:'A09', method:'GET', path:'/googlecade4f9f2f6a0033.html', desc:'GSC verification file', body:null, expect:'200 OK', check: r => r.ok },
+  { id:'A10', method:'GET', path:'/', desc:'Homepage loads', body:null, expect:'200 + HTML', check: r => r.ok },
+  { id:'A11', method:'POST', path:'/api/analyse', desc:'JSON injection attempt (security)', body:{query:'{"$gt":""}; DROP TABLE users;'}, expect:'200 or 400, NO 500', check: r => r.status !== 500 },
+  { id:'A12', method:'POST', path:'/api/analyse', desc:'XSS in query (security)', body:{query:'<script>alert(1)</script> my landlord is not returning deposit'}, expect:'200 + laws, no script exec', check: r => r.ok },
+];
+
+const UI_TESTS = [
+  { id:'U01', path:'/', name:'Homepage', mustContain:['SatLegal','Describe Your Legal Issue','analysis'], desc:'Main wizard loads' },
+  { id:'U02', path:'/pricing.html', name:'Pricing page', mustContain:['₹499','₹2,499','Report'], desc:'Pricing tiers visible' },
+  { id:'U03', path:'/faq.html', name:'FAQ page', mustContain:['SatLegal','question','answer'], desc:'FAQ content loads' },
+  { id:'U04', path:'/how-it-works.html', name:'How It Works', mustContain:['step','legal','analysis'], desc:'Steps content visible' },
+  { id:'U05', path:'/contact.html', name:'Contact page', mustContain:['contact','email','SatLegal'], desc:'Contact form visible' },
+  { id:'U06', path:'/about.html', name:'About page', mustContain:['SatLegal','66+','Indian'], desc:'66+ laws stat visible' },
+  { id:'U07', path:'/laws-reference.html', name:'Laws Reference', mustContain:['Indian','law','section'], desc:'Law library content' },
+  { id:'U08', path:'/legal-topics.html', name:'Legal Topics', mustContain:['family','criminal','property'], desc:'Topic categories visible' },
+  { id:'U09', path:'/auth/login.html', name:'Login page', mustContain:['Login','password','email'], desc:'Login form renders' },
+  { id:'U10', path:'/auth/signup.html', name:'Signup page', mustContain:['Sign Up','password','email'], desc:'Signup form renders' },
+  { id:'U11', path:'/auth/lawyer-register.html', name:'Lawyer Register', mustContain:['lawyer','register','Bar Council'], desc:'Lawyer registration form' },
+  { id:'U12', path:'/terms-conditions.html', name:'Terms & Conditions', mustContain:['terms','SatLegal','conditions'], desc:'Terms content visible' },
+  { id:'U13', path:'/payment/qr.html', name:'Payment / QR page', mustContain:['payment','UPI','amount'], desc:'Payment page structure' },
+  { id:'U14', path:'/404.html', name:'404 page', mustContain:['404','not found','SatLegal'], desc:'404 error page visible' },
+];
+
+const REG_TESTS = LAW_TESTS.slice(0, 10); // First 10 law tests used for regression
+
+// ─── State ────────────────────────────────────────────────────────────────────
+const state = {
+  lawResults: {},
+  apiResults: {},
+  uiResults: {},
+  regResults: {},
+  running: false,
+  startTime: null,
+};
+
+// ─── Utilities ────────────────────────────────────────────────────────────────
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+function timeSince(ms){ return ms < 1000 ? ms+'ms' : (ms/1000).toFixed(1)+'s' }
+function chip(status, text){ return `<span class="chip ${status}">${esc(text)}</span>` }
+function lawTag(law, cls=''){ return `<span class="law-tag ${cls}">${esc(law)}</span>` }
+
+function updateSummary(){
+  const all = {...state.lawResults, ...state.apiResults, ...state.uiResults, ...state.regResults};
+  const vals = Object.values(all);
+  const pass = vals.filter(v=>v==='pass').length;
+  const fail = vals.filter(v=>v==='fail').length;
+  const warn = vals.filter(v=>v==='warn').length;
+  const skip = vals.filter(v=>!v||v==='pending').length;
+  const total = LAW_TESTS.length + API_TESTS.length + UI_TESTS.length + REG_TESTS.length;
+  const done = pass+fail+warn;
+  document.getElementById('s-pass').textContent = pass;
+  document.getElementById('s-fail').textContent = fail;
+  document.getElementById('s-warn').textContent = warn;
+  document.getElementById('s-skip').textContent = total - done;
+  const pct = done ? Math.round((pass/(pass+fail+warn))*100) : 0;
+  document.getElementById('accuracy-pct').textContent = pct+'%';
+  document.getElementById('progress-fill').style.width = (done/total*100)+'%';
+  // Update tab badges
+  const lawDone = LAW_TESTS.filter(t=>state.lawResults[t.id]).length;
+  const apiDone = API_TESTS.filter(t=>state.apiResults[t.id]).length;
+  const uiDone = UI_TESTS.filter(t=>state.uiResults[t.id]).length;
+  const regDone = REG_TESTS.filter(t=>state.regResults[t.id]).length;
+  document.getElementById('tb-law').textContent = lawDone+'/'+LAW_TESTS.length;
+  document.getElementById('tb-api').textContent = apiDone+'/'+API_TESTS.length;
+  document.getElementById('tb-ui').textContent = uiDone+'/'+UI_TESTS.length;
+  document.getElementById('tb-reg').textContent = regDone+'/'+REG_TESTS.length;
+}
+
+// ─── Tab switching ────────────────────────────────────────────────────────────
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach((el,i)=>{
+    const tabs=['law','api','ui','reg'];
+    el.classList.toggle('active', tabs[i]===tab);
+  });
+  document.querySelectorAll('.tab-panel').forEach(el=>el.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+}
+
+// ─── Init tables ─────────────────────────────────────────────────────────────
+function initTables(){
+  // Law table
+  const lt = document.getElementById('law-tbody');
+  lt.innerHTML = LAW_TESTS.map((t,i)=>`
+    <tr id="law-row-${t.id}">
+      <td style="color:var(--skip);font-size:11px">${i+1}</td>
+      <td>
+        <div class="query-text">${esc(t.query)}</div>
+        <div style="margin-top:4px"><span style="font-size:10px;background:var(--sf-lt);color:var(--sf-dk);padding:2px 6px;border-radius:8px;font-weight:600">${esc(t.tag)}</span></div>
+      </td>
+      <td><span class="law-tag">${esc(t.expected)}</span></td>
+      <td id="law-detected-${t.id}"><span style="color:var(--skip);font-size:11px">—</span></td>
+      <td id="law-status-${t.id}">${chip('skip','Pending')}</td>
+    </tr>`).join('');
+
+  // API table
+  const at = document.getElementById('api-tbody');
+  at.innerHTML = API_TESTS.map((t,i)=>`
+    <tr id="api-row-${t.id}">
+      <td style="color:var(--skip);font-size:11px">${i+1}</td>
+      <td>
+        <span class="method-badge ${t.method}">${t.method}</span>
+        <div class="endpoint-url">${esc(t.path)}</div>
+        <div style="font-size:11px;color:var(--skip);margin-top:3px">${esc(t.desc)}</div>
+      </td>
+      <td style="font-size:11px;color:var(--skip)">${esc(t.expect)}</td>
+      <td id="api-resp-${t.id}"><span style="color:var(--skip);font-size:11px">—</span></td>
+      <td id="api-status-${t.id}">${chip('skip','Pending')}</td>
+    </tr>`).join('');
+
+  // UI checklist
+  const uc = document.getElementById('ui-checklist');
+  uc.innerHTML = UI_TESTS.map(t=>`
+    <div class="checklist-item skip" id="ui-item-${t.id}">
+      <div class="check" id="ui-check-${t.id}">◻</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600">${esc(t.name)}</div>
+        <div class="page-check-url">${BASE}${t.path}</div>
+        <div style="font-size:11px;color:var(--skip);margin-top:3px">${esc(t.desc)} · Checks for: ${t.mustContain.map(c=>`<code>${esc(c)}</code>`).join(', ')}</div>
+        <div id="ui-detail-${t.id}" style="margin-top:4px;font-size:11px"></div>
+      </div>
+      <div id="ui-chip-${t.id}">${chip('skip','Pending')}</div>
+    </div>`).join('');
+
+  // Regression table
+  const rt = document.getElementById('reg-tbody');
+  rt.innerHTML = REG_TESTS.map((t,i)=>`
+    <tr id="reg-row-${t.id}">
+      <td style="color:var(--skip);font-size:11px">${i+1}</td>
+      <td><div class="query-text">${esc(t.query)}</div></td>
+      <td id="reg-baseline-${t.id}"><span style="color:var(--skip);font-size:11px">No baseline</span></td>
+      <td id="reg-current-${t.id}"><span style="color:var(--skip);font-size:11px">—</span></td>
+      <td id="reg-status-${t.id}">${chip('skip','Pending')}</td>
+    </tr>`).join('');
+
+  updateBaselineInfo();
+}
+
+// ─── Law Accuracy Tests ───────────────────────────────────────────────────────
+async function runLawTest(t){
+  document.getElementById('law-status-'+t.id).innerHTML = chip('running','Testing…');
+  const t0 = Date.now();
+  try {
+    const res = await fetch(BASE+'/api/analyse', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({query: t.query}),
+    });
+    const data = await res.json();
+    const ms = Date.now()-t0;
+    const laws = data.laws || data.detectedLaws || [];
+    const detected = Array.isArray(laws) ? laws : [laws];
+
+    // Check if expected law is in detected (partial match)
+    const expLower = t.expected.toLowerCase();
+    const matched = detected.some(l => l && l.toLowerCase().includes(expLower.split('–')[0].trim().toLowerCase()) && l.toLowerCase().includes(expLower.split('–').slice(1).join('–').trim().split('(')[0].trim().toLowerCase()));
+
+    // Also try direct partial match
+    const matched2 = detected.some(l => l && t.expected && (l.toLowerCase().includes(t.expected.toLowerCase().substring(0,20))));
+    const pass = matched || matched2;
+    const partial = !pass && detected.length > 0;
+    const status = !res.ok ? 'fail' : pass ? 'pass' : partial ? 'warn' : 'fail';
+
+    state.lawResults[t.id] = status;
+
+    const detectedHtml = detected.length
+      ? detected.map(l=>lawTag(l, pass && detected.some(d=>d===l)?'match':'')  ).join('')
+      : '<span style="color:var(--fail);font-size:11px">No laws detected</span>';
+
+    document.getElementById('law-detected-'+t.id).innerHTML = detectedHtml + `<div class="response-time">⏱ ${timeSince(ms)}</div>`;
+    document.getElementById('law-status-'+t.id).innerHTML = chip(status, status==='pass'?'✓ Pass':status==='warn'?'⚠ Partial':'✗ Fail');
+
+  } catch(e){
+    state.lawResults[t.id] = 'fail';
+    document.getElementById('law-detected-'+t.id).innerHTML = `<span style="color:var(--fail);font-size:11px">Error: ${esc(e.message)}</span>`;
+    document.getElementById('law-status-'+t.id).innerHTML = chip('fail','✗ Error');
+  }
+  updateSummary();
+}
+
+// ─── API Tests ────────────────────────────────────────────────────────────────
+async function runApiTest(t){
+  document.getElementById('api-status-'+t.id).innerHTML = chip('running','Testing…');
+  const t0 = Date.now();
+  try {
+    const opts = { method: t.method, headers: {} };
+    if(t.body){ opts.headers['Content-Type']='application/json'; opts.body=JSON.stringify(t.body); }
+    const res = await fetch(BASE+t.path, opts);
+    const ms = Date.now()-t0;
+    let data = null;
+    const ct = res.headers.get('content-type')||'';
+    if(ct.includes('json')) try{ data=await res.json(); }catch(e){}
+    else { const txt=await res.text(); data=txt.substring(0,100); }
+
+    const rObj = { ok:res.ok, status:res.status, data };
+    const pass = t.check(rObj);
+    const status = pass ? 'pass' : 'fail';
+    state.apiResults[t.id] = status;
+
+    const codeClass = res.status < 400 ? 'ok' : 'err';
+    document.getElementById('api-resp-'+t.id).innerHTML = `
+      <span class="response-code ${codeClass}">${res.status}</span>
+      <span style="font-size:10px;color:var(--skip);margin-left:6px">${esc(res.statusText)}</span>
+      <div class="response-time">⏱ ${timeSince(ms)}${data&&typeof data==='object'?` · ${Object.keys(data).slice(0,4).join(', ')}`:''}  </div>`;
+    document.getElementById('api-status-'+t.id).innerHTML = chip(status, pass?'✓ Pass':'✗ Fail');
+
+  } catch(e){
+    state.apiResults[t.id] = 'fail';
+    document.getElementById('api-resp-'+t.id).innerHTML = `<span style="color:var(--fail);font-size:11px">${esc(e.message)}</span>`;
+    document.getElementById('api-status-'+t.id).innerHTML = chip('fail','✗ Error');
+  }
+  updateSummary();
+}
+
+// ─── UI / Page Tests ─────────────────────────────────────────────────────────
+async function runUiTest(t){
+  const item = document.getElementById('ui-item-'+t.id);
+  const checkEl = document.getElementById('ui-check-'+t.id);
+  document.getElementById('ui-chip-'+t.id).innerHTML = chip('running','Checking…');
+  const t0 = Date.now();
+  try {
+    const res = await fetch(BASE+t.path, {method:'GET'});
+    const ms = Date.now()-t0;
+    const html = await res.text();
+    const htmlLower = html.toLowerCase();
+    const missing = t.mustContain.filter(c=>!htmlLower.includes(c.toLowerCase()));
+    const pass = res.ok && missing.length===0;
+    const partial = res.ok && missing.length>0;
+    const status = !res.ok?'fail':pass?'pass':'warn';
+
+    state.uiResults[t.id] = status;
+    item.className = 'checklist-item '+status;
+    checkEl.textContent = status==='pass'?'✓':status==='warn'?'⚠':'✗';
+
+    const detail = missing.length ? `Missing: ${missing.map(c=>`<code>${esc(c)}</code>`).join(', ')}` : `All checks passed · ${html.length.toLocaleString()} bytes`;
+    document.getElementById('ui-detail-'+t.id).innerHTML = `<span style="color:var(--${status==='pass'?'pass':status==='warn'?'warn':'fail'})">${detail}</span> <span style="color:var(--skip)">⏱ ${timeSince(ms)}</span>`;
+    document.getElementById('ui-chip-'+t.id).innerHTML = chip(status, status==='pass'?'✓ Pass':status==='warn'?'⚠ Missing content':'✗ Fail');
+
+  } catch(e){
+    state.uiResults[t.id] = 'fail';
+    item.className = 'checklist-item fail';
+    checkEl.textContent = '✗';
+    document.getElementById('ui-detail-'+t.id).innerHTML = `<span style="color:var(--fail)">${esc(e.message)}</span>`;
+    document.getElementById('ui-chip-'+t.id).innerHTML = chip('fail','✗ Error');
+  }
+  updateSummary();
+}
+
+// ─── Regression Tests ─────────────────────────────────────────────────────────
+function getBaseline(){ try{ return JSON.parse(localStorage.getItem('sl_test_baseline')||'{}'); }catch(e){ return {}; } }
+function updateBaselineInfo(){
+  const b = getBaseline();
+  const keys = Object.keys(b);
+  const el = document.getElementById('baseline-info');
+  if(keys.length===0){ el.textContent='No baseline saved yet. Run the law tests first, then save as baseline.'; return; }
+  const saved = localStorage.getItem('sl_baseline_date')||'unknown date';
+  el.textContent = `Baseline saved on ${saved} · ${keys.length} test cases stored.`;
+}
+
+function saveBaseline(){
+  const current = {};
+  LAW_TESTS.slice(0,10).forEach(t=>{
+    const el = document.getElementById('law-detected-'+t.id);
+    if(el){ current[t.id] = el.textContent.trim(); }
+  });
+  if(Object.values(current).every(v=>!v||v==='—')){
+    alert('Run law tests first before saving baseline.'); return;
+  }
+  localStorage.setItem('sl_test_baseline', JSON.stringify(current));
+  localStorage.setItem('sl_baseline_date', new Date().toLocaleString('en-IN'));
+  updateBaselineInfo();
+  alert('Baseline saved!');
+}
+
+function clearBaseline(){
+  if(!confirm('Clear baseline?')) return;
+  localStorage.removeItem('sl_test_baseline');
+  localStorage.removeItem('sl_baseline_date');
+  updateBaselineInfo();
+}
+
+function viewBaseline(){
+  const b = getBaseline();
+  if(!Object.keys(b).length){ alert('No baseline saved.'); return; }
+  alert(JSON.stringify(b, null, 2));
+}
+
+async function runRegTest(t){
+  document.getElementById('reg-status-'+t.id).innerHTML = chip('running','Testing…');
+  const baseline = getBaseline();
+  const baselineVal = baseline[t.id] || null;
+
+  // Show baseline
+  document.getElementById('reg-baseline-'+t.id).innerHTML = baselineVal
+    ? `<span style="font-size:11px;color:var(--skip)">${esc(baselineVal.substring(0,80))}</span>`
+    : `<span style="color:var(--skip);font-size:11px">No baseline</span>`;
+
+  if(!baselineVal){
+    state.regResults[t.id] = 'skip';
+    document.getElementById('reg-status-'+t.id).innerHTML = chip('skip','No baseline');
+    updateSummary(); return;
+  }
+
+  try {
+    const res = await fetch(BASE+'/api/analyse', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({query: t.query}),
+    });
+    const data = await res.json();
+    const laws = (data.laws || data.detectedLaws || []).join(', ');
+
+    document.getElementById('reg-current-'+t.id).innerHTML = `<span style="font-size:11px">${esc(laws.substring(0,100))}</span>`;
+
+    const same = laws.toLowerCase().trim() === baselineVal.toLowerCase().trim();
+    const status = same ? 'pass' : 'warn';
+    state.regResults[t.id] = status;
+    document.getElementById('reg-status-'+t.id).innerHTML = chip(status, same ? '✓ Same' : '⚠ Changed');
+
+  } catch(e){
+    state.regResults[t.id] = 'fail';
+    document.getElementById('reg-current-'+t.id).innerHTML = `<span style="color:var(--fail);font-size:11px">${esc(e.message)}</span>`;
+    document.getElementById('reg-status-'+t.id).innerHTML = chip('fail','✗ Error');
+  }
+  updateSummary();
+}
+
+// ─── Run sections ─────────────────────────────────────────────────────────────
+async function runSection(section){
+  const btnId = {law:'runLawBtn',api:'runApiBtn',ui:'runUiBtn',reg:'runRegBtn'}[section];
+  const btn = document.getElementById(btnId);
+  btn.disabled = true; btn.textContent = '⏳ Running…';
+
+  if(section==='law'){ for(const t of LAW_TESTS){ await runLawTest(t); } }
+  else if(section==='api'){ for(const t of API_TESTS){ await runApiTest(t); } }
+  else if(section==='ui'){ for(const t of UI_TESTS){ await runUiTest(t); } }
+  else if(section==='reg'){ for(const t of REG_TESTS){ await runRegTest(t); } }
+
+  btn.disabled = false;
+  btn.textContent = '▶ Run ' + {law:'Law',api:'API',ui:'Page',reg:'Regression'}[section] + ' Tests';
+}
+
+async function runAll(){
+  if(state.running) return;
+  state.running = true;
+  state.startTime = Date.now();
+  const btn = document.getElementById('runAllBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Running All Tests…';
+  document.getElementById('run-status').textContent = 'Running law accuracy tests…';
+  document.getElementById('runLawBtn').disabled = true;
+  document.getElementById('runApiBtn').disabled = true;
+  document.getElementById('runUiBtn').disabled = true;
+  document.getElementById('runRegBtn').disabled = true;
+
+  switchTab('law');
+  for(const t of LAW_TESTS){ await runLawTest(t); }
+
+  document.getElementById('run-status').textContent = 'Running API tests…';
+  switchTab('api');
+  for(const t of API_TESTS){ await runApiTest(t); }
+
+  document.getElementById('run-status').textContent = 'Running page checks…';
+  switchTab('ui');
+  for(const t of UI_TESTS){ await runUiTest(t); }
+
+  document.getElementById('run-status').textContent = 'Running regression…';
+  switchTab('reg');
+  for(const t of REG_TESTS){ await runRegTest(t); }
+
+  const elapsed = Date.now()-state.startTime;
+  document.getElementById('total-time').textContent = `Total: ${timeSince(elapsed)}`;
+  document.getElementById('last-run-time').textContent = 'Last run: '+new Date().toLocaleString('en-IN');
+  document.getElementById('run-status').textContent = 'Complete';
+
+  btn.disabled = false;
+  btn.innerHTML = '▶ Run All Tests';
+  document.getElementById('runLawBtn').disabled = false;
+  document.getElementById('runApiBtn').disabled = false;
+  document.getElementById('runUiBtn').disabled = false;
+  document.getElementById('runRegBtn').disabled = false;
+  state.running = false;
+
+  switchTab('law');
+}
+
+// ─── Export ───────────────────────────────────────────────────────────────────
+function buildReport(){
+  const all = Object.values({...state.lawResults,...state.apiResults,...state.uiResults,...state.regResults});
+  const pass = all.filter(v=>v==='pass').length;
+  const fail = all.filter(v=>v==='fail').length;
+  const warn = all.filter(v=>v==='warn').length;
+  return {
+    generated: new Date().toISOString(),
+    target: BASE,
+    summary: { total: all.length, pass, fail, partial:warn, accuracy: all.length?Math.round(pass/all.length*100):0 },
+    lawTests: LAW_TESTS.map(t=>({
+      id:t.id, query:t.query, expected:t.expected, tag:t.tag,
+      status: state.lawResults[t.id]||'pending',
+      detected: document.getElementById('law-detected-'+t.id)?.textContent||'—'
+    })),
+    apiTests: API_TESTS.map(t=>({
+      id:t.id, method:t.method, path:t.path, desc:t.desc,
+      status: state.apiResults[t.id]||'pending',
+      response: document.getElementById('api-resp-'+t.id)?.textContent||'—'
+    })),
+    uiTests: UI_TESTS.map(t=>({
+      id:t.id, path:t.path, name:t.name,
+      status: state.uiResults[t.id]||'pending',
+    })),
+    regressionTests: REG_TESTS.map(t=>({
+      id:t.id, query:t.query,
+      status: state.regResults[t.id]||'pending',
+    })),
+  };
+}
+
+function exportJSON(){
+  const report = buildReport();
+  const blob = new Blob([JSON.stringify(report,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'satlegal-test-report-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+}
+
+function exportCSV(){
+  const report = buildReport();
+  const rows = [['Suite','ID','Query/Endpoint','Expected/Description','Status']];
+  report.lawTests.forEach(t=>rows.push(['Law',t.id,t.query,t.expected,t.status]));
+  report.apiTests.forEach(t=>rows.push(['API',t.id,t.method+' '+t.path,t.desc,t.status]));
+  report.uiTests.forEach(t=>rows.push(['UI',t.id,t.path,t.name,t.status]));
+  report.regressionTests.forEach(t=>rows.push(['Regression',t.id,t.query,'—',t.status]));
+  const csv = rows.map(r=>r.map(c=>'"'+(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'satlegal-test-report-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+function copyShareLink(){
+  navigator.clipboard.writeText(window.location.href).then(()=>alert('Link copied!'));
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+initTables();
+updateSummary();
+</script>
+</body>
+</html>
