@@ -752,25 +752,32 @@ module.exports = async function handler(req, res) {
 
       console.log('[lawyer/register] new registration:', email.slice(0, 3) + '***');
 
-      // Welcome email to lawyer — fire-and-forget
+      // Welcome email to lawyer — awaited so Vercel doesn't kill it before send
       const _rk = process.env.RESEND_API_KEY;
       if (_rk) {
-        fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${_rk}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            from: 'SatLegal Support <support@satlegal.in>',
-            to: [email],
-            subject: 'Your SatLegal lawyer registration is under review',
-            html: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto">
-              <h2 style="color:#1a3a1a">Thank you for registering, ${String(name).split(' ')[0]}!</h2>
-              <p>We've received your lawyer registration on SatLegal. Our team will review your profile and Bar Council details within <strong>2–3 business days</strong>.</p>
-              <p>Once approved, you'll receive leads from users who match your specialisation and will be able to manage your availability and bookings directly from your dashboard.</p>
-              <p>If you have questions in the meantime, reply to this email or write to us at <a href="mailto:support@satlegal.in">support@satlegal.in</a>.</p>
-              <p style="color:#888;font-size:12px;margin-top:24px">SatLegal · Connecting people with verified legal professionals across India.</p>
-            </div>`
-          })
-        }).catch(e => console.error('[lawyer welcome email]', e.message));
+        try {
+          const emailRes = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${_rk}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              from: 'SatLegal <support@satlegal.in>',
+              to: [email],
+              subject: 'Your SatLegal lawyer registration is under review',
+              html: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto">
+                <h2 style="color:#1a3a1a">Thank you for registering, ${String(name).split(' ')[0]}!</h2>
+                <p>We've received your lawyer registration on SatLegal. Our team will review your profile and Bar Council details within <strong>2–3 business days</strong>.</p>
+                <p>Once approved, you'll receive leads from users who match your specialisation and will be able to manage your availability and bookings directly from your dashboard.</p>
+                <p>If you have questions in the meantime, reply to this email or write to us at <a href="mailto:support@satlegal.in">support@satlegal.in</a>.</p>
+                <p style="color:#888;font-size:12px;margin-top:24px">SatLegal · Connecting people with verified legal professionals across India.</p>
+              </div>`
+            })
+          });
+          console.log('[lawyer welcome email] sent to', email.slice(0,3)+'*** status='+emailRes.status);
+        } catch(e) {
+          console.error('[lawyer welcome email] FAILED:', e.message);
+        }
+      } else {
+        console.warn('[lawyer welcome email] RESEND_API_KEY not set — email skipped');
       }
 
       return res.status(201).json({

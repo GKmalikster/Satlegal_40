@@ -1948,7 +1948,7 @@ function s1(){
     // Query is vague OR no keyword match — use targeted context questions
     const ctxQs=[
       {id:'ctx_nature',question:'What best describes the nature of your issue?',type:'radio',
-       options:['Criminal — someone committed a crime against me or my family','I am being accused / blamed for something (I need to defend myself)','Financial fraud — money taken by deception or false promises','Employment — salary, termination, workplace rights','Vehicle / car / bike — damaged, stolen, or accident','Property / Land / Builder / RERA dispute','Government authority action — MCD / BMC / Municipal / Sealing / Demolition','Family — divorce, custody, maintenance, domestic violence','Consumer — defective product, poor service, or medical negligence','Cyber crime / Online fraud / UPI fraud','Others — my situation does not fit any of the above']},
+       options:['Criminal — someone committed a crime against me or my family','I am being accused / blamed for something (I need to defend myself)','Financial fraud — money taken by deception or false promises','Employment — salary, termination, workplace rights','Vehicle / car / bike — damaged, stolen, or accident','Property / Land / Builder / RERA dispute','Government authority action — MCD / BMC / Municipal / Sealing / Demolition','Family — divorce, custody, maintenance, domestic violence','Consumer — defective product, poor service, or billing dispute','Cyber crime / Online fraud / UPI fraud','Others — my situation does not fit any of the above']},
       {id:'ctx_party',question:'Who is the other party or what happened?',type:'radio',
        options:['A stranger / unknown person committed a crime against me','A neighbour, known person, or acquaintance damaged my property/vehicle','A family member or relative (domestic matter)','My employer or company','A hospital, doctor, or medical professional','A government authority, MCD, BMC, or police','A builder, landlord, or property developer','A bank, lender, or financial institution','An online seller, platform, or unknown caller (cyber)','Others — none of the above']},
       {id:'ctx_harm',question:'What specifically happened?',type:'radio',
@@ -2145,7 +2145,8 @@ function getSectionIcon(sec){
 }
 function updateQProgress(){
   const total=W.questions.length;
-  const answered=W.questions.filter(q=>W.answers[q.id]).length;
+  // 'Others' without description text is not counted as answered
+  const answered=W.questions.filter(q=>W.answers[q.id] && W.answers[q.id]!=='Others').length;
   const pct=total>0?Math.round((answered/total)*100):0;
   const fill=document.getElementById('qProgFill');const label=document.getElementById('qProgLabel');
   const bar=document.getElementById('qProgressBar');
@@ -2223,7 +2224,9 @@ function renderQs(){
   updateQProgress();
 }
 function selOpt(qId,oi,val){
-  W.answers[qId]=val;
+  // When "Others" is selected, store as incomplete marker until user fills the text box
+  const isOthers = val==='Others' || val.startsWith('Others');
+  W.answers[qId] = isOthers ? 'Others' : val;
   document.querySelectorAll(`[id^="qo_${qId}_"]`).forEach(e=>e.classList.remove('sel'));
   const el=document.getElementById(`qo_${qId}_${oi}`);
   if(el){
@@ -2246,6 +2249,9 @@ function selOpt(qId,oi,val){
 
 function saveOthersText(qId, text){
   W.answers[qId] = text.trim() ? 'Others — ' + text.trim() : 'Others';
+  // Clear red error border once user starts typing
+  const tb = document.getElementById('others_txt_'+qId);
+  if(tb && text.trim()) tb.style.borderColor='var(--primary)';
   updateQProgress();
 }
 function _chkSelOther(qId, val){
@@ -2264,12 +2270,24 @@ function _chkSelOther(qId, val){
 async function s2(){
   // Enforce all questions answered before proceeding
   if(W.questions && W.questions.length){
-    const unanswered = W.questions.filter(q => !W.answers[q.id]);
+    // 'Others' without description text counts as unanswered
+    const unanswered = W.questions.filter(q => !W.answers[q.id] || W.answers[q.id]==='Others');
     if(unanswered.length){
-      toast('Please answer all questions before proceeding.','err');
-      // Scroll to first unanswered question
+      const hasOthers = unanswered.some(q => W.answers[q.id]==='Others');
+      toast(hasOthers
+        ? 'You selected "Others" — please describe your situation in the text box before continuing.'
+        : 'Please answer all questions before proceeding.', 'err');
+      // Scroll to first unanswered / incomplete question
       const firstQ = document.getElementById('qt_' + unanswered[0].id);
       if(firstQ) firstQ.scrollIntoView({behavior:'smooth', block:'center'});
+      // Highlight Others text box if that's the issue
+      if(hasOthers){
+        const firstOthers = unanswered.find(q => W.answers[q.id]==='Others');
+        if(firstOthers){
+          const tb = document.getElementById('others_txt_'+firstOthers.id);
+          if(tb){tb.focus();tb.style.borderColor='#ef4444';}
+        }
+      }
       return;
     }
   }
@@ -3349,10 +3367,15 @@ function genReport(uid,user){
   h+=`<div class="rs"><div class="rs-title">📋 Your Action Plan — Next Steps</div>
     <div class="step-list">${buildSteps(W.selected,W.answers,W.areas)}</div></div>`;
 
-  // 5. Lawyers
-  h+=`<div class="rs"><div class="rs-title">👨‍⚖️ We Shall Connect You to a Qualified Lawyer</div>
-    <div class="lawyer-grid">${buildLawyers()}</div>
-    <p style="font-size:11px;color:var(--text-lt);text-align:center;margin-top:12px">⚠️ Verify credentials independently before engaging any lawyer.</p>
+  // 5. Lawyer consent CTA
+  h+=`<div class="rs" style="border:2px solid var(--primary);border-radius:12px;padding:22px 24px;background:linear-gradient(135deg,#f0fdf4,#dcfce7)">
+    <div style="font-size:18px;font-weight:900;color:var(--gr-800);margin-bottom:8px">👨‍⚖️ Would you like to speak with a verified lawyer?</div>
+    <p style="font-size:14px;color:var(--text);line-height:1.6;margin:0 0 18px">Our network of verified advocates can review your case and advise you on next steps. There is no obligation to proceed — you can simply have a short consultation to understand your options.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <a href="user/book.html" style="display:inline-block;background:#138808;color:#fff;font-size:14px;font-weight:800;padding:12px 22px;border-radius:9px;text-decoration:none;flex:1;min-width:180px;text-align:center">✅ Yes, Connect Me to a Lawyer →</a>
+      <button onclick="closeRpt()" style="background:#fff;border:2px solid var(--sf-300);color:var(--text);font-size:14px;font-weight:700;padding:12px 22px;border-radius:9px;cursor:pointer;flex:1;min-width:180px">✕ No Thanks — Close &amp; Save Report</button>
+    </div>
+    <p style="font-size:11px;color:var(--text-lt);margin:14px 0 0">⚠️ Verify credentials independently before engaging any lawyer. Report is saved automatically.</p>
   </div>`;
 
   // Footer warning
